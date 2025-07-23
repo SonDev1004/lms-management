@@ -23,9 +23,9 @@ public class Assignment extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String fileName;
 
-    Integer Factor;
+    Integer factor;
 
-    LocalDateTime DueDate;
+    LocalDateTime dueDate;
     @Column(columnDefinition = "bit default 1")
     boolean isActive;
 

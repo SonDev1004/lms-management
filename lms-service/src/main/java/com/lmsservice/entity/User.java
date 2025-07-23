@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)", nullable = false, unique = true)
     String userName;
     @Column(columnDefinition = "nvarchar(255)", nullable = false)
     String password;
@@ -31,7 +31,6 @@ public class User extends EntityAbstract {
     @Column(columnDefinition = "bit default 0")
     Boolean gender;
     // Ràng buộc với email và phone
-    @Email
     String email;
     //Ràng buộc phone với định dạng số điện thoại
     String phone;

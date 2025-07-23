@@ -21,7 +21,7 @@ public class Submission extends EntityAbstract {
 
     Integer score;
 
-    LocalDateTime submitedDate;
+    LocalDateTime submittedDate;
 
     //Assignment
     @ManyToOne

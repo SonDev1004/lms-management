@@ -21,8 +21,7 @@ public class Room extends EntityAbstract {
 
     @Column(columnDefinition = "nvarchar(max)")
     String roomName;
-
-    @Min(1)
+    
     @Column(columnDefinition = "tinyint")
     Short capacity;
 

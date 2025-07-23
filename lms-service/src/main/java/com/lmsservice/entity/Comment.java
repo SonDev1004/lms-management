@@ -18,12 +18,12 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(255)")
-    String Content;
+    String content;
 
-    Date PostedDate;
+    Date postedDate;
 
     @Column(columnDefinition = "bit default 0")
-    LocalDateTime IsAppropriate;
+    LocalDateTime isAppropriate;
 
     @ManyToOne()
     @JoinColumn(name = "sessionId")

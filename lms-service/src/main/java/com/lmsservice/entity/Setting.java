@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Setting extends EntityAbstract{
+public class Setting extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(255)")
     String name;
     @Column(columnDefinition = "nvarchar(255)")

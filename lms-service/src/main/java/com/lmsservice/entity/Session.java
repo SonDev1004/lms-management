@@ -18,7 +18,7 @@ import java.util.List;
 public class Session extends  EntityAbstract {
 
     @Column(name = "[order]", columnDefinition = "tinyint")
-    Short orderSession; // Đôi thành sessionOrder
+    Short orderSession;
 
     LocalDate date;
 

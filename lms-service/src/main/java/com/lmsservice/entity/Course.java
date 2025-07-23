@@ -18,7 +18,7 @@ public class Course extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String title;
 
-    @Min(0)
+    @Column(columnDefinition = "int default 1")
     Integer quantity;
 
     // Subject

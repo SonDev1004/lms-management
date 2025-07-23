@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role extends  EntityAbstract {
+public class Role extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(100)")
     String name;
 
@@ -21,11 +21,7 @@ public class Role extends  EntityAbstract {
     String description;
 
     @ManyToMany
-    @JoinTable(
-            name = "role_permission",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
-    )
+    @JoinTable(name = "RolePermission", joinColumns = @JoinColumn(name = "roleId"), inverseJoinColumns = @JoinColumn(name = "permissionId"))
     Set<Permission> permissions;
 
     @OneToMany(mappedBy = "role")

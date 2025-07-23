@@ -20,7 +20,7 @@ public class Subject extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(100)")
     String title;
 
-    @Column(columnDefinition = "char(36)")
+    @Column(columnDefinition = "char(36)", unique = true)
     String code;
 
     @Column(columnDefinition = "tinyint")

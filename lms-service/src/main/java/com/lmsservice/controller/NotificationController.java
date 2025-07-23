@@ -1,6 +1,6 @@
 package com.lmsservice.controller;
 
-import com.lmsservice.service.NotificationController;
+import com.lmsservice.service.NotificationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

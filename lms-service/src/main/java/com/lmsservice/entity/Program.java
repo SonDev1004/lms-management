@@ -38,7 +38,7 @@ public class Program extends EntityAbstract {
     Boolean isActive;
     //Curriculum
     @OneToMany(mappedBy = "program")
-    List<Curriculum> curriculumList = new ArrayList<>();
+    List<Curriculum> curriculumList;
     //Enrollments
     @OneToMany(mappedBy = "program")
     List<Enrollment> enrollments;

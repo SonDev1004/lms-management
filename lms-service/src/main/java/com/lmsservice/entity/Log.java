@@ -25,7 +25,7 @@ public class Log extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(255)")
     String relatedTable;
 
-    Integer RelatedId;
+    Integer relatedId;
 
     @Column(columnDefinition = "nvarchar(255)")
     String relatedOlData;

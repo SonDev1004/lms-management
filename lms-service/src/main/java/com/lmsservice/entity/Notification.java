@@ -19,7 +19,7 @@ public class Notification extends EntityAbstract{
     @Column(columnDefinition = "nvarchar(max)")
     String content;
 
-    @Column(columnDefinition = "tinyint")
+    @Column(columnDefinition = "tinyint CHECK (severity >= 1 AND severity <= 5)")
     Short severity;
 
     @Column(columnDefinition = "nvarchar(max)")

@@ -20,6 +20,7 @@ public class Permission extends EntityAbstract {
     String name;
     @Column(columnDefinition = "nvarchar(255)")
     String description;
+    @Column(columnDefinition = "bit default 1")
     boolean isActive;
 
     @ManyToMany(mappedBy = "permissions")

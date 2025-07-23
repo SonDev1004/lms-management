@@ -19,7 +19,7 @@ public class Teacher extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String specialty;
 
-    @Column(columnDefinition = "char(36)")
+    @Column(columnDefinition = "char(36)", unique = true)
     String code;
 
     @Column(columnDefinition = "nvarchar(max)")
