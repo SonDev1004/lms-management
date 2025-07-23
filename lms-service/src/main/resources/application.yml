@@ -10,7 +10,7 @@ spring:
 
     jpa:
         hibernate:
-            ddl-auto: create
+            ddl-auto: create-drop
         show-sql: true
         properties:
             hibernate:
@@ -19,7 +19,7 @@ spring:
                 hibernate.validator.fail_fast: false
                 format_sql: true
                 # Giu nguy?n t?n entity/cot (PascalCase, camelCase)
-                physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+                physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
                 implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
 
 

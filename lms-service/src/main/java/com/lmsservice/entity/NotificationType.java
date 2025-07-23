@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class NotificationType extends EntityAbstract{
-    @Column(columnDefinition = "nvarchar(255)")
+    @Column(columnDefinition = "nvarchar(255)", nullable = false)
     String title;
     @Column(columnDefinition = "nvarchar(255)")
     String icon;

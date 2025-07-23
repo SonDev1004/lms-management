@@ -25,7 +25,7 @@ public class Teacher extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String note;
 
-    @Column(columnDefinition = "bit default 0")
+    @Column(columnDefinition = "bit default 0", nullable = false)
     boolean isFullTime;
 
     //Courses

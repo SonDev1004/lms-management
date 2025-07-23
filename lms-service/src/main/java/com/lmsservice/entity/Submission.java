@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Submission extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(max)")
+    @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String fileName;
-
-    Integer score;
+    @Column(columnDefinition = "float default 0.00", nullable = false)
+    Float score;
 
     LocalDateTime submittedDate;
 

@@ -13,10 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Enrollment extends EntityAbstract {
-    @Column(columnDefinition = "decimal(18,2)")
+    @Column(columnDefinition = "decimal(18,2) default 0.00", nullable = false)
     BigDecimal paidFee;
 
-    @Column(columnDefinition = "decimal(18,2)")
+    @Column(columnDefinition = "decimal(18,2) default 0.00", nullable = false)
     BigDecimal remainingFee;
 
     // Student

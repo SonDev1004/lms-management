@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Student extends EntityAbstract {
-    @Column(columnDefinition = "char(36)")
+    @Column(columnDefinition = "char(36)", unique = true)
     String code;
 
     @Column(columnDefinition = "nvarchar(255)")

@@ -14,10 +14,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Lesson extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(max)")
+    @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String title;
 
-    @Column(columnDefinition = "nvarchar(max)")
+    @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String content;
 
     @Column(columnDefinition = "nvarchar(max)")

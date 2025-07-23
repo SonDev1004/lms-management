@@ -17,12 +17,12 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Comment extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(255)")
+    @Column(columnDefinition = "nvarchar(255)", nullable = false)
     String content;
 
     Date postedDate;
 
-    @Column(columnDefinition = "bit default 0")
+    @Column(columnDefinition = "bit default 0", nullable = false)
     LocalDateTime isAppropriate;
 
     @ManyToOne()

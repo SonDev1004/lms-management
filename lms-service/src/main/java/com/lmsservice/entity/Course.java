@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Course extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(max)")
+    @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String title;
 
     @Column(columnDefinition = "int default 1")

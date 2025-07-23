@@ -17,7 +17,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Session extends  EntityAbstract {
 
-    @Column(name = "[order]", columnDefinition = "tinyint")
+    @Column(name = "[order]", columnDefinition = "tinyint default 1", nullable = false)
     Short orderSession;
 
     LocalDate date;
@@ -29,7 +29,7 @@ public class Session extends  EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String fileNames;
 
-    @Column(columnDefinition = "bit default 0")
+    @Column(columnDefinition = "bit default 0", nullable = false)
     boolean isAbsent;
 
     @Column(columnDefinition = "nvarchar(max)")

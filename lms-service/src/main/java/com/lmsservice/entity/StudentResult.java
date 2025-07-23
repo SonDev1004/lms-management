@@ -1,5 +1,6 @@
 package com.lmsservice.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -13,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StudentResult extends EntityAbstract {
+    @Column(columnDefinition = "float default 0.00", nullable = false)
     Float score;
 
     //Student

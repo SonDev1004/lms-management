@@ -12,9 +12,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Setting extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(255)")
+    @Column(columnDefinition = "nvarchar(255)",nullable = false, unique = true)
     String name;
-    @Column(columnDefinition = "nvarchar(255)")
+    @Column(columnDefinition = "nvarchar(255)",nullable = false)
     String value;
     @Column(columnDefinition = "nvarchar(255)")
     String description;

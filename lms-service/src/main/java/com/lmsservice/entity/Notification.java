@@ -16,16 +16,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Notification extends EntityAbstract{
-    @Column(columnDefinition = "nvarchar(max)")
+    @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String content;
 
-    @Column(columnDefinition = "tinyint CHECK (severity >= 1 AND severity <= 5)")
+    @Column(columnDefinition = "tinyint CHECK (severity >= 1 AND severity <= 5)", nullable = false)
     Short severity;
 
     @Column(columnDefinition = "nvarchar(max)")
     String url;
 
-    @Column(columnDefinition = "bit default 0")
+    @Column(columnDefinition = "bit default 0", nullable = false)
     boolean isSeen;
 
     LocalDateTime postedDate;

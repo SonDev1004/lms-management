@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(100)")
+    @Column(columnDefinition = "nvarchar(100)", unique = true)
     String name;
 
     @Column(columnDefinition = "nvarchar(100)")

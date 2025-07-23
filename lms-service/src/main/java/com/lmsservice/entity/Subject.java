@@ -17,25 +17,25 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Subject extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(100)")
+    @Column(columnDefinition = "nvarchar(100)", nullable = false)
     String title;
 
     @Column(columnDefinition = "char(36)", unique = true)
     String code;
 
-    @Column(columnDefinition = "tinyint")
+    @Column(columnDefinition = "tinyint default 1", nullable = false)
     Integer sessionNumber;
 
-    @Column(columnDefinition = "decimal(18,2)")
+    @Column(columnDefinition = "decimal(18,2) default 0.00", nullable = false)
     BigDecimal fee;
 
     @Column(columnDefinition = "nvarchar(max)")
     String image;
 
-    @Column(columnDefinition = "tinyint default 1")
+    @Column(columnDefinition = "tinyint default 1", nullable = false)
     Integer minStudent;
 
-    @Column(columnDefinition = "tinyint default 1")
+    @Column(columnDefinition = "tinyint default 1", nullable = false)
     Integer maxStudent;
 
     @Column(columnDefinition = "nvarchar(max)")

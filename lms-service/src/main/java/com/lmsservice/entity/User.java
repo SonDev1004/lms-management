@@ -32,14 +32,14 @@ public class User extends EntityAbstract {
     Boolean gender;
     // Ràng buộc với email và phone
     String email;
-    //Ràng buộc phone với định dạng số điện thoại
+    @Column(columnDefinition = "varchar(15)", unique = true)
     String phone;
     @Column(columnDefinition = "nvarchar(255)")
     String avatar;
 
     LocalDateTime createdDate;
 
-    @Column(columnDefinition = "bit default 1")
+    @Column(columnDefinition = "bit default 1", nullable = false)
     Boolean isActive;
 
     @OneToMany(mappedBy = "user")

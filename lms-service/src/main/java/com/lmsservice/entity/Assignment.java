@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Assignment extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(max)")
+    @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String title;
 
     @Column(columnDefinition = "tinyint default 10")
@@ -26,7 +26,7 @@ public class Assignment extends EntityAbstract {
     Integer factor;
 
     LocalDateTime dueDate;
-    @Column(columnDefinition = "bit default 1")
+    @Column(columnDefinition = "bit default 1", nullable = false)
     boolean isActive;
 
     //Course

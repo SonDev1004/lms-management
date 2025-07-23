@@ -15,10 +15,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseStudent extends EntityAbstract {
     Float averageScore;
-    @Column(columnDefinition = "varchar(max)")
+    @Column(columnDefinition = "varchar(max) default '[]'", nullable = false)
     String attendanceList;
 
-    @Column(columnDefinition = "bit default 0")
+    @Column(columnDefinition = "bit default 0", nullable = false)
     Boolean isAudit;
 
     @Column(columnDefinition = "nvarchar(max)")

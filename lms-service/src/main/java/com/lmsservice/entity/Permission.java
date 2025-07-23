@@ -16,11 +16,11 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Permission extends EntityAbstract {
-    @Column(columnDefinition = "nvarchar(100)")
+    @Column(columnDefinition = "nvarchar(100)",unique = true)
     String name;
     @Column(columnDefinition = "nvarchar(255)")
     String description;
-    @Column(columnDefinition = "bit default 1")
+    @Column(columnDefinition = "bit default 1", nullable = false)
     boolean isActive;
 
     @ManyToMany(mappedBy = "permissions")

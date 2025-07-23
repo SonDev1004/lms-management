@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Curriculum extends EntityAbstract {
-    @Column(name = "[order]", columnDefinition = "tinyint")
+    @Column(name = "[order]", columnDefinition = "tinyint default 1", nullable = false)
     Integer orderNumber;
 
     @ManyToOne()
