@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# IntelliJ IDEA project files
+lms-frontend.iml
