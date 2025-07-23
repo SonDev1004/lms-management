@@ -1,0 +1,29 @@
+server:
+    port: 8081
+
+spring:
+    datasource:
+        url: jdbc:sqlserver://QuocDuy;databaseName=LMS_Management;trustServerCertificate=true
+        username: sa
+        password: 123456
+        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+    jpa:
+        hibernate:
+            ddl-auto: create  # ho?c update / create-drop
+        show-sql: true
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.SQLServerDialect
+                format_sql: true
+                naming:
+                    # Gi? nguyên tên b?ng/c?t nh? khai báo trong entity Java (PascalCase).
+                    physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+                    # Dùng quy t?c ??t tên nh? trong entity, không ??i sang snake_case.
+                    implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
+# Hibernate Validator (n?u b?n dùng @NotNull, @Email,...)
+javax:
+    validation:
+        fail-fast: false
+
