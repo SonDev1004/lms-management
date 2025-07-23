@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.3</version>
+        <version>3.3.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.lms-service</groupId>
@@ -28,8 +28,47 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <!--        version cho Lombok and MapStruct-->
+        <projectlombok-lombok.version>1.18.30</projectlombok-lombok.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <spotless.version>2.43.0</spotless.version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <sonar.coverage.exclusions>
+            src/main/java/com/Lmsservice/dto/**
+            src/main/java/com/Lmsservice/entity/**
+            src/main/java/com/Lmsservice/mapper/**
+            src/main/java/com/Lmsservice/configuration/**
+        </sonar.coverage.exclusions>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <image.path>registry.hub.docker.com/hoangson93</image.path>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.profiles.active>test</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
+        <!-- Restful API -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -40,15 +79,194 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--Lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${projectlombok-lombok.version}</version>
+            <!-- Lombok chỉ sử dụng khi biên dịch, không đi kèm trong bản build cuối cùng -->
+            <scope>provided</scope>
+        </dependency>
+        <!--MapStruct-->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+        <!-- Database -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!-- Flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-sqlserver</artifactId>
+        </dependency>
+
+        <!-- Devtool -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!--            spotless : giúp format code-->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <removeUnusedImports/>
+                        <toggleOffOn/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                        <indent>
+                            <tabs>true</tabs>
+                            <spacesPerTab>4</spacesPerTab>
+                        </indent>
+                        <palantirJavaFormat/>
+                        <importOrder>
+                            <!-- Specify either order or file, but not both -->
+                            <order>java,jakarta,org,com,com.diffplug,</order>
+                        </importOrder>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--    end spotless-->
+
+            <!--            plugin Jacoco-->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>com/sondev/identity_service/dto/**</exclude>
+                        <exclude>com/sondev/identity_service/entity/**</exclude>
+                        <exclude>com/sondev/identity_service/mapper/**</exclude>
+                        <exclude>com/sondev/identity_service/configuration/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!--          end  plugin Jacoco-->
+            <!--exclude lombok ra khoi maven-->
+            <plugin>
+                <!--default-->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--end default-->
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!--plugin lombok and mapstruct-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <!--Việc kết hợp Lombok và MapStruct yêu cầu một plugin bổ sung để xử lý các annotation của Lombok khi biên dịch MapStruct.
+                     MapStruct cần nhận diện được các getter/setter được Lombok tự động tạo ra.-->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${projectlombok-lombok.version}</version>
+                        </path>
+                        <path>
+                            <!--Giúp cho mapstruct va lombok có thể phối hợp làm việc với nhau-->
+                            <!--lombok-mapstruct-binding: Thư viện này đóng vai trò làm cầu nối giữa Lombok và MapStruct.
+                            Nó giúp MapStruct hiểu được các getter/setter được tạo tự động bởi Lombok, cho phép bạn sử dụng cả Lombok và MapStruct trong cùng một class.-->
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${lombok-mapstruct-binding.version}</version>
+                        </path>
+                        <path>
+                            <!--mapstruct-processor: Đây là trình biên dịch của MapStruct, giúp MapStruct xử lý các interface mapper và tạo ra các lớp ánh xạ tự động.-->
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <!--Tắt việc chèn timestamp vào file sinh ra bởi MapStruct. Điều này có thể giúp tránh các thay đổi không cần thiết trong file khi chỉ cần biên dịch lại mà không có thay đổi logic.-->
+                        <arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
+                        <!--Chỉ định rằng các mapper sẽ được quản lý bởi Spring. Điều này có nghĩa là bạn có thể sử dụng @Autowired để tiêm các mapper vào trong các class khác.-->
+                        <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                        <!--Chỉ định rằng các mapper sẽ được quản lý bởi Spring. Điều này có nghĩa là bạn có thể sử dụng @Autowired để tiêm các mapper vào trong các class khác.-->
+                        <arg>-Amapstruct.verbose=true</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>lms-service</finalName>
     </build>
 
 </project>

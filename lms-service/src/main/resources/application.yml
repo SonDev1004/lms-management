@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: lms-service
+  profiles:
+    active: @spring.profiles.active@
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        # include: health,prometheus,metrics
+
+logging:
+  level:
+    root: INFO
+    web: INFO

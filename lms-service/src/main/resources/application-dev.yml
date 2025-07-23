@@ -1,0 +1,33 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  devtools:
+    add-properties: true
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=lms_management;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: spka15004Aa@
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+openapi:
+  service:
+    api-docs: lsm-service
+    server: http://localhost:${server.port}
+    title: LMS Service API
+    version: 1.0.0
+
+jwt:
+  secretKey: dev@123
