@@ -6,5 +6,5 @@ import jakarta.persistence.*;
 public abstract class EntityAbstract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 }
