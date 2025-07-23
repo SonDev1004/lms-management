@@ -1,0 +1,25 @@
+server:
+    port: 8081
+
+spring:
+    datasource:
+        url: jdbc:sqlserver://QuocDuy;databaseName=LMS_Management;trustServerCertificate=true
+        username: sa
+        password: 123456
+        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+    jpa:
+        hibernate:
+            ddl-auto: create
+        show-sql: true
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.SQLServerDialect
+                javax.persistence.validation.mode: AUTO
+                hibernate.validator.fail_fast: false
+                format_sql: true
+                # Giu nguy?n t?n entity/cot (PascalCase, camelCase)
+                physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+                implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
+
