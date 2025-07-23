@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CourseStudent extends Course {
+public class CourseStudent extends EntityAbstract {
     Float averageScore;
     @Column(columnDefinition = "varchar(max)")
     String attendanceList;
