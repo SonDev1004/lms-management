@@ -5,18 +5,23 @@ spring:
   devtools:
     add-properties: true
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=lms_management;encrypt=true;trustServerCertificate=true
-    username: sa
-    password: spka15004Aa@
+    url: ${DMBS_URL:jdbc:sqlserver://localhost:1433;databaseName=dev_lms_management;encrypt=true;trustServerCertificate=true}
+    username: ${DBMS_USERNAME:sa}
+    password: ${DBMS_PASSWORD:123}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     database-platform: org.hibernate.dialect.SQLServerDialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        javax.persistence.validation.mode: AUTO
+        hibernate.validator.fail_fast: false
         format_sql: true
+        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
 springdoc:
   api-docs:
     enabled: true
