@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,10 +19,10 @@ public class Curriculum extends EntityAbstract {
     Integer orderNumber;
 
     @ManyToOne()
-    @JoinColumn(name = "programId", nullable = false)
+    @JoinColumn(name = "program_id", nullable = false)
     Program program;
 
     @ManyToOne()
-    @JoinColumn(name = "subjectId", nullable = false)
+    @JoinColumn(name = "subject_id", nullable = false)
     Subject subject;
 }

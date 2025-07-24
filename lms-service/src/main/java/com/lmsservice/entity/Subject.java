@@ -1,14 +1,15 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -44,7 +45,7 @@ public class Subject extends EntityAbstract {
     @Column(columnDefinition = "bit default 1", nullable = false)
     Boolean isActive;
 
-    //Curriculum
+    // Curriculum
     @OneToMany(mappedBy = "subject")
     List<Curriculum> curriculums = new ArrayList<>();
 
@@ -59,7 +60,7 @@ public class Subject extends EntityAbstract {
     // StudentResults
     @OneToMany(mappedBy = "subject")
     List<StudentResult> studentResults;
-    //Enrollments
+    // Enrollments
     @OneToMany(mappedBy = "subject")
     List<Enrollment> enrollments;
 }

@@ -1,10 +1,11 @@
 package com.lmsservice.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -25,24 +26,24 @@ public class Student extends EntityAbstract {
     @OneToMany(mappedBy = "student")
     List<Feedback> feedbacks;
 
-    //Submissions
-    @OneToMany (mappedBy = "student")
+    // Submissions
+    @OneToMany(mappedBy = "student")
     List<Submission> submissions;
 
-    //CourseStudents
+    // CourseStudents
     @OneToMany(mappedBy = "student")
     List<CourseStudent> courseStudents;
 
-    //StudentResults
+    // StudentResults
     @OneToMany(mappedBy = "student")
     List<StudentResult> studentResults;
 
-    //Enrollments
+    // Enrollments
     @OneToMany(mappedBy = "student")
     List<Enrollment> enrollments;
 
-    //User
+    // User
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     User user;
 }

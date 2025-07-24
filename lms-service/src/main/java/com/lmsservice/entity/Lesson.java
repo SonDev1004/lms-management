@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -27,6 +28,6 @@ public class Lesson extends EntityAbstract {
     String document;
 
     @ManyToOne()
-    @JoinColumn(name = "subjectId", nullable = false)
+    @JoinColumn(name = "subject_id", nullable = false)
     Subject subject;
 }

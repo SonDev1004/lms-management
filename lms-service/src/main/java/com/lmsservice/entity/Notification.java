@@ -1,13 +1,14 @@
 package com.lmsservice.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Notification extends EntityAbstract{
+public class Notification extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String content;
 
@@ -30,13 +31,13 @@ public class Notification extends EntityAbstract{
 
     LocalDateTime postedDate;
 
-    //Notification
+    // Notification
     @ManyToOne
-    @JoinColumn(name = "notificationTypeId", nullable = false)
+    @JoinColumn(name = "notification_type_id", nullable = false)
     NotificationType notificationType;
 
-    //User
+    // User
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     User user;
 }

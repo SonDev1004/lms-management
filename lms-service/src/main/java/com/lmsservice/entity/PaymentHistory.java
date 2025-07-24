@@ -1,14 +1,15 @@
 package com.lmsservice.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,11 +19,10 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PaymentHistory extends EntityAbstract {
 
-
     @Column(columnDefinition = "decimal(18,2)", nullable = false)
     private BigDecimal amount;
 
-    @Column(columnDefinition = "nvarchar(255)",nullable = false)
+    @Column(columnDefinition = "nvarchar(255)", nullable = false)
     private String bankCode;
 
     @Column(columnDefinition = "nvarchar(255)", nullable = false)
@@ -52,7 +52,6 @@ public class PaymentHistory extends EntityAbstract {
     LocalDateTime paymentDate;
 
     @ManyToOne()
-    @JoinColumn(name = "enrollmentId", nullable = false)
+    @JoinColumn(name = "enrollment_id", nullable = false)
     Enrollment enrollment;
-
 }

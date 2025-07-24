@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,13 +18,13 @@ public class StudentResult extends EntityAbstract {
     @Column(columnDefinition = "float default 0.00", nullable = false)
     Float score;
 
-    //Student
+    // Student
     @ManyToOne
-    @JoinColumn(name = "studentId", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     Student student;
 
-    //Subject
+    // Subject
     @ManyToOne
-    @JoinColumn(name = "subjectId", nullable = false)
+    @JoinColumn(name = "subject_id", nullable = false)
     Subject subject;
 }

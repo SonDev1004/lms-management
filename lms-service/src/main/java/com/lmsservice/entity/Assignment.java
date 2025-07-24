@@ -1,11 +1,12 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -26,15 +27,16 @@ public class Assignment extends EntityAbstract {
     Integer factor;
 
     LocalDateTime dueDate;
+
     @Column(columnDefinition = "bit default 1", nullable = false)
     boolean isActive;
 
-    //Course
+    // Course
     @ManyToOne
-    @JoinColumn(name = "courseId", nullable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     Course course;
 
-    //Submissions
+    // Submissions
     @OneToMany(mappedBy = "assignment")
     List<Submission> submissions;
 }

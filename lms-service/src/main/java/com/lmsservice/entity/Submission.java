@@ -1,13 +1,14 @@
 package com.lmsservice.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,18 +19,19 @@ import java.time.LocalDateTime;
 public class Submission extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String fileName;
+
     @Column(columnDefinition = "float default 0.00", nullable = false)
     Float score;
 
     LocalDateTime submittedDate;
 
-    //Assignment
+    // Assignment
     @ManyToOne
-    @JoinColumn(name = "assignmentId", nullable = false)
+    @JoinColumn(name = "assignment_id", nullable = false)
     Assignment assignment;
 
-    //Student
+    // Student
     @ManyToOne
-    @JoinColumn(name = "StudentId", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     Student student;
 }

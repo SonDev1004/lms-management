@@ -1,10 +1,9 @@
 package com.lmsservice.repository;
 
-import com.lmsservice.entity.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface RoomRepository extends JpaRepository<Room, Long> {
-}
+import com.lmsservice.entity.Room;
 
+@Repository
+public interface RoomRepository extends JpaRepository<Room, Long> {}

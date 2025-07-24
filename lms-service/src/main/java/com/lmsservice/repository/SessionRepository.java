@@ -1,10 +1,9 @@
 package com.lmsservice.repository;
 
-import com.lmsservice.entity.Session;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SessionRepository extends JpaRepository<Session, Long> {
-}
+import com.lmsservice.entity.Session;
 
+@Repository
+public interface SessionRepository extends JpaRepository<Session, Long> {}

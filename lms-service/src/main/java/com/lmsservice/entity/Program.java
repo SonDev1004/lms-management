@@ -1,13 +1,13 @@
 package com.lmsservice.entity;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -25,10 +25,10 @@ public class Program extends EntityAbstract {
     @Column(columnDefinition = "char(36)", unique = true)
     String code;
 
-    @Column(columnDefinition = "tinyint default 1",nullable = false)
+    @Column(columnDefinition = "tinyint default 1", nullable = false)
     Integer minStudent;
 
-    @Column(columnDefinition = "tinyint  default 1",nullable = false)
+    @Column(columnDefinition = "tinyint  default 1", nullable = false)
     Integer maxStudent;
 
     @Column(columnDefinition = "nvarchar(max)")
@@ -36,10 +36,10 @@ public class Program extends EntityAbstract {
 
     @Column(columnDefinition = "bit default 1", nullable = false)
     Boolean isActive;
-    //Curriculum
+    // Curriculum
     @OneToMany(mappedBy = "program")
     List<Curriculum> curriculumList;
-    //Enrollments
+    // Enrollments
     @OneToMany(mappedBy = "program")
     List<Enrollment> enrollments;
 }

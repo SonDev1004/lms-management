@@ -1,13 +1,14 @@
 package com.lmsservice.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,7 +29,7 @@ public class Log extends EntityAbstract {
     Integer relatedId;
 
     @Column(columnDefinition = "nvarchar(255)")
-    String relatedOlData;
+    String relatedOldData;
 
     @Column(columnDefinition = "nvarchar(255)")
     String relatedNewData;
@@ -36,6 +37,6 @@ public class Log extends EntityAbstract {
     LocalDateTime actionDate;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     User user;
 }

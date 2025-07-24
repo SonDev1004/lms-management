@@ -1,10 +1,9 @@
 package com.lmsservice.repository;
 
-import com.lmsservice.entity.Enrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
-}
+import com.lmsservice.entity.Enrollment;
 
+@Repository
+public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {}

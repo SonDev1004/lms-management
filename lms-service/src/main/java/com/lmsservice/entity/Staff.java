@@ -1,10 +1,11 @@
 package com.lmsservice.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -16,15 +17,15 @@ public class Staff extends EntityAbstract {
     @Column(columnDefinition = "char(36)", unique = true)
     String code;
 
-    //Course
+    // Course
     @OneToMany(mappedBy = "staff")
     List<Course> courses;
-    //Enrollments
+    // Enrollments
     @OneToMany(mappedBy = "staff")
     List<Enrollment> enrollments;
 
-    //User
+    // User
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     User user;
 }

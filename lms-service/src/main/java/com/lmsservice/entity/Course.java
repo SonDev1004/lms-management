@@ -1,12 +1,12 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -23,9 +23,9 @@ public class Course extends EntityAbstract {
 
     // Subject
     @ManyToOne
-    @JoinColumn(name = "subjectId", nullable = false)
+    @JoinColumn(name = "subject_id", nullable = false)
     Subject subject;
-    //Assignments
+    // Assignments
     @OneToMany(mappedBy = "course")
     List<Assignment> assignments = new ArrayList<>();
     // Sessions
@@ -35,14 +35,14 @@ public class Course extends EntityAbstract {
     @OneToMany(mappedBy = "course")
     List<Feedback> feedbacks = new ArrayList<>();
 
-    //Teacher
+    // Teacher
     @ManyToOne
-    @JoinColumn(name = "teacherId", nullable = false)
+    @JoinColumn(name = "teacher_id", nullable = false)
     Teacher teacher;
 
-    //Staff
+    // Staff
     @ManyToOne
-    @JoinColumn(name = "staffId", nullable = false)
+    @JoinColumn(name = "staff_id", nullable = false)
     Staff staff;
     // CourseStudents
     @OneToMany(mappedBy = "course")

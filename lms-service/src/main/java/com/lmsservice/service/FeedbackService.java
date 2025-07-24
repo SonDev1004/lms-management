@@ -1,10 +1,12 @@
 package com.lmsservice.service;
 
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.repository.FeedbackRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -12,4 +14,3 @@ import org.springframework.stereotype.Service;
 public class FeedbackService {
     FeedbackRepository feedbackRepository;
 }
-

@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CourseStudent extends EntityAbstract {
     Float averageScore;
+
     @Column(columnDefinition = "varchar(max) default '[]'", nullable = false)
     String attendanceList;
 
@@ -24,13 +26,13 @@ public class CourseStudent extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String note;
 
-    //Student
+    // Student
     @ManyToOne()
-    @JoinColumn(name = "studentId", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     Student student;
 
-    //Course
+    // Course
     @ManyToOne()
-    @JoinColumn(name = "courseId", nullable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     Course course;
 }

@@ -1,14 +1,15 @@
 package com.lmsservice.entity;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -26,10 +27,10 @@ public class Comment extends EntityAbstract {
     LocalDateTime isAppropriate;
 
     @ManyToOne()
-    @JoinColumn(name = "sessionId")
+    @JoinColumn(name = "session_id")
     Session session;
 
     @ManyToOne()
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     User user;
 }

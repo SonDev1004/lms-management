@@ -1,11 +1,13 @@
 package com.lmsservice.controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.lmsservice.service.ProgramService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,4 +16,3 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProgramController {
     ProgramService programService;
 }
-

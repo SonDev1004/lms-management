@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Feedback extends  EntityAbstract {
+public class Feedback extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String content;
 
@@ -22,10 +23,10 @@ public class Feedback extends  EntityAbstract {
 
     // Course
     @ManyToOne()
-    @JoinColumn(name = "courseId", nullable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     Course course;
     // Student
     @ManyToOne
-    @JoinColumn(name = "studentId", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     Student student;
 }

@@ -1,10 +1,11 @@
 package com.lmsservice.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -28,11 +29,11 @@ public class Teacher extends EntityAbstract {
     @Column(columnDefinition = "bit default 0", nullable = false)
     boolean isFullTime;
 
-    //Courses
+    // Courses
     @OneToMany(mappedBy = "teacher")
     List<Course> courses;
-    //User
+    // User
     @OneToOne
-    @JoinColumn(name = "userId", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     User user;
 }

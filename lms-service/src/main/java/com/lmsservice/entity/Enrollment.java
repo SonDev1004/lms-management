@@ -1,11 +1,13 @@
 package com.lmsservice.entity;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-import java.util.List;
 @Entity
 @Getter
 @Setter
@@ -21,19 +23,19 @@ public class Enrollment extends EntityAbstract {
 
     // Student
     @ManyToOne()
-    @JoinColumn(name = "studentId", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     Student student;
-    //Staff
+    // Staff
     @ManyToOne()
-    @JoinColumn(name = "staffId", nullable = false)
+    @JoinColumn(name = "staff_id", nullable = false)
     Staff staff;
     // Program
     @ManyToOne()
-    @JoinColumn(name = "programId", nullable = false)
+    @JoinColumn(name = "program_id", nullable = false)
     Program program;
     // Subject
     @ManyToOne()
-    @JoinColumn(name = "subjectId", nullable = false)
+    @JoinColumn(name = "subject_id", nullable = false)
     Subject subject;
 
     @OneToMany(mappedBy = "enrollment")

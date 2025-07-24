@@ -1,13 +1,14 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
@@ -15,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Session extends  EntityAbstract {
+public class Session extends EntityAbstract {
 
     @Column(name = "[order]", columnDefinition = "tinyint default 1", nullable = false)
     Short orderSession;
@@ -35,17 +36,17 @@ public class Session extends  EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String description;
 
-    //Course
+    // Course
     @ManyToOne
-    @JoinColumn(name = "courseId", nullable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     Course course;
 
-    //Comments
+    // Comments
     @OneToMany(mappedBy = "session")
     List<Comment> comments = new ArrayList<>();
 
-    //Room
+    // Room
     @ManyToOne()
-    @JoinColumn(name = "roomId", nullable = false)
+    @JoinColumn(name = "room_id", nullable = false)
     Room room;
 }
