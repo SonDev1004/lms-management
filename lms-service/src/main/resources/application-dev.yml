@@ -5,7 +5,7 @@ spring:
   devtools:
     add-properties: true
   datasource:
-    url: ${DMBS_URL:jdbc:sqlserver://localhost:1433;databaseName=dev_lms_management;encrypt=true;trustServerCertificate=true}
+    url: ${DBMS_URL:jdbc:sqlserver://localhost:1433;databaseName=dev_lms_management;encrypt=true;trustServerCertificate=true}
     username: ${DBMS_USERNAME:sa}
     password: ${DBMS_PASSWORD:123}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
