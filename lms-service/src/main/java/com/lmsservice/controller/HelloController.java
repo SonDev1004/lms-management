@@ -12,7 +12,13 @@ public class HelloController {
 
     @Operation(summary = "Test API", description = "Mô tả chi tiết về API này")
     @GetMapping("/hello")
+    public String xinchao() {
+        return "chao, LMS Service!";
+    }
+
+    @Operation(summary = "Test API", description = "Mô tả chi tiết về API này")
+    @GetMapping("/chao")
     public String hello() {
-        return "Hello, LMS Service!";
+        return "chao, LMS Service!";
     }
 }
