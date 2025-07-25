@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/test")
 public class HelloController {
 
+    public HelloController() {
+    }
+
     @Operation(summary = "Test API", description = "Mô tả chi tiết về API này")
     @GetMapping("/hello")
     public String hello() {

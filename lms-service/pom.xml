@@ -203,10 +203,10 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>com/sondev/identity_service/dto/**</exclude>
-                        <exclude>com/sondev/identity_service/entity/**</exclude>
-                        <exclude>com/sondev/identity_service/mapper/**</exclude>
-                        <exclude>com/sondev/identity_service/configuration/**</exclude>
+                        <exclude>com/lmsservice/dto/**</exclude>
+                        <exclude>com/lmsservice/entity/**</exclude>
+                        <exclude>com/lmsservice/mapper/**</exclude>
+                        <exclude>com/lmsservice/configuration/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>

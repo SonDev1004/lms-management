@@ -22,28 +22,28 @@ public class PaymentHistory extends EntityAbstract {
     @Column(columnDefinition = "decimal(18,2)", nullable = false)
     private BigDecimal amount;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String bankCode;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String bankTranNo;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String cardType;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String orderInfo;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String transactionNo;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String responseCode;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     private String transactionStatus;
 
-    @Column(columnDefinition = "nvarchar(255)", nullable = false)
+    @Column(columnDefinition = "nvarchar(255)")
     String referenceNumber;
 
     @Column(columnDefinition = "nvarchar(255)", nullable = false)

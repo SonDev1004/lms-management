@@ -31,11 +31,11 @@ public class Enrollment extends EntityAbstract {
     Staff staff;
     // Program
     @ManyToOne()
-    @JoinColumn(name = "program_id", nullable = false)
+    @JoinColumn(name = "program_id")
     Program program;
     // Subject
     @ManyToOne()
-    @JoinColumn(name = "subject_id", nullable = false)
+    @JoinColumn(name = "subject_id")
     Subject subject;
 
     @OneToMany(mappedBy = "enrollment")
