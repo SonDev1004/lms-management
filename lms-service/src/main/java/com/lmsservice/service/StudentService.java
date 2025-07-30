@@ -1,16 +1,43 @@
 package com.lmsservice.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.dto.response.StudentResponseDTO;
+import com.lmsservice.entity.User;
 import com.lmsservice.repository.StudentRepository;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StudentService {
-    StudentRepository studentRepository;
+
+    private final StudentRepository studentRepository;
+
+    public List<StudentResponseDTO> getAllStudents() {
+        return studentRepository.findAll().stream()
+                .map(student -> {
+                    User user = student.getUser();
+
+                    return StudentResponseDTO.builder()
+                            .id(student.getId())
+                            .code(student.getCode())
+                            .level(student.getLevel())
+                            .note(student.getNote())
+                            .userId(user.getId())
+                            .username(user.getUserName())
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .dateOfBirth(user.getDateOfBirth())
+                            .address(user.getAddress())
+                            .gender(user.getGender())
+                            .email(user.getEmail())
+                            .phone(user.getPhone())
+                            .avatar(user.getAvatar())
+                            .build();
+                })
+                .toList();
+    }
 }

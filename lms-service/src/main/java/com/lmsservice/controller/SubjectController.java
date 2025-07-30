@@ -1,8 +1,12 @@
 package com.lmsservice.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lmsservice.dto.response.SubjectResponseDTO;
 import com.lmsservice.service.SubjectService;
 
 import lombok.AccessLevel;
@@ -15,4 +19,9 @@ import lombok.experimental.FieldDefaults;
 @RequestMapping("/api/subject")
 public class SubjectController {
     SubjectService subjectService;
+    // ge all subjects have IsActive = true
+    @GetMapping("/all-subjects")
+    public List<SubjectResponseDTO> getAllSubject() {
+        return subjectService.getAllSubject();
+    }
 }

@@ -1,8 +1,12 @@
 package com.lmsservice.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lmsservice.dto.response.StudentResponseDTO;
 import com.lmsservice.service.StudentService;
 
 import lombok.AccessLevel;
@@ -15,4 +19,9 @@ import lombok.experimental.FieldDefaults;
 @RequestMapping("/api/student")
 public class StudentController {
     StudentService studentService;
+
+    @GetMapping("/get-all-students")
+    public List<StudentResponseDTO> getAllStudents() {
+        return studentService.getAllStudents();
+    }
 }

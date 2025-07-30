@@ -1,8 +1,12 @@
 package com.lmsservice.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lmsservice.dto.response.ProgramResponseDTO;
 import com.lmsservice.service.ProgramService;
 
 import lombok.AccessLevel;
@@ -15,4 +19,10 @@ import lombok.experimental.FieldDefaults;
 @RequestMapping("/api/program")
 public class ProgramController {
     ProgramService programService;
+
+    // Endpoint to get all active programs having isActive = true
+    @GetMapping("/all-programs")
+    public List<ProgramResponseDTO> getAllPrograms() {
+        return programService.getAllPrograms();
+    }
 }
