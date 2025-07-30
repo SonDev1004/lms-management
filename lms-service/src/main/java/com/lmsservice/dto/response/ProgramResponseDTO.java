@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProgramResponseDTO {
+
     private String title;
     private BigDecimal fee;
     private String code;

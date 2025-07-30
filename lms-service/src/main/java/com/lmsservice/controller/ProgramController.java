@@ -2,8 +2,10 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lmsservice.dto.response.ProgramResponseDTO;
@@ -22,7 +24,10 @@ public class ProgramController {
 
     // Endpoint to get all active programs having isActive = true
     @GetMapping("/all-programs")
-    public List<ProgramResponseDTO> getAllPrograms() {
-        return programService.getAllPrograms();
+    public Page<ProgramResponseDTO> getAllPrograms(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size,
+                                                   @RequestParam(defaultValue = "id") String sortBy) {
+
+        return programService.getAllPrograms(page, size, sortBy);
     }
 }

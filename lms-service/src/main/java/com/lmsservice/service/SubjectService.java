@@ -2,6 +2,10 @@ package com.lmsservice.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.response.SubjectResponseDTO;
@@ -17,8 +21,9 @@ import lombok.experimental.FieldDefaults;
 public class SubjectService {
     SubjectRepository subjectRepository;
 
-    public List<SubjectResponseDTO> getAllSubject() {
-        return subjectRepository.findAllByIsActiveTrue().stream()
+    public Page<SubjectResponseDTO> getAllSubject(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return subjectRepository.findAllByIsActiveTrue(pageable)
                 .map(subject -> SubjectResponseDTO.builder()
                         .title(subject.getTitle())
                         .code(subject.getCode())
@@ -29,7 +34,7 @@ public class SubjectService {
                         .maxStudent(subject.getMaxStudent())
                         .description(subject.getDescription())
                         .isActive(subject.getIsActive())
-                        .build())
-                .toList();
+                        .build());
+
     }
 }

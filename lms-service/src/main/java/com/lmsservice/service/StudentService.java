@@ -2,6 +2,10 @@ package com.lmsservice.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.response.StudentResponseDTO;
@@ -16,11 +20,12 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
-    public List<StudentResponseDTO> getAllStudents() {
-        return studentRepository.findAll().stream()
+    public Page<StudentResponseDTO> getAllStudents(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        return studentRepository.findAll(pageable)
                 .map(student -> {
                     User user = student.getUser();
-
                     return StudentResponseDTO.builder()
                             .id(student.getId())
                             .code(student.getCode())
@@ -37,7 +42,6 @@ public class StudentService {
                             .phone(user.getPhone())
                             .avatar(user.getAvatar())
                             .build();
-                })
-                .toList();
+                });
     }
 }
