@@ -1,4 +1,4 @@
-package com.lmsservice.service;
+package com.lmsservice.service; // Todo: trả về response chưa đúng chuẩn, cần sửa lại
 
 import com.lmsservice.dto.request.AuthRequest;
 import com.lmsservice.dto.request.RefreshRequest;
@@ -7,7 +7,10 @@ import com.lmsservice.dto.response.*;
 
 public interface AuthService {
     AuthResponse login(AuthRequest request);
+
     AuthResponse refresh(RefreshRequest request);
+
     void logout(String refreshToken);
+
     void register(RegisterRequest request);
 }

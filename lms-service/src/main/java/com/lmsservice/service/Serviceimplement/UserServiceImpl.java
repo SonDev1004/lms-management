@@ -1,5 +1,11 @@
 package com.lmsservice.service.Serviceimplement;
 
+import java.util.List;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.dto.response.ProfileResponse;
 import com.lmsservice.entity.User;
 import com.lmsservice.exception.ErrorCode;
@@ -7,12 +13,8 @@ import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.repository.UserRepository;
 import com.lmsservice.security.CustomUserDetails;
 import com.lmsservice.service.UserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileResponse getProfile(Authentication authentication) {
-        if ( authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
         }
 
@@ -55,4 +57,3 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 }
-

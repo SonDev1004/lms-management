@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -44,8 +45,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(
-                                "/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
                         .permitAll()
                         .requestMatchers("/api/user/profile")
                         .authenticated()
@@ -53,9 +53,9 @@ public class SecurityConfig {
                         .hasRole("STUDENT")
                         .requestMatchers("/api/teacher/**")
                         .hasRole("TEACHER")
-                        .requestMatchers("/api/staff/ACADEMIC_MANAGER/**")
+                        .requestMatchers("/api/staff/academic_manager/**")
                         .hasRole("ACADEMIC_MANAGER")
-                        .requestMatchers("/api/staff/ADMIN_IT/**")
+                        .requestMatchers("/api/staff/admin_it/**")
                         .hasRole("ADMIN_IT")
                         .anyRequest()
                         .authenticated())
@@ -81,5 +81,19 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    // khởi tạo spring web security: swagger
+    @Bean
+    public WebSecurityCustomizer ignoreResource() {
+        return webSecurity -> webSecurity
+                .ignoring()
+                .requestMatchers(
+                        "/actuator/**",
+                        "/v3/**",
+                        "/webjars/**",
+                        "/swagger-ui*/*swagger-initializer.js",
+                        "/swagger-ui*/**",
+                        "/favicon.ico");
     }
 }

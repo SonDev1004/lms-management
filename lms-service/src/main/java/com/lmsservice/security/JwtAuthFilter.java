@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RequiredArgsConstructor
 @Component
-@Slf4j
+@Slf4j(topic = "JWT-AUTH-FILTER")
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;

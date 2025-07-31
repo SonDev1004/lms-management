@@ -6,10 +6,6 @@ spring:
     name: lms-service
   profiles:
     active: @spring.profiles.active@
-  data:
-    redis:
-      host: 14.225.198.117
-      port: 6379
 
 management:
   endpoints:

@@ -1,22 +1,29 @@
 package com.lmsservice.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.lmsservice.dto.request.AuthRequest;
 import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AuthResponse;
 import com.lmsservice.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
+@Slf4j(topic = "AUTH-CONTROLLER")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
 
-    private final AuthService authService;
+    AuthService authService;
 
     @Operation(
             summary = "Đăng nhập hệ thống",
@@ -25,32 +32,39 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<AuthResponse> login(@RequestBody AuthRequest req) {
         AuthResponse authResponse = authService.login(req);
-
         return ApiResponse.<AuthResponse>builder()
                 .result(authResponse)
                 .message("Login successful")
                 .build();
     }
 
+    @Operation(
+            summary = "Làm mới access token",
+            description =
+                    "API này cho phép người dùng làm mới access token bằng refresh token. Nếu refresh token hợp lệ, trả về access token mới.")
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        // Todo: trả về response chưa đúng chuẩn, cần sửa lại
+        // Thiếu message, result chỉ cần trả về access token mới
         return ResponseEntity.ok(authService.refresh(request));
     }
 
     @Operation(
             summary = "Đăng ký tài khoản",
-            description = "API này cho phép người dùng tạo tài khoản mới với vai trò được chỉ định."
-    )
+            description = "API này cho phép người dùng tạo tài khoản mới với vai trò được chỉ định.")
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ApiResponse<?> register(@RequestBody RegisterRequest request) {
         authService.register(request);
-        return ResponseEntity.ok("Register successful");
+        return ApiResponse.builder().message("Register successful").build();
     }
 
+    @Operation(
+            summary = "Đăng xuất",
+            description =
+                    "API này cho phép người dùng đăng xuất khỏi hệ thống. Sau khi đăng xuất, access token sẽ không còn hợp lệ.")
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
+    public ApiResponse<?> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
-        return ResponseEntity.ok("Logout successful");
+        return ApiResponse.builder().message("Logout successful").build();
     }
 }
-

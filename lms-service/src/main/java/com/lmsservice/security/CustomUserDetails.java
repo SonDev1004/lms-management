@@ -21,13 +21,11 @@ import lombok.Getter;
 // Lớp này sẽ được sử dụng trong quá trình xác thực người dùng và phân quyền
 // trong ứng dụng Spring Security.
 public class CustomUserDetails implements UserDetails {
-    private Long userId;
     private final User user;
     private final List<GrantedAuthority> authorities;
     private final List<String> permissions;
 
     public CustomUserDetails(User user, List<GrantedAuthority> authorities, List<String> permissions) {
-        this.userId = user.getId();
         this.user = user;
         this.authorities = authorities;
         this.permissions = permissions;

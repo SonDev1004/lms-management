@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.lmsservice.entity.Permission;
@@ -23,13 +24,17 @@ import io.jsonwebtoken.security.Keys;
  */
 public class JwtTokenProvider {
 
-    private final String accessSecret = "1ef1ed938c82d16798fa1ec4300d3571988b1b37b9116a7e70c6def68bff3516";
-    private final String refreshSecret = "0021f3009a0d7a65b84fd75c056ec4c6a46ca6b9961e7cecfd7ffa38e3fc9dd4";
+    @Value("${jwt.accessKey}")
+    private String accessSecret;
 
-    // Thời gian sống của token
-    private final long accessExpiration = 1440 * 60 * 1000; // 1 ngày   (test)
+    @Value("${jwt.refreshKey}")
+    private String refreshSecret;
 
-    private final long refreshExpiration = 20 * 60 * 1000; // 20 phút
+    @Value("${jwt.expiryMinutes}")
+    private long accessExpiration;
+
+    @Value("${jwt.expiryDay}")
+    private long refreshExpiration;
 
     /**
      * Tạo Access Token từ thông tin người dùng
@@ -42,7 +47,7 @@ public class JwtTokenProvider {
      * Tạo Refresh Token từ thông tin người dùng
      */
     public String generateRefreshToken(User user) {
-        return generateToken(user, refreshSecret, refreshExpiration);
+        return generateToken(user, refreshSecret, refreshExpiration * 60 * 24);
     }
 
     /**
@@ -58,7 +63,7 @@ public class JwtTokenProvider {
                 .claim("roles", List.of(user.getRole().getName()))
                 .claim("permissions", permissions)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime * 1000 * 60))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -153,6 +158,7 @@ public class JwtTokenProvider {
             return null;
         }
     }
+
     public long getExpiration(String token) {
         return Jwts.parser()
                 .setSigningKey(accessSecret.getBytes())
@@ -161,5 +167,4 @@ public class JwtTokenProvider {
                 .getExpiration()
                 .getTime();
     }
-
 }

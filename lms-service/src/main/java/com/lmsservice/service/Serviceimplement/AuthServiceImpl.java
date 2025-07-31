@@ -1,5 +1,15 @@
 package com.lmsservice.service.Serviceimplement;
 
+import java.time.LocalDateTime;
+
+import jakarta.validation.Valid;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.dto.request.AuthRequest;
 import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
@@ -13,15 +23,8 @@ import com.lmsservice.security.CustomUserDetails;
 import com.lmsservice.security.JwtTokenProvider;
 import com.lmsservice.security.TokenService;
 import com.lmsservice.service.AuthService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void register(RegisterRequest request) {
+    public void register (@Valid RegisterRequest request) {
         if (userRepository.existsByUserName(request.getUserName())) {
             throw new RuntimeException("Username already exists");
         }
@@ -73,14 +76,19 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setDateOfBirth(request.getDateOfBirth().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate());        user.setAddress(request.getAddress());
+        user.setDateOfBirth(request.getDateOfBirth()
+                .toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate());
+        user.setAddress(request.getAddress());
         user.setGender(request.getGender());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
         user.setAvatar(request.getAvatar());
         user.setCreatedDate(LocalDateTime.now());
         user.setIsActive(true);
-        user.setRole(roleRepository.findById(request.getRoleId()).orElseThrow(() -> new RuntimeException("Role not found")));
+        user.setRole(
+                roleRepository.findById(request.getRoleId()).orElseThrow(() -> new RuntimeException("Role not found")));
 
         userRepository.save(user);
     }

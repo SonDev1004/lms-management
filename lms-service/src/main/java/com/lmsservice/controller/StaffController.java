@@ -20,16 +20,16 @@ import lombok.experimental.FieldDefaults;
 public class StaffController {
     StaffService staffService;
 
-    @GetMapping("/ACADEMIC_MANAGER")
+    @GetMapping("/academic_manager")
     public String getAcademicManager() {
         return "Hello, Academic Manager!";
     }
 
-    @GetMapping("/ADMIN_IT")
+    @GetMapping("/admin_it")
     public String getAdminIT() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
-        Long userId = userDetails.getUserId();
+        Long userId = userDetails.getUser().getId();
         System.out.println("User ID: " + userId);
         return "Hello, Admin IT!";
     }
