@@ -46,7 +46,7 @@ public class OpenApiConfig {
                 .security(List.of(new SecurityRequirement().addList(securitySchemeName)))
                 .info(new Info()
                         .title(title)
-                        .description("API documents for Backend Service")
+                        .description("API documents for Lms Service")
                         .version(version)
                         .license(new License().name("Apache 2.0").url("https://springdoc.org")));
     }

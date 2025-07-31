@@ -1,8 +1,16 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
+@Getter
+@Setter
 public abstract class EntityAbstract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
