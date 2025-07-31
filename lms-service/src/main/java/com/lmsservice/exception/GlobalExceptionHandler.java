@@ -44,4 +44,14 @@ public class GlobalExceptionHandler {
                         .message(errorCode.getMessage())
                         .build());
     }
+
+    @ExceptionHandler(value = UnAuthorizeException.class)
+    ResponseEntity<ApiResponse> handlingUnAuthorizeException(UnAuthorizeException exception) {
+        ErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
 }
