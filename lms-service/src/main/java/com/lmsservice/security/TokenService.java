@@ -1,7 +1,9 @@
 package com.lmsservice.security;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.response.AuthResponse;
@@ -20,7 +22,7 @@ public class TokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
-
+    private final StringRedisTemplate redisTemplate;
     /**
      * Làm mới access token từ refresh token.
      *
@@ -43,5 +45,15 @@ public class TokenService {
                 user.getRole().getPermissions().stream().map(p -> p.getName()).toList();
 
         return new AuthResponse(newAccessToken, refreshToken, user.getUserName(), permissionList);
+    }
+
+    public void invalidateToken(String token) {
+        long expiration = jwtTokenProvider.getExpiration(token); // trả về epoch milli
+        long now = System.currentTimeMillis();
+        long ttl = expiration - now;
+
+        if (ttl > 0) {
+            redisTemplate.opsForValue().set("blacklist:" + token, "true", ttl, TimeUnit.MILLISECONDS);
+        }
     }
 }

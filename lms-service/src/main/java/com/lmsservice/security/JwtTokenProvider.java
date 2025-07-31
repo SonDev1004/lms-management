@@ -153,4 +153,13 @@ public class JwtTokenProvider {
             return null;
         }
     }
+    public long getExpiration(String token) {
+        return Jwts.parser()
+                .setSigningKey(accessSecret.getBytes())
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .getTime();
+    }
+
 }

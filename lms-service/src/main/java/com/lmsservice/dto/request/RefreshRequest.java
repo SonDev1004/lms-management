@@ -1,4 +1,4 @@
-package com.lmsservice.dto.response;
+package com.lmsservice.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
