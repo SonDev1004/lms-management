@@ -27,6 +27,13 @@ public class ProgramService {
     public ProgramResponseDTO createProgram(ProgramRequestDTO programRequest) {
 
         // validate the request
+        if (programRequest.getMinStudent() != null && programRequest.getMinStudent() < 1) {
+            throw new AppException(ErrorCode.INVALID_MIN_STUDENT);
+        }
+
+        if (programRequest.getMaxStudent() != null && programRequest.getMaxStudent() < 1) {
+            throw new AppException(ErrorCode.INVALID_MAX_STUDENT);
+        }
         if (programRequest.getMinStudent() != null
                 && programRequest.getMaxStudent() != null
                 && programRequest.getMinStudent() > programRequest.getMaxStudent()) {
