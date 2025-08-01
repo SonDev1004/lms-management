@@ -63,8 +63,8 @@ public class GlobalExceptionHandler {
         // Lấy message lỗi đầu tiên từ danh sách field bị lỗi
         String errorMessage = ex.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> fieldError.getDefaultMessage()) // Lấy message đã khai báo trong DTO
-                .findFirst()                                     // Lấy lỗi đầu tiên
-                .orElse("Validation error");                     // Nếu không có lỗi -> dùng message mặc định
+                .findFirst() // Lấy lỗi đầu tiên
+                .orElse("Validation error"); // Nếu không có lỗi -> dùng message mặc định
 
         // Trả về HTTP 400 (Bad Request) với thông tin lỗi
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

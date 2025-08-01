@@ -1,22 +1,22 @@
 package com.lmsservice.service;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.dto.request.ProgramRequestDTO;
 import com.lmsservice.dto.response.ProgramResponseDTO;
 import com.lmsservice.entity.Program;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
-import org.springframework.stereotype.Service;
-
 import com.lmsservice.repository.ProgramRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +26,10 @@ public class ProgramService {
 
     public ProgramResponseDTO createProgram(ProgramRequestDTO programRequest) {
 
-        //validate the request
-        if (programRequest.getMinStudent() != null && programRequest.getMaxStudent() != null &&
-                programRequest.getMinStudent() > programRequest.getMaxStudent()) {
+        // validate the request
+        if (programRequest.getMinStudent() != null
+                && programRequest.getMaxStudent() != null
+                && programRequest.getMinStudent() > programRequest.getMaxStudent()) {
             throw new AppException(ErrorCode.INVALID_PROGRAM_RANGE);
         }
         if (programRepository.existsByTitle(programRequest.getTitle())) {
@@ -56,7 +57,7 @@ public class ProgramService {
                 .build();
     }
 
-    //Generate a unique code for the program
+    // Generate a unique code for the program
     private String generatePrettyUUID() {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String shortUUID = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
