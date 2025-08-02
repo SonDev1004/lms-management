@@ -3,6 +3,7 @@ package com.lmsservice.service.Serviceimplement;
 import java.time.LocalDateTime;
 
 import jakarta.validation.Valid;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -66,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void register (@Valid RegisterRequest request) {
+    public void register(@Valid RegisterRequest request) {
         if (userRepository.existsByUserName(request.getUserName())) {
             throw new RuntimeException("Username already exists");
         }

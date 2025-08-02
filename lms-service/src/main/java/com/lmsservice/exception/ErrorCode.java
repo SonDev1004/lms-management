@@ -20,7 +20,12 @@ public enum ErrorCode {
     MALFORMED_TOKEN(1011, "Malformed JWT token", HttpStatus.UNAUTHORIZED),
     INVALID_SIGNATURE(1012, "Invalid JWT signature", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN(1013, "Invalid token", HttpStatus.UNAUTHORIZED),
-    ;
+    // Program Code
+    PROGRAM_NOT_FOUND(1014, "Program not found", HttpStatus.NOT_FOUND),
+    INVALID_PROGRAM_RANGE(1015, "Minimum student cannot be greater than maximum student", HttpStatus.BAD_REQUEST),
+    DUPLICATE_PROGRAM_TITLE(1016, "Program title already exists", HttpStatus.BAD_REQUEST),
+    INVALID_MIN_STUDENT(1017, "Minimum student must be at least 1", HttpStatus.BAD_REQUEST),
+    INVALID_MAX_STUDENT(1018, "Maximum student must be at least 1", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;
