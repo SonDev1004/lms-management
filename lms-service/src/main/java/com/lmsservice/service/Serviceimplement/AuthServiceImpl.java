@@ -1,6 +1,8 @@
 package com.lmsservice.service.Serviceimplement;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import jakarta.validation.Valid;
 
@@ -24,8 +26,10 @@ import com.lmsservice.security.CustomUserDetails;
 import com.lmsservice.security.JwtTokenProvider;
 import com.lmsservice.security.TokenService;
 import com.lmsservice.service.AuthService;
+import com.lmsservice.service.BlackListService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authManager;
     private final JwtTokenProvider tokenProvider;
     private final RoleRepository roleRepository;
+    private final BlackListService blackListService;
 
     @Override
     public AuthResponse login(AuthRequest req) {
@@ -88,14 +93,21 @@ public class AuthServiceImpl implements AuthService {
         user.setAvatar(request.getAvatar());
         user.setCreatedDate(LocalDateTime.now());
         user.setIsActive(true);
-        user.setRole(
-                roleRepository.findById(request.getRoleId()).orElseThrow(() -> new RuntimeException("Role not found")));
+
+        user.setRole(roleRepository.findByName("GUEST").orElseThrow(() -> new RuntimeException("Role not found")));
 
         userRepository.save(user);
     }
 
     @Override
-    public void logout(String token) {
-        tokenService.invalidateToken(token);
+    public void logout(String authHeader) {
+        if (authHeader == null) {
+            throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
+        }
+        String token = authHeader.replaceFirst("^Bearer ", "").replaceFirst("^String,", "").trim();
+        blackListService.addToBlackList(token);
     }
+
+
+
 }

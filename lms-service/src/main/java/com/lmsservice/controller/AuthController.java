@@ -1,5 +1,6 @@
 package com.lmsservice.controller;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,10 +44,12 @@ public class AuthController {
             description =
                     "API này cho phép người dùng làm mới access token bằng refresh token. Nếu refresh token hợp lệ, trả về access token mới.")
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
-        // Todo: trả về response chưa đúng chuẩn, cần sửa lại
-        // Thiếu message, result chỉ cần trả về access token mới
-        return ResponseEntity.ok(authService.refresh(request));
+    public ApiResponse<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        AuthResponse authResponse = authService.refresh(request);
+        return ApiResponse.<AuthResponse>builder()
+                .result(authResponse)
+                .message("Token refreshed successfully")
+                .build();
     }
 
     @Operation(
