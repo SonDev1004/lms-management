@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.entity.Permission;
 import com.lmsservice.entity.User;
 import com.lmsservice.repository.UserRepository;
 import com.lmsservice.security.CustomUserDetails;
@@ -23,14 +24,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
+    public UserDetails loadUserByUsername(String input) throws UsernameNotFoundException {
+        // theo username hoặc email
         User user = userRepository
-                .findByUserName(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .findByUserNameOrEmail(input, input)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username or email: " + input));
 
-        List<String> permissionNames =
-                user.getRole().getPermissions().stream().map(p -> p.getName()).toList();
+        List<String> permissionNames = user.getRole().getPermissions().stream()
+                .map(Permission::getName)
+                .toList();
 
         List<GrantedAuthority> authorities =
                 permissionNames.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());

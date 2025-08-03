@@ -20,7 +20,7 @@ public enum ErrorCode {
     MALFORMED_TOKEN(1011, "Malformed JWT token", HttpStatus.UNAUTHORIZED),
     INVALID_SIGNATURE(1012, "Invalid JWT signature", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN(1013, "Invalid token", HttpStatus.UNAUTHORIZED),
-    ;
+    TOKEN_BLACKLISTED(1014, "Token is blacklisted", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;

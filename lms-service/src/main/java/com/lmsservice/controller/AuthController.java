@@ -1,7 +1,5 @@
 package com.lmsservice.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.lmsservice.dto.request.AuthRequest;
@@ -15,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "AUTH-CONTROLLER")
 @RestController
@@ -43,10 +42,12 @@ public class AuthController {
             description =
                     "API này cho phép người dùng làm mới access token bằng refresh token. Nếu refresh token hợp lệ, trả về access token mới.")
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
-        // Todo: trả về response chưa đúng chuẩn, cần sửa lại
-        // Thiếu message, result chỉ cần trả về access token mới
-        return ResponseEntity.ok(authService.refresh(request));
+    public ApiResponse<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        AuthResponse authResponse = authService.refresh(request);
+        return ApiResponse.<AuthResponse>builder()
+                .result(authResponse)
+                .message("Token refreshed successfully")
+                .build();
     }
 
     @Operation(

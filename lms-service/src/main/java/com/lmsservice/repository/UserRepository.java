@@ -11,5 +11,7 @@ import com.lmsservice.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);
 
+    Optional<User> findByUserNameOrEmail(String userName, String email);
+
     boolean existsByUserName(String userName);
 }

@@ -15,11 +15,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.lmsservice.entity.User;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.repository.UserRepository;
+import com.lmsservice.service.BlackListService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -28,10 +30,6 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Bộ lọc xác thực JWT cho các request đến server.
- * Nó sẽ kiểm tra xem request có chứa JWT hợp lệ không và xác thực người dùng nếu có.
- */
 @RequiredArgsConstructor
 @Component
 @Slf4j(topic = "JWT-AUTH-FILTER")
@@ -39,7 +37,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
+    private final BlackListService blackListService;
 
+    // Khai báo các đường dẫn không cần kiểm tra token
+    private static final List<String> PUBLIC_URLS = List.of(
+            "/api/auth/login**",
+            "/api/auth/register**",
+            "/api/auth/refresh**",
+            "/api/auth/logout**"
+    );
+
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+
+    /**
+     * Phương thức này sẽ được gọi cho mỗi request đến server.
+     * Nó sẽ kiểm tra xem request có chứa JWT token hợp lệ hay không.
+     * Nếu có, nó sẽ xác thực người dùng và thiết lập thông tin xác thực vào SecurityContext.
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -47,12 +61,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // Nếu là URL công khai thì bỏ qua filter
+        boolean isPublic = PUBLIC_URLS.stream().anyMatch(p -> pathMatcher.match(p, path));
+        if (isPublic) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String token = getJwtFromRequest(request);
-
             if (token != null) {
-                validateTokenAndSetAuthentication(token, request);
+                validateTokenAndSetAuthentication(token, request, response);
             }
+
         } catch (ExpiredJwtException ex) {
             log.error("JWT token đã hết hạn: {}", ex.getMessage());
             request.setAttribute("errorCode", ErrorCode.TOKEN_EXPIRED);
@@ -76,7 +99,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void validateTokenAndSetAuthentication(String token, HttpServletRequest request) {
+    /**
+     * Xác thực token và thiết lập thông tin người dùng vào SecurityContext.
+     *
+     * @param token JWT token từ request
+     * @param request HttpServletRequest để lấy thông tin người dùng
+     */
+    private void validateTokenAndSetAuthentication(String token, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        if (blackListService.isTokenBlacklisted(token)) {
+            log.warn("Token nằm trong blacklist (đã logout): {}", token);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"message\":\"Token đã logout và không hợp lệ\"}");
+            return;
+        }
+
         if (tokenProvider.validateToken(token, false)) {
             String username = tokenProvider.getUsernameFromToken(token, false);
             List<String> permissions = tokenProvider.getPermissionsFromToken(token, false);
@@ -90,8 +130,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 permissions.forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
             }
 
-            User user =
-                    userRepository.findByUserName(username).orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userRepository.findByUserName(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
             CustomUserDetails userDetails = new CustomUserDetails(user, authorities, permissions);
             UsernamePasswordAuthenticationToken authToken =
@@ -101,6 +141,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
     }
 
+
+    /**
+     * Lấy JWT token từ header Authorization của request.
+     *
+     * @param request HttpServletRequest để lấy header
+     * @return JWT token nếu có, ngược lại trả về null
+     */
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

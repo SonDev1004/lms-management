@@ -35,7 +35,10 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getUserName();
     }
-    // todo user.getEmail() tương lai tính
+
+    public String getEmail() {
+        return user.getEmail();
+    }
 
     @Override
     public String getPassword() {
