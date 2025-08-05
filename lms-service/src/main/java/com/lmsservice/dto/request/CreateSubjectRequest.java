@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,19 +14,25 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProgramRequestDTO {
+public class CreateSubjectRequest {
     @NotBlank(message = "Title is required")
-    @Size(max = 100, message = "Title must be less than 100 characters")
     String title;
+
+    String code;
+
+    @Min(value = 1, message = "Session number must be at least 1")
+    Integer sessionNumber;
+
+    @Min(value = 0, message = "Fee must be non-negative")
+    BigDecimal fee;
+
+    String image;
 
     @Min(value = 1, message = "Minimum student must be at least 1")
     Integer minStudent;
 
     @Min(value = 1, message = "Maximum student must be at least 1")
     Integer maxStudent;
-
-    @Min(value = 0, message = "Fee must be non-negative")
-    BigDecimal fee;
 
     String description;
     Boolean isActive = true;

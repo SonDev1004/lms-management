@@ -1,4 +1,4 @@
-package com.lmsservice.service.Serviceimplement;
+package com.lmsservice.service.impl;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

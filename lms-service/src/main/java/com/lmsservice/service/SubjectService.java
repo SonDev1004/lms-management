@@ -2,15 +2,10 @@ package com.lmsservice.service;
 
 import org.springframework.stereotype.Service;
 
-import com.lmsservice.repository.SubjectRepository;
-
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import com.lmsservice.dto.request.CreateSubjectRequest;
+import com.lmsservice.dto.response.SubjectResponse;
 
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SubjectService {
-    SubjectRepository subjectRepository;
+public interface SubjectService {
+    SubjectResponse createSubject(CreateSubjectRequest requestDTO);
 }
