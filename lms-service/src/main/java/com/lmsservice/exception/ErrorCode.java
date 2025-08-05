@@ -20,7 +20,7 @@ public enum ErrorCode {
     MALFORMED_TOKEN(1011, "Malformed JWT token", HttpStatus.UNAUTHORIZED),
     INVALID_SIGNATURE(1012, "Invalid JWT signature", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN(1013, "Invalid token", HttpStatus.UNAUTHORIZED),
-    TOKEN_BLACKLISTED(1014, "Token is blacklisted", HttpStatus.UNAUTHORIZED);
+    TOKEN_BLACKLISTED(1014, "Token is blacklisted", HttpStatus.UNAUTHORIZED),
     // Program Code
     PROGRAM_NOT_FOUND(1014, "Program not found", HttpStatus.NOT_FOUND),
     INVALID_PROGRAM_RANGE(1015, "Minimum student cannot be greater than maximum student", HttpStatus.BAD_REQUEST),
@@ -38,7 +38,6 @@ public enum ErrorCode {
     INVALID_SUBJECT_TITLE(1026, "Subject title cannot be empty", HttpStatus.BAD_REQUEST),
     INVALID_SUBJECT_TITLE_LENGTH(1027, "Subject title must be less than 100 characters", HttpStatus.BAD_REQUEST),
     INVALID_MIN_MAX_STUDENT(1028, "Student must be at least 1", HttpStatus.BAD_REQUEST);
-
 
     private final int code;
     private final String message;
