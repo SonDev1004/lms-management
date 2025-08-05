@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProgramResponseDTO {
+public class ProgramResponse {
     Long id;
     String title;
     BigDecimal fee;

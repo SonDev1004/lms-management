@@ -4,14 +4,15 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lmsservice.dto.request.ProgramRequestDTO;
+import com.lmsservice.dto.request.ProgramRequest;
 import com.lmsservice.dto.response.ApiResponse;
-import com.lmsservice.dto.response.ProgramResponseDTO;
+import com.lmsservice.dto.response.ProgramResponse;
 import com.lmsservice.service.ProgramService;
 
 import lombok.AccessLevel;
@@ -25,10 +26,11 @@ import lombok.experimental.FieldDefaults;
 public class ProgramController {
     ProgramService programService;
 
+    @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse> createProgram(@Valid @RequestBody ProgramRequestDTO programRequestDTO) {
+    public ResponseEntity<ApiResponse> createProgram(@Valid @RequestBody ProgramRequest programRequestDTO) {
 
-        ProgramResponseDTO response = programService.createProgram(programRequestDTO);
+        ProgramResponse response = programService.createProgram(programRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.builder()
                         .code(HttpStatus.CREATED.value())

@@ -13,8 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.lmsservice.dto.request.ProgramRequestDTO;
-import com.lmsservice.dto.response.ProgramResponseDTO;
+import com.lmsservice.dto.request.ProgramRequest;
+import com.lmsservice.dto.response.ProgramResponse;
 import com.lmsservice.entity.Program;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
@@ -30,12 +30,12 @@ class ProgramServiceTest {
     @InjectMocks
     private ProgramService programService;
 
-    private ProgramRequestDTO request;
+    private ProgramRequest request;
 
     @BeforeEach
     void init() {
         // Chuẩn bị dữ liệu mặc định
-        request = ProgramRequestDTO.builder()
+        request = ProgramRequest.builder()
                 .title("English Beginner")
                 .minStudent(5)
                 .maxStudent(20)
@@ -61,7 +61,7 @@ class ProgramServiceTest {
         when(programRepository.save(any(Program.class))).thenReturn(savedProgram);
 
         // Act
-        ProgramResponseDTO response = programService.createProgram(request);
+        ProgramResponse response = programService.createProgram(request);
 
         // Assert
         assertNotNull(response);
@@ -79,8 +79,7 @@ class ProgramServiceTest {
         request.setMinStudent(30);
         request.setMaxStudent(20);
 
-        AppException exception = assertThrows(AppException.class,
-                () -> programService.createProgram(request));
+        AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
         assertEquals(ErrorCode.INVALID_PROGRAM_RANGE, exception.getErrorCode());
         verify(programRepository, never()).save(any(Program.class));
@@ -91,8 +90,7 @@ class ProgramServiceTest {
     void createProgram_MinStudentLessThanOne_ShouldThrowException() {
         request.setMinStudent(0);
 
-        AppException exception = assertThrows(AppException.class,
-                () -> programService.createProgram(request));
+        AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
         assertEquals(ErrorCode.INVALID_MIN_STUDENT, exception.getErrorCode());
         verify(programRepository, never()).save(any(Program.class));
@@ -103,12 +101,12 @@ class ProgramServiceTest {
     void createProgram_MaxStudentLessThanOne_ShouldThrowException() {
         request.setMaxStudent(0);
 
-        AppException exception = assertThrows(AppException.class,
-                () -> programService.createProgram(request));
+        AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
         assertEquals(ErrorCode.INVALID_MAX_STUDENT, exception.getErrorCode());
         verify(programRepository, never()).save(any(Program.class));
     }
+
     @Test
     @DisplayName("Throw exception when program title already exists")
     void createProgram_DuplicateTitle_ShouldThrowException() {
@@ -116,12 +114,10 @@ class ProgramServiceTest {
         when(programRepository.existsByTitle(request.getTitle())).thenReturn(true);
 
         // Act
-        AppException exception = assertThrows(AppException.class,
-                () -> programService.createProgram(request));
+        AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
         // Assert
         assertEquals(ErrorCode.DUPLICATE_PROGRAM_TITLE, exception.getErrorCode());
         verify(programRepository, never()).save(any(Program.class));
     }
-
 }
