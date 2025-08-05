@@ -1,5 +1,6 @@
 package com.lmsservice.entity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -20,7 +21,7 @@ public class Program extends EntityAbstract {
     String title;
 
     @Column(columnDefinition = "decimal(18,2) default 0.00", nullable = false)
-    Double fee;
+    BigDecimal fee;
 
     @Column(columnDefinition = "char(36)", unique = true)
     String code;
