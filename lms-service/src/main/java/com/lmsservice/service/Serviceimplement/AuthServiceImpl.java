@@ -1,8 +1,7 @@
 package com.lmsservice.service.Serviceimplement;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 
 import jakarta.validation.Valid;
 
@@ -29,7 +28,6 @@ import com.lmsservice.service.AuthService;
 import com.lmsservice.service.BlackListService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -104,10 +102,11 @@ public class AuthServiceImpl implements AuthService {
         if (authHeader == null) {
             throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
         }
-        String token = authHeader.replaceFirst("^Bearer ", "").replaceFirst("^String,", "").trim();
-        blackListService.addToBlackList(token);
+        String token = authHeader
+                .replaceFirst("^Bearer ", "")
+                .replaceFirst("^String,", "")
+                .trim();
+        Instant expiredAt = tokenProvider.getExpirationDate(token, false);
+        blackListService.addToBlackList(token, expiredAt);
     }
-
-
-
 }
