@@ -1,15 +1,20 @@
 package com.lmsservice.repository;
 
+import java.time.Instant;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import com.lmsservice.entity.BlackListToken;
 
-import java.time.Instant;
-
 @Repository
 public interface BlackListTokenRepository extends JpaRepository<BlackListToken, String> {
     boolean existsByTokenHash(String tokenHash);
-    int deleteByExpiresAtBefore(Instant expiry);
 
+    @Transactional
+    @Modifying
+    int deleteByExpiresAtBefore(Instant expiry);
 }

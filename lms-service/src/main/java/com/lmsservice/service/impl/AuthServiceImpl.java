@@ -41,13 +41,13 @@ public class AuthServiceImpl implements AuthService {
     private final BlackListService blackListService;
 
     @Override
-    public AuthResponse login(AuthRequest req) {
+    public AuthResponse login(@Valid AuthRequest req) {
         Authentication auth;
         try {
             auth = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword()));
         } catch (AuthenticationException e) {
-            throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
+            throw new UnAuthorizeException(ErrorCode.USER_NOT_EXISTS);
         }
 
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
@@ -72,9 +72,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(@Valid RegisterRequest request) {
         if (userRepository.existsByUserName(request.getUserName())) {
-            throw new RuntimeException("Username already exists");
+            throw new UnAuthorizeException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
-
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UnAuthorizeException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
         User user = new User();
         user.setUserName(request.getUserName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
