@@ -11,7 +11,7 @@ public enum ErrorCode {
     USER_EXISTS(1002, "User existed", HttpStatus.BAD_REQUEST),
     USERNAME_INVALID(1003, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1004, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTS(1005, "User not existed", HttpStatus.NOT_FOUND),
+    USER_NOT_EXISTS(1005, "User or Password not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
@@ -37,7 +37,11 @@ public enum ErrorCode {
     INVALID_SUBJECT_FEE(1025, "Fee must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
     INVALID_SUBJECT_TITLE(1026, "Subject title cannot be empty", HttpStatus.BAD_REQUEST),
     INVALID_SUBJECT_TITLE_LENGTH(1027, "Subject title must be less than 100 characters", HttpStatus.BAD_REQUEST),
-    INVALID_MIN_MAX_STUDENT(1028, "Student must be at least 1", HttpStatus.BAD_REQUEST);
+    INVALID_MIN_MAX_STUDENT(1028, "Student must be at least 1", HttpStatus.BAD_REQUEST),
+
+    // register
+    USERNAME_ALREADY_EXISTS(1035, "Username already exists", HttpStatus.BAD_REQUEST),
+    EMAIL_ALREADY_EXISTS(1036, "Email already exists", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;

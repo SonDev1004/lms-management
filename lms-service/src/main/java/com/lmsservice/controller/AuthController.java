@@ -1,7 +1,7 @@
 package com.lmsservice.controller;
 
+import jakarta.validation.Valid;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.lmsservice.dto.request.AuthRequest;
@@ -31,7 +31,7 @@ public class AuthController {
             description =
                     "API này cho phép người dùng đăng nhập vào hệ thống bằng tên đăng nhập và mật khẩu. Nếu thông tin hợp lệ, trả về access token, refresh token và thông tin người dùng.")
     @PostMapping("/login")
-    public ApiResponse<AuthResponse> login(@RequestBody AuthRequest req) {
+    public ApiResponse<AuthResponse> login(@Valid @RequestBody AuthRequest req) {
         AuthResponse authResponse = authService.login(req);
         return ApiResponse.<AuthResponse>builder()
                 .result(authResponse)
@@ -56,7 +56,7 @@ public class AuthController {
             summary = "Đăng ký tài khoản",
             description = "API này cho phép người dùng tạo tài khoản mới với vai trò được chỉ định.")
     @PostMapping("/register")
-    public ApiResponse<?> register(@RequestBody RegisterRequest request) {
+    public ApiResponse<?> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request);
         return ApiResponse.builder().message("Register successful").build();
     }
