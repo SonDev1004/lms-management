@@ -6,20 +6,17 @@ import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AuthResponse;
+import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.service.AuthService;
-
-import com.sun.security.auth.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @Slf4j(topic = "AUTH-CONTROLLER")
 @RestController
@@ -77,8 +74,13 @@ public class AuthController {
 
     @PostMapping("/change-password")
     public ApiResponse<?> changePassword(@RequestBody @Valid ChangePasswordRequest request,
-                                            @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        authService.changePassword(request, userPrincipal.getName());
+                                         Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String username = authentication.getName();
+        authService.changePassword(request, username);
         return ApiResponse.builder().message("Change password successful").build();
     }
 
