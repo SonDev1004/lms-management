@@ -1,6 +1,9 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.*;
+import java.time.Instant;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,8 +15,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BlackListToken extends EntityAbstract {
+public class BlackListToken {
+    @Id
+    String tokenHash;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
-    private String token;
+    Instant expiresAt;
 }

@@ -104,6 +104,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private void validateTokenAndSetAuthentication(
             String token, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        if (!tokenProvider.validateToken(token, false)) {
+            return;
+        }
+
+        String username = tokenProvider.getUsernameFromToken(token, false);
+        List<String> permissions = tokenProvider.getPermissionsFromToken(token, false);
+        List<String> roles = tokenProvider.getRolesFromToken(token, false);
+
         if (blackListService.isTokenBlacklisted(token)) {
             log.warn("Token nằm trong blacklist (đã logout): {}", token);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -113,28 +121,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (tokenProvider.validateToken(token, false)) {
-            String username = tokenProvider.getUsernameFromToken(token, false);
-            List<String> permissions = tokenProvider.getPermissionsFromToken(token, false);
-            List<String> roles = tokenProvider.getRolesFromToken(token, false);
+        User user = userRepository.findByUserName(username).orElseThrow(() -> new RuntimeException("User not found"));
 
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            if (roles != null) {
-                roles.forEach(r -> authorities.add(new SimpleGrantedAuthority("ROLE_" + r)));
-            }
-            if (permissions != null) {
-                permissions.forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
-            }
-
-            User user =
-                    userRepository.findByUserName(username).orElseThrow(() -> new RuntimeException("User not found"));
-
-            CustomUserDetails userDetails = new CustomUserDetails(user, authorities, permissions);
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (roles != null) {
+            roles.forEach(r -> authorities.add(new SimpleGrantedAuthority("ROLE_" + r)));
         }
+        if (permissions != null) {
+            permissions.forEach(p -> authorities.add(new SimpleGrantedAuthority(p)));
+        }
+
+        CustomUserDetails userDetails = new CustomUserDetails(user, authorities, permissions);
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+
+        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
     /**

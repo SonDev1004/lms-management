@@ -1,6 +1,7 @@
 package com.lmsservice.security;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -148,13 +149,15 @@ public class JwtTokenProvider {
      * Trả về toàn bộ claims từ token
      */
     private Claims getAllClaimsFromToken(String token, boolean isRefreshToken) {
+        String secret = isRefreshToken ? refreshSecret : accessSecret;
         try {
-            String secret = isRefreshToken ? refreshSecret : accessSecret;
-            return Jwts.parser()
+            return Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException | IllegalArgumentException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -166,5 +169,10 @@ public class JwtTokenProvider {
                 .getBody()
                 .getExpiration()
                 .getTime();
+    }
+
+    public Instant getExpirationDate(String token, boolean isRefreshToken) {
+        Claims claims = getAllClaimsFromToken(token, isRefreshToken);
+        return claims != null ? claims.getExpiration().toInstant() : null;
     }
 }

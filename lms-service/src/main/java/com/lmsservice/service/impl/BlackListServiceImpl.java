@@ -1,5 +1,7 @@
 package com.lmsservice.service.impl;
 
+import java.time.Instant;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +21,22 @@ public class BlackListServiceImpl implements BlackListService {
 
     @Override
     @Transactional
-    public void addToBlackList(String token) {
+    public void addToBlackList(String token, Instant expirationTime) {
         if (token == null) {
             log.warn("Token is null, cannot add to blacklist.");
             return;
         }
         String rawToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-        if (blackListTokenRepository.existsByToken(rawToken)) {
+        if (blackListTokenRepository.existsByTokenHash(rawToken)) {
             log.info("Token already blacklisted.");
             return;
         }
 
-        BlackListToken blackListToken = BlackListToken.builder().token(rawToken).build();
+        BlackListToken blackListToken = BlackListToken.builder()
+                .tokenHash(rawToken)
+                .expiresAt(
+                        expirationTime != null ? expirationTime : Instant.now().plusSeconds(86400))
+                .build();
 
         blackListTokenRepository.save(blackListToken);
         log.info("Token added to blacklist: {}", rawToken);
@@ -38,6 +44,6 @@ public class BlackListServiceImpl implements BlackListService {
 
     @Override
     public boolean isTokenBlacklisted(String token) {
-        return blackListTokenRepository.existsByToken(token);
+        return blackListTokenRepository.existsByTokenHash(token);
     }
 }
