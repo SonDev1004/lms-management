@@ -1,7 +1,5 @@
 package com.lmsservice.repository;
 
-import java.time.LocalDateTime;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

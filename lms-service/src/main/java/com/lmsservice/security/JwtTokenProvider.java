@@ -167,7 +167,4 @@ public class JwtTokenProvider {
                 .getExpiration()
                 .getTime();
     }
-
-
-
 }

@@ -26,7 +26,7 @@ import lombok.experimental.FieldDefaults;
 public class SubjectController {
     SubjectService subjectService;
 
-    @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
+//    @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/create")
     public ResponseEntity<ApiResponse> createSubject(@Valid @RequestBody CreateSubjectRequest requestDTO) {
         SubjectResponse responseDTO = subjectService.createSubject(requestDTO);

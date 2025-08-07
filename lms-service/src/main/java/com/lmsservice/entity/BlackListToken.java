@@ -1,7 +1,5 @@
 package com.lmsservice.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -18,5 +16,4 @@ public class BlackListToken extends EntityAbstract {
 
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String token;
-
 }

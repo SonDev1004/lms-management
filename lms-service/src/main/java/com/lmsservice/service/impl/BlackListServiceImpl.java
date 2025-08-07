@@ -1,8 +1,5 @@
 package com.lmsservice.service.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,26 +17,24 @@ public class BlackListServiceImpl implements BlackListService {
 
     private final BlackListTokenRepository blackListTokenRepository;
 
-@Override
-@Transactional
-public void addToBlackList(String token) {
-    if (token == null) {
-        log.warn("Token is null, cannot add to blacklist.");
-        return;
-    }
-    String rawToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-    if (blackListTokenRepository.existsByToken(rawToken)) {
-        log.info("Token already blacklisted.");
-        return;
-    }
+    @Override
+    @Transactional
+    public void addToBlackList(String token) {
+        if (token == null) {
+            log.warn("Token is null, cannot add to blacklist.");
+            return;
+        }
+        String rawToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+        if (blackListTokenRepository.existsByToken(rawToken)) {
+            log.info("Token already blacklisted.");
+            return;
+        }
 
-    BlackListToken blackListToken = BlackListToken.builder()
-            .token(rawToken)
-            .build();
+        BlackListToken blackListToken = BlackListToken.builder().token(rawToken).build();
 
-    blackListTokenRepository.save(blackListToken);
-    log.info("Token added to blacklist: {}", rawToken);
-}
+        blackListTokenRepository.save(blackListToken);
+        log.info("Token added to blacklist: {}", rawToken);
+    }
 
     @Override
     public boolean isTokenBlacklisted(String token) {
