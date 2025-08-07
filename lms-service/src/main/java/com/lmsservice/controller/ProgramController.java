@@ -30,6 +30,7 @@ public class ProgramController {
     // API create program
     @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/create")
+    //    Todo: Duy chưa viết Swagger document
     public ResponseEntity<ApiResponse> createProgram(@Valid @RequestBody ProgramRequest programRequestDTO) {
 
         ProgramResponse response = programService.createProgram(programRequestDTO);
@@ -44,6 +45,7 @@ public class ProgramController {
     // API add subject to program
     @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/{programId}/add-subject")
+    //    Todo: Duy chưa viết Swagger document
     public ResponseEntity<ApiResponse> addSubjectsToProgram(
             @PathVariable Long programId, @Valid @RequestBody List<CurriculumRequest> requests) {
         List<CurriculumResponse> response = programService.addSubjectsToProgram(programId, requests);

@@ -14,7 +14,7 @@ import com.lmsservice.entity.BlackListToken;
 public interface BlackListTokenRepository extends JpaRepository<BlackListToken, String> {
     boolean existsByTokenHash(String tokenHash);
 
-    @Transactional
+    @Transactional // Todo: Nhân kiểm tra lại @Transactional để làm gì, nó có thật sự cần thiết không?
     @Modifying
     int deleteByExpiresAtBefore(Instant expiry);
 }
