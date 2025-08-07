@@ -38,7 +38,13 @@ public enum ErrorCode {
     INVALID_SUBJECT_TITLE(1026, "Subject title cannot be empty", HttpStatus.BAD_REQUEST),
     INVALID_SUBJECT_TITLE_LENGTH(1027, "Subject title must be less than 100 characters", HttpStatus.BAD_REQUEST),
     INVALID_MIN_MAX_STUDENT(1028, "Student must be at least 1", HttpStatus.BAD_REQUEST),
-
+    // Curriculum Code
+    EMPTY_SUBJECT_LIST(1029, "Subject list cannot be empty", HttpStatus.BAD_REQUEST),
+    PROGRAM_NOT_ACTIVE(1030, "Program is not active", HttpStatus.BAD_REQUEST),
+    DUPLICATE_ORDER_NUMBER(1031, "Duplicate order number in subject list", HttpStatus.BAD_REQUEST),
+    SUBJECT_ALREADY_IN_PROGRAM(1032, "Subject already exists in the program", HttpStatus.BAD_REQUEST),
+    SUBJECT_NOT_ACTIVE(1033, "Subject is not active", HttpStatus.BAD_REQUEST),
+    DUPLICATE_SUBJECT_IN_REQUEST(1034, "Duplicate subject in request", HttpStatus.BAD_REQUEST),
     // register
     USERNAME_ALREADY_EXISTS(1035, "Username already exists", HttpStatus.BAD_REQUEST),
     EMAIL_ALREADY_EXISTS(1036, "Email already exists", HttpStatus.BAD_REQUEST),

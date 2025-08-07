@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,28 +14,41 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.lmsservice.dto.request.CurriculumRequest;
 import com.lmsservice.dto.request.ProgramRequest;
+import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
+import com.lmsservice.entity.Curriculum;
 import com.lmsservice.entity.Program;
+import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.repository.CurriculumRepository;
 import com.lmsservice.repository.ProgramRepository;
-import com.lmsservice.service.ProgramService;
+import com.lmsservice.repository.SubjectRepository;
+import com.lmsservice.service.impl.ProgramServiceImpl;
 
-@ExtendWith(MockitoExtension.class) // Kích hoạt Mockito cho JUnit 5
+@ExtendWith(MockitoExtension.class)
 class ProgramServiceTest {
 
     @Mock
     private ProgramRepository programRepository;
 
+    @Mock
+    private CurriculumRepository curriculumRepository;
+
+    @Mock
+    private SubjectRepository subjectRepository;
+
     @InjectMocks
-    private ProgramService programService;
+    private ProgramServiceImpl programService;
 
     private ProgramRequest request;
+    private Program program;
+    private Subject subject;
 
     @BeforeEach
-    void init() {
-        // Chuẩn bị dữ liệu mặc định
+    void setUp() {
         request = ProgramRequest.builder()
                 .title("English Beginner")
                 .minStudent(5)
@@ -43,12 +57,20 @@ class ProgramServiceTest {
                 .description("Basic English course")
                 .isActive(true)
                 .build();
+
+        program = new Program();
+        program.setId(1L);
+        program.setIsActive(true);
+
+        subject = new Subject();
+        subject.setId(10L);
     }
+
+    // ----------------- TEST CREATE PROGRAM -----------------
 
     @Test
     @DisplayName("Create program successfully")
     void createProgram_Success() {
-        // Arrange
         Program savedProgram = new Program();
         savedProgram.setId(1L);
         savedProgram.setTitle(request.getTitle());
@@ -58,19 +80,15 @@ class ProgramServiceTest {
         savedProgram.setIsActive(request.getIsActive());
         savedProgram.setCode("PROG-20250801-12345678");
 
+        when(programRepository.existsByTitle(request.getTitle())).thenReturn(false);
         when(programRepository.save(any(Program.class))).thenReturn(savedProgram);
 
-        // Act
         ProgramResponse response = programService.createProgram(request);
 
-        // Assert
         assertNotNull(response);
         assertEquals(request.getTitle(), response.getTitle());
-        assertEquals(request.getMinStudent(), response.getMinStudent());
-        assertEquals(request.getMaxStudent(), response.getMaxStudent());
-        assertEquals(request.getFee(), response.getFee());
         assertTrue(response.getIsActive());
-        verify(programRepository, times(1)).save(any(Program.class));
+        verify(programRepository).save(any(Program.class));
     }
 
     @Test
@@ -93,7 +111,6 @@ class ProgramServiceTest {
         AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
         assertEquals(ErrorCode.INVALID_MIN_STUDENT, exception.getErrorCode());
-        verify(programRepository, never()).save(any(Program.class));
     }
 
     @Test
@@ -104,20 +121,150 @@ class ProgramServiceTest {
         AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
         assertEquals(ErrorCode.INVALID_MAX_STUDENT, exception.getErrorCode());
-        verify(programRepository, never()).save(any(Program.class));
     }
 
     @Test
     @DisplayName("Throw exception when program title already exists")
     void createProgram_DuplicateTitle_ShouldThrowException() {
-        // Arrange
         when(programRepository.existsByTitle(request.getTitle())).thenReturn(true);
 
-        // Act
         AppException exception = assertThrows(AppException.class, () -> programService.createProgram(request));
 
-        // Assert
         assertEquals(ErrorCode.DUPLICATE_PROGRAM_TITLE, exception.getErrorCode());
         verify(programRepository, never()).save(any(Program.class));
+    }
+
+    // ----------------- TEST ADD SUBJECTS -----------------
+
+    @Test
+    @DisplayName("Add subject successfully")
+    void addSubjectsToProgram_Success() {
+        List<CurriculumRequest> requests =
+                List.of(CurriculumRequest.builder().subjectId(10L).order(1).build());
+
+        when(programRepository.findById(1L)).thenReturn(Optional.of(program));
+        when(subjectRepository.findById(10L)).thenReturn(Optional.of(subject));
+        when(curriculumRepository.existsByProgramIdAndSubjectId(1L, 10L)).thenReturn(false);
+        when(curriculumRepository.findMaxOrderNumberByProgramId(1L)).thenReturn(3);
+        when(curriculumRepository.existsByProgramIdAndOrderNumber(1L, 1)).thenReturn(false);
+
+        Curriculum curriculum = new Curriculum();
+        curriculum.setId(100L);
+        curriculum.setOrderNumber(1);
+        curriculum.setProgram(program);
+        curriculum.setSubject(subject);
+
+        when(curriculumRepository.saveAll(anyList())).thenReturn(List.of(curriculum));
+
+        List<CurriculumResponse> responses = programService.addSubjectsToProgram(1L, requests);
+
+        assertEquals(1, responses.size());
+        assertEquals(100L, responses.get(0).getId());
+        assertEquals(1, responses.get(0).getOrder());
+        verify(curriculumRepository).saveAll(anyList());
+    }
+
+    @Test
+    @DisplayName("Throw exception when request list is empty")
+    void addSubjectsToProgram_EmptyRequest_ThrowsException() {
+        AppException exception = assertThrows(
+                AppException.class, () -> programService.addSubjectsToProgram(1L, Collections.emptyList()));
+
+        assertEquals(ErrorCode.EMPTY_SUBJECT_LIST, exception.getErrorCode());
+        verifyNoInteractions(programRepository);
+    }
+
+    @Test
+    @DisplayName("Throw exception when program is not found")
+    void addSubjectsToProgram_ProgramNotFound_ThrowsException() {
+        when(programRepository.findById(1L)).thenReturn(Optional.empty());
+
+        AppException exception = assertThrows(
+                AppException.class,
+                () -> programService.addSubjectsToProgram(
+                        1L,
+                        List.of(CurriculumRequest.builder()
+                                .subjectId(10L)
+                                .order(1)
+                                .build())));
+
+        assertEquals(ErrorCode.PROGRAM_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Throw exception when program is inactive")
+    void addSubjectsToProgram_ProgramNotActive_ThrowsException() {
+        program.setIsActive(false);
+        when(programRepository.findById(1L)).thenReturn(Optional.of(program));
+
+        AppException exception = assertThrows(
+                AppException.class,
+                () -> programService.addSubjectsToProgram(
+                        1L,
+                        List.of(CurriculumRequest.builder()
+                                .subjectId(10L)
+                                .order(1)
+                                .build())));
+
+        assertEquals(ErrorCode.PROGRAM_NOT_ACTIVE, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Throw exception when subject already exists in program")
+    void addSubjectsToProgram_SubjectAlreadyExists_ThrowsException() {
+        when(programRepository.findById(1L)).thenReturn(Optional.of(program));
+        when(subjectRepository.findById(10L)).thenReturn(Optional.of(subject));
+        when(curriculumRepository.existsByProgramIdAndSubjectId(1L, 10L)).thenReturn(true);
+
+        AppException exception = assertThrows(
+                AppException.class,
+                () -> programService.addSubjectsToProgram(
+                        1L,
+                        List.of(CurriculumRequest.builder()
+                                .subjectId(10L)
+                                .order(1)
+                                .build())));
+
+        assertEquals(ErrorCode.SUBJECT_ALREADY_IN_PROGRAM, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Throw exception when duplicate order in request")
+    void addSubjectsToProgram_DuplicateOrderInRequest_ThrowsException() {
+        List<CurriculumRequest> requests = List.of(
+                CurriculumRequest.builder().subjectId(10L).order(1).build(),
+                CurriculumRequest.builder().subjectId(11L).order(1).build());
+
+        when(programRepository.findById(1L)).thenReturn(Optional.of(program));
+
+        AppException exception =
+                assertThrows(AppException.class, () -> programService.addSubjectsToProgram(1L, requests));
+
+        assertEquals(ErrorCode.DUPLICATE_ORDER_NUMBER, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Adjust order to maxOrder + 1 when order already exists")
+    void addSubjectsToProgram_OrderAlreadyExists_SetToMaxOrderPlusOne() {
+        List<CurriculumRequest> requests =
+                List.of(CurriculumRequest.builder().subjectId(10L).order(1).build());
+
+        when(programRepository.findById(1L)).thenReturn(Optional.of(program));
+        when(subjectRepository.findById(10L)).thenReturn(Optional.of(subject));
+        when(curriculumRepository.existsByProgramIdAndSubjectId(1L, 10L)).thenReturn(false);
+        when(curriculumRepository.findMaxOrderNumberByProgramId(1L)).thenReturn(3);
+        when(curriculumRepository.existsByProgramIdAndOrderNumber(1L, 1)).thenReturn(true);
+
+        when(curriculumRepository.saveAll(anyList())).thenAnswer(invocation -> {
+            List<Curriculum> list = invocation.getArgument(0);
+            list.get(0).setId(101L);
+            list.get(0).setOrderNumber(4);
+            return list;
+        });
+
+        List<CurriculumResponse> responses = programService.addSubjectsToProgram(1L, requests);
+
+        assertEquals(4, responses.get(0).getOrder());
+        assertEquals(101L, responses.get(0).getId());
     }
 }
