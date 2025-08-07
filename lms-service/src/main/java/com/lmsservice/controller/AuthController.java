@@ -7,12 +7,16 @@ import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AuthResponse;
 import com.lmsservice.service.AuthService;
+
+import com.sun.security.auth.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -73,8 +77,8 @@ public class AuthController {
 
     @PostMapping("/change-password")
     public ApiResponse<?> changePassword(@RequestBody @Valid ChangePasswordRequest request,
-                                            Principal principal) {
-        authService.changePassword(request, principal.getName());
+                                            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        authService.changePassword(request, userPrincipal.getName());
         return ApiResponse.builder().message("Change password successful").build();
     }
 
