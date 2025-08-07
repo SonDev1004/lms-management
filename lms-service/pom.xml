@@ -41,6 +41,7 @@
         </sonar.coverage.exclusions>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <image.path>registry.hub.docker.com/hoangson93</image.path>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
     </properties>
 
     <profiles>
@@ -163,13 +164,14 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId> <!-- Dùng Jackson để xử lý JSON -->
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -231,6 +233,18 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <rules>
+                        <rule>
+                            <element>BUNDLE</element>
+                            <limits>
+                                <limit>
+                                    <counter>INSTRUCTION</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.80</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
                     <excludes>
                         <exclude>com/lmsservice/dto/**</exclude>
                         <exclude>com/lmsservice/entity/**</exclude>
@@ -295,10 +309,6 @@
                         <arg>-Amapstruct.verbose=true</arg>
                     </compilerArgs>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
         <finalName>lms-service</finalName>

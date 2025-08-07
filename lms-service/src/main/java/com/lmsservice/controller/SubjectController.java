@@ -28,6 +28,7 @@ public class SubjectController {
 
     @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/create")
+    // Todo: Duy chưa viết Swagger document
     public ResponseEntity<ApiResponse> createSubject(@Valid @RequestBody CreateSubjectRequest requestDTO) {
         SubjectResponse responseDTO = subjectService.createSubject(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
