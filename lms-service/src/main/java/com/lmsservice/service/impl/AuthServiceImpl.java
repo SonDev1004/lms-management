@@ -3,12 +3,14 @@ package com.lmsservice.service.impl;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
+import com.lmsservice.dto.request.ChangePasswordRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -111,4 +113,22 @@ public class AuthServiceImpl implements AuthService {
         Instant expiredAt = tokenProvider.getExpirationDate(token, false);
         blackListService.addToBlackList(token, expiredAt);
     }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request, String username) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new UnAuthorizeException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new UnAuthorizeException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new UnAuthorizeException(ErrorCode.OLD_PASSWORD_NOT_MATCH);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
 }

@@ -1,21 +1,21 @@
 package com.lmsservice.controller;
 
-import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.*;
-
 import com.lmsservice.dto.request.AuthRequest;
+import com.lmsservice.dto.request.ChangePasswordRequest;
 import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AuthResponse;
 import com.lmsservice.service.AuthService;
-
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Slf4j(topic = "AUTH-CONTROLLER")
 @RestController
@@ -70,4 +70,12 @@ public class AuthController {
         authService.logout(token);
         return ApiResponse.builder().message("Logout successful").build();
     }
+
+    @PostMapping("/change-password")
+    public ApiResponse<?> changePassword(@RequestBody @Valid ChangePasswordRequest request,
+                                            Principal principal) {
+        authService.changePassword(request, principal.getName());
+        return ApiResponse.builder().message("Change password successful").build();
+    }
+
 }

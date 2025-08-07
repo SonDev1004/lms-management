@@ -41,7 +41,12 @@ public enum ErrorCode {
 
     // register
     USERNAME_ALREADY_EXISTS(1035, "Username already exists", HttpStatus.BAD_REQUEST),
-    EMAIL_ALREADY_EXISTS(1036, "Email already exists", HttpStatus.BAD_REQUEST);
+    EMAIL_ALREADY_EXISTS(1036, "Email already exists", HttpStatus.BAD_REQUEST),
+    // change password
+    PASSWORD_NOT_MATCH(1037, "Password and confirm password do not match", HttpStatus.BAD_REQUEST),
+    OLD_PASSWORD_NOT_MATCH(1038, "Old password does not match", HttpStatus.BAD_REQUEST),
+    // user
+    USER_NOT_FOUND(1039, "User not found", HttpStatus.NOT_FOUND);;
 
     private final int code;
     private final String message;
