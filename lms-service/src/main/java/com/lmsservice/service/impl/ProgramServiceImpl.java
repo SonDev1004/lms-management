@@ -2,17 +2,25 @@ package com.lmsservice.service.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
+import jakarta.transaction.Transactional;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.dto.request.CurriculumRequest;
 import com.lmsservice.dto.request.ProgramRequest;
+import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
+import com.lmsservice.entity.Curriculum;
 import com.lmsservice.entity.Program;
+import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.repository.CurriculumRepository;
 import com.lmsservice.repository.ProgramRepository;
+import com.lmsservice.repository.SubjectRepository;
 import com.lmsservice.service.ProgramService;
 
 import lombok.AccessLevel;
@@ -24,6 +32,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProgramServiceImpl implements ProgramService {
     ProgramRepository programRepository;
+    CurriculumRepository curriculumRepository;
+    SubjectRepository subjectRepository;
 
     public ProgramResponse createProgram(ProgramRequest programRequest) {
 
@@ -63,6 +73,62 @@ public class ProgramServiceImpl implements ProgramService {
                 .description(savedProgram.getDescription())
                 .isActive(savedProgram.getIsActive())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public List<CurriculumResponse> addSubjectsToProgram(Long programId, List<CurriculumRequest> requests) {
+
+        if (requests == null || requests.isEmpty()) {
+            throw new AppException(ErrorCode.EMPTY_SUBJECT_LIST);
+        }
+
+        Program program =
+                programRepository.findById(programId).orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
+        if (program.getIsActive() == false) {
+            throw new AppException(ErrorCode.PROGRAM_NOT_ACTIVE);
+        }
+        Set<Long> subjectIds = new HashSet<>();
+        for (CurriculumRequest req : requests) {
+            if (!subjectIds.add(req.getSubjectId())) {
+                throw new AppException(ErrorCode.DUPLICATE_SUBJECT_IN_REQUEST);
+            }
+        }
+
+        List<Curriculum> curriculumList = new ArrayList<>();
+        Integer currentMaxOrder = curriculumRepository.findMaxOrderNumberByProgramId(programId);
+        int nextOrder = (currentMaxOrder == null ? 1 : currentMaxOrder + 1);
+
+        for (CurriculumRequest req : requests) {
+            Subject subject = subjectRepository
+                    .findById(req.getSubjectId())
+                    .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+            if (subject.getIsActive() == false) {
+                throw new AppException(ErrorCode.SUBJECT_NOT_ACTIVE);
+            }
+
+            Curriculum curriculum = new Curriculum();
+            curriculum.setProgram(program);
+            curriculum.setSubject(subject);
+            curriculum.setOrderNumber(nextOrder++);
+
+            curriculumList.add(curriculum);
+        }
+        List<Curriculum> savedCurriculums;
+        try {
+            savedCurriculums = curriculumRepository.saveAll(curriculumList);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.SUBJECT_ALREADY_IN_PROGRAM);
+        }
+
+        return savedCurriculums.stream()
+                .map(c -> CurriculumResponse.builder()
+                        .id(c.getId())
+                        .order(c.getOrderNumber())
+                        .programId(c.getProgram().getId())
+                        .subjectId(c.getSubject().getId())
+                        .build())
+                .toList();
     }
 
     // Generate a unique code for the program
