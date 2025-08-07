@@ -28,7 +28,6 @@ import com.lmsservice.service.AuthService;
 import com.lmsservice.service.BlackListService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -112,7 +111,4 @@ public class AuthServiceImpl implements AuthService {
         Instant expiredAt = tokenProvider.getExpirationDate(token, false);
         blackListService.addToBlackList(token, expiredAt);
     }
-
-
-
 }

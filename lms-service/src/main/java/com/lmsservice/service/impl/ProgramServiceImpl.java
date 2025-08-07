@@ -6,6 +6,7 @@ import java.util.*;
 
 import jakarta.transaction.Transactional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.request.CurriculumRequest;
@@ -106,10 +107,6 @@ public class ProgramServiceImpl implements ProgramService {
                 throw new AppException(ErrorCode.SUBJECT_NOT_ACTIVE);
             }
 
-            if (curriculumRepository.existsByProgramIdAndSubjectId(programId, req.getSubjectId())) {
-                throw new AppException(ErrorCode.SUBJECT_ALREADY_IN_PROGRAM);
-            }
-
             Curriculum curriculum = new Curriculum();
             curriculum.setProgram(program);
             curriculum.setSubject(subject);
@@ -117,7 +114,12 @@ public class ProgramServiceImpl implements ProgramService {
 
             curriculumList.add(curriculum);
         }
-        List<Curriculum> savedCurriculums = curriculumRepository.saveAll(curriculumList);
+        List<Curriculum> savedCurriculums;
+        try {
+            savedCurriculums = curriculumRepository.saveAll(curriculumList);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.SUBJECT_ALREADY_IN_PROGRAM);
+        }
 
         return savedCurriculums.stream()
                 .map(c -> CurriculumResponse.builder()
