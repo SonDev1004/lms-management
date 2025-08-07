@@ -5,5 +5,5 @@ CREATE TABLE black_list_token
 (
     900
 ) PRIMARY KEY,
-    expires_at TIMESTAMP
-    );
+    expires_at DATETIME
+);
