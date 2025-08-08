@@ -29,12 +29,12 @@ public class MinioServiceImpl implements MinioService {
     MinioClient minioClient;
 
     /**
-     * Uploads a file to the specified bucket in MinIO.
+     * Tải lên một tệp vào bucket chỉ định trong MinIO.
      *
-     * @param bucket
-     * @param file
-     * @return String
-     * @throws Exception
+     * @param bucket Tên bucket
+     * @param file Tệp cần tải lên
+     * @return Tên tệp đã tải lên
+     * @throws Exception Nếu có lỗi xảy ra khi tải lên
      */
     @Override
     public String uploadFile(String bucket, MultipartFile file) throws Exception {
@@ -58,12 +58,28 @@ public class MinioServiceImpl implements MinioService {
         return fileName;
     }
 
+    /**
+     * Tải về một tệp từ bucket chỉ định trong MinIO.
+     *
+     * @param bucket Tên bucket
+     * @param fileName Tên tệp cần tải về
+     * @return luồng InputStream của tệp
+     * @throws Exception Nếu có lỗi xảy ra khi tải về
+     */
     @Override
     public InputStream downloadFile(String bucket, String fileName) throws Exception {
         return minioClient.getObject(
                 GetObjectArgs.builder().bucket(bucket).object(fileName).build());
     }
 
+    /**
+     * Xóa một tệp khỏi bucket chỉ định trong MinIO.
+     *
+     * @param bucket Tên bucket
+     * @param fileName Tên tệp cần xóa
+     * @return true nếu xóa thành công, false nếu có lỗi
+     * @throws Exception Nếu có lỗi xảy ra khi xóa
+     */
     @Override
     public boolean deleteFile(String bucket, String fileName) throws Exception {
         Iterable<Result<DeleteError>> results = minioClient.removeObjects(RemoveObjectsArgs.builder()
@@ -78,11 +94,36 @@ public class MinioServiceImpl implements MinioService {
         return true; // Xóa thành công
     }
 
+    /**
+     * Tạo một URL tạm thời để truy cập tệp trong bucket MinIO.
+     *
+     * @param bucket Tên bucket
+     * @param fileName Tên tệp
+     * @param expiryInSeconds Thời gian hết hạn (giây)
+     * @return URL truy cập tệp
+     * @throws Exception Nếu có lỗi xảy ra khi tạo URL
+     */
     @Override
     public String generatePresignedUrl(String bucket, String fileName, int expiryInSeconds) throws Exception {
-        return "";
+        return minioClient.getPresignedObjectUrl(
+                GetPresignedObjectUrlArgs.builder()
+                        .method(Method.GET)
+                        .bucket(bucket)
+                        .object(fileName)
+                        .expiry(expiryInSeconds)
+                        .build()
+        );
     }
 
+    /**
+     * Lấy URL tạm thời để truy cập tệp trong bucket MinIO.
+     *
+     * @param bucket T��n bucket
+     * @param fileName Tên tệp
+     * @param expiryInSeconds Thời gian hết hạn (giây)
+     * @return URL truy cập tệp
+     * @throws Exception Nếu có lỗi xảy ra khi lấy URL
+     */
     @Override
     public String listFiles(String bucket, String fileName, int expiryInSeconds) throws Exception {
         return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
@@ -93,6 +134,14 @@ public class MinioServiceImpl implements MinioService {
                 .build());
     }
 
+    /**
+     * Kiểm tra tệp có tồn tại trong bucket MinIO hay không.
+     *
+     * @param bucket Tên bucket
+     * @param fileName Tên tệp
+     * @return true nếu tệp tồn tại, false nếu không tồn tại hoặc có lỗi
+     * @throws Exception Nếu có lỗi xảy ra khi kiểm tra
+     */
     @Override
     public boolean fileExists(String bucket, String fileName) throws Exception {
         try {
@@ -104,6 +153,14 @@ public class MinioServiceImpl implements MinioService {
         }
     }
 
+    /**
+     * Tạo mới một bucket trong MinIO nếu chưa tồn tại.
+     *
+     * @param bucketName Tên bucket cần tạo
+     * @throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
+     *         NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+     *         InternalException Nếu có lỗi xảy ra khi tạo bucket
+     */
     @Override
     public void createBucket(String bucketName)
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
@@ -116,6 +173,14 @@ public class MinioServiceImpl implements MinioService {
         }
     }
 
+    /**
+     * Xóa một bucket khỏi MinIO.
+     *
+     * @param bucketName Tên bucket cần xóa
+     * @throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
+     *         NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+     *         InternalException Nếu có lỗi xảy ra khi xóa bucket
+     */
     @Override
     public void deleteBucket(String bucketName)
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
@@ -124,6 +189,13 @@ public class MinioServiceImpl implements MinioService {
         minioClient.removeBucket(RemoveBucketArgs.builder().bucket(bucketName).build());
     }
 
+    /**
+     * Lấy metadata của một tệp trong bucket MinIO.
+     *
+     * @param bucket Tên bucket
+     * @param fileName Tên tệp
+     * @return Map chứa thông tin metadata của tệp
+     */
     @Override
     public Map<String, String> getFileMetadata(String bucket, String fileName) {
         Map<String, String> meta = new HashMap<>();
@@ -142,12 +214,15 @@ public class MinioServiceImpl implements MinioService {
     }
 
     /**
-     * Composes an object from multiple parts in the specified bucket.
-     * This is useful for large files that are uploaded in parts.
+     * Ghép nhiều phần thành một tệp hoàn chỉnh trong bucket MinIO.
+     * Thường dùng cho các tệp lớn được tải lên theo từng phần.
      *
-     * @param bucket
-     * @param partNames
-     * @param targetObjectName
+     * @param bucket Tên bucket
+     * @param partNames Danh sách tên các phần
+     * @param targetObjectName Tên tệp đích sau khi ghép
+     * @throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
+     *         NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+     *         InternalException Nếu có lỗi xảy ra khi ghép tệp
      */
     @Override
     public void composeObject(String bucket, List<String> partNames, String targetObjectName)

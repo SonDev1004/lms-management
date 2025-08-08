@@ -9,7 +9,7 @@ import io.minio.MinioClient;
 @Configuration
 public class MinioConfig {
 
-    @Value("${minio.endpoint")
+    @Value("${minio.hostname}")
     private String URL_MINIO_SERVER;
 
     @Value("${minio.accessKey}")

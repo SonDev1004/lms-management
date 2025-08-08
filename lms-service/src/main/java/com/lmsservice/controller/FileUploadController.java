@@ -23,10 +23,16 @@ public class FileUploadController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String fileName = minioService.uploadFile("lms-bucket", file);
+            String fileName = minioService.uploadFile("test-upload", file);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok("File uploaded successfully");
+    }
+
+    @PostMapping("/presigned-url")
+    public ResponseEntity<String> getPresignedUrl(@RequestParam("fileName") String fileName) throws Exception {
+        String url = minioService.generatePresignedUrl("test-upload", fileName, 60 * 10); // 10 phút
+        return ResponseEntity.ok(url);
     }
 }
