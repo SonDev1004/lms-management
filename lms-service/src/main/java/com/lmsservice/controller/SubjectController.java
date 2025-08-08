@@ -1,5 +1,6 @@
 package com.lmsservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,10 @@ public class SubjectController {
 
     @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/create")
+    @Operation(
+            summary = "Tạo môn học mới",
+            description = "API dùng để tạo một môn học mới, bao gồm tiêu đề, số buổi, học phí, số lượng học viên, mô tả và ảnh minh hoạ."
+    )
     // Todo: Duy chưa viết Swagger document
     public ResponseEntity<ApiResponse> createSubject(@Valid @RequestBody CreateSubjectRequest requestDTO) {
         SubjectResponse responseDTO = subjectService.createSubject(requestDTO);
