@@ -164,15 +164,26 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Jackson JSON processor-->
+        <!-- Sử dụng Jackson để xử lý JSON trong JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId> <!-- Dùng Jackson để xử lý JSON -->
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Redis-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Minio-->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.5.7</version> <!-- hoặc bản mới nhất -->
         </dependency>
     </dependencies>
 
