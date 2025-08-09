@@ -26,6 +26,7 @@ public class StaffController {
     }
 
     @GetMapping("/admin_it")
+    // Todo: Nhan chưa viết Swagger document
     public String getAdminIT() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();

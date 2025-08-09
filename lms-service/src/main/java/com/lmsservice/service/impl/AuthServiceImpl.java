@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.request.AuthRequest;
+import com.lmsservice.dto.request.ChangePasswordRequest;
 import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.AuthResponse;
@@ -110,5 +111,30 @@ public class AuthServiceImpl implements AuthService {
                 .trim();
         Instant expiredAt = tokenProvider.getExpirationDate(token, false);
         blackListService.addToBlackList(token, expiredAt);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request, String username) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new UnAuthorizeException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        User user = userRepository
+                .findByUserName(username)
+                .orElseThrow(() -> new UnAuthorizeException(ErrorCode.USER_NOT_FOUND));
+
+        // 1. Kiểm tra mật khẩu cũ có đúng không
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new UnAuthorizeException(ErrorCode.OLD_PASSWORD_NOT_MATCH);
+        }
+
+        // 2. Kiểm tra mật khẩu mới không được trùng với mật khẩu cũ
+        if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new UnAuthorizeException(ErrorCode.NEW_PASSWORD_SAME_AS_OLD);
+        }
+
+        // 3. Cập nhật mật khẩu
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 }

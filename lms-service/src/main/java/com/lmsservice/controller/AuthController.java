@@ -2,13 +2,17 @@ package com.lmsservice.controller;
 
 import jakarta.validation.Valid;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.lmsservice.dto.request.AuthRequest;
+import com.lmsservice.dto.request.ChangePasswordRequest;
 import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AuthResponse;
+import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,5 +73,19 @@ public class AuthController {
     public ApiResponse<?> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
         return ApiResponse.builder().message("Logout successful").build();
+    }
+
+    @PostMapping("/change-password")
+    public ApiResponse<?> changePassword(
+            @RequestBody @Valid ChangePasswordRequest request, Authentication authentication) {
+        // Todo: Nhân kiểm tra lại xem, việc check authentication ở đây có cần thiết không?
+        // Nếu chưa authenticated thì có vào được controller không?
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String username = authentication.getName();
+        authService.changePassword(request, username);
+        return ApiResponse.builder().message("Change password successful").build();
     }
 }

@@ -105,14 +105,12 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public String generatePresignedUrl(String bucket, String fileName, int expiryInSeconds) throws Exception {
-        return minioClient.getPresignedObjectUrl(
-                GetPresignedObjectUrlArgs.builder()
-                        .method(Method.GET)
-                        .bucket(bucket)
-                        .object(fileName)
-                        .expiry(expiryInSeconds)
-                        .build()
-        );
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+                .method(Method.GET)
+                .bucket(bucket)
+                .object(fileName)
+                .expiry(expiryInSeconds)
+                .build());
     }
 
     /**

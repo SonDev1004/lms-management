@@ -87,8 +87,8 @@ public interface MinioService {
      */
     void createBucket(String bucketName)
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
-            NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
-            InternalException;
+                    NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+                    InternalException;
 
     /**
      * Xóa một bucket khỏi MinIO.
@@ -100,8 +100,8 @@ public interface MinioService {
      */
     void deleteBucket(String bucketName)
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
-            NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
-            InternalException;
+                    NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+                    InternalException;
 
     /**
      * Lấy metadata của một tệp trong bucket MinIO.
@@ -125,6 +125,6 @@ public interface MinioService {
      */
     void composeObject(String bucket, List<String> partNames, String targetObjectName)
             throws ServerException, InsufficientDataException, ErrorResponseException, IOException,
-            NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
-            InternalException;
+                    NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException,
+                    InternalException;
 }

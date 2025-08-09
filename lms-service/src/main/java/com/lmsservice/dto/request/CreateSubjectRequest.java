@@ -35,5 +35,7 @@ public class CreateSubjectRequest {
     Integer maxStudent;
 
     String description;
+
+    @Builder.Default
     Boolean isActive = true;
 }
