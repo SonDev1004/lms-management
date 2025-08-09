@@ -26,7 +26,8 @@ public class CreateSubjectRequest {
     @Min(value = 0, message = "Fee must be non-negative")
     BigDecimal fee;
 
-    String image;
+    @Builder.Default
+    String image = "";
 
     @Min(value = 1, message = "Minimum student must be at least 1")
     Integer minStudent;
