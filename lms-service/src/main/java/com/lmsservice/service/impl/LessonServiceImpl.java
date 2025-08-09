@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class LessionServiceImpl implements LessonService {
+public class LessonServiceImpl implements LessonService {
     final LessonRepository lessonRepository;
     final SubjectRepository subjectRepository;
 
@@ -26,6 +26,7 @@ public class LessionServiceImpl implements LessonService {
                 .findById(lessonRequest.getSubjectId())
                 .orElseThrow(() -> new UnAuthorizeException(ErrorCode.SUBJECT_NOT_FOUND));
         Lesson lesson = new Lesson();
+
         lesson.setTitle(lessonRequest.getTitle());
         lesson.setContent(lessonRequest.getContent());
         lesson.setDescription(lessonRequest.getDescription());

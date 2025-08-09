@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -21,8 +22,8 @@ public class LessonRequest {
     @NotBlank(message = "Description cannot be blank")
     String description;
 
-    @NotBlank(message = "Document cannot be blank")
-    String document;
+    @Builder.Default()
+    String document="";
 
     @NotNull(message = "Subject ID cannot be null")
     Long subjectId;
