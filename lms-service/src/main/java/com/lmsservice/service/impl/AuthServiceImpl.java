@@ -3,18 +3,17 @@ package com.lmsservice.service.impl;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-import com.lmsservice.dto.request.ChangePasswordRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.request.AuthRequest;
+import com.lmsservice.dto.request.ChangePasswordRequest;
 import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.AuthResponse;
@@ -120,7 +119,8 @@ public class AuthServiceImpl implements AuthService {
             throw new UnAuthorizeException(ErrorCode.PASSWORD_NOT_MATCH);
         }
 
-        User user = userRepository.findByUserName(username)
+        User user = userRepository
+                .findByUserName(username)
                 .orElseThrow(() -> new UnAuthorizeException(ErrorCode.USER_NOT_FOUND));
 
         // 1. Kiểm tra mật khẩu cũ có đúng không
@@ -137,6 +137,4 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
-
-
 }

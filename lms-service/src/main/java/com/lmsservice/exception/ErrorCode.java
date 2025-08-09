@@ -53,7 +53,8 @@ public enum ErrorCode {
     OLD_PASSWORD_NOT_MATCH(1038, "Old password does not match", HttpStatus.BAD_REQUEST),
     NEW_PASSWORD_SAME_AS_OLD(1039, "New password cannot be the same as old password", HttpStatus.BAD_REQUEST),
     // user
-    USER_NOT_FOUND(1040, "User not found", HttpStatus.NOT_FOUND);;
+    USER_NOT_FOUND(1040, "User not found", HttpStatus.NOT_FOUND);
+    ;
 
     private final int code;
     private final String message;

@@ -16,5 +16,4 @@ public interface AuthService {
     void register(RegisterRequest request);
 
     void changePassword(ChangePasswordRequest request, String username);
-
 }
