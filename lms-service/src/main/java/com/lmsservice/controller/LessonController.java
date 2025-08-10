@@ -1,5 +1,6 @@
 package com.lmsservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +25,7 @@ import lombok.experimental.FieldDefaults;
 public class LessonController {
     final LessonService lessonService;
 
+    @Operation(summary = "TẠO MỚI LESSON", description = "API TẠO MỚI LESSON")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
     @PostMapping("/create")
     public ApiResponse<LessonResponse> createLesson(@RequestBody @Valid LessonRequest request) {
