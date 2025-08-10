@@ -1,5 +1,7 @@
 package com.lmsservice.service.impl;
 
+import com.lmsservice.mapper.LessonMapper;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.request.LessonRequest;
@@ -16,31 +18,21 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class LessonServiceImpl implements LessonService {
-    final LessonRepository lessonRepository;
-    final SubjectRepository subjectRepository;
+    LessonRepository lessonRepository;
+    SubjectRepository subjectRepository;
+    LessonMapper lessonMapper;
 
     @Override
     public LessonResponse createLesson(LessonRequest lessonRequest) {
-        Subject subject = subjectRepository
-                .findById(lessonRequest.getSubjectId())
+        Subject subject = subjectRepository.findById(lessonRequest.getSubjectId())
                 .orElseThrow(() -> new UnAuthorizeException(ErrorCode.SUBJECT_NOT_FOUND));
-        Lesson lesson = new Lesson();
 
-        lesson.setTitle(lessonRequest.getTitle());
-        lesson.setContent(lessonRequest.getContent());
-        lesson.setDescription(lessonRequest.getDescription());
-        lesson.setDocument(lessonRequest.getDocument());
+        Lesson lesson = lessonMapper.toEntity(lessonRequest);
         lesson.setSubject(subject);
 
         Lesson savedLesson = lessonRepository.save(lesson);
-        return LessonResponse.builder()
-                .id(savedLesson.getId())
-                .title(savedLesson.getTitle())
-                .content(savedLesson.getContent())
-                .description(savedLesson.getDescription())
-                .document(savedLesson.getDocument())
-                .subjectId(savedLesson.getSubject().getId())
-                .build();
+        return lessonMapper.toResponse(savedLesson);
     }
 }

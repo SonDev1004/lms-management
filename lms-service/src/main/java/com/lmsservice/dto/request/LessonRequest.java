@@ -19,8 +19,8 @@ public class LessonRequest {
     @NotBlank(message = "Content cannot be blank")
     String content;
 
-    @NotBlank(message = "Description cannot be blank")
-    String description;
+    @Builder.Default()
+    String description="";
 
     @Builder.Default()
     String document="";
