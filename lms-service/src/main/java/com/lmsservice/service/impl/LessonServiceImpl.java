@@ -14,6 +14,8 @@ import com.lmsservice.service.LessonService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
@@ -42,5 +44,20 @@ public class LessonServiceImpl implements LessonService {
                 .document(savedLesson.getDocument())
                 .subjectId(savedLesson.getSubject().getId())
                 .build();
+    }
+
+
+    @Override
+    public List<LessonResponse> getAllLessons() {
+        return lessonRepository.findAll().stream()
+                        .map(lesson -> LessonResponse.builder()
+                                .id(lesson.getId())
+                                .title(lesson.getTitle())
+                                .content(lesson.getContent())
+                                .description(lesson.getDescription())
+                                .document(lesson.getDocument())
+                                .subjectId(lesson.getSubject().getId())
+                                .build())
+                        .toList();
     }
 }
