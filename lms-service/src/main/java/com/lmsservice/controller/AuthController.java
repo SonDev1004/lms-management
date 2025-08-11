@@ -78,12 +78,6 @@ public class AuthController {
     @PostMapping("/change-password")
     public ApiResponse<?> changePassword(
             @RequestBody @Valid ChangePasswordRequest request, Authentication authentication) {
-        // Todo: Nhân kiểm tra lại xem, việc check authentication ở đây có cần thiết không?
-        // Nếu chưa authenticated thì có vào được controller không?
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UnAuthorizeException(ErrorCode.UNAUTHENTICATED);
-        }
-
         String username = authentication.getName();
         authService.changePassword(request, username);
         return ApiResponse.builder().message("Change password successful").build();

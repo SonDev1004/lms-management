@@ -199,7 +199,7 @@ class ProgramServiceTest {
 
         assertEquals(ErrorCode.PROGRAM_NOT_ACTIVE, exception.getErrorCode());
     }
-    
+
     @Test
     @DisplayName("Throw exception when duplicate subjectId in request")
     void addSubjectsToProgram_DuplicateSubjectInRequest_ThrowsException() {
@@ -207,8 +207,7 @@ class ProgramServiceTest {
 
         List<CurriculumRequest> requests = List.of(
                 CurriculumRequest.builder().subjectId(10L).build(),
-                CurriculumRequest.builder().subjectId(10L).build()
-        );
+                CurriculumRequest.builder().subjectId(10L).build());
 
         AppException exception =
                 assertThrows(AppException.class, () -> programService.addSubjectsToProgram(1L, requests));
