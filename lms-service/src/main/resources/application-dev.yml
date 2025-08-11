@@ -30,14 +30,14 @@ springdoc:
 openapi:
   service:
     api-docs: lsm-service
-    server: http://${OPENAPI_SERVER_URL}:${server.port}
+    server: http://${OPENAPI_SERVER_URL:localhost:8081}:${server.port}
     title: Lms service
     version: 1.0.0
 
 jwt:
   secretKey: dev@123
-  expiryMinutes: 20
-  expiryDay: 14
+  expiryMinutes: ${EXPIRY_MINUTES:5}
+  expiryDay: ${EXPIRY_DAY:10}
   accessKey: 1ef1ed938c82d16798fa1ec4300d3571988b1b37b9116a7e70c6def68bff3516
   refreshKey: 0021f3009a0d7a65b84fd75c056ec4c6a46ca6b9961e7cecfd7ffa38e3fc9dd4
 

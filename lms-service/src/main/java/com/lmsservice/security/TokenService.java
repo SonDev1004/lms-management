@@ -4,13 +4,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.lmsservice.repository.BlackListTokenRepository;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.response.AuthResponse;
 import com.lmsservice.entity.User;
+import com.lmsservice.repository.BlackListTokenRepository;
 import com.lmsservice.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;

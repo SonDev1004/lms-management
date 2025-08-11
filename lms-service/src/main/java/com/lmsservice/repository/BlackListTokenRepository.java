@@ -2,8 +2,6 @@ package com.lmsservice.repository;
 
 import java.time.Instant;
 
-import jakarta.transaction.Transactional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;

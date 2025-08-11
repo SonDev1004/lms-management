@@ -11,8 +11,6 @@ import com.lmsservice.dto.request.RefreshRequest;
 import com.lmsservice.dto.request.RegisterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AuthResponse;
-import com.lmsservice.exception.ErrorCode;
-import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;

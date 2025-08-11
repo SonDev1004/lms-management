@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingException(Exception exception) {
-
+        log.error(exception.getMessage(), exception);
         return ResponseEntity.status(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
                 .body(ApiResponse.builder()
                         .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
