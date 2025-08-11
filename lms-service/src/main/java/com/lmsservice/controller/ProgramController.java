@@ -2,8 +2,6 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -18,6 +16,7 @@ import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
 import com.lmsservice.service.ProgramService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,8 +33,8 @@ public class ProgramController {
     @PostMapping("/create")
     @Operation(
             summary = "Tạo chương trình học",
-            description = "Tạo mới một chương trình học với thông tin như tên, số lượng học viên, học phí và trạng thái"
-    )
+            description =
+                    "Tạo mới một chương trình học với thông tin như tên, số lượng học viên, học phí và trạng thái")
     public ResponseEntity<ApiResponse> createProgram(@Valid @RequestBody ProgramRequest programRequestDTO) {
 
         ProgramResponse response = programService.createProgram(programRequestDTO);
@@ -52,8 +51,8 @@ public class ProgramController {
     @PostMapping("/{programId}/curriculum")
     @Operation(
             summary = "Gán danh sách môn học vào chương trình",
-            description = "API dùng để thêm 1 hoặc nhiều môn học vào chương trình học thông qua curriculum. Thứ tự sẽ được tự động tính tiếp theo."
-    )
+            description =
+                    "API dùng để thêm 1 hoặc nhiều môn học vào chương trình học thông qua curriculum. Thứ tự sẽ được tự động tính tiếp theo.")
     public ResponseEntity<ApiResponse> addSubjectsToProgram(
             @PathVariable Long programId, @Valid @RequestBody List<CurriculumRequest> requests) {
         List<CurriculumResponse> response = programService.addSubjectsToProgram(programId, requests);

@@ -62,7 +62,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URLS)
                         .permitAll()
                         // ✅ Cho phép guest xem danh sách program
-                        .requestMatchers(HttpMethod.GET, "/api/program", "/api/program/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/program", "/api/program/**")
+                        .permitAll()
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()
                         .requestMatchers("/api/user/profile")
