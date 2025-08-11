@@ -20,18 +20,5 @@ import lombok.experimental.FieldDefaults;
 public class StaffController {
     StaffService staffService;
 
-    @GetMapping("/academic_manager")
-    public String getAcademicManager() {
-        return "Hello, Academic Manager!";
-    }
 
-    @GetMapping("/admin_it")
-    // Todo: Nhan chưa viết Swagger document
-    public String getAdminIT() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
-        Long userId = userDetails.getUser().getId();
-        System.out.println("User ID: " + userId);
-        return "Hello, Admin IT!";
-    }
 }

@@ -1,9 +1,12 @@
 package com.lmsservice.security;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.lmsservice.repository.BlackListTokenRepository;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.response.AuthResponse;
@@ -23,6 +26,7 @@ public class TokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final StringRedisTemplate redisTemplate;
+    private final BlackListTokenRepository blacklistTokenRepository;
     /**
      * Làm mới access token từ refresh token.
      *
@@ -55,5 +59,13 @@ public class TokenService {
         if (ttl > 0) {
             redisTemplate.opsForValue().set("blacklist:" + token, "true", ttl, TimeUnit.MILLISECONDS);
         }
+    }
+
+    @Scheduled(cron = "0 0 * * * *") // mỗi giờ chạy 1 lần
+    //    @Scheduled(fixedRate = 10000) // mỗi 10 giây
+    public void cleanBlackListTokens() {
+        Instant now = Instant.now();
+        int deleted = blacklistTokenRepository.deleteByExpiresAtBefore(now);
+        System.out.println("Đã xóa " + deleted + " token hết hạn khỏi blacklist.");
     }
 }
