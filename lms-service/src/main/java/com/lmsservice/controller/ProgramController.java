@@ -49,7 +49,7 @@ public class ProgramController {
 
     // API add subject to program
     @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
-    @PostMapping("/{programId}/add-subject")
+    @PostMapping("/{programId}/curriculum")
     @Operation(
             summary = "Gán danh sách môn học vào chương trình",
             description = "API dùng để thêm 1 hoặc nhiều môn học vào chương trình học thông qua curriculum. Thứ tự sẽ được tự động tính tiếp theo."
