@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -60,6 +61,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URLS)
                         .permitAll()
+                        // ✅ Cho phép guest xem danh sách program
+                        .requestMatchers(HttpMethod.GET, "/api/program", "/api/program/**").permitAll()
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()
                         .requestMatchers("/api/user/profile")
