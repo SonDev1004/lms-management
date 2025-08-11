@@ -30,7 +30,7 @@ springdoc:
 openapi:
   service:
     api-docs: lsm-service
-    server: http://localhost:${server.port}
+    server: http://${OPENAPI_SERVER_URL}:${server.port}
     title: Lms service
     version: 1.0.0
 
