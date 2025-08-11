@@ -36,7 +36,7 @@ openapi:
 
 jwt:
   secretKey: dev@123
-  expiryMinutes: 5
+  expiryMinutes: 20
   expiryDay: 14
   accessKey: 1ef1ed938c82d16798fa1ec4300d3571988b1b37b9116a7e70c6def68bff3516
   refreshKey: 0021f3009a0d7a65b84fd75c056ec4c6a46ca6b9961e7cecfd7ffa38e3fc9dd4
