@@ -10,6 +10,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router-dom';
 import './AuthTabs.css';
+import axios from 'axios';
 
 export default function AuthTabs({ onLogin }) {
     const [tab, setTab] = useState('login');
@@ -46,36 +47,21 @@ export default function AuthTabs({ onLogin }) {
             toast.current.show({ severity: 'warn', summary: 'Thiếu thông tin', detail: 'Vui lòng nhập username và password', life: 2500 });
             return;
         }
-        setLoadingLogin(true);
-        try {
-            if (onLogin) {
-                await onLogin({ username: username.trim(), password, remember });
-                toast.current.show({ severity: 'success', summary: 'Đăng nhập', detail: 'Thành công', life: 1200 });
-            } else {
-                // mock logic for demo
-                if (username === 'admin' && password === '123') {
-                    if (remember) localStorage.setItem('rememberUsername', username.trim());
-                    else localStorage.removeItem('rememberUsername');
-
-                    toast.current.show({ severity: 'success', summary: 'Đăng nhập', detail: 'Thành công', life: 1200 });
-                    setTimeout(() => navigate('/admin'), 1200);
-
-                } else if (username === 'student' && password === '123') {
-                    if (remember) localStorage.setItem('rememberUsername', username.trim());
-                    else localStorage.removeItem('rememberUsername');
-
-                    toast.current.show({ severity: 'success', summary: 'Đăng nhập', detail: 'Thành công', life: 1200 });
-                    setTimeout(() => navigate('/student'), 1200);
-
-                } else {
-                    throw new Error('Sai username hoặc password');
-                }
-
-            }
-        } catch (err) {
-            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: err.message || 'Đăng nhập thất bại', life: 3500 });
-        } finally {
-            setLoadingLogin(false);
+        if (onLogin) {
+            await onLogin({ username: username.trim(), password, remember });
+            toast.current.show({ severity: 'success', summary: 'Đăng nhập', detail: 'Thành công', life: 1200 });
+        } else {
+            axios.post('http://14.225.198.117:8081/api/auth/login', { username: username, password: password })
+                .then(res => {
+                    let { accessToken, refreshToken } = res.data.result;
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('accessToken', accessToken);
+                    localStorage.setItem('refreshToken', refreshToken);
+                    navigate('/home');
+                })
+                .catch(err => {
+                    toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Đăng nhập thất bại', life: 3500 });
+                })
         }
     };
 
@@ -265,12 +251,12 @@ export default function AuthTabs({ onLogin }) {
                         <h1 className="auth-title">Welcome Back!</h1>
                         <form onSubmit={handleLogin} noValidate aria-busy={loadingLogin}>
                             <div className="field-wrap">
-                                <InputText id="loginEmail" placeholder=" " value={username} onChange={(e) => setUsername(e.target.value)} ref={usernameRef} autoComplete="username" />
+                                <InputText id="loginEmail" value={username} onChange={(e) => setUsername(e.target.value)} ref={usernameRef} autoComplete="username" />
                                 <label htmlFor="loginEmail">Email Address / Username <span className="req">*</span></label>
                             </div>
 
                             <div className="field-wrap">
-                                <Password id="loginPassword" placeholder=" " value={password} onChange={(e) => setPassword(e.target.value)} feedback={false} toggleMask autoComplete="current-password" />
+                                <Password id="loginPassword" value={password} onChange={(e) => setPassword(e.target.value)} feedback={false} toggleMask autoComplete="current-password" />
                                 <label htmlFor="loginPassword">Password <span className="req">*</span></label>
                             </div>
 

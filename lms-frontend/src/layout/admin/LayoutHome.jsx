@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import { useRef } from "react";
 
 import { Avatar } from 'primereact/avatar';
 import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
+import { Menu } from 'primereact/menu';
 import { Menubar } from 'primereact/menubar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Panel } from 'primereact/panel';
 
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-
 import './LayoutHome.css';
+import axios from "axios";
 
 const LayoutHome = () => {
+    const menuRight = useRef(null);
+    const navigate = useNavigate();
+
     const itemRenderer = (item) => (
         <a className="flex align-items-center p-menuitem-link">
             <span className={item.icon} />
@@ -21,6 +23,17 @@ const LayoutHome = () => {
             {item.shortcut && <span className="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{item.shortcut}</span>}
         </a>
     );
+
+    const handleLogout = () => {
+        axios.post('http://14.225.198.117:8081/api/auth/logout')
+            .then(res => {
+                localStorage.removeItem('username');
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                navigate('/home');
+            });
+    }
+
     const items = [
         {
             label: 'Home',
@@ -83,12 +96,42 @@ const LayoutHome = () => {
         }
     ];
 
+    const profileItems = [
+        {
+            label: `${localStorage.getItem('username')}`,
+            items: [
+                {
+                    label: 'Tài khoản',
+                    icon: 'pi pi-user'
+                },
+                {
+                    label: 'Học trực tuyến',
+                    icon: 'pi pi-book'
+                }
+            ]
+        },
+        {
+            separator: true
+        },
+        {
+            label: 'Đăng xuất',
+            icon: 'pi pi-sign-out',
+            command: handleLogout
+        }
+    ];
+
     //Menubar Begin
     const start = <img alt="logo" src="https://primefaces.org/cdn/primereact/images/logo.png" height="40" className="mr-2"></img>;
     const end = (
         <div className="flex align-items-center gap-2">
             <InputText placeholder="Search" type="text" className="w-8rem sm:w-auto" />
-            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" />
+            {
+                localStorage.getItem('username') &&
+                <>
+                    <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" onClick={(e) => menuRight.current.toggle(e)} />
+                    <Menu model={profileItems} popup ref={menuRight} id="popup_menu_right" popupAlignment="right" />
+                </>
+            }
         </div>
     );
     //Menubar End
