@@ -5,6 +5,8 @@ import { InputText } from 'primereact/inputtext';
 
 import { Outlet } from "react-router-dom";
 import AdminSidebarMenu from './AdminSidebarMenu';
+import StudentSidebarMenu from "../student/StudentSidebarMenu.jsx";
+import RightPanel from "../student/RightPanel.jsx";
 
 const LayoutAdmin = () => {
     return (
@@ -35,16 +37,18 @@ const LayoutAdmin = () => {
                 {/* Sidebar menu */}
                 <div className='grid'>
                     <div className='col-2'>
-                        <AdminSidebarMenu />
+                        <AdminSidebarMenu/>
                     </div>
 
-                    <div className='col-10'>
-                        <Outlet />
-                    </div>
+                        <div className='col-10'>
+                            <Outlet />
+                        </div>
                 </div>
-            </div>
-        </>
-    );
-}
 
-export default LayoutAdmin;
+
+                </div>
+            </>
+            );
+            }
+
+            export default LayoutAdmin;
