@@ -15,5 +15,8 @@ public class AuthResponse {
     String accessToken;
     String refreshToken;
     String userName;
-    List<String> Permissions;
+    String firstName;
+    String lastName;
+    String roleName;
+    List<String> permissions;
 }
