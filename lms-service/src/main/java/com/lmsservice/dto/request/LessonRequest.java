@@ -20,10 +20,10 @@ public class LessonRequest {
     String content;
 
     @Builder.Default()
-    String description="";
+    String description = "";
 
     @Builder.Default()
-    String document="";
+    String document = "";
 
     @NotNull(message = "Subject ID cannot be null")
     Long subjectId;

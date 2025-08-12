@@ -1,7 +1,5 @@
 package com.lmsservice.service.impl;
 
-import com.lmsservice.mapper.LessonMapper;
-import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.request.LessonRequest;
@@ -10,11 +8,13 @@ import com.lmsservice.entity.Lesson;
 import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.exception.UnAuthorizeException;
+import com.lmsservice.mapper.LessonMapper;
 import com.lmsservice.repository.LessonRepository;
 import com.lmsservice.repository.SubjectRepository;
 import com.lmsservice.service.LessonService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonResponse createLesson(LessonRequest lessonRequest) {
-        Subject subject = subjectRepository.findById(lessonRequest.getSubjectId())
+        Subject subject = subjectRepository
+                .findById(lessonRequest.getSubjectId())
                 .orElseThrow(() -> new UnAuthorizeException(ErrorCode.SUBJECT_NOT_FOUND));
 
         Lesson lesson = lessonMapper.toEntity(lessonRequest);

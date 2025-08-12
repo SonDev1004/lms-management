@@ -1,5 +1,7 @@
 package com.lmsservice.security;
 
+import static java.util.Arrays.stream;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.lmsservice.config.SecurityConfig;
 import com.lmsservice.entity.User;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.repository.UserRepository;
@@ -39,10 +42,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final BlackListService blackListService;
 
-    // Khai báo các đường dẫn không cần kiểm tra token
-    private static final List<String> PUBLIC_URLS =
-            List.of("/api/auth/login**", "/api/auth/register**", "/api/auth/refresh**", "/api/auth/logout**");
-
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     /**
@@ -60,12 +59,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // Nếu là URL công khai thì bỏ qua filter
-        boolean isPublic = PUBLIC_URLS.stream().anyMatch(p -> pathMatcher.match(p, path));
+        boolean isPublic = stream(SecurityConfig.PUBLIC_URLS).anyMatch(url -> pathMatcher.match(url, path));
+
         if (isPublic) {
             filterChain.doFilter(request, response);
             return;
         }
-
         try {
             String token = getJwtFromRequest(request);
             if (token != null) {
