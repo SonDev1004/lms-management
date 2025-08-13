@@ -48,7 +48,14 @@ public class TokenService {
         List<String> permissionList =
                 user.getRole().getPermissions().stream().map(p -> p.getName()).toList();
 
-        return new AuthResponse(newAccessToken, refreshToken, user.getUserName(), permissionList);
+        return new AuthResponse(
+                newAccessToken,
+                refreshToken,
+                user.getUserName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole().getName(),
+                permissionList);
     }
 
     public void invalidateToken(String token) {
