@@ -19,9 +19,9 @@ public final class PageableUtils {
     private PageableUtils() {}
 
     // ====== Chính sách clamp mặc định (có thể chỉnh tuỳ dự án) ======
-    private static final int DEFAULT_PAGE = 0;    // Spring Pageable: 0-based
-    private static final int DEFAULT_SIZE = 20;   // size mặc định khi client không gửi/ gửi ≤ 0
-    private static final int MAX_SIZE     = 100;  // chặn size quá lớn
+    private static final int DEFAULT_PAGE = 0; // Spring Pageable: 0-based
+    private static final int DEFAULT_SIZE = 20; // size mặc định khi client không gửi/ gửi ≤ 0
+    private static final int MAX_SIZE = 100; // chặn size quá lớn
 
     /**
      * ❖ Sanitize sort theo danh sách property "root" cho phép (whitelist) + clamp page/size.
@@ -91,8 +91,8 @@ public final class PageableUtils {
                     if (o.isIgnoreCase()) mapped = mapped.ignoreCase();
                     switch (o.getNullHandling()) {
                         case NULLS_FIRST -> mapped = mapped.nullsFirst();
-                        case NULLS_LAST  -> mapped = mapped.nullsLast();
-                        case NATIVE      -> {} // giữ nguyên
+                        case NULLS_LAST -> mapped = mapped.nullsLast();
+                        case NATIVE -> {} // giữ nguyên
                     }
                     sanitized = sanitized.and(Sort.by(mapped));
                 }
@@ -124,8 +124,8 @@ public final class PageableUtils {
         if (o.isIgnoreCase()) kept = kept.ignoreCase();
         switch (o.getNullHandling()) {
             case NULLS_FIRST -> kept = kept.nullsFirst();
-            case NULLS_LAST  -> kept = kept.nullsLast();
-            case NATIVE      -> {} // giữ nguyên
+            case NULLS_LAST -> kept = kept.nullsLast();
+            case NATIVE -> {} // giữ nguyên
         }
         return kept;
     }

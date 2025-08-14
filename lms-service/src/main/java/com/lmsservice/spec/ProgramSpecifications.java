@@ -8,8 +8,7 @@ import com.lmsservice.dto.request.program.ProgramFilterRequest;
 import com.lmsservice.entity.Program;
 
 public final class ProgramSpecifications {
-    private ProgramSpecifications() {
-    }
+    private ProgramSpecifications() {}
 
     /**
      * Chỉ build các filter KHÁC isActive (đến đoạn quyền mới quyết định isActive)
@@ -27,7 +26,7 @@ public final class ProgramSpecifications {
             spec = spec.and(SpecUtils.anyOf(List.of(
                     SpecUtils.likeIgnoreCase("title", f.getKeyword()), SpecUtils.likeIgnoreCase("code", f.getKeyword())
                     // nếu muốn: SpecUtils.likeIgnoreCase("description", f.getKeyword())
-            )));
+                    )));
         }
         return spec;
     }
