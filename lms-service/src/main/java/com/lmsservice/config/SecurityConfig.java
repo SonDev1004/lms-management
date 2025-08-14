@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,7 +42,12 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     public static final String[] PUBLIC_URLS = {
-        "/api/auth/login**", "/api/auth/register**", "/api/auth/refresh**", "/api/auth/logout**", "/api/files/**",
+        "/api/auth/login**",
+        "/api/auth/register**",
+        "/api/auth/refresh**",
+        "/api/auth/logout**",
+        "/api/files/**",
+        "/api/program/**",
     };
 
     /**
@@ -60,9 +64,6 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URLS)
-                        .permitAll()
-                        // ✅ Cho phép guest xem danh sách program
-                        .requestMatchers(HttpMethod.GET, "/api/program", "/api/program/**")
                         .permitAll()
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()

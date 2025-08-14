@@ -18,7 +18,6 @@ import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
-import com.lmsservice.entity.Program;
 import com.lmsservice.service.ProgramService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,15 +68,15 @@ public class ProgramController {
                         .build());
     }
 
-    @Operation(
-            summary = "Lấy danh sách chương trình học",
-            description =
-                    "API này cho phép người dùng lấy danh sách các chương trình học đã được tạo trong hệ thống. Có thể lọc theo các tiêu chí như tên chương trình, trạng thái, số lượng học viên tối thiểu và tối đa, học phí, ngày bắt đầu và kết thúc.")
-    @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<Program>>> getProgram(
+    @Operation(summary = "Lấy danh sách chương trình học", description = "Lọc/search/sort/paging các chương trình học")
+    @GetMapping("/all-program")
+    public ResponseEntity<ApiResponse<PageResponse<ProgramResponse>>> getProgram(
             @ParameterObject ProgramFilterRequest f, @ParameterObject Pageable pageable) {
-        var rs = programService.getAllPrograms(f, pageable);
-        return ResponseEntity.ok(
-                ApiResponse.<PageResponse<Program>>builder().result(rs).build());
+        var response = programService.getAllPrograms(f, pageable);
+        return ResponseEntity.ok(ApiResponse.<PageResponse<ProgramResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get all programs successfully")
+                .result(response)
+                .build());
     }
 }

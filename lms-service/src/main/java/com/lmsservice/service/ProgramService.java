@@ -11,7 +11,6 @@ import com.lmsservice.dto.request.program.ProgramFilterRequest;
 import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
-import com.lmsservice.entity.Program;
 
 @Service
 public interface ProgramService {
@@ -19,5 +18,5 @@ public interface ProgramService {
 
     List<CurriculumResponse> addSubjectsToProgram(Long programId, List<CurriculumRequest> requests);
 
-    PageResponse<Program> getAllPrograms(ProgramFilterRequest f, Pageable pageable);
+    PageResponse<ProgramResponse> getAllPrograms(ProgramFilterRequest f, Pageable pageable);
 }

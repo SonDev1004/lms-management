@@ -139,7 +139,7 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
-    public PageResponse<Program> getAllPrograms(ProgramFilterRequest f, Pageable pageable) {
+    public PageResponse<ProgramResponse> getAllPrograms(ProgramFilterRequest f, Pageable pageable) {
         // Cho phép sort theo các field ROOT của Program
         Set<String> whitelist = PageableUtils.toWhitelist(
                 "id", "title", "fee", "code", "minStudent", "maxStudent", "isActive", "createdAt", "updatedAt");
@@ -147,8 +147,18 @@ public class ProgramServiceImpl implements ProgramService {
         Pageable safe = PageableUtils.sanitizeSort(pageable, whitelist, fallback);
 
         Page<Program> page = programRepository.findAll(ProgramSpecifications.from(f), safe);
-
-        return PageResponse.from(page);
+        // map sang DTO
+        Page<ProgramResponse> dtoPage = page.map(p -> ProgramResponse.builder()
+                .id(p.getId())
+                .title(p.getTitle())
+                .fee(p.getFee())
+                .code(p.getCode())
+                .minStudent(p.getMinStudent())
+                .maxStudent(p.getMaxStudent())
+                .description(p.getDescription())
+                .isActive(p.getIsActive())
+                .build());
+        return PageResponse.from(dtoPage);
     }
 
     // Generate a unique code for the program

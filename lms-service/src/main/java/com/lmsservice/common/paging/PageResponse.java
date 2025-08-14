@@ -62,7 +62,7 @@ public class PageResponse<T> {
         // ❖ Trả về: PageResponse<U> — DTO đã chuẩn hoá để xuất JSON.
 
         return new PageResponse<>(
-                page.getNumber(), // ❖ Lấy chỉ số trang hiện tại (0-based).
+                page.getNumber() +1, // ❖ Lấy chỉ số trang hiện tại (0-based).
                 page.getSize(), // ❖ Số phần tử trên trang hiện tại (kích thước trang).
                 page.getTotalElements(), // ❖ Tổng số phần tử (count(*)) cho toàn bộ tập dữ liệu.
                 page.getTotalPages(), // ❖ Tổng số trang.

@@ -35,7 +35,7 @@ public class PageableConfig {
             //   - Lợi ích: bảo vệ hệ thống trước các request cố tình lấy quá nhiều bản ghi 1 lúc.
             //   - Tuỳ dự án, bạn có thể chỉnh con số này (VD: 100, 500) theo nhu cầu và khả năng DB.
 
-            r.setOneIndexedParameters(false);
+            r.setOneIndexedParameters(true);
             // ❖ Ý nghĩa: chọn chế độ ĐÁNH SỐ TRANG 0-INDEX hay 1-INDEX khi đọc tham số từ HTTP.
             //   - false  => 0-index: page=0 là trang đầu tiên (PHÙ HỢP với Page.getNumber() của Spring Data).
             //   - true   => 1-index: page=1 là trang đầu tiên (dễ đọc hơn với người dùng, nhưng lệch với
