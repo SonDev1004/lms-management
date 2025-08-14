@@ -4,16 +4,21 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CurriculumRequest;
-import com.lmsservice.dto.request.ProgramRequest;
+import com.lmsservice.dto.request.program.ProgramFilterRequest;
+import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
+import com.lmsservice.entity.Program;
 import com.lmsservice.service.ProgramService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,5 +67,17 @@ public class ProgramController {
                         .message("Subjects added to program successfully")
                         .result(response)
                         .build());
+    }
+
+    @Operation(
+            summary = "Lấy danh sách chương trình học",
+            description =
+                    "API này cho phép người dùng lấy danh sách các chương trình học đã được tạo trong hệ thống. Có thể lọc theo các tiêu chí như tên chương trình, trạng thái, số lượng học viên tối thiểu và tối đa, học phí, ngày bắt đầu và kết thúc.")
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<Program>>> getProgram(
+            @ParameterObject ProgramFilterRequest f, @ParameterObject Pageable pageable) {
+        var rs = programService.getAllPrograms(f, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.<PageResponse<Program>>builder().result(rs).build());
     }
 }

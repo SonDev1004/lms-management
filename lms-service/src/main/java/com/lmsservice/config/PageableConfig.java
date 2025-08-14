@@ -6,8 +6,6 @@ package com.lmsservice.config;
  * Các import cần thiết cho cấu hình Spring và tuỳ biến cơ chế bind Pageable từ query params.
  */
 import org.springframework.context.annotation.*;
-// ❖ Import các annotation cấu hình Spring như @Configuration, @Bean, ...
-
 import org.springframework.data.web.config.PageableHandlerMethodArgumentResolverCustomizer;
 // ❖ Interface functional (SAM) cho phép "tuỳ biến" đối tượng PageableHandlerMethodArgumentResolver
 //   - Resolver này là thành phần Spring MVC dùng để bind tham số Pageable/Slice từ HTTP request vào method controller.
@@ -40,7 +38,8 @@ public class PageableConfig {
             r.setOneIndexedParameters(false);
             // ❖ Ý nghĩa: chọn chế độ ĐÁNH SỐ TRANG 0-INDEX hay 1-INDEX khi đọc tham số từ HTTP.
             //   - false  => 0-index: page=0 là trang đầu tiên (PHÙ HỢP với Page.getNumber() của Spring Data).
-            //   - true   => 1-index: page=1 là trang đầu tiên (dễ đọc hơn với người dùng, nhưng lệch với Page.getNumber()).
+            //   - true   => 1-index: page=1 là trang đầu tiên (dễ đọc hơn với người dùng, nhưng lệch với
+            // Page.getNumber()).
             //   Vì sao để false?
             //   - Đồng nhất với hành vi mặc định của Spring Data (Page#getNumber() là 0-based).
             //   - Tránh phải cộng/trừ 1 khi map dữ liệu vào PageResponse.
@@ -62,4 +61,3 @@ public class PageableConfig {
  * - KHÔNG dùng "sort=price,desc;id,asc" (dấu ';' không phải cú pháp chuẩn của Spring).
  * - Kết hợp với whitelist trong PageableUtils để khoá các cột cho phép sort.
  */
-

@@ -4,18 +4,12 @@ package com.lmsservice.common.paging;
 //   Lưu ý: convention thường dùng "com.filtertemplate..." thay vì "filtertemplate.com..."
 //   nhưng đây không ảnh hưởng chức năng. Đảm bảo package khớp với cấu trúc thư mục.
 
-import lombok.*;
-// ❖ Import toàn bộ annotation của Lombok (Getter, Setter, NoArgsConstructor, AllArgsConstructor, ...)
-//   Lombok giúp sinh code lặp (get/set/constructor) tự động lúc compile.
-
-import lombok.experimental.FieldDefaults;
-// ❖ Annotation để đặt "mặc định mức độ truy cập" và final/không final cho toàn bộ field trong class.
+import java.util.List;
 
 import org.springframework.data.domain.Page;
-// ❖ Page là kết quả phân trang chuẩn của Spring Data (chứa content + metadata: totalPages, totalElements, ...)
 
-import java.util.List;
-// ❖ Dùng List để chứa danh sách item ở trang hiện tại (page.getContent()).
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 /**
  * PageResponse<T> là DTO chuẩn hoá JSON trả về cho các API có phân trang.
@@ -68,14 +62,13 @@ public class PageResponse<T> {
         // ❖ Trả về: PageResponse<U> — DTO đã chuẩn hoá để xuất JSON.
 
         return new PageResponse<>(
-                page.getNumber(),          // ❖ Lấy chỉ số trang hiện tại (0-based).
-                page.getSize(),            // ❖ Số phần tử trên trang hiện tại (kích thước trang).
-                page.getTotalElements(),   // ❖ Tổng số phần tử (count(*)) cho toàn bộ tập dữ liệu.
-                page.getTotalPages(),      // ❖ Tổng số trang.
-                page.hasNext(),            // ❖ true nếu còn trang sau.
-                page.hasPrevious(),        // ❖ true nếu có trang trước.
-                page.getContent()          // ❖ List<U> — nội dung trang hiện tại.
-        );
+                page.getNumber(), // ❖ Lấy chỉ số trang hiện tại (0-based).
+                page.getSize(), // ❖ Số phần tử trên trang hiện tại (kích thước trang).
+                page.getTotalElements(), // ❖ Tổng số phần tử (count(*)) cho toàn bộ tập dữ liệu.
+                page.getTotalPages(), // ❖ Tổng số trang.
+                page.hasNext(), // ❖ true nếu còn trang sau.
+                page.hasPrevious(), // ❖ true nếu có trang trước.
+                page.getContent() // ❖ List<U> — nội dung trang hiện tại.
+                );
     }
 }
-

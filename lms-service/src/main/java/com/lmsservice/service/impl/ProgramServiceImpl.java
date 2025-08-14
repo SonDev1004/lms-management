@@ -7,10 +7,16 @@ import java.util.*;
 import jakarta.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.common.paging.PageResponse;
+import com.lmsservice.common.paging.PageableUtils;
 import com.lmsservice.dto.request.CurriculumRequest;
-import com.lmsservice.dto.request.ProgramRequest;
+import com.lmsservice.dto.request.program.ProgramFilterRequest;
+import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
 import com.lmsservice.entity.Curriculum;
@@ -22,6 +28,7 @@ import com.lmsservice.repository.CurriculumRepository;
 import com.lmsservice.repository.ProgramRepository;
 import com.lmsservice.repository.SubjectRepository;
 import com.lmsservice.service.ProgramService;
+import com.lmsservice.spec.ProgramSpecifications;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -129,6 +136,19 @@ public class ProgramServiceImpl implements ProgramService {
                         .subjectId(c.getSubject().getId())
                         .build())
                 .toList();
+    }
+
+    @Override
+    public PageResponse<Program> getAllPrograms(ProgramFilterRequest f, Pageable pageable) {
+        // Cho phép sort theo các field ROOT của Program
+        Set<String> whitelist = PageableUtils.toWhitelist(
+                "id", "title", "fee", "code", "minStudent", "maxStudent", "isActive", "createdAt", "updatedAt");
+        Sort fallback = Sort.by(Sort.Order.desc("id")); // sort mặc định khi client không truyền/hoặc truyền sai
+        Pageable safe = PageableUtils.sanitizeSort(pageable, whitelist, fallback);
+
+        Page<Program> page = programRepository.findAll(ProgramSpecifications.from(f), safe);
+
+        return PageResponse.from(page);
     }
 
     // Generate a unique code for the program

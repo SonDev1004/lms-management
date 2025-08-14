@@ -2,11 +2,11 @@ package com.lmsservice.common.paging;
 
 // ❖ Package utils chung cho phân trang/sắp xếp (dùng lại cho mọi resource).
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.*;
 // ❖ Import Pageable, PageRequest, Sort... từ Spring Data để thao tác paging/sort.
-
-import java.util.*;
-// ❖ Import Set, Map, List, HashSet... dùng cho whitelist & alias mapping.
 
 public final class PageableUtils {
     private PageableUtils() {
@@ -27,8 +27,10 @@ public final class PageableUtils {
      * - Hỗ trợ multi-sort (Spring cho phép lặp tham số &sort=...): ta duyệt từng Order và chỉ giữ Order hợp lệ.
      */
     public static Pageable sanitizeSort(Pageable incoming, Set<String> allowed, Sort fallback) {
-        if (incoming == null) return PageRequest.of(0, 20, fallback);
-        // ❖ Nếu không có Pageable (null), tạo PageRequest mặc định: page=0, size=20, sort=fallback.
+        if (incoming == null) {
+            // fallback có thể null -> về Sort.unsorted() để không NPE
+            return PageRequest.of(0, 20, fallback == null ? Sort.unsorted() : fallback);
+        }
 
         Sort sanitized = Sort.unsorted();
         // ❖ sanitized: sort đã "lọc sạch". Khởi tạo ở trạng thái "unsorted" rồi cộng dồn các Order hợp lệ.
@@ -99,19 +101,11 @@ public final class PageableUtils {
         // - Với to-many/nested phức tạp, cân nhắc thiết kế lại hoặc thêm spec orderBy tùy chỉnh.
     }
 
-    /**
-     * Whitelist mặc định cho Product (demo)
-     *
-     * @return Set các cột root cho phép sort ở resource Product
-     * <p>
-     * Mục đích:
-     * - Cung cấp 1 danh sách "an toàn" dùng ngay — đội dự án có thể sửa/extend theo entity của mình.
-     * - Dùng chung với sanitizeSort(...) để lọc sort client.
-     */
-    public static Set<String> productAllowedProps() {
-        return new HashSet<>(List.of("id", "name", "price", "inStock", "category"));
-        // ❖ Java 9+: List.of(...) tạo danh sách bất biến nhanh.
-        // ❖ Bọc trong HashSet để có Set (tìm kiếm O(1) khi kiểm tra contains).
-        // ❖ Các cột là field ROOT của entity Product — không chứa dấu chấm (nested).
+    // ✅ Helper tạo whitelist nhanh, giữ thứ tự khai báo (phục vụ multi-sort)
+    public static Set<String> toWhitelist(String... props) {
+        // LinkedHashSet để:
+        // - Giữ nguyên thứ tự bạn truyền vào (ví dụ "title" rồi "id")
+        // - Tự loại bỏ trùng lặp nếu có
+        return Arrays.stream(props).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
