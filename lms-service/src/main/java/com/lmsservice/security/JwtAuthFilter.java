@@ -61,10 +61,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Nếu là URL công khai thì bỏ qua filter
         boolean isPublic = stream(SecurityConfig.PUBLIC_URLS).anyMatch(url -> pathMatcher.match(url, path));
 
-        if (isPublic) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        if (isPublic) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
         try {
             String token = getJwtFromRequest(request);
             if (token != null) {
@@ -90,14 +90,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             log.error("Lỗi không xác định khi xử lý JWT: {}", ex.getMessage());
             request.setAttribute("errorCode", ErrorCode.UNAUTHENTICATED);
         }
-
+        // ❗ LUÔN cho request đi tiếp (public thì không bắt buộc token)
         filterChain.doFilter(request, response);
     }
 
     /**
      * Xác thực token và thiết lập thông tin người dùng vào SecurityContext.
      *
-     * @param token JWT token từ request
+     * @param token   JWT token từ request
      * @param request HttpServletRequest để lấy thông tin người dùng
      */
     private void validateTokenAndSetAuthentication(
