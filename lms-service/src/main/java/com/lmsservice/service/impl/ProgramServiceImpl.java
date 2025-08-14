@@ -6,10 +6,13 @@ import java.util.*;
 
 import jakarta.transaction.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.common.paging.PageResponse;
@@ -27,6 +30,7 @@ import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.repository.CurriculumRepository;
 import com.lmsservice.repository.ProgramRepository;
 import com.lmsservice.repository.SubjectRepository;
+import com.lmsservice.security.policy.ProgramPolicy;
 import com.lmsservice.service.ProgramService;
 import com.lmsservice.spec.ProgramSpecifications;
 
@@ -34,6 +38,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -41,6 +46,7 @@ public class ProgramServiceImpl implements ProgramService {
     ProgramRepository programRepository;
     CurriculumRepository curriculumRepository;
     SubjectRepository subjectRepository;
+    ProgramPolicy programPolicy;
 
     public ProgramResponse createProgram(ProgramRequest programRequest) {
 
@@ -140,13 +146,23 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public PageResponse<ProgramResponse> getAllPrograms(ProgramFilterRequest f, Pageable pageable) {
+
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean canViewAll = programPolicy.canViewAll(auth);
+
+        log.info("getAllPrograms canViewAll={} authorities={}",
+                canViewAll, auth != null ? auth.getAuthorities() : "null");
+
+        // ✅ chỉ cần gọi 1 hàm from(f, canViewAll)
+        Specification<Program> spec = ProgramSpecifications.from(f, canViewAll);
+
         // Cho phép sort theo các field ROOT của Program
         Set<String> whitelist = PageableUtils.toWhitelist(
                 "id", "title", "fee", "code", "minStudent", "maxStudent", "isActive", "createdAt", "updatedAt");
         Sort fallback = Sort.by(Sort.Order.desc("id")); // sort mặc định khi client không truyền/hoặc truyền sai
         Pageable safe = PageableUtils.sanitizeSort(pageable, whitelist, fallback);
 
-        Page<Program> page = programRepository.findAll(ProgramSpecifications.from(f), safe);
+        Page<Program> page = programRepository.findAll(spec, safe);
         // map sang DTO
         Page<ProgramResponse> dtoPage = page.map(p -> ProgramResponse.builder()
                 .id(p.getId())

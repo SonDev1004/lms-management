@@ -1,111 +1,146 @@
 package com.lmsservice.common.paging;
 
-// ❖ Package utils chung cho phân trang/sắp xếp (dùng lại cho mọi resource).
+/*
+ * ❖ Utils chung cho phân trang/sắp xếp (tái dùng cho mọi resource).
+ *    - Mục tiêu: AN TOÀN & THÂN THIỆN (lenient)
+ *      + Paging: tự "clamp" các giá trị xấu (page âm, size ≤ 0, size quá lớn)
+ *      + Sort: chỉ giữ các field nằm trong whitelist (hoặc alias mapping), nếu không hợp lệ -> dùng fallback
+ *    - Lợi ích:
+ *      + Bảo vệ API khỏi input bậy nhưng vẫn trả dữ liệu hợp lệ (UX mượt)
+ *      + Thứ tự ổn định khi fallback, paging chính xác
+ */
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.*;
-// ❖ Import Pageable, PageRequest, Sort... từ Spring Data để thao tác paging/sort.
 
 public final class PageableUtils {
-    private PageableUtils() {
-        // ❖ Class tiện ích (utility class) => private constructor để chặn khởi tạo.
-    }
+    private PageableUtils() {}
+
+    // ====== Chính sách clamp mặc định (có thể chỉnh tuỳ dự án) ======
+    private static final int DEFAULT_PAGE = 0;    // Spring Pageable: 0-based
+    private static final int DEFAULT_SIZE = 20;   // size mặc định khi client không gửi/ gửi ≤ 0
+    private static final int MAX_SIZE     = 100;  // chặn size quá lớn
 
     /**
-     * Chỉ cho phép sort theo cột root hợp lệ (whitelist).
+     * ❖ Sanitize sort theo danh sách property "root" cho phép (whitelist) + clamp page/size.
      *
-     * @param incoming Pageable client gửi lên (chứa page/size/sort)
-     * @param allowed  Danh sách "tên thuộc tính" cho phép sắp xếp (ví dụ: id, name, price...)
-     * @param fallback Sort fallback sẽ dùng nếu client không gửi sort hợp lệ
-     * @return Pageable mới (giữ nguyên page/size) nhưng sort đã được "lọc" theo whitelist
-     * <p>
+     * @param incoming Pageable client gửi lên (có page/size/sort). Có thể null.
+     * @param allowed  Tập thuộc tính cho phép sort, ví dụ: ["id","title","fee",...]
+     * @param fallback Sort fallback sẽ dùng nếu sau khi lọc không còn Order hợp lệ.
+     * @return Pageable mới:
+     *         - page/size đã được clamp về biên an toàn
+     *         - sort đã được "lọc sạch" theo whitelist (hoặc fallback)
+     *
      * Vì sao cần?
-     * - Bảo vệ API: không cho client sort theo cột lạ (tránh lỗi runtime/hiệu năng).
-     * - Đảm bảo trật tự ổn định (stable) khi fallback.
-     * - Hỗ trợ multi-sort (Spring cho phép lặp tham số &sort=...): ta duyệt từng Order và chỉ giữ Order hợp lệ.
+     * - Tránh lỗi runtime do client sort theo cột không tồn tại.
+     * - Đảm bảo thứ tự ổn định khi fallback (vd: id DESC).
+     * - UX tốt: input xấu không làm vỡ API; hệ thống tự điều chỉnh về giá trị an toàn.
      */
     public static Pageable sanitizeSort(Pageable incoming, Set<String> allowed, Sort fallback) {
-        if (incoming == null) {
-            // fallback có thể null -> về Sort.unsorted() để không NPE
-            return PageRequest.of(0, 20, fallback == null ? Sort.unsorted() : fallback);
+        // 1) Clamp page & size
+        final int page = clampPage(incoming);
+        final int size = clampSize(incoming);
+
+        // 2) Lọc sort theo whitelist
+        Sort sanitized = Sort.unsorted();
+        if (incoming != null && incoming.getSort() != null) {
+            for (Sort.Order o : incoming.getSort()) {
+                if (allowed.contains(o.getProperty())) {
+                    // giữ nguyên hướng (ASC/DESC), nullHandling/ignoreCase nếu có
+                    Sort.Order kept = copyOrder(o);
+                    sanitized = sanitized.and(Sort.by(kept));
+                }
+            }
         }
 
-        Sort sanitized = Sort.unsorted();
-        // ❖ sanitized: sort đã "lọc sạch". Khởi tạo ở trạng thái "unsorted" rồi cộng dồn các Order hợp lệ.
+        // 3) Nếu không còn sort hợp lệ -> fallback (nếu fallback null -> unsorted)
+        if (sanitized.isUnsorted()) {
+            sanitized = (fallback == null ? Sort.unsorted() : fallback);
+        }
 
-        for (Sort.Order o : incoming.getSort())
-            // ❖ Duyệt TỪNG điều kiện sắp xếp mà client gửi (có thể có nhiều sort).
-            if (allowed.contains(o.getProperty())) sanitized = sanitized.and(Sort.by(o));
-        // ❖ Nếu property nằm trong whitelist => giữ lại bằng cách "and" thêm Order đó.
-        //    - .and(...) cho phép chain nhiều Order theo thứ tự client gửi.
-        //    - Nếu không nằm trong whitelist => bỏ qua (không thêm).
-
-        if (sanitized.isUnsorted()) sanitized = fallback;
-        // ❖ Nếu sau khi lọc, không còn Order hợp lệ nào => dùng sort fallback an toàn (ví dụ: id DESC).
-        //    - Tránh trả về "unsorted" vì sẽ tạo thứ tự không ổn định giữa các request.
-
-        return PageRequest.of(incoming.getPageNumber(), incoming.getPageSize(), sanitized);
-        // ❖ Trả về Pageable MỚI:
-        //    - Giữ nguyên pageNumber (0-based) + pageSize của client
-        //    - Thay sort bằng "sanitized" (đã lọc)
-        // Lưu ý: nếu incoming là "unpaged", getPageNumber/getPageSize có thể không như kỳ vọng.
-        // Thực tế trong controller ta luôn nhận Pageable có page/size, nên an toàn.
+        return PageRequest.of(page, size, sanitized);
     }
 
     /**
-     * Cho phép sort alias -> nested path (ví dụ: brandName -> brand.name).
+     * ❖ Sanitize sort theo "alias mapping" -> nested path + clamp page/size.
+     *    Ví dụ: client sort=brandName,asc -> map ngầm sang "brand.name".
      *
-     * @param incoming    Pageable client gửi lên
-     * @param aliasToPath Map alias -> đường dẫn thuộc tính thực tế (có thể là nested, ví dụ: "brand.name")
-     * @param fallback    Sort fallback nếu map không tạo được Order hợp lệ nào
-     * @return Pageable mới với sort đã được ánh xạ & lọc
-     * <p>
+     * @param incoming    Pageable client gửi lên (có thể null)
+     * @param aliasToPath Map <alias, realPath> , ví dụ: {"brandName" -> "brand.name"}
+     * @param fallback    Sort fallback nếu không có alias hợp lệ
+     * @return Pageable đã clamp page/size + sort đã được ánh xạ & lọc
+     *
      * Khi nào dùng?
-     * - Khi KHÔNG muốn cho client biết cấu trúc entity (nested path), nhưng vẫn cho phép sort:
-     * client gọi sort=brandName,asc -> hệ thống map ngầm sang "brand.name".
-     * - Tránh lộ mô hình domain, giảm coupling giữa client & DB schema.
+     * - Khi KHÔNG muốn để lộ cấu trúc entity/nested path ra client nhưng vẫn hỗ trợ sort thân thiện.
      */
     public static Pageable sanitizeSortWithMapping(Pageable incoming, Map<String, String> aliasToPath, Sort fallback) {
-        if (incoming == null) return PageRequest.of(0, 20, fallback);
-        // ❖ Nếu không có Pageable, áp page=0,size=20,sort=fallback như trên.
+        // 1) Clamp page & size
+        final int page = clampPage(incoming);
+        final int size = clampSize(incoming);
 
+        // 2) Lọc & ánh xạ sort alias -> real path
         Sort sanitized = Sort.unsorted();
-        // ❖ Sort kết quả sau khi ánh xạ từng alias -> real path.
-
-        for (Sort.Order o : incoming.getSort()) {
-            // ❖ Duyệt từng Order client gửi (multi-sort vẫn hỗ trợ).
-            String real = aliasToPath.get(o.getProperty());
-            // ❖ Lấy "đường dẫn thật" (có thể là nested) tương ứng alias client yêu cầu.
-
-            if (real != null && !real.isBlank())
-                sanitized = sanitized.and(Sort.by(new Sort.Order(o.getDirection(), real)));
-            // ❖ Nếu alias hợp lệ (có mapping):
-            //    - Tạo Order mới với "real path" nhưng giữ nguyên hướng (ASC/DESC) từ client.
-            //    - GỘP (and) vào Sort kết quả theo đúng thứ tự client gửi.
-            //
-            // Lưu ý:
-            // - Ở đây ta chỉ copy "direction". Nếu bạn dùng thêm NullHandling/IgnoreCase trong Order,
-            //   có thể copy các thuộc tính đó tuỳ nhu cầu (.with(...)).
+        if (incoming != null && incoming.getSort() != null) {
+            for (Sort.Order o : incoming.getSort()) {
+                String real = aliasToPath.get(o.getProperty());
+                if (real != null && !real.isBlank()) {
+                    Sort.Order mapped = new Sort.Order(o.getDirection(), real);
+                    // giữ thuộc tính phụ của Order nếu có
+                    if (o.isIgnoreCase()) mapped = mapped.ignoreCase();
+                    switch (o.getNullHandling()) {
+                        case NULLS_FIRST -> mapped = mapped.nullsFirst();
+                        case NULLS_LAST  -> mapped = mapped.nullsLast();
+                        case NATIVE      -> {} // giữ nguyên
+                    }
+                    sanitized = sanitized.and(Sort.by(mapped));
+                }
+            }
         }
 
-        if (sanitized.isUnsorted()) sanitized = fallback;
-        // ❖ Không có alias hợp lệ nào => dùng fallback sort để đảm bảo thứ tự ổn định.
+        // 3) Fallback khi không có alias hợp lệ
+        if (sanitized.isUnsorted()) {
+            sanitized = (fallback == null ? Sort.unsorted() : fallback);
+        }
 
-        return PageRequest.of(incoming.getPageNumber(), incoming.getPageSize(), sanitized);
-        // ❖ Trả Pageable mới (giữ page/size gốc, thay sort đã ánh xạ).
-        //
-        // Cảnh báo nhỏ:
-        // - Sort theo nested path có thể khiến JPA sinh join; đa số case to-one OK.
-        // - Với to-many/nested phức tạp, cân nhắc thiết kế lại hoặc thêm spec orderBy tùy chỉnh.
+        return PageRequest.of(page, size, sanitized);
     }
 
-    // ✅ Helper tạo whitelist nhanh, giữ thứ tự khai báo (phục vụ multi-sort)
+    /**
+     * ❖ Helper tạo whitelist nhanh (giữ thứ tự bạn truyền vào, tự loại trùng).
+     *    Phục vụ multi-sort: thứ tự phần tử trong whitelist KHÔNG ép thứ tự sort
+     *    (thứ tự sort vẫn theo client), chỉ là tiện lợi khi build set.
+     */
     public static Set<String> toWhitelist(String... props) {
-        // LinkedHashSet để:
-        // - Giữ nguyên thứ tự bạn truyền vào (ví dụ "title" rồi "id")
-        // - Tự loại bỏ trùng lặp nếu có
         return Arrays.stream(props).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    // ====================== Private helpers ======================
+
+    // Copy Order để không mất ignoreCase/nullHandling khi lọc
+    private static Sort.Order copyOrder(Sort.Order o) {
+        Sort.Order kept = new Sort.Order(o.getDirection(), o.getProperty());
+        if (o.isIgnoreCase()) kept = kept.ignoreCase();
+        switch (o.getNullHandling()) {
+            case NULLS_FIRST -> kept = kept.nullsFirst();
+            case NULLS_LAST  -> kept = kept.nullsLast();
+            case NATIVE      -> {} // giữ nguyên
+        }
+        return kept;
+    }
+
+    // Ép page >= 0; incoming null -> DEFAULT_PAGE
+    private static int clampPage(Pageable incoming) {
+        if (incoming == null) return DEFAULT_PAGE;
+        return Math.max(0, incoming.getPageNumber());
+    }
+
+    // Ép size: size <= 0 -> DEFAULT_SIZE; size quá lớn -> MAX_SIZE; incoming null -> DEFAULT_SIZE
+    private static int clampSize(Pageable incoming) {
+        if (incoming == null) return DEFAULT_SIZE;
+        int size = incoming.getPageSize();
+        if (size <= 0) return DEFAULT_SIZE;
+        return Math.min(size, MAX_SIZE);
     }
 }
