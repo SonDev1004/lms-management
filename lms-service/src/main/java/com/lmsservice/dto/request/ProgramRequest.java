@@ -30,5 +30,7 @@ public class ProgramRequest {
     BigDecimal fee;
 
     String description;
+
+    @Builder.Default
     Boolean isActive = true;
 }

@@ -19,11 +19,11 @@ public class LessonRequest {
     @NotBlank(message = "Content cannot be blank")
     String content;
 
-    @NotBlank(message = "Description cannot be blank")
-    String description;
+    @Builder.Default()
+    String description = "";
 
     @Builder.Default()
-    String document="";
+    String document = "";
 
     @NotNull(message = "Subject ID cannot be null")
     Long subjectId;

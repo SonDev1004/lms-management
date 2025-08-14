@@ -14,6 +14,7 @@ import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.LessonResponse;
 import com.lmsservice.service.LessonService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
