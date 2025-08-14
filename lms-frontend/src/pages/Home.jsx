@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Galleria } from 'primereact/galleria';
 
 import './Home.css'
+import { Card } from 'primereact/card';
+import 'primeicons/primeicons.css';
+import { Link } from 'react-router-dom';
 const Home = () => {
     const [images, setImages] = useState([
         'https://mdbcdn.b-cdn.net/img/new/slides/041.webp',
@@ -16,7 +19,8 @@ const Home = () => {
 
     return (
         <>
-            <div className="card">
+            <div className="card py-4">
+                {/*Galleria Begin */}
                 <Galleria
                     value={images}
                     numVisible={5}
@@ -39,7 +43,32 @@ const Home = () => {
                     showThumbnails={false}
                     className="w-screen h-screen"
                 />
+                <div className="card flex justify-content-center flex-wrap">
+                    <Card title="Các chương trình học" className='col-8 text-center'>
+                        <div className='grid flex justify-content-center flex-wrap py-4'>
+                            <div className='col-3' >
+                                <Link to="/course/detail" className='p-button font-bold'>IELTS 4.0</Link>
+                            </div>
+                            <div className='col-3' >
+                                <Link to="/course/detail" className='p-button font-bold'>IELTS 4.0</Link>
+                            </div>
+                            <div className='col-3' >
+                                <Link to="/course/detail" className='p-button font-bold'>IELTS 4.0</Link>
+                            </div>
+                        </div>
+                        <div className='grid flex justify-content-center flex-wrap'>
+                            <div className='col-3' >
+                                <Link to="/course/detail" className='p-button font-bold'>IELTS 4.0</Link>
+                            </div><div className='col-3' >
+                                <Link to="/course/detail" className='p-button font-bold'>IELTS 4.0</Link>
+                            </div><div className='col-3' >
+                                <Link to="/course/detail" className='p-button font-bold'>IELTS 4.0</Link>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
             </div>
+            {/*Galleria End*/}
         </>
     );
 }

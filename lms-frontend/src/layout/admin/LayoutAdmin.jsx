@@ -3,7 +3,7 @@ import { Badge } from 'primereact/badge';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import AdminSidebarMenu from './AdminSidebarMenu';
 import StudentSidebarMenu from "../student/StudentSidebarMenu.jsx";
 import RightPanel from "../student/RightPanel.jsx";
@@ -14,7 +14,14 @@ const LayoutAdmin = () => {
             <div>
                 {/* Top menu */}
                 <div className='grid shadow-1 mb-3'>
-                    <div className='col-2'>Logo</div>
+                    <Link to="/home" style={{ display: 'inline-block' }}>
+                        <img
+                            alt="logo"
+                            src="https://primefaces.org/cdn/primereact/images/logo.png"
+                            height="40"
+                            className="mr-2"
+                        />
+                    </Link>
 
                     <div className='col-10'>
                         <div className='grid'>
@@ -37,18 +44,18 @@ const LayoutAdmin = () => {
                 {/* Sidebar menu */}
                 <div className='grid'>
                     <div className='col-2'>
-                        <AdminSidebarMenu/>
+                        <AdminSidebarMenu />
                     </div>
 
-                        <div className='col-10'>
-                            <Outlet />
-                        </div>
+                    <div className='col-10'>
+                        <Outlet />
+                    </div>
                 </div>
 
 
-                </div>
-            </>
-            );
-            }
+            </div>
+        </>
+    );
+}
 
-            export default LayoutAdmin;
+export default LayoutAdmin;

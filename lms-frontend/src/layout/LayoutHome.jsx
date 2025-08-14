@@ -5,8 +5,9 @@ import { Badge } from 'primereact/badge';
 import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
 import { Menubar } from 'primereact/menubar';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Panel } from 'primereact/panel';
+import { Divider } from 'primereact/divider';
 
 import './LayoutHome.css';
 import axios from "axios";
@@ -37,24 +38,26 @@ const LayoutHome = () => {
     const items = [
         {
             label: 'Home',
-            icon: 'pi pi-home'
+            icon: 'pi pi-home',
+            command: () => navigate('/home')
         },
         {
-            label: 'Features',
-            icon: 'pi pi-star'
+            label: 'Login',
+            icon: 'pi pi-sign-in',
+            command: () => navigate('/home/login')
         },
         {
-            label: 'Projects',
+            label: 'Courses',
             icon: 'pi pi-search',
             items: [
                 {
-                    label: 'Core',
+                    label: 'IELTS',
                     icon: 'pi pi-bolt',
                     shortcut: '⌘+S',
                     template: itemRenderer
                 },
                 {
-                    label: 'Blocks',
+                    label: 'TOEIC',
                     icon: 'pi pi-server',
                     shortcut: '⌘+B',
                     template: itemRenderer
@@ -121,7 +124,9 @@ const LayoutHome = () => {
     ];
 
     //Menubar Begin
-    const start = <img alt="logo" src="https://primefaces.org/cdn/primereact/images/logo.png" height="40" className="mr-2"></img>;
+    const start =
+        <Link to='/home' ><img alt="logo" src="https://primefaces.org/cdn/primereact/images/logo.png" height="40" className="mr-2"></img></Link>
+        ;
     const end = (
         <div className="flex align-items-center gap-2">
             <InputText placeholder="Search" type="text" className="w-8rem sm:w-auto" />
@@ -153,7 +158,13 @@ const LayoutHome = () => {
             <Menubar model={items} start={start} end={end} />
             <Outlet />
 
-            <div className='grid py-6 ' style={{ backgroundColor: 'gray' }}>
+            {/*Footer Begin */}
+            <div className='grid ' style={{ backgroundColor: 'gray' }}>
+                <div className="col-6">
+                    <img src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*ROCi1imT71cQp0FZ.png" alt="" className="w-4" />
+                </div>
+                <div className="col-6"></div>
+                <Divider />
                 <div className="col-6">
                     <Panel header='Thông tin liên hệ'>
                         <div className="mb-3">
@@ -163,15 +174,40 @@ const LayoutHome = () => {
                             <i className="pi pi-phone"></i> <a href="tel:0901234567">0901234567</a>
                         </div>
                         <div className="mb-3">
-                            <i className="pi pi-map-marker"></i> <span>123 Nguyen Thi Minh Khai</span>
+                            <i className="pi pi-map-marker"></i> <a href=""><span>123 Nguyen Thi Minh Khai</span></a>
                         </div>
                     </Panel>
                 </div>
 
-                <div className="col-6">
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b" alt="" className="w-full" />
+                <div className="col-3">
+                    <Panel header='Khóa học IELTS'>
+                        <div className="mb-3">
+                            <a href="">IELTS 4.0</a>
+                        </div>
+                        <div className="mb-3">
+                            <a href="">IELTS 5.0</a>
+                        </div>
+                        <div className="mb-3">
+                            <a href="">IELTS 6.0</a>
+                        </div>
+                    </Panel>
+                </div>
+
+                <div className="col-3">
+                    <Panel header='Khóa học khác'>
+                        <div className="mb-3">
+                            <a href="">Tiếng Anh Cơ Bản</a>
+                        </div>
+                        <div className="mb-3">
+                            <a href="">Tiếng Anh Cho Người Đi Làm</a>
+                        </div>
+                        <div className="mb-3">
+                            <a href="">Tiếng Anh Giao Tiếp</a>
+                        </div>
+                    </Panel>
                 </div>
             </div>
+            {/*Footer End */}
         </>);
 }
 

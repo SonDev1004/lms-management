@@ -19,5 +19,13 @@
 }
 
 .p-galleria .p-galleria-item-nav {
-    color: #234160;
+    color: black;
+}
+
+.p-button {
+    width: 200px;
+    background-color: #BCFEFE;
+    border: 2px, #001C44;
+    border-radius: 20px;
+    color: #001C44;
 }

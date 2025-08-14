@@ -1,0 +1,11 @@
+.p-menubar-root-list {
+    width: 100%;
+    justify-content: center;
+}
+
+html,
+body,
+.p-galleria .p-galleria-item img {
+    /* Màu nền */
+    background-color: #eefefd;
+}

@@ -51,7 +51,7 @@ export default function AuthTabs({ onLogin }) {
             await onLogin({ username: username.trim(), password, remember });
             toast.current.show({ severity: 'success', summary: 'Đăng nhập', detail: 'Thành công', life: 1200 });
         } else {
-            axios.post('http://14.225.198.117:8081/api/auth/login', { username: username, password: password })
+            axios.post('auth/login', { username: username, password: password })
                 .then(res => {
                     let { accessToken, refreshToken } = res.data.result;
                     localStorage.setItem('username', username);
@@ -67,17 +67,17 @@ export default function AuthTabs({ onLogin }) {
 
     // Register state
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        userName: '',
-        passwordR: '',
-        confirmPassword: '',
-        email: '',
-        phone: '',
-        dateOfBirth: null,
-        address: '',
+        firstName: 'Duong',
+        lastName: 'Huu Phuoc',
+        userName: 'huuphuoc29791',
+        password: 'Strong@Pass123',
+        confirmPassword: 'Strong@Pass123',
+        email: 'huuphuoc29791@gmail.com',
+        phone: '0905939947',
+        dateOfBirth: '01-01-1991',
+        address: 'TPHCM',
         gender: 'true',
-        avatar: null,
+        avatar: '',
     });
     const [errors, setErrors] = useState({});
     const [loadingRegister, setLoadingRegister] = useState(false);
@@ -87,10 +87,10 @@ export default function AuthTabs({ onLogin }) {
         setErrors(prev => ({ ...prev, [name]: '' }));
 
         // quick inline validation for password confirmation
-        if (name === 'confirmPassword' || name === 'passwordR') {
-            if (name === 'confirmPassword' && value !== formData.passwordR) {
+        if (name === 'confirmPassword' || name === 'password') {
+            if (name === 'confirmPassword' && value !== formData.password) {
                 setErrors(prev => ({ ...prev, confirmPassword: 'Mật khẩu không khớp' }));
-            } else if (name === 'passwordR' && formData.confirmPassword && value !== formData.confirmPassword) {
+            } else if (name === 'password' && formData.confirmPassword && value !== formData.confirmPassword) {
                 setErrors(prev => ({ ...prev, confirmPassword: 'Mật khẩu không khớp' }));
             } else {
                 setErrors(prev => ({ ...prev, confirmPassword: '' }));
@@ -101,8 +101,8 @@ export default function AuthTabs({ onLogin }) {
     const validate = () => {
         const errs = {};
         if (!formData.userName) errs.userName = 'Username bắt buộc';
-        if (!formData.passwordR) errs.passwordR = 'Password bắt buộc';
-        if (formData.passwordR !== formData.confirmPassword) errs.confirmPassword = 'Mật khẩu không khớp';
+        if (!formData.password) errs.password = 'Password bắt buộc';
+        if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Mật khẩu không khớp';
         if (!formData.email) errs.email = 'Email bắt buộc';
         return errs;
     };
@@ -117,47 +117,32 @@ export default function AuthTabs({ onLogin }) {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        const errs = validate();
-        if (Object.keys(errs).length) {
-            setErrors(errs);
-            toast.current.show({ severity: 'warn', summary: 'Kiểm tra thông tin', detail: 'Vui lòng điền đầy đủ thông tin', life: 2500 });
-            return;
-        }
-        setLoadingRegister(true);
-        const payload = new FormData();
-        Object.keys(formData).forEach(key => {
-            if (key === 'dateOfBirth' && formData.dateOfBirth) {
-                payload.append('dateOfBirth', formatDate(formData.dateOfBirth));
-            } else if (key === 'avatar' && formData.avatar) {
-                payload.append('avatar', formData.avatar);
-            } else {
-                payload.append(key, formData[key]);
-            }
-        });
 
-        try {
-            // Replace with your API path
-            const res = await fetch('/api/users/register', { method: 'POST', body: payload });
-            const result = await res.json();
-            if (res.ok) {
-                toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đăng ký thành công', life: 2000 });
-                setTimeout(() => setTab('login'), 1000);
-            } else {
-                toast.current.show({ severity: 'error', summary: 'Lỗi', detail: result.message || 'Đăng ký thất bại', life: 3000 });
-            }
-        } catch (err) {
-            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Có lỗi xảy ra khi đăng ký', life: 3000 });
-            console.error(err);
-        } finally {
-            setLoadingRegister(false);
-        }
+        axios.post('auth/register', formData)
+            .then(res => console.log(res.data))
+
+        // try {
+        //     // Replace with your API path
+
+        //     // if (res.ok) {
+        //     //     toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đăng ký thành công', life: 2000 });
+        //     //     setTimeout(() => setTab('login'), 1000);
+        //     // } else {
+        //     //     toast.current.show({ severity: 'error', summary: 'Lỗi', detail: result.message || 'Đăng ký thất bại', life: 3000 });
+        //     // }
+        // } catch (err) {
+        //     toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Có lỗi xảy ra khi đăng ký', life: 3000 });
+        //     console.error(err);
+        // } finally {
+        //     setLoadingRegister(false);
+        // }
     };
 
     const handleUpload = (event) => {
         if (event && event.files && event.files.length > 0) handleChange('avatar', event.files[0]);
     };
 
-    const isRegisterDisabled = loadingRegister || !formData.userName || !formData.passwordR || formData.passwordR !== formData.confirmPassword || !formData.email;
+    const isRegisterDisabled = loadingRegister || !formData.userName || !formData.password || formData.password !== formData.confirmPassword || !formData.email;
 
     return (
         <div className="auth-wrapper">
@@ -195,9 +180,9 @@ export default function AuthTabs({ onLogin }) {
                             </div>
 
                             <div className="field-wrap">
-                                <Password id="passwordR" placeholder=" " value={formData.passwordR} onChange={(e) => handleChange('passwordR', e.target.value)} feedback={false} toggleMask aria-invalid={!!errors.passwordR} />
-                                <label htmlFor="passwordR">Set A Password <span className="req">*</span></label>
-                                {errors.passwordR && <small className="p-error">{errors.passwordR}</small>}
+                                <Password id="password" placeholder=" " value={formData.password} onChange={(e) => handleChange('password', e.target.value)} feedback={false} toggleMask aria-invalid={!!errors.password} />
+                                <label htmlFor="password">Set A Password <span className="req">*</span></label>
+                                {errors.password && <small className="p-error">{errors.password}</small>}
                             </div>
 
                             <div className="field-wrap">
@@ -241,7 +226,7 @@ export default function AuthTabs({ onLogin }) {
                             <FileUpload name="avatar" mode="basic" accept="image/*" customUpload auto={false} chooseLabel="Choose Image" className="avatar-upload" uploadHandler={handleUpload} />
 
                             <div style={{ marginTop: 12 }}>
-                                <Button label="Get Started" className="start-btn p-button-rounded" type="submit" loading={loadingRegister} disabled={isRegisterDisabled} />
+                                <Button onClick={handleRegister} label="Get Started" className="start-btn p-button-rounded" type="submit" loading={loadingRegister} disabled={isRegisterDisabled} />
                             </div>
                         </form>
                     </div>

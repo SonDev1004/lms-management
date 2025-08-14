@@ -1,16 +1,20 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+
 import AdminDashboard from './pages/admin/AdminDashboard';
 import LayoutAdmin from './layout/admin/LayoutAdmin';
+
 import SubjectManagement from './pages/admin/SubjectManagement';
-import AuthTabs from './layout/AuthTabs.jsx';
-import './layout/AuthTabs.css';
+import AuthTabs from './pages/AuthTabs.jsx';
+
 import LayoutStudent from "./layout/student/LayoutStudent.jsx";
 import StudentDashboard from './layout/student/StudentDashboard.jsx';
 
-import LayoutHome from './layout/admin/LayoutHome';
+import LayoutHome from './layout/LayoutHome';
 import Home from './pages/Home';
+
 import axios from 'axios';
+import CourseDetail from './pages/CourseDetail.jsx';
 
 axios.interceptors.request.use(
     (config) => {
@@ -24,6 +28,7 @@ axios.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+axios.defaults.baseURL = 'http://14.225.198.117:8081/api/';
 
 const App = () => {
     return (
@@ -34,6 +39,11 @@ const App = () => {
                         <Route path='home' element={<LayoutHome />}>
                             <Route index element={<Home />} />
                             <Route path='login' element={<AuthTabs />} />
+                        </Route>
+
+                        {/*Course */}
+                        <Route path='course' element={<LayoutHome />}>
+                            <Route path='detail' element={<CourseDetail />} />
                         </Route>
 
                         {/* Student */}
