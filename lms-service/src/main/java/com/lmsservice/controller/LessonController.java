@@ -19,14 +19,14 @@ import lombok.experimental.FieldDefaults;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("/api/lessons")
+@RequestMapping("/api/lesson")
 public class LessonController {
 
     final LessonService lessonService;
 
     @Operation(summary = "Tạo mới Lesson", description = "API cho phép giáo viên hoặc quản lý đào tạo tạo mới Lesson")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
-    @PostMapping
+    @PostMapping("/create")
     public ApiResponse<LessonResponse> createLesson(@RequestBody @Valid LessonRequest request) {
         return ApiResponse.<LessonResponse>builder()
                 .result(lessonService.createLesson(request))
@@ -38,8 +38,8 @@ public class LessonController {
             summary = "Lấy tất cả Lesson",
             description =
                     "API lấy danh sách Lesson theo quyền: Admin thấy tất cả, Giáo viên thấy môn mình dạy, Học sinh thấy môn mình học")
-    @PreAuthorize("hasAnyRole('STUDENT','TEACHER','ACADEMIC_MANAGER','ADMIN_IT')")
-    @GetMapping
+    @PreAuthorize("hasAnyRole('ACADEMIC_MANAGER','ADMIN_IT')")
+    @GetMapping("/all")
     public ApiResponse<Page<LessonResponse>> getAllLessons(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.<Page<LessonResponse>>builder()

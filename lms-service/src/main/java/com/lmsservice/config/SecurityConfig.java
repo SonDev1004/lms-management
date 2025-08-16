@@ -42,7 +42,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     public static final String[] PUBLIC_URLS = {
-        "/api/auth/login**", "/api/auth/register**", "/api/auth/refresh**", "/api/auth/logout**", "/api/files/**",
+            "/api/auth/login**", "/api/auth/register**", "/api/auth/refresh**", "/api/auth/logout**", "/api/files/**",
     };
 
     /**
@@ -72,6 +72,8 @@ public class SecurityConfig {
                         .hasRole("ACADEMIC_MANAGER")
                         .requestMatchers("/api/staff/admin_it/**")
                         .hasRole("ADMIN_IT")
+                        .requestMatchers("/api/lesson/**")
+                        .authenticated()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
