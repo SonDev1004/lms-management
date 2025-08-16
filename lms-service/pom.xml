@@ -330,7 +330,7 @@
                         <image>eclipse-temurin:21-jre-alpine</image>
                     </from>
                     <to>
-                        <image>${image.path}/${project.artifactId}:20250815</image>
+                        <image>${image.path}/${project.artifactId}:20250816</image>
                         <!-- Setting docker hub account-->
                         <auth>
                             <!-- suppress UnresolveMavenProperty-->
