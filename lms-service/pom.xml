@@ -141,11 +141,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Actuator -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
         <!-- Spring security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -186,7 +181,21 @@
             <artifactId>minio</artifactId>
             <version>8.5.7</version> <!-- hoặc bản mới nhất -->
         </dependency>
+
+        <!-- Health check -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Minitoring-->
+        <dependency>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <groupId>io.micrometer</groupId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>
@@ -327,15 +336,31 @@
                 <version>3.4.0</version>
                 <configuration>
                     <from>
+                        <!-- Base image -->
                         <image>eclipse-temurin:21-jre-alpine</image>
+                        <!-- Spec platform build-->
+                        <platforms>
+                            <platform>
+                                <architecture>arm64</architecture>
+                                <os>linux</os>
+                            </platform>
+                            <platform>
+                                <architecture>amd64</architecture>
+                                <os>linux</os>
+                            </platform>
+                        </platforms>
                     </from>
                     <to>
-                        <image>${image.path}/${project.artifactId}:20250816</image>
+                        <image>${image.path}/${project.artifactId}</image>
+                        <tags>
+                            <tag>20250816</tag>
+                            <tag>latest</tag>
+                        </tags>
                         <!-- Setting docker hub account-->
                         <auth>
-                            <!-- suppress UnresolveMavenProperty-->
+                            <!--suppress UnresolvedMavenProperty -->
                             <username>${env.DOCKER_USERNAME}</username>
-                            <!-- suppress UnresolveMavenProperty-->
+                            <!--suppress UnresolvedMavenProperty -->
                             <password>${env.DOCKER_PASSWORD}</password>
                         </auth>
                     </to>
@@ -347,16 +372,6 @@
                             <SPRING_PROFILES_ACTIVE>dev</SPRING_PROFILES_ACTIVE>
                         </environment>
                     </container>
-                    <platforms>
-                        <platform>
-                            <architecture>arm64</architecture>
-                            <os>linux</os>
-                        </platform>
-                        <platform>
-                            <architecture>amd64</architecture>
-                            <os>linux</os>
-                        </platform>
-                    </platforms>
                 </configuration>
             </plugin>
         </plugins>
