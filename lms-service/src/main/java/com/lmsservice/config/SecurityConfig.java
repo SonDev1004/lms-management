@@ -78,6 +78,8 @@ public class SecurityConfig {
                         .hasRole("ACADEMIC_MANAGER")
                         .requestMatchers("/api/staff/admin_it/**")
                         .hasRole("ADMIN_IT")
+                        .requestMatchers("/api/lesson/**")
+                        .authenticated()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

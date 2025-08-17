@@ -65,6 +65,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //            filterChain.doFilter(request, response);
         //            return;
         //        }
+
         try {
             String token = getJwtFromRequest(request);
             if (token != null) {
