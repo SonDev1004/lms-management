@@ -26,7 +26,7 @@ public class LessonController {
 
     @Operation(summary = "Tạo mới Lesson", description = "API cho phép giáo viên hoặc quản lý đào tạo tạo mới Lesson")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
-    @PostMapping("/create")
+    @PostMapping("/create-lesson")
     public ApiResponse<LessonResponse> createLesson(@RequestBody @Valid LessonRequest request) {
         return ApiResponse.<LessonResponse>builder()
                 .result(lessonService.createLesson(request))
@@ -39,9 +39,15 @@ public class LessonController {
             description =
                     "API lấy danh sách Lesson theo quyền: Admin thấy tất cả, Giáo viên thấy môn mình dạy, Học sinh thấy môn mình học")
     @PreAuthorize("hasAnyRole('ACADEMIC_MANAGER','ADMIN_IT')")
-    @GetMapping("/all")
+    @GetMapping("/all-lessons")
     public ApiResponse<Page<LessonResponse>> getAllLessons(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size <= 0) {
+            return ApiResponse.<Page<LessonResponse>>builder()
+                    .result(null)
+                    .message("Invalid pagination parameters: page must be >= 0 and size > 0")
+                    .build();
+        }
         return ApiResponse.<Page<LessonResponse>>builder()
                 .result(lessonService.getAllLessons(page, size))
                 .message("Get all lessons successfully")

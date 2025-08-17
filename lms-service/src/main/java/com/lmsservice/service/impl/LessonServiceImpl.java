@@ -46,5 +46,4 @@ public class LessonServiceImpl implements LessonService {
         Page<Lesson> lessons = lessonRepository.findAll(pageable);
         return lessons.map(lessonMapper::toResponse);
     }
-
 }
