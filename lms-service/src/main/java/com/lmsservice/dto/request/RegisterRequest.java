@@ -1,16 +1,19 @@
 package com.lmsservice.dto.request;
 
 import java.util.Date;
+import javax.annotation.Nullable;
 
 import jakarta.validation.constraints.*;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class RegisterRequest {
 
     @NotBlank(message = "Username không được để trống")
@@ -35,6 +38,7 @@ public class RegisterRequest {
 
     @Past(message = "Ngày sinh phải là ngày trong quá khứ")
     @JsonFormat(pattern = "dd-MM-yyyy")
+    @Nullable
     private Date dateOfBirth;
 
     @Size(max = 255, message = "Địa chỉ tối đa 255 ký tự")
@@ -52,5 +56,6 @@ public class RegisterRequest {
     @Pattern(regexp = "^\\d{10,11}$", message = "Số điện thoại không hợp lệ (10-11 chữ số)")
     private String phone;
 
-    private String avatar;
+    @Builder.Default()
+    private String avatar = "";
 }

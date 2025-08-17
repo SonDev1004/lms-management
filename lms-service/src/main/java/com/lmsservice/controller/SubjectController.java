@@ -15,6 +15,7 @@ import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.SubjectResponse;
 import com.lmsservice.service.SubjectService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +29,10 @@ public class SubjectController {
 
     @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/create")
-    // Todo: Duy chưa viết Swagger document
+    @Operation(
+            summary = "Tạo môn học mới",
+            description =
+                    "API dùng để tạo một môn học mới, bao gồm tiêu đề, số buổi, học phí, số lượng học viên, mô tả và ảnh minh hoạ.")
     public ResponseEntity<ApiResponse> createSubject(@Valid @RequestBody CreateSubjectRequest requestDTO) {
         SubjectResponse responseDTO = subjectService.createSubject(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)

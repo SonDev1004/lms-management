@@ -86,10 +86,14 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setDateOfBirth(request.getDateOfBirth()
-                .toInstant()
-                .atZone(java.time.ZoneId.systemDefault())
-                .toLocalDate());
+        if (request.getDateOfBirth() != null) {
+            user.setDateOfBirth(request.getDateOfBirth()
+                    .toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate());
+        } else {
+            user.setDateOfBirth(null);
+        }
         user.setAddress(request.getAddress());
         user.setGender(request.getGender());
         user.setEmail(request.getEmail());
@@ -97,7 +101,6 @@ public class AuthServiceImpl implements AuthService {
         user.setAvatar(request.getAvatar());
         user.setCreatedDate(LocalDateTime.now());
         user.setIsActive(true);
-
         user.setRole(roleRepository.findByName("GUEST").orElseThrow(() -> new RuntimeException("Role not found")));
 
         userRepository.save(user);
