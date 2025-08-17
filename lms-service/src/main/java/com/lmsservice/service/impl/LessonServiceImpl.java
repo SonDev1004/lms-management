@@ -47,14 +47,4 @@ public class LessonServiceImpl implements LessonService {
         return lessons.map(lessonMapper::toResponse);
     }
 
-    private LessonResponse toLessonResponse(Lesson lesson) {
-        return LessonResponse.builder()
-                .id(lesson.getId())
-                .title(lesson.getTitle())
-                .content(lesson.getContent())
-                .description(lesson.getDescription())
-                .document(lesson.getDocument())
-                .subjectId(lesson.getSubject().getId())
-                .build();
-    }
 }
