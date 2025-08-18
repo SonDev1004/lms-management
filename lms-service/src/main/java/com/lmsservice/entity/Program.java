@@ -35,6 +35,9 @@ public class Program extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)")
     String description;
 
+    @Column(columnDefinition = "nvarchar(512) not null default ''", nullable = false)
+    private String imageUrl = "";
+
     @Column(columnDefinition = "bit default 1", nullable = false)
     Boolean isActive;
     // Curriculum
