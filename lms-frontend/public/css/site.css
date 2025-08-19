@@ -1,0 +1,9 @@
+a {
+    text-decoration: none;
+    color: #0891b2;
+}
+
+label.required::after {
+    content: ' *';
+    color: red;
+}
