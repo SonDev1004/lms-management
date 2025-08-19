@@ -1,11 +1,20 @@
+<<<<<<< Updated upstream
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+=======
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import LayoutHome from 'layouts/home/LayoutHome';
+import Login from 'pages/home/Login';
+import Register from 'pages/home/Register';
+import LayoutStudent from 'layouts/student/LayoutStudent';
+>>>>>>> Stashed changes
 
 function App() {
   const [count, setCount] = useState(0)
 
+<<<<<<< Updated upstream
   return (
     <>
       <div>
@@ -30,6 +39,31 @@ function App() {
       </p>
     </>
   )
+=======
+                {/* Student Route */}
+                <Route path='student' element={<LayoutStudent />}>
+
+                </Route>
+
+                {/* Teacher Route */}
+                <Route path='teacher'>
+
+                </Route>
+
+                {/* Staff Route */}
+                <Route path='staff'>
+
+                </Route>
+
+                {/* Admin Route */}
+                <Route path='admin'>
+
+                </Route>
+
+            </Routes>
+        </BrowserRouter >
+    );
+>>>>>>> Stashed changes
 }
 
 export default App
