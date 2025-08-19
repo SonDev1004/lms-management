@@ -16,4 +16,5 @@ public class LessonResponse {
     String description;
     String document;
     Long subjectId;
+    String subjectTitle;
 }

@@ -17,5 +17,6 @@ public interface LessonMapper {
 
     // Entity -> DTO
     @Mapping(source = "subject.id", target = "subjectId")
+    @Mapping(source = "subject.title", target = "subjectTitle")
     LessonResponse toResponse(Lesson lesson);
 }

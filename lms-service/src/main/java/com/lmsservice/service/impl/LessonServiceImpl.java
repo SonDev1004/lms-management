@@ -3,6 +3,8 @@ package com.lmsservice.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -41,13 +43,17 @@ public class LessonServiceImpl implements LessonService {
         return lessonMapper.toResponse(savedLesson);
     }
 
-    public List<LessonResponse> getLessonsBySubjectId(Long subjectId, Pageable pageable) {
+    @Override
+    public Page<LessonResponse> getLessonsBySubjectId(Long subjectId, Pageable pageable) {
         Subject subject = subjectRepository
                 .findById(subjectId)
                 .orElseThrow(() -> new UnAuthorizeException(ErrorCode.SUBJECT_NOT_FOUND));
 
-        List<Lesson> lessons = lessonRepository.findBySubjectId(subject.getId(), pageable);
+        Page<Lesson> lessonsPage = lessonRepository.findBySubjectId(subject.getId(), pageable);
 
-        return lessons.stream().map(lessonMapper::toResponse).collect(Collectors.toList());
+        List<LessonResponse> lessonResponses =
+                lessonsPage.getContent().stream().map(lessonMapper::toResponse).collect(Collectors.toList());
+
+        return new PageImpl<>(lessonResponses, pageable, lessonsPage.getTotalElements());
     }
 }
