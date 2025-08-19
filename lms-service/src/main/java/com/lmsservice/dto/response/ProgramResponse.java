@@ -19,5 +19,7 @@ public class ProgramResponse {
     Integer minStudent;
     Integer maxStudent;
     String description;
+    @Builder.Default
+    String imageUrl = "";
     Boolean isActive;
 }

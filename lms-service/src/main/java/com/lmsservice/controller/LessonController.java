@@ -1,7 +1,5 @@
 package com.lmsservice.controller;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +17,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,6 +33,26 @@ public class LessonController {
         return ApiResponse.<LessonResponse>builder()
                 .result(lessonService.createLesson(request))
                 .message("Create lesson successfully")
+                .build();
+    }
+
+    @Operation(
+            summary = "Lấy tất cả Lesson",
+            description =
+                    "API lấy danh sách Lesson theo quyền: Admin thấy tất cả, Giáo viên thấy môn mình dạy, Học sinh thấy môn mình học")
+    @PreAuthorize("hasAnyRole('ACADEMIC_MANAGER','ADMIN_IT')")
+    @GetMapping("/all-lessons")
+    public ApiResponse<Page<LessonResponse>> getAllLessons(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size <= 0) {
+            return ApiResponse.<Page<LessonResponse>>builder()
+                    .result(null)
+                    .message("Invalid pagination parameters: page must be >= 0 and size > 0")
+                    .build();
+        }
+        return ApiResponse.<Page<LessonResponse>>builder()
+                .result(lessonService.getAllLessons(page, size))
+                .message("Get all lessons successfully")
                 .build();
     }
 
@@ -58,3 +78,4 @@ public class LessonController {
                 .build();
     }
 }
+

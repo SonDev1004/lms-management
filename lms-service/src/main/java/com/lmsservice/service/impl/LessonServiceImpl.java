@@ -1,10 +1,8 @@
 package com.lmsservice.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +19,9 @@ import com.lmsservice.service.LessonService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +56,12 @@ public class LessonServiceImpl implements LessonService {
                 lessonsPage.getContent().stream().map(lessonMapper::toResponse).collect(Collectors.toList());
 
         return new PageImpl<>(lessonResponses, pageable, lessonsPage.getTotalElements());
+    }
+
+    @Override
+    public Page<LessonResponse> getAllLessons(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Lesson> lessons = lessonRepository.findAll(pageable);
+        return lessons.map(lessonMapper::toResponse);
     }
 }
