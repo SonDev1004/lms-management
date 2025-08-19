@@ -1,5 +1,7 @@
 package com.lmsservice.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -16,8 +18,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -78,4 +78,3 @@ public class LessonController {
                 .build();
     }
 }
-

@@ -1,5 +1,8 @@
 package com.lmsservice.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +22,6 @@ import com.lmsservice.service.LessonService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
