@@ -9,6 +9,9 @@ import LayoutHome from 'layouts/home/LayoutHome';
 import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
 import LayoutStudent from 'layouts/student/LayoutStudent';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 function App() {
