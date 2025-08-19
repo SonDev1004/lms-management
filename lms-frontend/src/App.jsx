@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
+import CourseHome from 'pages/course/CourseHome .jsx';
 
 const App = () => {
     return (
@@ -15,8 +16,12 @@ const App = () => {
                 </Route>
 
                 {/* Student Route */}
-                <Route path='student'>
+                <Route path='student' >
 
+
+                </Route>
+                <Route path='course'>
+                    <Route path='home' element={<CourseHome />} />
                 </Route>
 
                 {/* Teacher Route */}
