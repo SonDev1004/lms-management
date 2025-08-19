@@ -39,7 +39,6 @@ public class LessonController {
     @Operation(
             summary = "LẤY DANH SÁCH LESSON THEO SUBJECT ID",
             description = "API lấy danh sách Lesson theo Subject ID")
-    @PreAuthorize("hasAnyRole('STUDENT','TEACHER','ACADEMIC_MANAGER','ADMIN_IT')")
     @GetMapping("/by-subject/{subjectId}")
     public ApiResponse<List<LessonResponse>> getLessonsBySubjectId(
             @PathVariable Long subjectId,
