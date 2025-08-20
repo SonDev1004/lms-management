@@ -19,7 +19,7 @@ public class Course extends EntityAbstract {
     String title;
 
     @Column(columnDefinition = "int default 1")
-    Integer quantity;
+    Integer capacity;
 
     // Subject
     @ManyToOne
