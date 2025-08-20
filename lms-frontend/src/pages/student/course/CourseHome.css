@@ -11,7 +11,7 @@
     .course-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
-    .course-grid { grid-template-columns: 1fr; }
+    .course-grid { grid-template-columns: 1fr; gap: 16px; }
 }
 
 .course-card {
@@ -23,7 +23,7 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    min-height: 240px;
+    min-height: 220px;
     border: none;
 }
 
@@ -32,25 +32,21 @@
     box-shadow: 0 12px 30px rgba(14,30,50,0.12);
 }
 
-.course-card .p-card-body {
-    padding: 0;
-}
-.course-card .p-card-footer {
-    padding: 0;
-}
+.course-card .p-card-body { padding: 0; }
+.course-card .p-card-footer { padding: 0; }
 
 .card-header {
     position: relative;
-    padding: 18px 20px 26px 20px;
-    height: 110px;
+    padding: 18px 20px 36px 20px;
+    height: auto;
     display: flex;
     align-items: flex-start;
     color: #fff;
+    min-height: 120px;
 }
 
-.header-text {
-    z-index: 1;
-}
+.header-text { z-index: 1; width: 100%; }
+
 .title {
     margin: 0;
     font-size: 1.15rem;
@@ -58,12 +54,28 @@
     letter-spacing: 0.2px;
     line-height: 1.1;
 }
+
 .subtitle {
-    margin: 6px 0 0 0;
-    font-size: 0.82rem;
+    margin: 6px 0 8px 0;
+    font-size: 0.86rem;
     opacity: 0.95;
-    font-weight: 500;
+    font-weight: 600;
 }
+
+.header-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+
+.meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.80rem;
+    background: rgba(255,255,255,0.08);
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: rgba(255,255,255,0.95);
+}
+
+.meta-row .pi { font-size: 1rem; opacity: 0.95; }
 
 .header-avatar {
     position: absolute;
@@ -81,9 +93,34 @@
 
 .card-body {
     flex: 1;
-    min-height: 100px;
-    padding-top: 28px;
+    min-height: 80px;
+    padding-top: 36px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
+
+/* status badge */
+.body-top { display:flex; justify-content:flex-end; }
+.status-badge {
+    display:inline-block;
+    padding:6px 10px;
+    border-radius: 999px;
+    font-weight:700;
+    font-size:0.78rem;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.status-đang-mở { background: #43a047; }
+.status-sắp-khai-giảng { background: #1976d2; }
+.status-đã-đầy { background: #9e9e9e; }
+
+.body-info { margin-top: 6px; font-size: 0.9rem; color: #2b2b2b; display:flex; flex-direction:column; gap:6px; }
+.body-info .muted { color: #6b7280; font-size: 0.82rem; margin-top:8px; }
 
 .card-footer {
     padding: 10px 18px;
@@ -101,11 +138,14 @@
     --p-button-border-radius: 999px;
     font-size: 1rem;
 }
-.footer-btn:hover {
-    background: rgba(0,0,0,0.04);
-}
+.footer-btn:hover { background: rgba(0,0,0,0.04); }
 
-.course-card:focus {
-    outline: 3px solid rgba(0,150,136,0.12);
-    outline-offset: 2px;
+.course-card:focus { outline: 3px solid rgba(0,150,136,0.12); outline-offset: 2px; }
+
+@media (max-width: 600px) {
+    .title { font-size: 1rem; }
+    .subtitle { font-size: 0.78rem; }
+    .header-avatar { width: 48px !important; height: 48px !important; bottom: -22px; }
+    .card-header { padding-bottom: 30px; }
+    .card-body { padding-top: 30px; min-height: 70px; }
 }
