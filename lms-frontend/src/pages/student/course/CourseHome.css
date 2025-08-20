@@ -24,11 +24,19 @@
     display: flex;
     flex-direction: column;
     min-height: 240px;
+    border: none;
 }
 
 .course-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 30px rgba(14,30,50,0.12);
+}
+
+.course-card .p-card-body {
+    padding: 0;
+}
+.course-card .p-card-footer {
+    padding: 0;
 }
 
 .card-header {

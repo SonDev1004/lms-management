@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
+import { Card } from 'primereact/card';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 import './CourseHome.css';
-
 
 const headerColors = [
     '#3f51b5', '#5d6d23', '#00897b', '#37474f', '#ef5350',
@@ -39,7 +39,7 @@ const CourseHome = () => {
         () =>
             rawCourses.map((c) => ({
                 id: c.id,
-                title: `${c.code} - ${c.name} - ${c.semester}`.trim().replace(/- $/, ''), // xoá "-" nếu trống
+                title: `${c.code} - ${c.name} - ${c.semester}`.trim().replace(/- $/, ''),
                 subtitle: c.teacher,
                 avatarText: c.code.charAt(0).toUpperCase(),
                 headerColor: getRandomColor(headerColors),
@@ -50,15 +50,8 @@ const CourseHome = () => {
 
     return (
         <div className="course-grid p-4">
-            {courses.map((c) => (
-                <div
-                    key={c.id}
-                    className="course-card"
-                    onClick={() => navigate(`/course/${c.id}`)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => (e.key === 'Enter' ? navigate(`/course/${c.id}`) : null)}
-                >
+            {courses.map((c) => {
+                const header = (
                     <div className="card-header" style={{ background: c.headerColor }}>
                         <div className="header-text">
                             <h3 className="title">{c.title}</h3>
@@ -72,9 +65,9 @@ const CourseHome = () => {
                             style={{ background: c.avatarColor, color: '#fff' }}
                         />
                     </div>
+                );
 
-                    <div className="card-body" />
-
+                const footer = (
                     <div className="card-footer">
                         <Button
                             icon="pi pi-camera"
@@ -92,8 +85,25 @@ const CourseHome = () => {
                             onClick={(e) => e.stopPropagation()}
                         />
                     </div>
-                </div>
-            ))}
+                );
+
+                return (
+                    <Card
+                        key={c.id}
+                        className="course-card"
+                        header={header}
+                        footer={footer}
+                        onClick={() => navigate(`/course/${c.id}`)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') navigate(`/course/${c.id}`);
+                        }}
+                    >
+                        <div className="card-body" />
+                    </Card>
+                );
+            })}
         </div>
     );
 };
