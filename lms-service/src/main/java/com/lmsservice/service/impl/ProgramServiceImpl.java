@@ -74,9 +74,7 @@ public class ProgramServiceImpl implements ProgramService {
         program.setMaxStudent(programRequest.getMaxStudent() != null ? programRequest.getMaxStudent() : 1);
         program.setFee(programRequest.getFee() != null ? programRequest.getFee() : BigDecimal.ZERO);
         program.setIsActive(programRequest.getIsActive() != null ? programRequest.getIsActive() : true);
-        program.setImageUrl(
-                programRequest.getImageUrl() != null ? programRequest.getImageUrl() : ""
-        );
+        program.setImageUrl(programRequest.getImageUrl() != null ? programRequest.getImageUrl() : "");
 
         Program savedProgram = programRepository.save(program);
         return ProgramResponse.builder()
