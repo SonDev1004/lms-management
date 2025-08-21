@@ -17,8 +17,14 @@ const App = () => {
 
                 {/* Student Route */}
                 <Route path='student' >
+<<<<<<< Updated upstream
                     <Route path='course' element={<CourseHome />} />
 
+=======
+                    <Route path ="course" element={<CourseHome />} />
+
+
+>>>>>>> Stashed changes
                 </Route>
 
                 {/* Teacher Route */}
