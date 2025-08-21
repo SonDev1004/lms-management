@@ -1,8 +1,11 @@
 package com.lmsservice.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +24,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/lesson")
 public class LessonController {
-
     final LessonService lessonService;
 
-    @Operation(summary = "Tạo mới Lesson", description = "API cho phép giáo viên hoặc quản lý đào tạo tạo mới Lesson")
-    @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
-    @PostMapping("/create-lesson")
+    @Operation(summary = "TẠO MỚI LESSON", description = "API TẠO MỚI LESSON")
+    @PreAuthorize("hasAnyRole('ADMIN_IT','ACADEMIC_MANAGER')")
+    @PostMapping("/create")
     public ApiResponse<LessonResponse> createLesson(@RequestBody @Valid LessonRequest request) {
         return ApiResponse.<LessonResponse>builder()
                 .result(lessonService.createLesson(request))
@@ -51,6 +53,28 @@ public class LessonController {
         return ApiResponse.<Page<LessonResponse>>builder()
                 .result(lessonService.getAllLessons(page, size))
                 .message("Get all lessons successfully")
+                .build();
+    }
+
+    @Operation(
+            summary = "LẤY DANH SÁCH LESSON THEO SUBJECT ID",
+            description = "API lấy danh sách Lesson theo Subject ID")
+    @GetMapping("/by-subject/{subjectId}")
+    public ApiResponse<List<LessonResponse>> getLessonsBySubjectId(
+            @PathVariable Long subjectId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<LessonResponse> lessons = lessonService.getLessonsBySubjectId(subjectId, PageRequest.of(page, size));
+
+        List<LessonResponse> lessonList = lessons.getContent();
+        String message = lessonList.isEmpty()
+                ? "No lesson found for the given subject id"
+                : "Get lessons by subject id successfully";
+
+        return ApiResponse.<List<LessonResponse>>builder()
+                .result(lessonList)
+                .message(message)
                 .build();
     }
 }
