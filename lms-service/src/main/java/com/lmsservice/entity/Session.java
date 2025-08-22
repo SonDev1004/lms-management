@@ -28,10 +28,10 @@ public class Session extends EntityAbstract {
     LocalTime endTime;
 
     @Column(name = "timeslot_id")
-    Long timeslotId;                  // sau này có thể đổi sang @ManyToOne CourseTimeslot
+    Long timeslotId; // sau này có thể đổi sang @ManyToOne CourseTimeslot
 
     @Column(name = "status")
-    Integer status;                   // 1=Planned, 2=Completed, 5=Cancelled
+    Integer status; // 1=Planned, 2=Completed, 5=Cancelled
 
     @Column(columnDefinition = "nvarchar(max)")
     String fileNames;

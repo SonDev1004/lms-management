@@ -17,8 +17,10 @@ import lombok.experimental.FieldDefaults;
 public class Course extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String title;
+
     @Column(name = "code", columnDefinition = "char(36)", nullable = false)
     String code;
+
     @Column(columnDefinition = "int default 1")
     Integer capacity;
     /**
