@@ -17,13 +17,18 @@ import lombok.experimental.FieldDefaults;
 public class Course extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String title;
-
+    @Column(name = "code", columnDefinition = "char(36)", nullable = false)
+    String code;
     @Column(columnDefinition = "int default 1")
-    Integer quantity;
-
+    Integer capacity;
+    /**
+     * Số buổi dự kiến (thường mặc định bằng subject.session_number)
+     */
+    @Column(name = "planned_session")
+    Integer plannedSession;
     // Subject
     @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false)
+    @JoinColumn(name = "subject_id")
     Subject subject;
     // Assignments
     @OneToMany(mappedBy = "course")
@@ -47,4 +52,8 @@ public class Course extends EntityAbstract {
     // CourseStudents
     @OneToMany(mappedBy = "course")
     List<CourseStudent> courseStudents;
+
+    /** Pattern lịch học hằng tuần (T2/T4/T6...), sinh từ bảng course_timeslot */
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<CourseTimeslot> timeslots = new ArrayList<>();
 }
