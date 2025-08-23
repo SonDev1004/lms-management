@@ -42,7 +42,7 @@ import AMReport from 'pages/academic_manager/AMReport';
 import AMNoti from 'pages/academic_manager/AMNoti';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
-import CourseDetailStudent from "pages/student/course/CourseDetailStudent.jsx";
+import CourseDetailStudent from "pages/student/course/CourseDetail/CourseDetailStudent.jsx";
 
 
 const App = () => {
