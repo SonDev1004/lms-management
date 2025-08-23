@@ -2,7 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
-import CourseHome from 'pages/student/course/CourseHome .jsx';
+import LayoutStudent from 'layouts/student/LayoutStudent';
+import CourseHome from 'pages/course/CourseHome.jsx';
 
 const App = () => {
     return (
@@ -16,9 +17,12 @@ const App = () => {
                 </Route>
 
                 {/* Student Route */}
-                <Route path='student' >
-                    <Route path='course' element={<CourseHome />} />
+                <Route path='student' element={<LayoutStudent />}>
 
+                </Route>
+
+                <Route path='course'>
+                    <Route path='home' element={<CourseHome />} />
                 </Route>
 
                 {/* Teacher Route */}
