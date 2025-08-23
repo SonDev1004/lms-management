@@ -1,5 +1,7 @@
+import CourseHome from "pages/course/CourseHome.jsx";
+
 const StudentCourses = () => {
-    return (<h1>StudentCourses</h1>);
+    return <CourseHome/>;
 }
 
 export default StudentCourses;

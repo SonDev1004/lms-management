@@ -42,6 +42,7 @@ import AMReport from 'pages/academic_manager/AMReport';
 import AMNoti from 'pages/academic_manager/AMNoti';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
+import CourseDetailStudent from "pages/student/course/CourseDetailStudent.jsx";
 
 
 const App = () => {
@@ -56,6 +57,7 @@ const App = () => {
                 </Route>
 
                 {/* Student Route */}
+
                 <Route path='student' element={<LayoutStudent />}>
                     <Route index element={<StudentDashboard />} />
                     <Route path='courses' element={<StudentCourses />} />
@@ -63,12 +65,19 @@ const App = () => {
                     <Route path='score' element={<StudentScore />} />
                     <Route path='enrollment' element={<StudentEnrollment />} />
                     <Route path='news' element={<StudentNews />} />
+
+                    {/* Nested: student/course */}
+                    <Route path="course">
+                        <Route index element={<CourseHome />} />
+                        <Route path="detail" element={<CourseDetailStudent />} />
+                    </Route>
                 </Route>
 
+                {/* Course Route (ngoài student) */}
                 <Route path='course'>
                     <Route path='home' element={<CourseHome />} />
-
                 </Route>
+
 
                 {/* Teacher Route */}
                 <Route path='teacher' element={<LayoutTeacher />}>

@@ -4,7 +4,7 @@ import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
 import { useNavigate } from 'react-router-dom';
-import './CourseHome.css';
+import '../../course/CourseHome.css';
 
 const subjectColors = {
     'IELTS': '#1976d2',
