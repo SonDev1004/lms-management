@@ -11,35 +11,35 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
 import LayoutStudent from 'layouts/student/LayoutStudent';
-import StudentDashboard from './pages/student/StudentDashboard';
-import StudentCourses from './pages/student/StudentCourses';
-import StudentSchedule from './pages/student/StudentSchedule';
-import StudentEnrollment from './pages/student/StudentEnrollment';
-import StudentNews from './pages/student/StudentNews';
-import StudentScore from './pages/student/StudentScore';
+import StudentDashboard from 'pages/student/StudentDashboard';
+import StudentCourses from 'pages/student/StudentCourses';
+import StudentSchedule from 'pages/student/StudentSchedule';
+import StudentEnrollment from 'pages/student/StudentEnrollment';
+import StudentNews from 'pages/student/StudentNews';
+import StudentScore from 'pages/student/StudentScore';
 
 import LayoutTeacher from 'layouts/teacher/LayoutTeacher';
-import TeacherDashboard from './pages/teacher/TeacherDashboard';
-import TeacherCourses from './pages/teacher/TeacherCourses';
-import TeacherSchedule from './pages/teacher/TeacherSchedule';
-import TeacherNoti from './pages/teacher/TeacherNoti';
+import TeacherDashboard from 'pages/teacher/TeacherDashboard';
+import TeacherCourses from 'pages/teacher/TeacherCourses';
+import TeacherSchedule from 'pages/teacher/TeacherSchedule';
+import TeacherNoti from 'pages/teacher/TeacherNoti';
 
 import LayoutAdmin from 'layouts/admin/LayoutAdmin';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminSystems from './pages/admin/AdminSystems';
-import AdminSecurity from './pages/admin/AdminSecutiry';
-import AdminUpload from './pages/admin/AdminUpload';
+import AdminDashboard from 'pages/admin/AdminDashboard';
+import AdminSystems from 'pages/admin/AdminSystems';
+import AdminSecurity from 'pages/admin/AdminSecutiry';
+import AdminUpload from 'pages/admin/AdminUpload';
 
 import LayoutAcademicManager from 'layouts/academic_manager/LayoutAcademicManager';
-import AMDashboard from './pages/academic_manager/AMDashboard';
-import AMProgram from './pages/academic_manager/AMProgram';
-import AMCourse from './pages/academic_manager/AMCourse';
-import AMTeacher from './pages/academic_manager/AMTeacher';
-import AMStudent from './pages/academic_manager/AMStudent';
-import AMFeedback from './pages/academic_manager/AMFeedback';
-import AMSchedule from './pages/academic_manager/AMSchedule';
-import AMReport from './pages/academic_manager/AMReport';
-import AMNoti from './pages/academic_manager/AMNoti';
+import AMDashboard from 'pages/academic_manager/AMDashboard';
+import AMProgram from 'pages/academic_manager/AMProgram';
+import AMCourse from 'pages/academic_manager/AMCourse';
+import AMTeacher from 'pages/academic_manager/AMTeacher';
+import AMStudent from 'pages/academic_manager/AMStudent';
+import AMFeedback from 'pages/academic_manager/AMFeedback';
+import AMSchedule from 'pages/academic_manager/AMSchedule';
+import AMReport from 'pages/academic_manager/AMReport';
+import AMNoti from 'pages/academic_manager/AMNoti';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
 

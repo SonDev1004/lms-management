@@ -26,7 +26,7 @@ const LayoutHomeFooter = () => {
                         </Panel>
                     </div>
 
-                    <div className="col-3">
+                    <div className="col-6">
                         <Panel header='Khóa học IELTS'>
                             <div className="mb-3">
                                 <a href="">IELTS 4.0</a>
@@ -38,10 +38,6 @@ const LayoutHomeFooter = () => {
                                 <a href="">IELTS 6.0</a>
                             </div>
                         </Panel>
-                    </div>
-
-                    <div className="col-3 ">
-                        <GoogleMapView />
                     </div>
                 </div>
             </div>
