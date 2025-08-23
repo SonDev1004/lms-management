@@ -1,0 +1,35 @@
+:root {
+    --color-primary: #FFFAF1;
+    --color-secondary: #FFE5B4;
+    --color-accent: #3B82F6;
+    --color-neutral-dark: #374151;
+    --color-neutral-light: #E5E7EB;
+}
+
+body {
+    background-color: var(--color-primary);
+    color: var(--color-neutral-dark);
+}
+
+.card {
+    background-color: var(--color-secondary);
+    border: 1px solid var(--color-neutral-light);
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.btn-primary {
+    background-color: var(--color-accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+.btn-secondary {
+    background-color: var(--color-primary);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
