@@ -12,6 +12,7 @@
     "dependencies": {
         "@react-google-maps/api": "^2.20.7",
         "axios": "^1.11.0",
+        "classnames": "^2.5.1",
         "primeflex": "^4.0.0",
         "primeicons": "^7.0.0",
         "primereact": "^10.9.6",
