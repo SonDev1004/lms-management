@@ -42,7 +42,12 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     public static final String[] PUBLIC_URLS = {
-        "/api/auth/login**", "/api/auth/register**", "/api/auth/refresh**", "/api/auth/logout**", "/api/files/**",
+        "/api/auth/login**",
+        "/api/auth/register**",
+        "/api/auth/refresh**",
+        "/api/auth/logout**",
+        "/api/files/**",
+        "/api/program/**",
     };
 
     /**
@@ -72,6 +77,8 @@ public class SecurityConfig {
                         .hasRole("ACADEMIC_MANAGER")
                         .requestMatchers("/api/staff/admin_it/**")
                         .hasRole("ADMIN_IT")
+                        .requestMatchers("/api/lesson/**")
+                        .authenticated()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
@@ -115,7 +122,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // your React app URL
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://14.225.198.117:5173")); // local
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

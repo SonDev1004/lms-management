@@ -1,4 +1,4 @@
-package com.lmsservice.dto.request;
+package com.lmsservice.dto.request.program;
 
 import java.math.BigDecimal;
 
@@ -30,6 +30,9 @@ public class ProgramRequest {
     BigDecimal fee;
 
     String description;
+
+    @Size(max = 512, message = "Image URL must be less than 512 characters")
+    String imageUrl;
 
     @Builder.Default
     Boolean isActive = true;

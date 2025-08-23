@@ -10,6 +10,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@react-google-maps/api": "^2.20.7",
         "axios": "^1.11.0",
         "primeflex": "^4.0.0",
         "primeicons": "^7.0.0",
