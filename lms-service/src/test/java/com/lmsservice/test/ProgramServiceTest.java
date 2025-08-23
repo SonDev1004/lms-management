@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.lmsservice.dto.request.CurriculumRequest;
-import com.lmsservice.dto.request.ProgramRequest;
+import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
 import com.lmsservice.entity.Curriculum;

@@ -3,6 +3,8 @@ package com.lmsservice.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import org.springframework.data.domain.Pageable;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -27,4 +29,8 @@ public class LessonRequest {
 
     @NotNull(message = "Subject ID cannot be null")
     Long subjectId;
+
+    public Pageable getOtherParam() {
+        return Pageable.unpaged();
+    }
 }

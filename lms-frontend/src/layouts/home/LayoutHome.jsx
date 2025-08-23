@@ -4,7 +4,6 @@ import { MegaMenu } from 'primereact/megamenu';
 import { Menu } from 'primereact/menu';
 import { useRef } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import LayoutHomeFooter from './LayoutHomeFooter';
 import axiosClient from 'services/axiosClient';
 
 import logo from 'assets/images/logo.png';
@@ -92,34 +91,13 @@ const LayoutHome = () => {
             ]
         },
         {
-            label: 'Sports',
-            icon: 'pi pi-clock',
-            items: [
-                [
-                    {
-                        label: 'Football',
-                        items: [{ label: 'Kits' }, { label: 'Shoes' }, { label: 'Shorts' }, { label: 'Training' }]
-                    }
-                ],
-                [
-                    {
-                        label: 'Running',
-                        items: [{ label: 'Accessories' }, { label: 'Shoes' }, { label: 'T-Shirts' }, { label: 'Shorts' }]
-                    }
-                ],
-                [
-                    {
-                        label: 'Swimming',
-                        items: [{ label: 'Kickboard' }, { label: 'Nose Clip' }, { label: 'Swimsuits' }, { label: 'Paddles' }]
-                    }
-                ],
-                [
-                    {
-                        label: 'Tennis',
-                        items: [{ label: 'Balls' }, { label: 'Rackets' }, { label: 'Shoes' }, { label: 'Training' }]
-                    }
-                ]
-            ]
+            label: 'Dashboard',
+            icon: 'pi pi-clock'
+        },
+        {
+            label: 'Login',
+            icon: 'pi pi-sign-in',
+            command: () => navigate('/login')
         }
     ];
 
@@ -153,7 +131,7 @@ const LayoutHome = () => {
         <Link to='/' >
             <img alt="logo" src={logo} height="40" className="mr-2" />
         </Link >
-    );
+    )
 
     // Menu end item
     const end = (
@@ -172,8 +150,8 @@ const LayoutHome = () => {
     return (
         <>
             <MegaMenu model={items} start={start} end={end} />
-
             <Outlet />
+
         </>
     );
 }
