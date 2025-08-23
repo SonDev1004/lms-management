@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Galleria } from 'primereact/galleria';
-import { photoService } from 'services/PhotoService';
+import { photoService } from 'services/photoService.js';
 
 
 const Banner = () => {
