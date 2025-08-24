@@ -22,12 +22,11 @@ const LayoutNavbar = ({ role }) => {
             roles: ['student', 'teacher', 'academic_manager'],
             command: () => navigate(`/${role}/schedule`)
         },
-        ,
         {
             label: 'Thông báo',
             icon: 'pi pi-plus',
             roles: ['student', 'teacher', 'academic_manager'],
-            command: () => navigate(`/${role}/noti`)
+            command: () => navigate(`/${role}/notification`)
         },
 
         {
