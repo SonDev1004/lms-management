@@ -108,13 +108,13 @@ const LayoutHome = () => {
             items: [
                 {
                     label: 'Tài khoản',
-                    icon: 'pi pi-user'
-                },
-                {
-                    label: 'Học trực tuyến',
-                    icon: 'pi pi-book'
+                    icon: 'pi pi-user',
+                    command: () => {
+                        navigate('/user-profile');
+                    }
                 }
             ]
+
         },
         {
             separator: true
@@ -141,7 +141,7 @@ const LayoutHome = () => {
                 localStorage.getItem('username') &&
                 <>
                     <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" onClick={(e) => menuRight.current.toggle(e)} />
-                    <Menu model={profileItems} popup ref={menuRight} id="popup_menu_right" popupAlignment="right" />
+                    <Menu model={profileItems} popup ref={menuRight} id="popup_menu_right" popupAlignment="right"  />
                 </>
             }
         </div>

@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
-import UserProfile from './pages/home/UserProfile';
+import UserProfile from 'pages/student/user-profile/UserProfile.jsx';
 import Guest from './pages/home/Guest';
 import './styles/custom-theme.css';
 
@@ -54,6 +54,8 @@ const App = () => {
                     <Route index element={<Guest />} />
                     <Route path='login' element={<Login />} />
                     <Route path='register' element={<Register />} />
+
+
                 </Route>
 
                 {/* Student Route */}
@@ -66,6 +68,7 @@ const App = () => {
                     <Route path='enrollment' element={<StudentEnrollment />} />
                     <Route path='news' element={<StudentNews />} />
 
+                    <Route path="user-profile" element={<UserProfile />} />
                     {/* Nested: student/course */}
                     <Route path="course">
                         <Route index element={<CourseHome />} />
@@ -85,7 +88,8 @@ const App = () => {
                     <Route path='courses' element={<TeacherCourses />} />
                     <Route path='schedule' element={<TeacherSchedule />} />
                     <Route path='noti' element={<TeacherNoti />} />
-                    <Route path='profile' element={<UserProfile />} />
+                    <Route path="user-profile" element={<UserProfile />} />
+
                 </Route>
 
                 {/* academic_manager Route */}
@@ -100,6 +104,7 @@ const App = () => {
                     <Route path='report' element={<AMReport />} />
                     <Route path='noti' element={<AMNoti />} />
                     <Route path='profile' element={<UserProfile />} />
+                    <Route path="user-profile" element={<UserProfile />} />
                 </Route>
 
                 {/* Admin Route */}
@@ -108,6 +113,7 @@ const App = () => {
                     <Route path='systems' element={<AdminSystems />} />
                     <Route path='upload' element={<AdminUpload />} />
                     <Route path='security' element={<AdminSecurity />} />
+                    <Route path="user-profile" element={<UserProfile />} />
 
                 </Route>
 
