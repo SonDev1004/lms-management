@@ -44,6 +44,7 @@ import AMNoti from 'pages/academic_manager/AMNoti';
 import CourseHome from 'pages/course/CourseHome.jsx';
 import CourseDetailStudent from "pages/student/course/CourseDetailStudent.jsx";
 import ProtectedRoute from './components/ProtectedRoute';
+import Unauthorized from './pages/home/Unauthorized';
 
 
 const App = () => {
@@ -116,7 +117,7 @@ const App = () => {
                 </Route>
 
                 {/* Trang lỗi phân quyền */}
-                <Route path="/unauthorized" element={<h2>Bạn không có quyền truy cập</h2>} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
         </BrowserRouter >
     );
