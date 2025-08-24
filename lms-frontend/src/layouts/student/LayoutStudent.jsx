@@ -8,7 +8,7 @@ const LayoutStudent = () => {
             <LayoutHeader />
             <div className='grid'>
                 <div className='col-3'>
-                    <LayoutNavbar role='student' />
+                    <LayoutNavbar role='STUDENT' />
                 </div>
                 <div className='col-9'>
                     <Outlet />

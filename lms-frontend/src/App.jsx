@@ -14,7 +14,7 @@ import StudentDashboard from 'pages/student/StudentDashboard';
 import StudentCourses from 'pages/student/StudentCourses';
 import StudentSchedule from 'pages/student/StudentSchedule';
 import StudentEnrollment from 'pages/student/StudentEnrollment';
-import StudentNews from 'pages/student/StudentNews';
+import StudentNoti from 'pages/student/StudentNoti';
 import StudentScore from 'pages/student/StudentScore';
 
 import LayoutTeacher from 'layouts/teacher/LayoutTeacher';
@@ -41,10 +41,12 @@ import AMReport from 'pages/academic_manager/AMReport';
 import AMNoti from 'pages/academic_manager/AMNoti';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
-import CourseDetailStudent from "pages/student/course/CourseDetailStudent.jsx";
+import CourseDetailStudent from "pages/student/course/CourseDetail/CourseDetailStudent.jsx";
 import StudentNotification from "pages/student/StudentNotification.jsx";
 import UserProfile from "pages/user-profile/UserProfile.jsx";
 
+import ProtectedRoute from './components/ProtectedRoute';
+import Unauthorized from './pages/home/Unauthorized';
 
 
 const App = () => {
@@ -56,26 +58,24 @@ const App = () => {
                     <Route index element={<Guest />} />
                     <Route path='login' element={<Login />} />
                     <Route path='register' element={<Register />} />
-
-
                 </Route>
 
                 {/* Student Route */}
+                <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+                    <Route path='student' element={<LayoutStudent />}>
+                        <Route index element={<StudentDashboard />} />
+                        <Route path='courses' element={<StudentCourses />} />
+                        <Route path='schedule' element={<StudentSchedule />} />
+                        <Route path='score' element={<StudentScore />} />
+                        <Route path='enrollment' element={<StudentEnrollment />} />
+                        <Route path='notification' element={<StudentNotification />} />
+                        <Route path='profile' element={<UserProfile />} />
 
-                <Route path='student' element={<LayoutStudent />}>
-                    <Route index element={<StudentDashboard />} />
-                    <Route path='courses' element={<StudentCourses />} />
-                    <Route path='schedule' element={<StudentSchedule />} />
-                    <Route path='score' element={<StudentScore />} />
-                    <Route path='enrollment' element={<StudentEnrollment />} />
-                    <Route path='news' element={<StudentNews />} />
-                    <Route path='notification' element={<StudentNotification />} />
-                    <Route path='profile' element={<UserProfile />} />
-
-                    {/* Nested: student/course */}
-                    <Route path="course">
-                        <Route index element={<CourseHome />} />
-                        <Route path="detail" element={<CourseDetailStudent />} />
+                        {/* Nested: student/course */}
+                        <Route path="course">
+                            <Route index element={<CourseHome />} />
+                            <Route path="detail" element={<CourseDetailStudent />} />
+                        </Route>
                     </Route>
                 </Route>
 
@@ -86,18 +86,18 @@ const App = () => {
 
 
                 {/* Teacher Route */}
-                <Route path='teacher' element={<LayoutTeacher />}>
-                    <Route index element={<TeacherDashboard />} />
-                    <Route path='courses' element={<TeacherCourses />} />
-                    <Route path='schedule' element={<TeacherSchedule />} />
-                    <Route path='noti' element={<TeacherNoti />} />
-                    <Route path='profile' element={<UserProfile />} />
-
-
+                <Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
+                    <Route path='teacher' element={<LayoutTeacher />}>
+                        <Route index element={<TeacherDashboard />} />
+                        <Route path='courses' element={<TeacherCourses />} />
+                        <Route path='schedule' element={<TeacherSchedule />} />
+                        <Route path='noti' element={<TeacherNoti />} />
+                        <Route path='profile' element={<UserProfile />} />
+                    </Route>
                 </Route>
 
                 {/* academic_manager Route */}
-                <Route path='academic_manager' element={<LayoutAcademicManager />}>
+                <Route path='staff' element={<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']}><LayoutAcademicManager /></ProtectedRoute>}>
                     <Route index element={<AMDashboard />} />
                     <Route path='program' element={<AMProgram />} />
                     <Route path='courses' element={<AMCourse />} />
@@ -111,15 +111,18 @@ const App = () => {
                 </Route>
 
                 {/* Admin Route */}
-                <Route path='admin' element={<LayoutAdmin />}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path='systems' element={<AdminSystems />} />
-                    <Route path='upload' element={<AdminUpload />} />
-                    <Route path='security' element={<AdminSecurity />} />
-                    <Route path='profile' element={<UserProfile />} />
-
+                <Route element={<ProtectedRoute allowedRoles={['ADMIN_IT']} />}>
+                    <Route path='admin' element={<LayoutAdmin />} >
+                        <Route index element={<AdminDashboard />} />
+                        <Route path='systems' element={<AdminSystems />} />
+                        <Route path='upload' element={<AdminUpload />} />
+                        <Route path='security' element={<AdminSecurity />} />
+                        <Route path='profile' element={<UserProfile />} />
+                    </Route>
                 </Route>
 
+                {/* Trang lỗi phân quyền */}
+                <Route path="/unauthorized" element={<Unauthorized />} />
             </Routes>
         </BrowserRouter >
     );
