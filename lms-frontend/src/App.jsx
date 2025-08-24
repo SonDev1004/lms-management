@@ -42,7 +42,7 @@ import AMReport from 'pages/academic_manager/AMReport';
 import AMNoti from 'pages/academic_manager/AMNoti';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
-import CourseDetailStudent from "pages/student/course/CourseDetailStudent.jsx";
+import CourseDetailStudent from "pages/student/course/CourseDetail/CourseDetailStudent.jsx";
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/home/Unauthorized';
 
@@ -75,6 +75,7 @@ const App = () => {
                         </Route>
                     </Route>
                 </Route>
+
                 {/* Course Route (ngoài student) */}
                 <Route path='course'>
                     <Route path='home' element={<CourseHome />} />
