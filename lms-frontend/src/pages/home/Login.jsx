@@ -27,6 +27,7 @@ const Login = () => {
                 localStorage.setItem('username', username);
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('role', res.data.result.roleName);
                 navigate('/');
             })
             .catch(err => {

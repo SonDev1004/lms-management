@@ -19,6 +19,8 @@ export default function TemplateDemo() {
                 localStorage.removeItem('username');
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+                localStorage.removeItem('roleName');
+                // localStorage.clear();
                 navigate('/');
             });
     };
