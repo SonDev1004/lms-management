@@ -16,9 +16,11 @@ export default function TemplateDemo() {
     const handleLogout = () => {
         axiosClient.post('auth/logout')
             .then(res => {
+                localStorage.removeItem('role');
                 localStorage.removeItem('username');
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+
                 navigate('/');
             });
     };
