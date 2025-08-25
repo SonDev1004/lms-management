@@ -5,11 +5,14 @@ import { Menu } from 'primereact/menu';
 import { useRef } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import axiosClient from 'services/axiosClient';
+import roleToRoute from '../../services/roleToRoute';
 
 import logo from 'assets/images/logo.png';
 
 const LayoutHome = () => {
     // States, hooks and refs
+    const role = localStorage.getItem('role');
+
     const navigate = useNavigate();
     const menuRight = useRef(null);
 
@@ -20,46 +23,14 @@ const LayoutHome = () => {
                 localStorage.removeItem('username');
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+                localStorage.removeItem('role');
                 navigate('/');
             });
     };
 
     // Menu items
     const items = [
-        {
-            label: 'Programs',
-            icon: 'pi pi-book',
-            items: [
-                [
-                    {
-                        label: 'Living Room',
-                        items: [{ label: 'Accessories' }, { label: 'Armchair' }, { label: 'Coffee Table' }, { label: 'Couch' }, { label: 'TV Stand' }]
-                    }
-                ],
-                [
-                    {
-                        label: 'Kitchen',
-                        items: [{ label: 'Bar stool' }, { label: 'Chair' }, { label: 'Table' }]
-                    },
-                    {
-                        label: 'Bathroom',
-                        items: [{ label: 'Accessories' }]
-                    }
-                ],
-                [
-                    {
-                        label: 'Bedroom',
-                        items: [{ label: 'Bed' }, { label: 'Chaise lounge' }, { label: 'Cupboard' }, { label: 'Dresser' }, { label: 'Wardrobe' }]
-                    }
-                ],
-                [
-                    {
-                        label: 'Office',
-                        items: [{ label: 'Bookcase' }, { label: 'Cabinet' }, { label: 'Chair' }, { label: 'Desk' }, { label: 'Executive Chair' }]
-                    }
-                ]
-            ]
-        },
+
         {
             label: 'Subjects',
             icon: 'pi pi-file',
@@ -90,15 +61,25 @@ const LayoutHome = () => {
                 ]
             ]
         },
-        {
-            label: 'Dashboard',
-            icon: 'pi pi-clock'
-        },
-        {
-            label: 'Login',
-            icon: 'pi pi-sign-in',
-            command: () => navigate('/login')
-        }
+
+        //Phân quyền show Dashboard theo role
+        ...(role && roleToRoute(role)
+            ? [{
+                label: 'Dashboard',
+                icon: 'pi pi-clock',
+                command: () => navigate(`/${roleToRoute(role)}`),
+            }]
+            : []
+        ),
+        //Tắt login khi đã đăng nhập
+        ...(!localStorage.getItem('username')
+            ? [{
+                label: 'Login',
+                icon: 'pi pi-sign-in',
+                command: () => navigate('/login')
+            }]
+            : []
+        )
     ];
 
     // Profile menu items
@@ -108,13 +89,13 @@ const LayoutHome = () => {
             items: [
                 {
                     label: 'Tài khoản',
-                    icon: 'pi pi-user'
-                },
-                {
-                    label: 'Học trực tuyến',
-                    icon: 'pi pi-book'
+                    icon: 'pi pi-user',
+                    command: () => {
+                        navigate('/user-profile');
+                    }
                 }
             ]
+
         },
         {
             separator: true
@@ -122,6 +103,7 @@ const LayoutHome = () => {
         {
             label: 'Đăng xuất',
             icon: 'pi pi-sign-out',
+            roles: ['student', 'teacher', 'academic_manager', 'admin'],
             command: handleLogout
         }
     ];
@@ -141,7 +123,7 @@ const LayoutHome = () => {
                 localStorage.getItem('username') &&
                 <>
                     <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" shape="circle" onClick={(e) => menuRight.current.toggle(e)} />
-                    <Menu model={profileItems} popup ref={menuRight} id="popup_menu_right" popupAlignment="right" />
+                    <Menu model={profileItems} popup ref={menuRight} id="popup_menu_right" popupAlignment="right"  />
                 </>
             }
         </div>

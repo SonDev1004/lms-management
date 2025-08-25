@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Button } from 'primereact/button';
@@ -6,8 +6,9 @@ import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
 import { Panel } from 'primereact/panel';
 import { Toast } from 'primereact/toast';
-
 import axiosClient from 'services/axiosClient';
+import roleToRoute from 'services/roleToRoute';
+
 
 import bg from 'assets/images/bg-login.png';
 
@@ -18,6 +19,7 @@ const Login = () => {
     const navigate = useNavigate();
     const toast = useRef(null);
 
+
     // Functions
     const handleLogin = (e) => {
         e.preventDefault();
@@ -27,6 +29,7 @@ const Login = () => {
                 localStorage.setItem('username', username);
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
+                localStorage.setItem('role', res.data.result.roleName);
                 navigate('/');
             })
             .catch(err => {
@@ -34,6 +37,13 @@ const Login = () => {
             })
     }
 
+    useEffect(() => {
+        const role = localStorage.getItem("role");
+        if (role) {
+            // Đã đăng nhập, redirect về dashboard tương ứng
+            navigate(`/${roleToRoute(role)}`);
+        }
+    }, [navigate]);
     return (
         <>
             <div style={{ backgroundImage: `url(${bg})`, backgroundSize: 'cover', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

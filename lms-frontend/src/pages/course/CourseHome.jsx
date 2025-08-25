@@ -17,6 +17,7 @@ const subjectColors = {
     'default': '#6a1b9a'
 };
 
+
 const avatarPalette = [
     '#ff7043', '#7e57c2', '#ef5350', '#8d6e63', '#26a69a',
     '#29b6f6', '#ffb300', '#9ccc65'
