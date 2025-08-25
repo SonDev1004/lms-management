@@ -1,436 +1,367 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { Card } from 'primereact/card';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
-import { TabView, TabPanel } from 'primereact/tabview';
 import { InputText } from 'primereact/inputtext';
-import { Divider } from 'primereact/divider';
-import { ProgressBar } from 'primereact/progressbar';
-import { Tag } from 'primereact/tag';
-import { Chart } from 'primereact/chart';
-import { Dialog } from 'primereact/dialog';
-import { Toast } from 'primereact/toast';
-import { DataView } from 'primereact/dataview';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
 import { Calendar } from 'primereact/calendar';
+import { Dropdown } from 'primereact/dropdown';
+import { Divider } from 'primereact/divider';
+import { Toast } from 'primereact/toast';
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 import './UserProfile.css';
 
-// npm install chart.js
-const sampleStudent = {
-    studentId: 'STU-2024-098',
-    name: 'Lê Thị B',
-    username: 'lethib',
-    className: 'Toeic Basic - T2/T4 18:00',
-    level: 'A2 (Elementary)',
-    tutor: 'Mr. Trần Minh',
-    location: 'Hà Nội, Việt Nam',
-    email: 'lethib@example.com',
-    phone: '+84 98 765 4321',
-    enrolled: '2024-09-01T00:00:00.000Z',
-    bio: 'Học viên chuyên luyện TOEIC, thích luyện nghe mỗi ngày và tham gia speaking club.',
-    skills: ['Speaking', 'Listening', 'Reading', 'Writing'],
-    progress: { Speaking: 72, Listening: 80, Reading: 65, Writing: 58 },
-    attendanceRate: 92,
-    nextLesson: '2025-08-26T18:00:00.000Z',
-    outstandingFee: 0,
-    goals: 'Nâng điểm TOEIC lên 600 trong 6 tháng, cải thiện Speaking để tự tin phỏng vấn.',
-    lastTest: {
-        name: 'Placement Test',
-        date: '2025-07-30T09:00:00.000Z',
-        overall: 470,
-        breakdown: { Listening: 250, Reading: 220 }
-    },
-    skillHistory: {
-        labels: ['May', 'Jun', 'Jul', 'Aug'],
-        Speaking: [60, 66, 70, 72],
-        Listening: [70, 75, 78, 80],
-        Reading: [55, 60, 63, 65],
-        Writing: [50, 54, 56, 58]
-    }
+const MOCK_USER = {
+    username: 'john.doe',
+    firstName: 'John',
+    lastName: 'Doe',
+    dateOfBirth: '1999-05-12',
+    address: '221B Baker Street, London',
+    gender: true,
+    email: 'john.doe@example.com',
+    phone: '+84 912 345 678',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    role: 'student'
 };
 
-const activity = [
-    { id: 1, status: 'lesson', date: '2025-08-20T10:00:00.000Z', actor: 'Tutor - Trần Minh', content: 'Attended Lesson: Unit 8 - Listening practice' },
-    { id: 2, status: 'test', date: '2025-07-30T09:00:00.000Z', actor: 'Center', content: 'Placement Test: Overall 470 (Listening 250 / Reading 220)' },
-    { id: 3, status: 'payment', date: '2025-06-10T14:00:00.000Z', actor: 'Admin', content: 'Paid course fee for Sep–Nov 2025' }
+const genderOptions = [
+    { label: 'Male', value: true },
+    { label: 'Female', value: false }
 ];
 
-//chuyển thể ngày
-const formatDate = (isoOrString) => {
-    if (!isoOrString) return '';
-    const d = new Date(isoOrString);
-    if (isNaN(d)) return isoOrString;
-    return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
-};
-//nhận giờ
-const formatTime = (isoOrString) => {
-    if (!isoOrString) return '';
-    const d = new Date(isoOrString);
-    if (isNaN(d)) return isoOrString;
-    return new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
-};
+export default function UserProfile() {
+    const [form, setForm] = useState(MOCK_USER);
+    const [editingField, setEditingField] = useState(null);
+    const [tempValue, setTempValue] = useState(null);
+    const [saving, setSaving] = useState(false);
+    const toast = useRef(null);
 
-const statusColor = { lesson: '#0ea5e9', test: '#10b981', payment: '#f59e0b', default: '#9ca3af' };
-const statusIcon = { lesson: 'pi-book', test: 'pi-chart-line', payment: 'pi-wallet' };
-const statusSeverity = { lesson: 'info', test: 'success', payment: 'warning', default: 'info' };
+    const fullName = useMemo(() => `${form.firstName || ''} ${form.lastName || ''}`.trim(), [form]);
 
-// validation
-const isValidEmail = (s) => !!s && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-const digitsCount = (s) => (s ? s.replace(/\D/g, '').length : 0);
-const isValidPhone = (s) => digitsCount(s) >= 9;
+    const startEdit = (key) => {
+        if (saving) return;
+        // open editor for the requested field, prefill with current value
+        setEditingField(key);
+        setTempValue(form[key] ?? (key === 'gender' ? null : ''));
+    };
 
-//profile trên
-const ProfileSidebar = React.memo(function ProfileSidebar({ student }) {
-    const initials = (student.name || '').split(' ').map(n => (n || '')[0] || '').slice(0,2).join('').toUpperCase();
+    const cancelEdit = () => {
+        if (saving) return;
+        setEditingField(null);
+        setTempValue(null);
+        toast.current?.show({ severity: 'info', summary: 'Cancelled', detail: 'Edit cancelled', life: 1500 });
+    };
+
+    const isPhoneValid = (v) => {
+        if (!v) return false;
+        const cleaned = String(v).replace(/[^\d+]/g, '');
+        return cleaned.length >= 8 && cleaned.length <= 15;
+    };
+
+    const isValidForKey = (key, value) => {
+        if (key === 'phone') return isPhoneValid(value);
+        if (key === 'dateOfBirth') return value !== null && value !== undefined && String(value).trim().length > 0;
+        // gender is boolean (true/false) — allow false
+        if (key === 'gender') return value === true || value === false;
+        // default: non-empty string
+        return value !== null && value !== undefined && String(value).trim().length > 0;
+    };
+
+    const getValidationError = (key, value) => {
+        if (key === 'phone') {
+            if (!value || String(value).trim().length === 0) return 'Phone cannot be empty.';
+            if (!isPhoneValid(value)) return 'Phone must contain 8–15 digits, may include leading +.';
+            return null;
+        }
+        if (key === 'dateOfBirth') {
+            if (!value) return 'Please select a date.';
+            return null;
+        }
+        if (key === 'gender') {
+            if (value !== true && value !== false) return 'Please select gender.';
+            return null;
+        }
+        // strings
+        if (value === null || value === undefined || String(value).trim().length === 0) return `${labelForKey(key)} cannot be empty.`;
+        return null;
+    };
+
+    const mockSaveApi = (key, value) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (key === 'phone' && !isPhoneValid(value)) {
+                    reject(new Error('Invalid phone format on server.'));
+                } else {
+                    resolve({ ok: true, key, value });
+                }
+            }, 700);
+        });
+    };
+
+    const saveEdit = async (key) => {
+        const error = getValidationError(key, tempValue);
+        if (error) {
+            toast.current?.show({ severity: 'warn', summary: 'Invalid', detail: error, life: 3500 });
+            return;
+        }
+
+        try {
+            setSaving(true);
+            const res = await mockSaveApi(key, tempValue);
+            if (res && res.ok) {
+                setForm((s) => ({ ...s, [key]: tempValue }));
+                setEditingField(null);
+                setTempValue(null);
+                toast.current?.show({ severity: 'success', summary: 'Saved', detail: `${labelForKey(key)} updated.`, life: 3000 });
+            } else {
+                throw new Error('Save failed');
+            }
+        } catch (err) {
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: err.message || 'Save failed', life: 4000 });
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const renderActions = (key, allowEdit = true) => {
+        if (!allowEdit) return null;
+        if (editingField === key) {
+            const disabled = !!getValidationError(key, tempValue) || saving;
+            return (
+                <div className="action-buttons" style={{ display: 'flex', gap: 8 }}>
+                    <Button
+                        icon="pi pi-check"
+                        className="p-button-rounded"
+                        aria-label="Save"
+                        onClick={() => saveEdit(key)}
+                        disabled={disabled}
+                        loading={saving}
+                        loadingIcon="pi pi-spin pi-spinner"
+                        aria-disabled={disabled}
+                    />
+                    <Button
+                        icon="pi pi-times"
+                        className="p-button-rounded p-button-secondary"
+                        aria-label="Cancel"
+                        onClick={cancelEdit}
+                        disabled={saving}
+                    />
+                </div>
+            );
+        }
+        // hide edit button while another field edits to avoid accidental overwrite
+        const editDisabled = saving || (editingField && editingField !== key);
+        return (
+            <Button
+                icon="pi pi-pencil"
+                className="p-button-rounded p-button-text edit-right"
+                aria-label={`Edit ${key}`}
+                onClick={() => startEdit(key)}
+                disabled={editDisabled}
+            />
+        );
+    };
+
+    const formatDisplayDate = (iso) => {
+        if (!iso) return '-';
+        try {
+            const d = new Date(iso);
+            return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+        } catch (e) {
+            return iso;
+        }
+    };
+
+    function labelForKey(key) {
+        switch (key) {
+            case 'firstName': return 'First name';
+            case 'lastName': return 'Last name';
+            case 'dateOfBirth': return 'Date of Birth';
+            case 'gender': return 'Gender';
+            case 'address': return 'Address';
+            case 'phone': return 'Phone';
+            default: return key;
+        }
+    }
 
     return (
-        <aside className="profile-side">
-            <Card className="side-card">
-                <div className="avatar-row">
-                    <div className="avatar-wrap">
-                        <Avatar label={initials} shape="circle" className="avatar-main" />
-                    </div>
+        <div className="user-profile-root p-m-4">
+            <Toast ref={toast} />
+            <Card className="user-profile-card">
+                <div className="user-profile-header p-d-flex p-flex-column p-ai-center">
+                    <Avatar
+                        image={form.avatar}
+                        shape="circle"
+                        size="xlarge"
+                        className="user-avatar"
+                        style={{ width: 96, height: 96, objectFit: 'cover' }}
+                    />
 
-                    <div className="user-meta">
-                        <h2 className="user-name">{student.name}</h2>
-                        <div className="user-sub">ID: <strong>{student.studentId}</strong></div>
-                        <div className="user-role">Class: {student.className}</div>
+                    <div className="user-name-block p-text-center p-mt-3">
+                        <div className="user-fullname" style={{ fontWeight: 700, fontSize: '1.1rem' }}>{fullName || form.username}</div>
+                        <div className="user-username" style={{ color: '#6b7280' }}>@{form.username}</div>
 
-                        <div className="user-location">
-                            <i className="pi pi-user-tie tutor-icon" aria-hidden="true" />
-                            <strong className="tutor-label">Tutor:</strong>
-                            <span className="tutor-name">{student.tutor}</span>
-                        </div>
-
-                        <div className="user-level">
-                            <span className="level-badge"><i className="pi pi-star level-icon" /> {student.level}</span>
+                        <div className="user-role-wrap p-mt-2">
+                            <div className="role-badge p-d-inline-flex p-ai-center">
+                                <span className="role-icon" aria-hidden>🎓</span>
+                                <span className="role-text">{(form.role || 'Unknown').toUpperCase()}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <Divider />
+                <Divider className="p-mt-4 p-mb-4" />
 
-                <div className="profile-stats">
-                    <div className="stat-row attendance-row">
-                        <div>
-                            <small className="stat-label">Attendance</small>
-                        </div>
-                        <div className="stat-bar">
-                            <ProgressBar value={student.attendanceRate} showValue={true} />
+                <div className="p-grid p-nogutter p-align-start p-justify-between">
+                    <div className="p-col-12 p-md-6 p-p-3">
+                        <div className="p-text-sm p-text-bold p-mb-2">Personal</div>
+                        <div className="section-card">
+
+                            <FieldRow
+                                label="First name"
+                                icon="pi pi-user"
+                                displayValue={form.firstName}
+                                editingField={editingField}
+                                fieldKey="firstName"
+                                tempValue={tempValue}
+                                setTempValue={setTempValue}
+                                renderActions={renderActions}
+                                getValidationError={getValidationError}
+                            />
+
+                            <FieldRow
+                                label="Last name"
+                                icon="pi pi-id-card"
+                                displayValue={form.lastName}
+                                editingField={editingField}
+                                fieldKey="lastName"
+                                tempValue={tempValue}
+                                setTempValue={setTempValue}
+                                renderActions={renderActions}
+                                getValidationError={getValidationError}
+                            />
+
+                            <div className="field-row p-mb-3">
+                                <div className="field-left">
+                                    <div className="field-body">
+                                        <label className="form-label"><i className="pi pi-calendar p-mr-2" />Date of Birth</label>
+                                        {!editingField || editingField !== 'dateOfBirth' ? (
+                                            <div className="field-display"><span>{formatDisplayDate(form.dateOfBirth)}</span></div>
+                                        ) : (
+                                            <div>
+                                                <Calendar
+                                                    value={tempValue ? new Date(tempValue) : null}
+                                                    onChange={(e) => setTempValue(e.value ? e.value.toISOString().slice(0,10) : null)}
+                                                    dateFormat="yy-mm-dd"
+                                                    showIcon
+                                                    maxDate={new Date()}
+                                                    placeholder="YYYY-MM-DD"
+                                                />
+                                                {getValidationError('dateOfBirth', tempValue) && <small className="field-error">{getValidationError('dateOfBirth', tempValue)}</small>}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="field-actions">{renderActions('dateOfBirth')}</div>
+                            </div>
+
+                            <div className="field-row p-mb-3">
+                                <div className="field-left">
+                                    <div className="field-body">
+                                        <label className="form-label"><i className="pi pi-male p-mr-2" />Gender</label>
+                                        {!editingField || editingField !== 'gender' ? (
+                                            <div className="field-display"><span>{form.gender ? 'Male' : 'Female'}</span></div>
+                                        ) : (
+                                            <div>
+                                                <Dropdown value={tempValue} options={genderOptions} onChange={(e) => setTempValue(e.value)} placeholder="Select gender" />
+                                                {getValidationError('gender', tempValue) && <small className="field-error">{getValidationError('gender', tempValue)}</small>}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="field-actions">{renderActions('gender')}</div>
+                            </div>
+
+                            <div className="field-row p-mb-3">
+                                <div className="field-left">
+                                    <div className="field-body">
+                                        <label className="form-label"><i className="pi pi-map-marker p-mr-2" />Address</label>
+                                        {!editingField || editingField !== 'address' ? (
+                                            <div className="field-display"><span title={form.address || ''}>{form.address || '-'}</span></div>
+                                        ) : (
+                                            <div>
+                                                <InputText value={tempValue || ''} onChange={(e) => setTempValue(e.target.value)} />
+                                                {getValidationError('address', tempValue) && <small className="field-error">{getValidationError('address', tempValue)}</small>}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="field-actions">{renderActions('address')}</div>
+                            </div>
+
                         </div>
                     </div>
 
-                    <div className="stat-row nextlesson-row">
-                        <div>
-                            <small className="stat-label">Next lesson</small>
-                            <div className="next-lesson">
-                                <i className="pi pi-calendar next-lesson-icon" aria-hidden="true" />
-                                <span className="next-lesson-text">{formatDate(student.nextLesson)} — {formatTime(student.nextLesson)}</span>
+                    <div className="p-col-12 p-md-6 p-p-3">
+                        <div className="p-text-sm p-text-bold p-mb-2">Contact</div>
+                        <div className="section-card">
+
+                            <div className="field-row p-mb-3">
+                                <div className="field-left" style={{ flex: 1 }}>
+                                    <div className="field-body" style={{ width: '100%' }}>
+                                        <label className="form-label"><i className="pi pi-envelope p-mr-2" />Email</label>
+                                        <div className="field-display"><span title={form.email || ''}>{form.email || '-'}</span></div>
+                                    </div>
+                                </div>
+                                <div className="field-actions" />
                             </div>
+
+                            <div className="field-row p-mb-3">
+                                <div className="field-left">
+                                    <div className="field-body">
+                                        <label className="form-label"><i className="pi pi-phone p-mr-2" />Phone</label>
+                                        {!editingField || editingField !== 'phone' ? (
+                                            <div className="field-display"><span title={form.phone || ''}>{form.phone || '-'}</span></div>
+                                        ) : (
+                                            <div>
+                                                <InputText value={tempValue || ''} onChange={(e) => setTempValue(e.target.value)} />
+                                                <div className="field-hint">Example: +84912345678 or 0912345678</div>
+                                                {getValidationError('phone', tempValue) && <small className="field-error">{getValidationError('phone', tempValue)}</small>}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="field-actions">{renderActions('phone')}</div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </Card>
-        </aside>
-    );
-});
-
-//skill pc
-const RadarChart = React.memo(function RadarChart({ student }) {
-    const radarData = useMemo(() => ({
-        labels: student.skills,
-        datasets: [{
-            label: 'Current progress',
-            data: student.skills.map(s => student.progress[s]),
-            fill: true,
-            backgroundColor: 'rgba(14,165,233,0.18)',
-            borderColor: '#0ea5e9',
-            pointBackgroundColor: '#0ea5e9'
-        }]
-    }), [student]);
-
-    const radarOptions = useMemo(() => ({
-        scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, color: '#374151' }, grid: { color: 'rgba(0,0,0,0.06)' }, pointLabels: { color: '#374151' } } },
-        plugins: { legend: { position: 'bottom' } },
-        maintainAspectRatio: false
-    }), []);
-
-    return <Chart type="radar" data={radarData} options={radarOptions} style={{ height: '320px' }} />;
-});
-//trend pc
-const TrendChart = React.memo(function TrendChart({ student }) {
-    const trendData = useMemo(() => ({
-        labels: student.skillHistory.labels,
-        datasets: [
-            { label: 'Speaking', data: student.skillHistory.Speaking, fill: false, tension: 0.3, borderColor: '#0ea5e9', backgroundColor: '#0ea5e9' },
-            { label: 'Listening', data: student.skillHistory.Listening, fill: false, tension: 0.3, borderColor: '#06b6d4', backgroundColor: '#06b6d4' },
-            { label: 'Reading', data: student.skillHistory.Reading, fill: false, tension: 0.3, borderColor: '#f59e0b', backgroundColor: '#f59e0b' },
-            { label: 'Writing', data: student.skillHistory.Writing, fill: false, tension: 0.3, borderColor: '#10b981', backgroundColor: '#10b981' }
-        ]
-    }), [student]);
-
-    const trendOptions = useMemo(() => ({ plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } } }, maintainAspectRatio: false }), []);
-
-    return <Chart type="line" data={trendData} options={trendOptions} style={{ height: '320px' }} />;
-});
-
-//user
-export default function UserProfile() {
-    const [student, setStudent] = useState(sampleStudent);
-
-    const [form, setForm] = useState({
-        email: sampleStudent.email,
-        phone: sampleStudent.phone,
-        className: sampleStudent.className,
-        tutor: sampleStudent.tutor,
-        sms: true,
-        enrolled: sampleStudent.enrolled,
-        location: sampleStudent.location
-    });
-
-    const [editingField, setEditingField] = useState(null);
-    const [testDialogVisible, setTestDialogVisible] = useState(false);
-    const [selectedTest, setSelectedTest] = useState(null);
-    const toast = useRef(null);
-
-    const activities = useMemo(() => activity, []);
-//thả chế độ edit
-    const beginInlineEdit = (field) => {
-        setForm(f => ({ ...f,
-            email: student.email,
-            phone: student.phone,
-            enrolled: student.enrolled,
-            location: student.location,
-            className: student.className,
-            tutor: student.tutor
-        }));
-        setEditingField(field);
-    };
-//bỏ edit
-    const cancelInlineEdit = (field) => {
-        setForm(f => ({ ...f, [field]: student[field] ?? f[field] }));
-        setEditingField(null);
-    };
-//test
-    const openTestDetails = useCallback((item) => {
-        if (item && item.status === 'test') {
-            setSelectedTest(item);
-            setTestDialogVisible(true);
-        }
-    }, []);
-//nhật kí
-    const activityItemTemplate = useCallback((a) => {
-        const color = statusColor[a.status] || statusColor.default;
-        const icon = statusIcon[a.status] || 'pi-file';
-        const severity = statusSeverity[a.status] || 'info';
-
-        return (
-            <div className="activity-row" key={a.id} onClick={() => a.status === 'test' && openTestDetails(a)} role={a.status === 'test' ? 'button' : undefined} tabIndex={a.status === 'test' ? 0 : -1}>
-                <div className="row-left">
-                    <Avatar icon={`pi ${icon}`} size="large" shape="circle" style={{ background: color, color: '#fff' }} />
-                </div>
-                <div className="row-body">
-                    <div className="activity-title">
-                        {a.content} <small className="p-text-secondary">• {formatDate(a.date)} • {formatTime(a.date)}</small>
-                        <span className="activity-tag"><Tag value={a.status} severity={severity} className="p-ml-2" /></span>
-                    </div>
-                    <div className="activity-content">By: {a.actor}</div>
-                </div>
-            </div>
-        );
-    }, [openTestDetails]);
-
-    return (
-        <div className="user-profile-root">
-            <Toast ref={toast} />
-
-            <div className="profile-grid p-d-flex">
-                <ProfileSidebar student={student} />
-
-                <main className="profile-main">
-                    <Card className="main-card">
-                        <TabView>
-                            <TabPanel header="Overview">
-                                <div className="overview-grid">
-                                    <section className="overview-left">
-                                        <p className="user-bio">{student.bio}</p>
-
-                                        <div className="info-grid">
-                                            {/*email*/}
-                                            <div className="info-item">
-                                                <small>Email</small>
-                                                <div className="field-row">
-                                                    <div className="value email-value">
-                                                        {editingField === 'email' ? (
-                                                            <InputText value={form.email} onChange={(e) => setForm(f => ({ ...f, email: e.target.value }))} aria-label="Edit email" />
-                                                        ) : (
-                                                            <div className="email-text"><i className="pi pi-envelope p-mr-2" aria-hidden="true"></i>{student.email}</div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="actions">
-                                                        {editingField === 'email' ? (
-                                                            <>
-                                                                <Button icon="pi pi-check" className="p-button-text edit-field-btn" onClick={() => {
-                                                                    if (!isValidEmail(form.email)) { toast.current.show({ severity: 'error', summary: 'Invalid email', detail: 'Please enter a valid email', life: 3000 }); return; }
-                                                                    setStudent(prev => ({ ...prev, email: form.email }));
-                                                                    setEditingField(null);
-                                                                    toast.current.show({ severity: 'success', summary: 'Saved', detail: 'Email updated', life: 2000 });
-                                                                }} aria-label="Save email" />
-                                                                <Button icon="pi pi-times" className="p-button-text edit-field-btn" onClick={() => cancelInlineEdit('email')} aria-label="Cancel edit email" />
-                                                            </>
-                                                        ) : (
-                                                            <Button icon="pi pi-pencil" className="p-button-text edit-field-btn" onClick={() => beginInlineEdit('email')} aria-label="Edit email" />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/*phone*/}
-                                            <div className="info-item">
-                                                <small>Phone</small>
-                                                <div className="field-row">
-                                                    <div className="value">
-                                                        {editingField === 'phone' ? (
-                                                            <InputText value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} aria-label="Edit phone" />
-                                                        ) : (
-                                                            <div><i className="pi pi-phone p-mr-2" aria-hidden="true"></i>{student.phone}</div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="actions">
-                                                        {editingField === 'phone' ? (
-                                                            <>
-                                                                <Button icon="pi pi-check" className="p-button-text edit-field-btn" onClick={() => {
-                                                                    if (!isValidPhone(form.phone)) { toast.current.show({ severity: 'error', summary: 'Invalid phone', detail: 'Please enter a valid phone', life: 3000 }); return; }
-                                                                    setStudent(prev => ({ ...prev, phone: form.phone }));
-                                                                    setEditingField(null);
-                                                                    toast.current.show({ severity: 'success', summary: 'Saved', detail: 'Phone updated', life: 2000 });
-                                                                }} aria-label="Save phone" />
-                                                                <Button icon="pi pi-times" className="p-button-text edit-field-btn" onClick={() => cancelInlineEdit('phone')} aria-label="Cancel edit phone" />
-                                                            </>
-                                                        ) : (
-                                                            <Button icon="pi pi-pencil" className="p-button-text edit-field-btn" onClick={() => beginInlineEdit('phone')} aria-label="Edit phone" />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/*enrolled*/}
-
-                                            <div className="info-item">
-                                                <small>Enrolled</small>
-                                                <div className="field-row">
-                                                    <div className="value">
-                                                        {editingField === 'enrolled' ? (
-                                                            <Calendar value={form.enrolled ? new Date(form.enrolled) : null} onChange={(e) => setForm(f => ({ ...f, enrolled: e.value ? e.value.toISOString() : null }))} showIcon dateFormat="dd/mm/yy" />
-                                                        ) : (
-                                                            <div>{formatDate(student.enrolled)}</div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="actions">
-                                                        {editingField === 'enrolled' ? (
-                                                            <>
-                                                                <Button icon="pi pi-check" className="p-button-text edit-field-btn" onClick={() => {
-                                                                    setStudent(prev => ({ ...prev, enrolled: form.enrolled }));
-                                                                    setEditingField(null);
-                                                                    toast.current.show({ severity: 'success', summary: 'Saved', detail: 'Enrolled date updated', life: 2000 });
-                                                                }} aria-label="Save enrolled" />
-                                                                <Button icon="pi pi-times" className="p-button-text edit-field-btn" onClick={() => cancelInlineEdit('enrolled')} aria-label="Cancel edit enrolled" />
-                                                            </>
-                                                        ) : (
-                                                            <Button icon="pi pi-pencil" className="p-button-text edit-field-btn" onClick={() => beginInlineEdit('enrolled')} aria-label="Edit enrolled" />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/*location*/}
-
-                                            <div className="info-item">
-                                                <small>Location</small>
-                                                <div className="field-row">
-                                                    <div className="value">
-                                                        {editingField === 'location' ? (
-                                                            <InputText value={form.location} onChange={(e) => setForm(f => ({ ...f, location: e.target.value }))} aria-label="Edit location" />
-                                                        ) : (
-                                                            <div>{student.location}</div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="actions">
-                                                        {editingField === 'location' ? (
-                                                            <>
-                                                                <Button icon="pi pi-check" className="p-button-text edit-field-btn" onClick={() => { setStudent(prev => ({ ...prev, location: form.location })); setEditingField(null); toast.current.show({ severity: 'success', summary: 'Saved', detail: 'Location updated', life: 2000 }); }} aria-label="Save location" />
-                                                                <Button icon="pi pi-times" className="p-button-text edit-field-btn" onClick={() => cancelInlineEdit('location')} aria-label="Cancel edit location" />
-                                                            </>
-                                                        ) : (
-                                                            <Button icon="pi pi-pencil" className="p-button-text edit-field-btn" onClick={() => beginInlineEdit('location')} aria-label="Edit location" />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <Divider />
-
-                                        <h4>Mục tiêu & Trạng thái</h4>
-                                        <div className="goals">{student.goals}</div>
-
-                                        <div className="p-mt-3">
-                                            <small>Last test</small>
-                                            <div className="last-test">
-                                                <div>{student.lastTest.name} • {formatDate(student.lastTest.date)}</div>
-                                                <div className="p-text-secondary">Overall: {student.lastTest.overall}</div>
-                                                <Button label="Xem chi tiết" onClick={() => { setSelectedTest({ ...student.lastTest, status: 'test' }); setTestDialogVisible(true); }} className="p-button-text p-ml-2" icon="pi pi-eye" aria-label="View last test" />
-                                            </div>
-                                        </div>
-
-                                        <Divider />
-
-                                        <h4>Skill Progress (radar)</h4>
-                                        <div className="chart-radar"><RadarChart student={student} /></div>
-
-                                        <Divider />
-
-                                        <h4>Trend (last months)</h4>
-                                        <div className="chart-trend"><TrendChart student={student} /></div>
-
-                                    </section>
-                                </div>
-                            </TabPanel>
-
-                            <TabPanel header="Attendance & Tests">
-                                <h3>Attendance & Test History</h3>
-                                <div className="p-mt-3">
-                                    <DataView value={activities} layout="list" itemTemplate={activityItemTemplate} />
-                                </div>
-                            </TabPanel>
-                        </TabView>
-                    </Card>
-                </main>
-            </div>
-
-            <Dialog header={selectedTest ? selectedTest.name : 'Test details'} visible={testDialogVisible} style={{ width: '480px' }} modal onHide={() => setTestDialogVisible(false)}>
-                {selectedTest ? (
-                    <div>
-                        <p><strong>Date:</strong> {formatDate(selectedTest.date)} • {formatTime(selectedTest.date)}</p>
-                        <p><strong>Overall:</strong> {selectedTest.overall}</p>
-                        {selectedTest.breakdown && (
-                            <div>
-                                <h5>Breakdown</h5>
-                                <DataTable value={Object.entries(selectedTest.breakdown).map(([k,v]) => ({ section: k, score: v }))} showGridlines={false} className="p-mt-2">
-                                    <Column field="section" header="Section" body={(row) => <strong>{row.section}</strong>} />
-                                    <Column field="score" header="Score" />
-                                </DataTable>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <p>No test selected</p>
-                )}
-            </Dialog>
         </div>
     );
 }
 
+function FieldRow({ label, icon, displayValue, editingField, fieldKey, tempValue, setTempValue, renderActions, getValidationError }) {
+    return (
+        <div className="field-row p-mb-3">
+            <div className="field-left">
+                <div className="field-body">
+                    <label className="form-label"><i className={icon + ' p-mr-2'} />{label}</label>
+                    {!editingField || editingField !== fieldKey ? (
+                        <div className="field-display"><span title={displayValue || ''}>{displayValue || '-'}</span></div>
+                    ) : (
+                        <div>
+                            <InputText value={tempValue || ''} onChange={(e) => setTempValue(e.target.value)} autoFocus />
+                            {getValidationError(fieldKey, tempValue) && <small className="field-error">{getValidationError(fieldKey, tempValue)}</small>}
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="field-actions">{renderActions(fieldKey)}</div>
+        </div>
+    );
+}
