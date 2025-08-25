@@ -70,7 +70,6 @@ const App = () => {
                         <Route path='enrollment' element={<StudentEnrollment />} />
                         <Route path='notification' element={<StudentNotification />} />
                         <Route path='profile' element={<UserProfile />} />
-
                         {/* Nested: student/course */}
                         <Route path="course">
                             <Route index element={<CourseHome />} />
@@ -97,17 +96,19 @@ const App = () => {
                 </Route>
 
                 {/* academic_manager Route */}
-                <Route path='staff' element={<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']}><LayoutAcademicManager /></ProtectedRoute>}>
-                    <Route index element={<AMDashboard />} />
-                    <Route path='program' element={<AMProgram />} />
-                    <Route path='courses' element={<AMCourse />} />
-                    <Route path='teacher' element={<AMTeacher />} />
-                    <Route path='student' element={<AMStudent />} />
-                    <Route path='feedback' element={<AMFeedback />} />
-                    <Route path='schedule' element={<AMSchedule />} />
-                    <Route path='report' element={<AMReport />} />
-                    <Route path='noti' element={<AMNoti />} />
-                    <Route path='profile' element={<UserProfile />} />
+                <Route element={<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']} />}>
+                    <Route path='staff' element={<LayoutAcademicManager />}>
+                        <Route index element={<AMDashboard />} />
+                        <Route path='program' element={<AMProgram />} />
+                        <Route path='courses' element={<AMCourse />} />
+                        <Route path='teacher' element={<AMTeacher />} />
+                        <Route path='student' element={<AMStudent />} />
+                        <Route path='feedback' element={<AMFeedback />} />
+                        <Route path='schedule' element={<AMSchedule />} />
+                        <Route path='report' element={<AMReport />} />
+                        <Route path='noti' element={<AMNoti />} />
+                        <Route path='profile' element={<UserProfile />} />
+                    </Route>
                 </Route>
 
                 {/* Admin Route */}
@@ -117,7 +118,6 @@ const App = () => {
                         <Route path='systems' element={<AdminSystems />} />
                         <Route path='upload' element={<AdminUpload />} />
                         <Route path='security' element={<AdminSecurity />} />
-                        <Route path='profile' element={<UserProfile />} />
                     </Route>
                 </Route>
 
@@ -129,3 +129,4 @@ const App = () => {
 }
 
 export default App;
+

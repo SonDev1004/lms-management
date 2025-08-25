@@ -20,7 +20,6 @@ export default function TemplateDemo() {
                 localStorage.removeItem('username');
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
-
                 navigate('/');
             });
     };
