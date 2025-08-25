@@ -54,8 +54,9 @@ public enum ErrorCode {
     NEW_PASSWORD_SAME_AS_OLD(1039, "New password cannot be the same as old password", HttpStatus.BAD_REQUEST),
     // user
     USER_NOT_FOUND(1040, "User not found", HttpStatus.NOT_FOUND),
-    UNAUTHORIZED_ACCESS_ROLE(1041, "Unauthorized access due to insufficient role permissions", HttpStatus.FORBIDDEN);
-
+    UNAUTHORIZED_ACCESS_ROLE(1041, "Unauthorized access due to insufficient role permissions", HttpStatus.FORBIDDEN),
+    // Lesson
+    LESSON_NOT_FOUND(1042, "Lesson not found", HttpStatus.NOT_FOUND);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

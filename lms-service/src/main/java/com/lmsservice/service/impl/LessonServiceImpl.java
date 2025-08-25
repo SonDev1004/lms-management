@@ -64,4 +64,12 @@ public class LessonServiceImpl implements LessonService {
         Page<Lesson> lessons = lessonRepository.findAll(pageable);
         return lessons.map(lessonMapper::toResponse);
     }
+
+    @Override
+    public LessonResponse getLessonById(Long lessonId) {
+        Lesson lesson = lessonRepository
+                .findById(lessonId)
+                .orElseThrow(() -> new UnAuthorizeException(ErrorCode.LESSON_NOT_FOUND));
+        return lessonMapper.toResponse(lesson);
+    }
 }

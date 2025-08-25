@@ -12,4 +12,6 @@ public interface LessonService {
     Page<LessonResponse> getLessonsBySubjectId(Long subjectId, Pageable pageable);
 
     Page<LessonResponse> getAllLessons(int page, int size);
+
+    LessonResponse getLessonById(Long lessonId);
 }

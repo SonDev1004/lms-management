@@ -77,4 +77,13 @@ public class LessonController {
                 .message(message)
                 .build();
     }
+
+    @Operation(summary = "LẤY LESSON THEO ID", description = "API lấy Lesson theo ID")
+    @GetMapping("/{lessonId}")
+    public ApiResponse<LessonResponse> getLessonById(@PathVariable Long lessonId) {
+        return ApiResponse.<LessonResponse>builder()
+                .result(lessonService.getLessonById(lessonId))
+                .message("Get lesson by id successfully")
+                .build();
+    }
 }
