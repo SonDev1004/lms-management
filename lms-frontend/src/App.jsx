@@ -65,21 +65,23 @@ const App = () => {
                 </Route>
 
                 {/* Student Route */}
-
-                <Route path='student' element={<LayoutStudent/>}>
-                    <Route index element={<StudentDashboard/>}/>
-                    <Route path='courses' element={<StudentCourses/>}/>
-                    <Route path='schedule' element={<StudentSchedule/>}/>
-                    <Route path='score' element={<StudentScore/>}/>
-                    <Route path='enrollment' element={<StudentEnrollment/>}/>
-                    <Route path='notification' element={<StudentNotification/>}/>
-                    <Route path="profile" element={<StudentProfile/>}/>
-                    {/* Nested: student/course */}
-                    <Route path="course">
-                        <Route index element={<CourseHome/>}/>
-                        <Route path="detail" element={<CourseDetailStudent/>}/>
+                <Route element={<ProtectedRoute allowedRoles={['STUDENT']}/>}>
+                    <Route path='student' element={<LayoutStudent/>}>
+                        <Route index element={<StudentDashboard/>}/>
+                        <Route path='courses' element={<StudentCourses/>}/>
+                        <Route path='schedule' element={<StudentSchedule/>}/>
+                        <Route path='score' element={<StudentScore/>}/>
+                        <Route path='enrollment' element={<StudentEnrollment/>}/>
+                        <Route path='notification' element={<StudentNotification/>}/>
+                        <Route path="profile" element={<StudentProfile/>}/>
+                        {/* Nested: student/course */}
+                        <Route path="course">
+                            <Route index element={<CourseHome/>}/>
+                            <Route path="detail" element={<CourseDetailStudent/>}/>
+                        </Route>
                     </Route>
                 </Route>
+
 
                 {/* Course Route (ngoài student) */}
                 <Route path='course'>
@@ -88,13 +90,14 @@ const App = () => {
 
 
                 {/* Teacher Route */}
-                <Route path='teacher' element={<LayoutTeacher/>}>
-                    <Route index element={<TeacherDashboard/>}/>
-                    <Route path='courses' element={<TeacherCourses/>}/>
-                    <Route path='schedule' element={<TeacherSchedule/>}/>
-                    <Route path='notification' element={<TeacherNotification/>}/>
-                    <Route path="profile" element={<TeacherProfile/>}/>
-
+                <Route element={<ProtectedRoute allowedRoles={['TEACHER']}/>}>
+                    <Route path='teacher' element={<LayoutTeacher/>}>
+                        <Route index element={<TeacherDashboard/>}/>
+                        <Route path='courses' element={<TeacherCourses/>}/>
+                        <Route path='schedule' element={<TeacherSchedule/>}/>
+                        <Route path='notification' element={<TeacherNotification/>}/>
+                        <Route path="profile" element={<TeacherProfile/>}/>
+                    </Route>
                 </Route>
 
                 <Route element={<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']}/>}>
@@ -113,13 +116,14 @@ const App = () => {
                 </Route>
 
                 {/* Admin Route */}
-                <Route path='admin' element={<LayoutAdmin/>}>
-                    <Route index element={<AdminDashboard/>}/>
-                    <Route path='systems' element={<AdminSystems/>}/>
-                    <Route path='upload' element={<AdminUpload/>}/>
-                    <Route path='security' element={<AdminSecurity/>}/>
-                    <Route path="profile" element={<AdminProfile/>}/>
-
+                <Route element={<ProtectedRoute allowedRoles={['ADMIN_IT']}/>}>
+                    <Route path='admin' element={<LayoutAdmin/>}>
+                        <Route index element={<AdminDashboard/>}/>
+                        <Route path='systems' element={<AdminSystems/>}/>
+                        <Route path='upload' element={<AdminUpload/>}/>
+                        <Route path='security' element={<AdminSecurity/>}/>
+                        <Route path="profile" element={<AdminProfile/>}/>
+                    </Route>
                 </Route>
                 <Route path="/unauthorized" element={<Unauthorized/>}/>
             </Routes>
