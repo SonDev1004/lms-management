@@ -48,6 +48,7 @@ import ProtectedRoute from "components/ProtectedRoute.jsx";
 import AMProfile from "pages/roles/academic_manager/AMProfile.jsx";
 import TeacherProfile from "pages/roles/teacher/TeacherProfile.jsx";
 import AdminProfile from "pages/roles/admin/AdminProfile.jsx";
+import Unauthorized from "pages/home/Unauthorized.jsx";
 
 
 const App = () => {
@@ -120,7 +121,7 @@ const App = () => {
                     <Route path="profile" element={<AdminProfile/>}/>
 
                 </Route>
-
+                <Route path="/unauthorized" element={<Unauthorized/>}/>
             </Routes>
         </BrowserRouter>
     );
