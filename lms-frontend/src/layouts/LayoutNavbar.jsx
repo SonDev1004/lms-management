@@ -202,6 +202,12 @@ const LayoutNavbar = ({ role }) => {
             icon: 'pi pi-bell',
             roles: ['ADMIN_IT'],
             command: () => navigate('/admin/security'),
+        },
+        {
+            label: 'Thông tin cá nhân',
+            icon: 'pi pi-user',
+            roles: ['ADMIN_IT'],
+            command: () => navigate('/admin/profile'),
         }
         //*Admin Navbar End
     ];
