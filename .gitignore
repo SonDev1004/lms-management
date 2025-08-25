@@ -1,0 +1,13 @@
+/lms-management.iml
+/.idea/
+/target/
+
+/.idea/dataSources.xml
+/.idea/RestfulApiTool-Environment-Cache.xml
+/.idea/sqldialects.xml
+/lms-service/.idea/.gitignore
+/lms-service/.idea/compiler.xml
+/lms-service/.idea/encodings.xml
+/lms-service/.idea/jarRepositories.xml
+/lms-service/.idea/misc.xml
+/lms-service/.idea/vcs.xml
