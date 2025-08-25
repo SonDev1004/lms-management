@@ -10,44 +10,44 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
 import LayoutStudent from 'layouts/student/LayoutStudent';
-import StudentDashboard from 'pages/student/StudentDashboard';
-import StudentCourses from 'pages/student/StudentCourses';
-import StudentSchedule from 'pages/student/StudentSchedule';
-import StudentEnrollment from 'pages/student/StudentEnrollment';
-import StudentScore from 'pages/student/StudentScore';
+import StudentDashboard from 'pages/roles/student/StudentDashboard';
+import StudentCourses from 'pages/roles/student/StudentCourses';
+import StudentSchedule from 'pages/roles/student/StudentSchedule';
+import StudentEnrollment from 'pages/roles/student/StudentEnrollment';
+import StudentScore from 'pages/roles/student/StudentScore';
 
 import LayoutTeacher from 'layouts/teacher/LayoutTeacher';
-import TeacherDashboard from 'pages/teacher/TeacherDashboard';
-import TeacherCourses from 'pages/teacher/TeacherCourses';
-import TeacherSchedule from 'pages/teacher/TeacherSchedule';
-import TeacherNotification from 'pages/teacher/TeacherNotification.jsx';
+import TeacherDashboard from 'pages/roles/teacher/TeacherDashboard';
+import TeacherCourses from 'pages/roles/teacher/TeacherCourses';
+import TeacherSchedule from 'pages/roles/teacher/TeacherSchedule';
+import TeacherNotification from 'pages/roles/teacher/TeacherNotification.jsx';
 
 import LayoutAdmin from 'layouts/admin/LayoutAdmin';
-import AdminDashboard from 'pages/admin/AdminDashboard';
-import AdminSystems from 'pages/admin/AdminSystems';
-import AdminSecurity from 'pages/admin/AdminSecutiry';
-import AdminUpload from 'pages/admin/AdminUpload';
+import AdminDashboard from 'pages/roles/admin/AdminDashboard';
+import AdminSystems from 'pages/roles/admin/AdminSystems';
+import AdminSecurity from 'pages/roles/admin/AdminSecutiry';
+import AdminUpload from 'pages/roles/admin/AdminUpload';
 
 import LayoutAcademicManager from 'layouts/academic_manager/LayoutAcademicManager';
-import AMDashboard from 'pages/academic_manager/AMDashboard';
-import AMProgram from 'pages/academic_manager/AMProgram';
-import AMCourse from 'pages/academic_manager/AMCourse';
-import AMTeacher from 'pages/academic_manager/AMTeacher';
-import AMStudent from 'pages/academic_manager/AMStudent';
-import AMFeedback from 'pages/academic_manager/AMFeedback';
-import AMSchedule from 'pages/academic_manager/AMSchedule';
-import AMReport from 'pages/academic_manager/AMReport';
-import AMNotification from 'pages/academic_manager/AMNotification.jsx';
+import AMDashboard from 'pages/roles/academic_manager/AMDashboard';
+import AMProgram from 'pages/roles/academic_manager/AMProgram';
+import AMCourse from 'pages/roles/academic_manager/AMCourse';
+import AMTeacher from 'pages/roles/academic_manager/AMTeacher';
+import AMStudent from 'pages/roles/academic_manager/AMStudent';
+import AMFeedback from 'pages/roles/academic_manager/AMFeedback';
+import AMSchedule from 'pages/roles/academic_manager/AMSchedule';
+import AMReport from 'pages/roles/academic_manager/AMReport';
+import AMNotification from 'pages/roles/academic_manager/AMNotification.jsx';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
-import CourseDetailStudent from "pages/student/course/CourseDetail/CourseDetailStudent.jsx";
-import UserProfile from "pages/user-profile/UserProfile.jsx";
-import StudentNotification from "pages/student/StudentNotification.jsx";
-import StudentProfile from "pages/student/StudentProfile.jsx";
+import CourseDetailStudent from "pages/course/detail/CourseDetailStudent.jsx";
+import UserProfile from "pages/profile/UserProfile.jsx";
+import StudentNotification from "pages/roles/student/StudentNotification.jsx";
+import StudentProfile from "pages/roles/student/StudentProfile.jsx";
 import ProtectedRoute from "components/ProtectedRoute.jsx";
-import AMProfile from "pages/academic_manager/AMProfile.jsx";
-import TeacherProfile from "pages/teacher/TeacherProfile.jsx";
-import AdminProfile from "pages/admin/AdminProfile.jsx";
+import AMProfile from "pages/roles/academic_manager/AMProfile.jsx";
+import TeacherProfile from "pages/roles/teacher/TeacherProfile.jsx";
+import AdminProfile from "pages/roles/admin/AdminProfile.jsx";
 
 
 const App = () => {

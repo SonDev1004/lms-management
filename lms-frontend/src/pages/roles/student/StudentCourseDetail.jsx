@@ -1,4 +1,4 @@
-import CourseDetailStudent from 'pages/course/CourseDetail/CourseDetailStudent.jsx';
+import CourseDetailStudent from 'pages/course/detail/CourseDetailStudent.jsx';
 
 const CourseDetail = () => {
     return <CourseDetailStudent/>;
