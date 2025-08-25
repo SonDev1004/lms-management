@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
-import UserProfile from './pages/home/UserProfile';
+import UserProfile from 'pages/student/user-profile/UserProfile.jsx';
 import Guest from './pages/home/Guest';
 import './styles/custom-theme.css';
 
