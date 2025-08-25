@@ -7,7 +7,6 @@ export default function ProtectedRoute({ allowedRoles }) {
     if (!userRole) {
         return <Navigate to="/login" replace />;
     }
-
     // Nếu không đúng quyền, chuyển về /unauthorized
     if (!allowedRoles.includes(userRole)) {
         return <Navigate to="/unauthorized" replace />;
