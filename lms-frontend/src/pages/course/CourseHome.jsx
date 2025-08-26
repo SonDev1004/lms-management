@@ -190,7 +190,6 @@ export default function CourseHome() {
                 <Tooltip target=".btn-tooltip" position="top" mouseTrack mouseTrackLeft={10} />
 
                 {visibleCourses.map(c => {
-                    // sử dụng màu nguyên (đậm) cho header — không nhạt/gradient
                     const headerStyle = {
                         background: c.headerColor
                     };
