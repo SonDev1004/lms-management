@@ -14,7 +14,6 @@ import StudentDashboard from 'pages/student/StudentDashboard';
 import StudentCourses from 'pages/student/StudentCourses';
 import StudentSchedule from 'pages/student/StudentSchedule';
 import StudentEnrollment from 'pages/student/StudentEnrollment';
-import StudentNoti from 'pages/student/StudentNoti';
 import StudentScore from 'pages/student/StudentScore';
 
 import LayoutTeacher from 'layouts/teacher/LayoutTeacher';
@@ -64,7 +63,7 @@ const App = () => {
                 <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
                     <Route path='student' element={<LayoutStudent />}>
                         <Route index element={<StudentDashboard />} />
-                        <Route path='courses' element={<StudentCourses />} />
+                        <Route path='course' element={<StudentCourses />} />
                         <Route path='schedule' element={<StudentSchedule />} />
                         <Route path='score' element={<StudentScore />} />
                         <Route path='enrollment' element={<StudentEnrollment />} />
