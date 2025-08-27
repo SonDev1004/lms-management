@@ -105,7 +105,17 @@ const rawCourses = [
         schedule: 'T7-CN 09:00-11:00',
         reminders: ['Luyện âm /θ/', 'Ghi âm bài nói và nộp'],
         status: 'Tạm hoãn'
-    }
+    },
+    {
+        id: 'c9',
+        subject: 'IELTS',
+        course: 'IELTS Intermediate',
+        teacher: 'Ngô Tồng Quốc',
+        room: 'P101',
+        schedule: 'T2-T4 18:00-20:00',
+        reminders: ['Hoàn thành bt: Unit 4 - bài tập 1-4', 'Chuẩn bị presentation tuần tới'],
+        status: 'Đang học'
+    },
 ];
 
 function getContrastColor(hex) {
@@ -221,6 +231,7 @@ export default function CourseHome() {
                         <Card
                             key={c.id}
                             className="course-card"
+                            style={{ height: '100%' }} // ensure card fills the grid cell
                             header={
                                 <div className="card-header" style={headerStyle}>
                                     <div className="header-text" style={{ color: headerTextColor }}>
@@ -275,11 +286,7 @@ export default function CourseHome() {
                                                             ? 'pi pi-clock'
                                                             : 'pi pi-exclamation-circle';
                                                 return (
-                                                    <li
-                                                        className={`reminder-item reminder-${type}`}
-                                                        key={idx}
-                                                        title={txt}
-                                                    >
+                                                    <li className={`reminder-item reminder-${type}`} key={idx} title={txt}>
                                                         <i className={icon} aria-hidden="true" />
                                                         <span className="reminder-text">{txt}</span>
                                                     </li>
