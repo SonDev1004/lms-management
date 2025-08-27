@@ -46,6 +46,7 @@ import UserProfile from "pages/user-profile/UserProfile.jsx";
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/home/Unauthorized';
+import CourseStage from "pages/student/course/CourseStage.jsx";
 
 
 const App = () => {
@@ -63,7 +64,7 @@ const App = () => {
                 <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
                     <Route path='student' element={<LayoutStudent />}>
                         <Route index element={<StudentDashboard />} />
-                        <Route path='course' element={<StudentCourses />} />
+                        <Route path='courses' element={<StudentCourses />} />
                         <Route path='schedule' element={<StudentSchedule />} />
                         <Route path='score' element={<StudentScore />} />
                         <Route path='enrollment' element={<StudentEnrollment />} />
@@ -72,6 +73,7 @@ const App = () => {
                         {/* Nested: student/course */}
                         <Route path="course">
                             <Route index element={<CourseHome />} />
+                            <Route path='stage' element={<CourseStage />} />
                             <Route path="detail" element={<CourseDetailStudent />} />
                         </Route>
                     </Route>
