@@ -37,8 +37,9 @@ import AMStudent from 'pages/roles/academic_manager/AMStudent';
 import AMFeedback from 'pages/roles/academic_manager/AMFeedback';
 import AMSchedule from 'pages/roles/academic_manager/AMSchedule';
 import AMReport from 'pages/roles/academic_manager/AMReport';
-import AMNotification from 'pages/roles/academic_manager/AMNotification.jsx';
 
+import AMNotification from 'pages/roles/academic_manager/AMNotification.jsx';
+import CourseStage from "pages/student/course/CourseStage.jsx";
 import CourseHome from 'pages/course/CourseHome.jsx';
 import CourseDetailStudent from "pages/course/detail/CourseDetailStudent.jsx";
 import UserProfile from "pages/profile/UserProfile.jsx";
@@ -77,6 +78,7 @@ const App = () => {
                         {/* Nested: student/course */}
                         <Route path="course">
                             <Route index element={<CourseHome/>}/>
+                            <Route path='stage' element={<CourseStage />} />
                             <Route path="detail" element={<CourseDetailStudent/>}/>
                         </Route>
                     </Route>
