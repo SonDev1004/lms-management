@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.lmsservice.entity.CourseStudent;
 
 @Repository
-public interface CourseStudentRepository extends JpaRepository<CourseStudent, Long> {}
+public interface CourseStudentRepository extends JpaRepository<CourseStudent, Long> {
+    boolean existsByCourseIdAndStudentId(Long courseId, Long studentId);
+}
