@@ -1,40 +1,40 @@
 import { useNavigate } from 'react-router-dom';
 import { PanelMenu } from 'primereact/panelmenu';
-
+import roleToRoute from '../services/roleToRoute'
 const LayoutNavbar = ({ role }) => {
     const navigate = useNavigate();
     const items = [
         {
             label: 'Tổng quan',
             icon: 'pi pi-home',
-            roles: ['student', 'teacher', 'academic_manager', 'admin'],
-            command: () => navigate(`/${role}`)
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+            command: () => navigate(`/${roleToRoute(role)}`),
         },
         {
             label: 'Lớp học',
             icon: 'pi pi-book',
-            roles: ['student', 'teacher', 'academic_manager'],
-            command: () => navigate(`/${role}/courses`)
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/courses`)
         },
         {
             label: 'Thời khóa biểu',
             icon: 'pi pi-calendar',
-            roles: ['student', 'teacher', 'academic_manager'],
-            command: () => navigate(`/${role}/schedule`)
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/schedule`)
         },
-        ,
+
         {
             label: 'Thông báo',
             icon: 'pi pi-plus',
-            roles: ['student', 'teacher', 'academic_manager'],
-            command: () => navigate(`/${role}/noti`)
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
 
         {
             label: 'Thông tin cá nhân',
             icon: 'pi pi-user',
-            roles: ['student', 'teacher', 'academic_manager'],
-            command: () => navigate(`/${role}/profile`)
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/profile`)
         },
         //Eduacademic_manager Navbar Begin
         // {
@@ -188,20 +188,26 @@ const LayoutNavbar = ({ role }) => {
         {
             label: 'Quản lý hệ thống',
             icon: 'pi pi-bell',
-            roles: ['admin'],
+            roles: ['ADMIN_IT'],
             command: () => navigate('/admin/systems'),
         },
         {
             label: 'Quản lý dữ liệu',
             icon: 'pi pi-bell',
-            roles: ['admin'],
+            roles: ['ADMIN_IT'],
             command: () => navigate('/admin/upload'),
         },
         {
             label: 'Quản lý bảo mật',
             icon: 'pi pi-bell',
-            roles: ['admin'],
+            roles: ['ADMIN_IT'],
             command: () => navigate('/admin/security'),
+        },
+        {
+            label: 'Thông tin cá nhân',
+            icon: 'pi pi-user',
+            roles: ['ADMIN_IT'],
+            command: () => navigate('/admin/profile'),
         }
         //*Admin Navbar End
     ];

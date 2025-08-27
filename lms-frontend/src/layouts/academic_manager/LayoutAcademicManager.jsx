@@ -8,7 +8,7 @@ const LayoutAcademicManager = () => {
         <LayoutHeader />
         <div className='grid'>
             <div className='col-3'>
-                <LayoutNavbar role='academic_manager' />
+                <LayoutNavbar role='ACADEMIC_MANAGER' />
             </div>
             <div className='col-9'>
                 <Outlet />
