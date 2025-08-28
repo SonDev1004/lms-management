@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
@@ -8,180 +8,299 @@ import './CourseHome.css';
 const subjectColors = {
     IELTS: '#1976d2',
     TOEIC: '#f57c00',
-    TOEFL: '#0288d1',
-    'Tiếng Anh Giao Tiếp': '#c2185b',
-    'Tiếng Anh Thiếu Nhi': '#43a047',
-    'Business English': '#5d4037',
-    Pronunciation: '#e64a19',
-    default: '#6a1b9a'
+    TOEFL: '#0288d1'
 };
 
-const statusColors = {
-    'Đang học': '#43a047',
-    'Sắp mở': '#fbc02d',
-    'Đã học': '#757575',
-    'Mở đăng ký': '#fb8c00',
-    'Tạm hoãn': '#c2185b',
-    default: '#9e9e9e'
-};
-
-const rawCourses = [
-    {
-        id: 'c1',
-        subject: 'IELTS',
-        course: 'IELTS Intermediate',
-        teacher: 'Ngô Tồng Quốc',
-        room: 'P101',
-        schedule: 'T2-T4 18:00-20:00',
-        reminders: ['Hoàn thành bt: Unit 4 - bài tập 1-4', 'Chuẩn bị presentation tuần tới'],
-        status: 'Đang học'
-    },
-    {
-        id: 'c2',
-        subject: 'IELTS',
-        course: 'IELTS Foundation',
-        teacher: 'Ngân Đặng Hà Thanh',
-        room: 'P202',
-        schedule: 'T3-T5 08:00-10:00',
-        reminders: ['Đọc passage trang 22', 'Nộp bài nghe hôm nay'],
-        status: 'Mở đăng ký'
-    },
-    {
-        id: 'c3',
-        subject: 'Tiếng Anh Giao Tiếp',
-        course: 'Giao tiếp nâng cao',
-        teacher: 'Nguyễn Văn A',
-        room: 'P303',
-        schedule: 'T7-CN 14:00-16:00',
-        reminders: ['Luyện nói: topic Holidays', 'Xem video mẫu trước giờ học'],
-        status: 'Sắp mở'
-    },
-    {
-        id: 'c4',
-        subject: 'Tiếng Anh Thiếu Nhi',
-        course: 'Starters Movers Flyers',
-        teacher: 'Lê Thị B',
-        room: 'P105',
-        schedule: 'T2-T6 17:00-18:30',
-        reminders: ['Tập hát bài mới', 'Học từ vựng: Animals'],
-        status: 'Đang học'
-    },
-    {
-        id: 'c5',
-        subject: 'Business English',
-        course: 'Thương mại nâng cao',
-        teacher: 'Phạm Văn C',
-        room: 'P201',
-        schedule: 'T3-T5 19:00-21:00',
-        reminders: ['Chuẩn bị case study', 'Đọc báo cáo Q2'],
-        status: 'Đã học'
-    },
-    {
-        id: 'c6',
-        subject: 'TOEIC',
-        course: 'TOEIC 500+',
-        teacher: 'Trần Văn D',
-        room: 'P401',
-        schedule: 'T2-T4-T6 08:00-09:30',
-        reminders: ['Bài thi mẫu: Part 5', 'Ôn từ vựng chủ đề Travel'],
-        status: 'Mở đăng ký'
-    },
-    {
-        id: 'c7',
-        subject: 'TOEFL',
-        course: 'TOEFL iBT Preparation',
-        teacher: 'Lê Ngọc E',
-        room: 'P402',
-        schedule: 'T3-T5 18:00-20:00',
-        reminders: ['Viết essay: Agree/Disagree', 'Nghe lecture practice'],
-        status: 'Đang học'
-    },
-    {
-        id: 'c8',
-        subject: 'Pronunciation',
-        course: 'Phát âm chuẩn',
-        teacher: 'Nguyễn Thị F',
-        room: 'P203',
-        schedule: 'T7-CN 09:00-11:00',
-        reminders: ['Luyện âm /θ/', 'Ghi âm bài nói và nộp'],
-        status: 'Tạm hoãn'
-    },
-    {
-        id: 'c9',
-        subject: 'IELTS',
-        course: 'IELTS Intermediate',
-        teacher: 'Ngô Tồng Quốc',
-        room: 'P101',
-        schedule: 'T2-T4 18:00-20:00',
-        reminders: ['Hoàn thành bt: Unit 4 - bài tập 1-4', 'Chuẩn bị presentation tuần tới'],
-        status: 'Đang học'
-    },
-];
-
-function getContrastColor(hex) {
-    const h = hex.replace('#', '');
-    const hexFull = h.length === 3 ? h.split('').map(ch => ch + ch).join('') : h;
-    const bigint = parseInt(hexFull, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    return yiq >= 160 ? '#222' : '#fff';
+function hashStringToInt(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619) >>> 0;
+    }
+    return h;
 }
 
-function classifyReminder(textLower) {
-    const urgentKeywords = ['nộp', 'hôm nay', 'gấp', 'khẩn', 'deadline', 'nộp hôm'];
-    const soonKeywords = ['tuần', 'ngày mai', 'tuần tới', 'gần', 'sớm', 'trước giờ học'];
+const PALETTE = [
+    '#1976d2', // blue (default IELTS)
+    '#0288d1', // cyan / teal
+    '#43a047', // green
+    '#7cb342', // light green
+    '#f9a825', // amber (yellow/gold)
+    '#f57c00', // orange
+    '#e53935', // red (muted)
+    '#8e24aa', // purple
+    '#5c6bc0', // indigo
+    '#00897b', // teal darker
+    '#546e7a', // blue-grey
+    '#6d4c41'  // brown
+];
 
-    for (const k of urgentKeywords) {
-        if (textLower.includes(k)) return 'urgent';
+function generatePaletteColorForSubject(subject) {
+    const key = subject ? String(subject) : Math.random().toString();
+    const idx = hashStringToInt(key) % PALETTE.length;
+    return PALETTE[idx];
+}
+
+function getContrastColor(cssColor) {
+    if (!cssColor) return '#222';
+    const c = cssColor.trim();
+
+    if (c.startsWith('#')) {
+        const hex = c.slice(1);
+        const hexFull = hex.length === 3 ? hex.split('').map(ch => ch + ch).join('') : hex;
+        const bigint = parseInt(hexFull, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+        return yiq >= 160 ? '#222' : '#FAFAFA';
     }
-    for (const k of soonKeywords) {
-        if (textLower.includes(k)) return 'soon';
+
+    if (c.startsWith('hsl')) {
+        const inside = c.substring(c.indexOf('(') + 1, c.lastIndexOf(')'));
+        const parts = inside.split(/[, ]+/).filter(Boolean);
+        if (parts.length >= 3) {
+            const lPart = parts[2];
+            const m = lPart.match(/(\d+(\.\d+)?)/);
+            if (m) {
+                const l = Number(m[1]);
+                return l >= 64 ? '#222' : '#FAFAFA';
+            }
+        }
+        return '#222';
     }
+
+    return '#222';
+}
+
+const mockCourses = [
+    {
+        id: '201',
+        title: 'IELTS Speaking Booster',
+        subject: 'IELTS Speaking',
+        session_number: 12,
+        attended_sessions: 3,
+        description: 'Luyện phản xạ nói, part 2 & 3, feedback sửa phát âm và mở rộng ý.',
+        is_active: true,
+        start_date: '2025-08-01',
+        teacher: 'Lê Hồng Anh',
+        schedule: 'T3-T5 19:00-20:30',
+        reminders: ['Chuẩn bị: topic talk tuần 2', 'Bài tập: record 2 mẫu trả lời'],
+        room: 'P203'
+    },
+    {
+        id: '202',
+        title: 'TOEFL Listening Mastery',
+        subject: 'Listening Skills',
+        session_number: 16,
+        attended_sessions: 0,
+        description: 'Chiến thuật nghe bài dài, note-taking và phân tích câu hỏi nghe TOEFL.',
+        is_active: true,
+        start_date: '2025-09-10',
+        teacher: 'Phạm Minh Tú',
+        schedule: 'T2-T4 18:30-20:00',
+        reminders: ['Đăng ký test mẫu', 'Chuẩn bị: danh sách từ vựng chuyên ngành'],
+        room: 'P305'
+    },
+    {
+        id: '203',
+        title: 'Academic Reading Intensive',
+        subject: 'Academic Reading',
+        session_number: 18,
+        attended_sessions: 6,
+        description: 'Phân tích passage học thuật, skimming/scanning, tốc độ đọc cho IELTS/TOEFL.',
+        is_active: true,
+        start_date: '2025-07-15',
+        teacher: 'Nguyễn Thùy Dương',
+        schedule: 'T3-T6 09:00-10:30',
+        reminders: ['Ôn tập: passage tuần 3', 'Submit: summary bài đọc tuần 2'],
+        room: 'P110'
+    },
+    {
+        id: '204',
+        title: 'IELTS Writing Workshop',
+        subject: 'IELTS Writing',
+        session_number: 10,
+        attended_sessions: 0,
+        description: 'Task 1 & 2: cấu trúc bài, từ vựng học thuật và sửa bài mẫu.',
+        is_active: true,
+        start_date: '2025-10-05',
+        teacher: 'Trần Mai Lan',
+        schedule: 'T7 13:30-16:30',
+        reminders: ['Chuẩn bị: viết draft Task 2', 'Deadline nộp bài mẫu tuần 1'],
+        room: 'P402'
+    },
+    {
+        id: '205',
+        title: 'TOEIC Listening Sprint',
+        subject: 'TOEIC Listening',
+        session_number: 14,
+        attended_sessions: 4,
+        description: 'Kỹ thuật làm Part 1-4, phân biệt âm, tốc độ nghe thật nhanh.',
+        is_active: true,
+        start_date: '2025-08-20',
+        teacher: 'Lưu Văn Hùng',
+        schedule: 'T2-T4 07:30-09:00',
+        reminders: ['Bài thi thử: Part 3 vào thứ 4', 'Ôn từ vựng chủ đề Workplace'],
+        room: 'P401'
+    },
+    {
+        id: '206',
+        title: 'Advanced Reading for Exams',
+        subject: 'Academic Reading',
+        session_number: 20,
+        attended_sessions: 20,
+        description: 'Khóa đã hoàn thành: kỹ năng đọc nâng cao, phân tích chiến lược làm bài thi.',
+        is_active: false,
+        start_date: '2025-06-10',
+        teacher: 'Phan Thị Hồng',
+        schedule: 'T2-T4-T6 17:00-18:30',
+        reminders: ['Đã kết thúc — xem lại feedback cuối khoá'],
+        room: 'P108'
+    },
+    {
+        id: '207',
+        title: 'Pronunciation Clinic (Accent Reduction)',
+        subject: 'Pronunciation Clinic',
+        session_number: 8,
+        attended_sessions: 1,
+        description: 'Tập trung vào âm khó, nối âm, nhấn nhá để tăng độ hiểu khi nói tiếng Anh.',
+        is_active: true,
+        start_date: '2025-09-22',
+        teacher: 'Đỗ Thanh Vân',
+        schedule: 'T5 18:00-20:00',
+        reminders: ['Chuẩn bị: ghi âm 1 minute speech', 'Practice: minimal pairs list'],
+        room: 'P207'
+    },
+    {
+        id: '208',
+        title: 'Writing for Band 7+',
+        subject: 'IELTS Writing',
+        session_number: 12,
+        attended_sessions: 5,
+        description: 'Hướng dẫn ngữ pháp, cohesion/coherence, và template nâng band Writing.',
+        is_active: true,
+        start_date: '2025-07-30',
+        teacher: 'Vũ Nguyễn Lan',
+        schedule: 'T3 18:30-20:30',
+        reminders: ['Nộp draft Task 1 tuần này', 'Chuẩn bị: peer review bài viết'],
+        room: 'P310'
+    },
+    {
+        id: '209',
+        title: 'Listening & Note-taking Skills',
+        subject: 'Listening Skills',
+        session_number: 10,
+        attended_sessions: 0,
+        description: 'Kỹ năng note-taking cho lecture, dictation, và tập luyện tốc độ ghi chép.',
+        is_active: true,
+        start_date: '2025-11-01',
+        teacher: 'Hoàng Minh Khoa',
+        schedule: 'T6 14:00-16:00',
+        reminders: ['Chuẩn bị: bộ đề lecture sample', 'Practice: 10-min dictation daily'],
+        room: 'P506'
+    },
+    {
+        id: '210',
+        title: 'Speaking Club — Conversation Practice',
+        subject: 'Conversation Club',
+        session_number: 12,
+        attended_sessions: 2,
+        description: 'Câu lạc bộ nói tự do, chủ đề hàng tuần, feedback small group.',
+        is_active: true,
+        start_date: '2025-08-25',
+        teacher: 'Mai Thị Hương',
+        schedule: 'T4 19:00-20:30',
+        reminders: ['Topic tuần này: Travel & Culture', 'Chuẩn bị 2 câu hỏi mở để thảo luận'],
+        room: 'P121'
+    }
+];
+
+function classifyReminder(text) {
+    if (!text) return 'normal';
+    const t = text.toLowerCase();
+    if (/(hoàn thành|nộp|deadline|bài thi|gấp|urgent|submit|due)/i.test(t)) return 'urgent';
+    if (/(chuẩn bị|prepare|presentation|agenda|chuẩn bị)/i.test(t)) return 'prepare';
+    if (/(ôn tập|ôn|ôn từ|review|practice|luyện)/i.test(t)) return 'review';
     return 'normal';
+}
+
+const reminderIcons = {
+    urgent: { emoji: '⏰', label: 'Deadline' },
+    prepare: { emoji: '📝', label: 'Chuẩn bị' },
+    review: { emoji: '📖', label: 'Ôn tập' },
+    normal: { emoji: '🔔', label: 'Nhắc' }
+};
+
+function fetchCoursesMock() {
+    return new Promise(resolve => setTimeout(() => resolve(mockCourses), 120));
+}
+
+function formatDateISO(isoString) {
+    if (!isoString) return '-';
+    const d = isoString instanceof Date ? isoString : new Date(isoString);
+    try {
+        return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(d);
+    } catch {
+        return isoString;
+    }
 }
 
 export default function CourseHome() {
     const navigate = useNavigate();
+    const [courses, setCourses] = useState([]);
     const [filter, setFilter] = useState('Tất cả');
-    const filterOptions = ['Tất cả', 'Đang học', 'Đã học', 'Sắp mở'];
 
-    const courses = useMemo(
-        () =>
-            rawCourses.map(c => ({
-                ...c,
-                headerColor: subjectColors[c.subject] || subjectColors.default,
-                statusColor: statusColors[c.status] || statusColors.default
-            })),
-        []
-    );
-
-    const counts = useMemo(() => {
-        const map = { 'Tất cả': rawCourses.length };
-        ['Đang học', 'Đã học', 'Sắp mở'].forEach(k => {
-            map[k] = rawCourses.filter(c => c.status === k).length;
+    useEffect(() => {
+        let mounted = true;
+        fetchCoursesMock().then(data => {
+            if (!mounted) return;
+            setCourses(data);
         });
-        return map;
+        return () => { mounted = false; };
     }, []);
 
-    const visibleCourses = useMemo(() => {
-        if (filter === 'Tất cả') return courses;
-        return courses.filter(c => c.status === filter);
-    }, [courses, filter]);
+    const now = useMemo(() => new Date(), []);
 
-    const handleKeyActivate = (e, id) => {
-        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+    const uiCourses = useMemo(() => courses.map(c => {
+        // ưu tiên color cố định nếu có mapping, ngược lại lấy từ PALETTE
+        const accent = subjectColors[c.subject] || generatePaletteColorForSubject(c.subject || c.title || c.id);
+        const startDate = c.start_date ? new Date(c.start_date) : null;
+        const hasStarted = startDate ? now >= startDate : false;
+        const hasFinished = startDate ? now > startDate && !c.is_active : false;
+        const clickable = Boolean(c.is_active && hasStarted && !hasFinished);
+        const accentText = getContrastColor(accent);
+        return { ...c, subjectColor: accent, startDate, hasStarted, hasFinished, clickable, accentText };
+    }), [courses, now]);
+
+    const counts = useMemo(() => ({
+        'Tất cả': uiCourses.length,
+        'Đang học': uiCourses.filter(c => c.clickable).length,
+        'Sắp mở': uiCourses.filter(c => !c.hasStarted).length,
+        'Đã học': uiCourses.filter(c => c.hasFinished).length
+    }), [uiCourses]);
+
+    const visible = useMemo(() => {
+        if (filter === 'Tất cả') return uiCourses;
+        if (filter === 'Đang học') return uiCourses.filter(c => c.clickable);
+        if (filter === 'Sắp mở') return uiCourses.filter(c => !c.hasStarted);
+        if (filter === 'Đã học') return uiCourses.filter(c => c.hasFinished);
+        return uiCourses;
+    }, [uiCourses, filter]);
+
+    const handleKeyActivate = (e, c) => {
+        if (!c.clickable) return;
+        if (['Enter', ' ', 'Spacebar'].includes(e.key)) {
             e.preventDefault();
-            navigate(`/course/${id}`);
+            navigate(`/course/detail/${c.id}`);
         }
     };
 
     return (
-        <div className="course-wrapper">
-            <div className="controls">
+        <div className="course-wrapper p-d-flex p-flex-column">
+            <div className="controls" style={{ padding: '0 16px' }}>
                 <div className="filter-bar" role="toolbar" aria-label="Bộ lọc trạng thái lớp">
-                    {filterOptions.map(opt => (
+                    {['Tất cả', 'Đang học', 'Sắp mở', 'Đã học'].map(opt => (
                         <button
                             key={opt}
                             className={`filter-btn ${filter === opt ? 'is-active' : ''}`}
@@ -196,33 +315,37 @@ export default function CourseHome() {
                 </div>
             </div>
 
-            <div className="course-grid p-4" role="list" aria-live="polite">
+            <div className="course-grid" role="list" aria-live="polite">
                 <Tooltip target=".btn-tooltip" position="top" mouseTrack mouseTrackLeft={10} />
 
-                {visibleCourses.map(c => {
-                    const headerStyle = {
-                        background: c.headerColor
-                    };
-
-                    const headerTextColor = getContrastColor(c.headerColor);
+                {visible.map(c => {
+                    const accent = c.subjectColor;
+                    const accentText = c.accentText || getContrastColor(accent);
+                    const metaTextColor = accentText === '#FAFAFA' ? 'rgba(255,255,255,0.86)' : 'rgba(34,34,34,0.78)';
+                    const metaBg = accentText === '#FAFAFA' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)';
+                    const headerStyle = { background: accent, color: accentText };
 
                     const footer = (
-                        <div className="card-footer" aria-hidden="false" aria-label={`Hành động cho ${c.course}`}>
+                        <div className="card-footer">
                             <Button
+                                label="Tài liệu"
                                 icon="pi pi-folder"
-                                className="p-button-text p-button-rounded footer-btn btn-tooltip"
+                                className="footer-btn btn-tooltip"
                                 data-pr-tooltip="Tài liệu"
-                                aria-label={`Tài liệu ${c.course}`}
+                                aria-label={`Tài liệu ${c.title}`}
                                 onClick={e => e.stopPropagation()}
-                                title="Tài liệu"
+                                disabled={!c.clickable}
+                                style={{ background: accent, color: accentText, border: `1px solid ${accent}` }}
                             />
                             <Button
-                                icon="pi pi-ellipsis-v"
-                                className="p-button-text p-button-rounded footer-btn btn-tooltip"
-                                data-pr-tooltip="Thêm"
-                                aria-label={`Thêm ${c.course}`}
-                                onClick={e => e.stopPropagation()}
-                                title="Thêm"
+                                label="Chi tiết"
+                                icon="pi pi-info-circle"
+                                className="footer-btn btn-tooltip"
+                                data-pr-tooltip="Chi tiết"
+                                aria-label={`Chi tiết ${c.title}`}
+                                onClick={e => { e.stopPropagation(); if (c.clickable) navigate(`/course/detail/${c.id}`); }}
+                                disabled={!c.clickable}
+                                style={{ background: 'transparent', color: accent, border: `1px solid ${accent}` }}
                             />
                         </div>
                     );
@@ -230,20 +353,18 @@ export default function CourseHome() {
                     return (
                         <Card
                             key={c.id}
-                            className="course-card"
-                            style={{ height: '100%' }} // ensure card fills the grid cell
+                            className={`course-card ${c.clickable ? 'clickable' : 'disabled'}`}
+                            style={{ height: '100%' }}
                             header={
                                 <div className="card-header" style={headerStyle}>
-                                    <div className="header-text" style={{ color: headerTextColor }}>
-                                        <h3 className="title" title={c.subject}>
-                                            {c.subject}
-                                        </h3>
-                                        <p className="subtitle" title={c.course}>
-                                            {c.course}
-                                        </p>
+                                    <div className="header-left">
+                                        <div className="title-wrap">
+                                            <h3 className="title" title={c.title} style={{ color: accentText }}>{c.title}</h3>
+                                            <p className="subtitle" style={{ color: accentText }}>{c.subject}</p>
+                                        </div>
 
-                                        <div className="header-meta">
-                                            <div className="meta-row">
+                                        <div className="header-meta" style={{ marginTop: 8, color: metaTextColor }}>
+                                            <div className="meta-row" style={{ background: metaBg }}>
                                                 <i className="pi pi-user" aria-hidden="true" />
                                                 <div className="meta-text">
                                                     <strong className="meta-label">GV:</strong>
@@ -251,65 +372,62 @@ export default function CourseHome() {
                                                 </div>
                                             </div>
 
-                                            <div className="meta-row">
+                                            <div className="meta-row" style={{ marginTop: 8, background: metaBg }}>
                                                 <i className="pi pi-clock" aria-hidden="true" />
-                                                <span className="meta-value meta-schedule">{c.schedule}</span>
+                                                <div className="meta-text">
+                                                    <span className="meta-value meta-schedule">{c.schedule}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="room-badge" aria-hidden="true" style={{ color: headerTextColor }}>
-                                        {c.room}
+                                    <div className="header-right">
+                                        <div className="room-badge" aria-hidden="true" style={{ background: accentText === '#FAFAFA' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)', color: accentText }}>{c.room}</div>
+                                        <div className="start-date" style={{ color: accentText }}>Khai giảng: {formatDateISO(c.start_date)}</div>
                                     </div>
                                 </div>
                             }
                             footer={footer}
-                            onClick={() => navigate(`/course/${c.id}`)}
+                            onClick={() => c.clickable && navigate(`/course/detail/${c.id}`)}
                             role="listitem"
-                            tabIndex={0}
-                            onKeyDown={e => handleKeyActivate(e, c.id)}
-                            aria-label={`${c.subject} - ${c.course}`}
+                            tabIndex={c.clickable ? 0 : -1}
+                            onKeyDown={e => handleKeyActivate(e, c)}
+                            aria-label={`${c.subject} - ${c.title}`}
+                            aria-disabled={!c.clickable}
                         >
-                            <div className="card-body">
-                                <div className="body-info" aria-live="polite">
-                                    <strong className="reminder-title">Nhắc nhở / Bài tập</strong>
+                            <div className="card-body fixed-layout">
+                                <div className="body-left">
+                                    <div className="desc-wrapper">
+                                        <div className="desc" role="region" aria-label={`Mô tả khóa ${c.title}`}>
+                                            {c.description}
+                                        </div>
 
-                                    <ul className="reminder-list" aria-label={`Nhắc nhở của ${c.course}`}>
-                                        {c.reminders && c.reminders.length > 0 ? (
-                                            c.reminders.map((r, idx) => {
-                                                const txt = String(r);
-                                                const type = classifyReminder(txt.toLowerCase());
-                                                const icon =
-                                                    type === 'urgent'
-                                                        ? 'pi pi-exclamation-triangle'
-                                                        : type === 'soon'
-                                                            ? 'pi pi-clock'
-                                                            : 'pi pi-exclamation-circle';
-                                                return (
-                                                    <li className={`reminder-item reminder-${type}`} key={idx} title={txt}>
-                                                        <i className={icon} aria-hidden="true" />
-                                                        <span className="reminder-text">{txt}</span>
-                                                    </li>
-                                                );
-                                            })
-                                        ) : (
-                                            <li className="reminder-item">
-                                                <span className="reminder-text">Không có nhắc nhở</span>
-                                            </li>
-                                        )}
-                                    </ul>
+                                        <div className="reminders">
+                                            <strong>Nhắc nhở / Bài tập</strong>
+                                            <ul className="reminder-list" aria-live="polite">
+                                                {c.reminders && c.reminders.length ? c.reminders.map((r, idx) => {
+                                                    const kind = classifyReminder(r);
+                                                    const ic = reminderIcons[kind] || reminderIcons.normal;
+                                                    return (
+                                                        <li className={`reminder-item reminder-${kind}`} key={idx} title={r}>
+                                                            <span className="reminder-icon" role="img" aria-label={ic.label}>{ic.emoji}</span>
+                                                            <span className="reminder-text">{r}</span>
+                                                        </li>
+                                                    );
+                                                }) : (<li className="reminder-item reminder-normal">Không có nhắc nhở</li>)}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div
-                                    className="status-badge status-bottom"
-                                    style={{
-                                        background: c.statusColor,
-                                        color: getContrastColor(c.statusColor)
-                                    }}
-                                    aria-label={`Trạng thái: ${c.status}`}
-                                    title={c.status}
-                                >
-                                    {c.status}
+                                <div className="body-right">
+                                    <div className="info-row">
+                                        <div><strong>Buổi:</strong> <span className="muted"> {c.attended_sessions}/{c.session_number}</span></div>
+                                    </div>
+
+                                    <div className={`status-pill ${c.clickable ? 'active' : c.hasFinished ? 'finished' : 'upcoming'}`} style={{ marginTop: 12 }}>
+                                        {c.clickable ? 'Đang học' : c.hasFinished ? 'Đã học' : 'Sắp khai giảng'}
+                                    </div>
                                 </div>
                             </div>
                         </Card>
