@@ -4,11 +4,15 @@ import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
 import UserProfile from './pages/home/UserProfile';
 import Guest from './pages/home/Guest';
+import ProtectedRoute from './components/ProtectedRoute';
+import Unauthorized from './pages/home/Unauthorized';
+
 import './styles/custom-theme.css';
 
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 
 import LayoutStudent from 'layouts/student/LayoutStudent';
 import StudentDashboard from 'pages/student/StudentDashboard';
@@ -41,10 +45,12 @@ import AMSchedule from 'pages/academic_manager/AMSchedule';
 import AMReport from 'pages/academic_manager/AMReport';
 import AMNoti from 'pages/academic_manager/AMNoti';
 
+import ProgramDetail from './pages/home/ProgramDetail';
+
 import CourseHome from 'pages/course/CourseHome.jsx';
 import CourseDetailStudent from "pages/student/course/CourseDetail/CourseDetailStudent.jsx";
-import ProtectedRoute from './components/ProtectedRoute';
-import Unauthorized from './pages/home/Unauthorized';
+
+
 
 
 const App = () => {
@@ -56,6 +62,11 @@ const App = () => {
                     <Route index element={<Guest />} />
                     <Route path='login' element={<Login />} />
                     <Route path='register' element={<Register />} />
+                </Route>
+
+                {/* Program Route (ngoài student) */}
+                <Route path='program' element={<LayoutHome />}>
+                    <Route path=':id' element={<ProgramDetail />} />
                 </Route>
 
                 {/* Student Route */}
@@ -75,6 +86,8 @@ const App = () => {
                         </Route>
                     </Route>
                 </Route>
+
+
 
                 {/* Course Route (ngoài student) */}
                 <Route path='course'>
