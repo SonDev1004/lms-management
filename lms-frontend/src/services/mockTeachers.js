@@ -1,0 +1,47 @@
+export const teachers = [
+    {
+        id: 1,
+        certificate: "Thuyết trình bằng TA - K08/2025",
+        specialty: 16,
+        code: 31,
+        note: 4,
+        is_full_time: 2,
+        user_id: 36,
+    },
+    {
+        id: 2,
+        certificate: "Tranh biện bằng TA - K08/2025",
+        specialty: 16,
+        code: 34,
+        note: 4,
+        is_full_time: 1,
+        user_id: 37,
+    },
+    {
+        id: 3,
+        certificate: "Tiếng Anh Du lịch - K09/2025",
+        specialty: 18,
+        code: 35,
+        note: 3,
+        is_full_time: 1,
+        user_id: 38,
+    },
+    {
+        id: 4,
+        certificate: "Cambridge KET (A2) – K09/2025",
+        specialty: 18,
+        code: 26,
+        note: 4,
+        is_full_time: 2,
+        user_id: 39,
+    },
+    {
+        id: 5,
+        certificate: "Business English - K08/2025",
+        specialty: 18,
+        code: 28,
+        note: 5,
+        is_full_time: 1,
+        user_id: 40,
+    }
+];
