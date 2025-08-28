@@ -41,7 +41,7 @@ import AMFeedback from 'pages/roles/academic_manager/AMFeedback';
 import AMSchedule from 'pages/roles/academic_manager/AMSchedule';
 import AMReport from 'pages/roles/academic_manager/AMReport';
 import AMNotification from 'pages/roles/academic_manager/AMNotification.jsx';
-import CourseStage from "pages/student/course/CourseStage.jsx
+import CourseStage from "pages/student/course/CourseStage.jsx";
 import ProgramDetail from './pages/home/ProgramDetail';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
