@@ -1,8 +1,8 @@
 :root {
     --color-primary: #FFFAF1;
-    --color-secondary: #FFE5B4;
+    --color-secondary: #f2deb8;
     --color-accent: #3B82F6;
-    --color-neutral-dark: #374151;
+    --color-neutral-dark: #10284f;
     --color-neutral-light: #E5E7EB;
 }
 
@@ -32,4 +32,39 @@ body {
     border: 1px solid var(--color-accent);
     padding: 0.5rem 1rem;
     border-radius: 8px;
+}
+
+.landscape-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 6 / 1;
+    /* Tỉ lệ landscape phổ biến */
+    object-fit: cover;
+    /* Ảnh fill đầy khung, không méo */
+    border-radius: 12px;
+    /* Bo góc nhẹ */
+    box-shadow: 0 2px 16px #0001;
+    /* Đổ bóng nhẹ */
+    display: block;
+    background: #eee;
+}
+
+.badge {
+
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+.badge-open {
+    background-color: green;
+}
+
+.badge-closed {
+    background-color: rgb(139, 139, 139);
+}
+
+.badge-upcoming {
+    background-color: orange;
 }
