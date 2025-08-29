@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useRef } from 'react';
-import { Card } from 'primereact/card';
-import { Avatar } from 'primereact/avatar';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { Divider } from 'primereact/divider';
-import { Toast } from 'primereact/toast';
+// UserProfile.jsx
+import React, {useState, useMemo, useRef, useEffect} from 'react';
+import {Card} from 'primereact/card';
+import {Avatar} from 'primereact/avatar';
+import {Button} from 'primereact/button';
+import {InputText} from 'primereact/inputtext';
+import {Calendar} from 'primereact/calendar';
+import {Dropdown} from 'primereact/dropdown';
+import {Divider} from 'primereact/divider';
+import {Toast} from 'primereact/toast';
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -14,44 +15,63 @@ import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import './UserProfile.css';
 
-const MOCK_USER = {
-    username: 'john.doe',
-    firstName: 'John',
-    lastName: 'Doe',
-    dateOfBirth: '1999-05-12',
-    address: '221B Baker Street, London',
-    gender: true,
-    email: 'john.doe@example.com',
-    phone: '+84 912 345 678',
-    avatar: 'https://i.pravatar.cc/150?img=12',
-    role: 'student'
-};
+import axiosClient from 'services/axiosClient.jsx';
 
 const genderOptions = [
-    { label: 'Male', value: true },
-    { label: 'Female', value: false }
+    {label: 'Male', value: true},
+    {label: 'Female', value: false}
 ];
 
 export default function UserProfile() {
-    const [form, setForm] = useState(MOCK_USER);
+    // === TẤT CẢ HOOK PHẢI KHỞI TẠO Ở ĐẦU ===
+    const [form, setForm] = useState({});          // lưu dữ liệu user
+    const [loading, setLoading] = useState(true);  // trạng thái load
     const [editingField, setEditingField] = useState(null);
     const [tempValue, setTempValue] = useState(null);
     const [saving, setSaving] = useState(false);
     const toast = useRef(null);
 
-    const fullName = useMemo(() => `${form.firstName || ''} ${form.lastName || ''}`.trim(), [form]);
+    const fullName = useMemo(() => `${form?.firstName || ''} ${form?.lastName || ''}`.trim(), [form]);
 
-    const startEdit = (key) => {
-        if (saving) return;
-        setEditingField(key);
-        setTempValue(form[key] ?? (key === 'gender' ? null : ''));
-    };
+    // lấy profile từ API
+    useEffect(() => {
+        axiosClient.get('user/profile')
+            .then(response => {
+                console.log('API response', response)
+                const payload = response?.data?.result ?? response?.data ?? {};
+                setForm(payload);
+            })
+            .catch(error => {
+                console.error('Lỗi khi gọi API:', error);
+                toast.current?.show({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Không lấy được profile',
+                    life: 3000
+                });
+            })
+            .finally(() => setLoading(false));
+    }, []);
 
-    const cancelEdit = () => {
-        if (saving) return;
-        setEditingField(null);
-        setTempValue(null);
-        toast.current?.show({ severity: 'info', summary: 'Cancelled', detail: 'Edit cancelled', life: 1500 });
+    if (loading) return <p style={{padding: 12}}>Đang tải dữ liệu hồ sơ...</p>;
+
+    const labelForKey = (key) => {
+        switch (key) {
+            case 'firstName':
+                return 'First name';
+            case 'lastName':
+                return 'Last name';
+            case 'dateOfBirth':
+                return 'Date of Birth';
+            case 'gender':
+                return 'Gender';
+            case 'address':
+                return 'Address';
+            case 'phone':
+                return 'Phone';
+            default:
+                return key;
+        }
     };
 
     const isPhoneValid = (v) => {
@@ -74,8 +94,9 @@ export default function UserProfile() {
             if (value !== true && value !== false) return 'Please select gender.';
             return null;
         }
-        if (value === null || value === undefined || String(value).trim().length === 0)
+        if (value === null || value === undefined || String(value).trim().length === 0) {
             return `${labelForKey(key)} cannot be empty.`;
+        }
         return null;
     };
 
@@ -85,24 +106,38 @@ export default function UserProfile() {
                 if (key === 'phone' && !isPhoneValid(value)) {
                     reject(new Error('Invalid phone format on server.'));
                 } else {
-                    resolve({ ok: true, key, value });
+                    resolve({ok: true, key, value});
                 }
             }, 700);
         });
     };
 
+    const startEdit = (key) => {
+        if (saving) return;
+        setEditingField(key);
+        setTempValue(form?.[key] ?? (key === 'gender' ? null : ''));
+    };
+
+    const cancelEdit = () => {
+        if (saving) return;
+        setEditingField(null);
+        setTempValue(null);
+        toast.current?.show({severity: 'info', summary: 'Cancelled', detail: 'Edit cancelled', life: 1500});
+    };
+
     const saveEdit = async (key) => {
         const error = getValidationError(key, tempValue);
         if (error) {
-            toast.current?.show({ severity: 'warn', summary: 'Invalid', detail: error, life: 3500 });
+            toast.current?.show({severity: 'warn', summary: 'Invalid', detail: error, life: 3500});
             return;
         }
 
         try {
             setSaving(true);
             const res = await mockSaveApi(key, tempValue);
+
             if (res && res.ok) {
-                setForm((s) => ({ ...s, [key]: tempValue }));
+                setForm((s) => ({...s, [key]: tempValue}));
                 setEditingField(null);
                 setTempValue(null);
                 toast.current?.show({
@@ -112,12 +147,7 @@ export default function UserProfile() {
                     life: 3000
                 });
             } else {
-                toast.current?.show({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'Save failed',
-                    life: 4000
-                });
+                toast.current?.show({severity: 'error', summary: 'Error', detail: 'Save failed', life: 4000});
             }
         } catch (err) {
             toast.current?.show({
@@ -137,7 +167,7 @@ export default function UserProfile() {
         if (editingField === key) {
             const disabled = !!getValidationError(key, tempValue) || saving;
             return (
-                <div className="action-buttons" style={{ display: 'flex', gap: 8 }}>
+                <div className="action-buttons" style={{display: 'flex', gap: 8}}>
                     <Button
                         icon="pi pi-check"
                         className="p-button-rounded"
@@ -146,7 +176,6 @@ export default function UserProfile() {
                         disabled={disabled}
                         loading={saving}
                         loadingIcon="pi pi-spin pi-spinner"
-                        aria-disabled={disabled}
                     />
                     <Button
                         icon="pi pi-times"
@@ -175,58 +204,39 @@ export default function UserProfile() {
         if (!iso) return '-';
         try {
             const d = new Date(iso);
-            return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+            return d.toLocaleDateString(undefined, {day: '2-digit', month: 'short', year: 'numeric'});
         } catch {
             return iso;
         }
     };
 
-    function labelForKey(key) {
-        switch (key) {
-            case 'firstName':
-                return 'First name';
-            case 'lastName':
-                return 'Last name';
-            case 'dateOfBirth':
-                return 'Date of Birth';
-            case 'gender':
-                return 'Gender';
-            case 'address':
-                return 'Address';
-            case 'phone':
-                return 'Phone';
-            default:
-                return key;
-        }
-    }
-
     return (
         <div className="user-profile-root p-m-4">
-            <Toast ref={toast} />
+            <Toast ref={toast}/>
             <Card className="user-profile-card">
                 <div className="user-profile-header p-d-flex p-flex-column p-ai-center">
                     <Avatar
-                        image={form.avatar}
+                        image={form?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName || form?.username || '')}`}
                         shape="circle"
                         size="xlarge"
                         className="user-avatar"
-                        style={{ width: 96, height: 96, objectFit: 'cover' }}
+                        style={{width: 96, height: 96, objectFit: 'cover'}}
                     />
                     <div className="user-name-block p-text-center p-mt-3">
-                        <div className="user-fullname" style={{ fontWeight: 700, fontSize: '1.1rem' }}>
-                            {fullName || form.username}
+                        <div className="user-fullname" style={{fontWeight: 700, fontSize: '1.1rem'}}>
+                            {fullName || form?.username}
                         </div>
-                        <div className="user-username" style={{ color: '#6b7280' }}>@{form.username}</div>
+                        <div className="user-username" style={{color: '#6b7280'}}>@{form?.username}</div>
                         <div className="user-role-wrap p-mt-2">
                             <div className="role-badge p-d-inline-flex p-ai-center">
                                 <span className="role-icon" aria-hidden>🎓</span>
-                                <span className="role-text">{(form.role || 'Unknown').toUpperCase()}</span>
+                                <span className="role-text">{(form?.role || 'Unknown').toUpperCase()}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <Divider className="p-mt-4 p-mb-4" />
+                <Divider className="p-mt-4 p-mb-4"/>
 
                 <div className="p-grid p-nogutter p-align-start p-justify-between">
                     {/* Personal */}
@@ -236,7 +246,7 @@ export default function UserProfile() {
                             <FieldRow
                                 label="First name"
                                 icon="pi pi-user"
-                                displayValue={form.firstName}
+                                displayValue={form?.firstName}
                                 editingField={editingField}
                                 fieldKey="firstName"
                                 tempValue={tempValue}
@@ -244,10 +254,11 @@ export default function UserProfile() {
                                 renderActions={renderActions}
                                 getValidationError={getValidationError}
                             />
+
                             <FieldRow
                                 label="Last name"
                                 icon="pi pi-id-card"
-                                displayValue={form.lastName}
+                                displayValue={form?.lastName}
                                 editingField={editingField}
                                 fieldKey="lastName"
                                 tempValue={tempValue}
@@ -256,29 +267,28 @@ export default function UserProfile() {
                                 getValidationError={getValidationError}
                             />
 
-                            {/* Date of Birth */}
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-calendar p-mr-2" />Date of Birth</label>
-                                        {!editingField || editingField !== 'dateOfBirth' ? (
+                                        <label className="form-label"><i className="pi pi-calendar p-mr-2"/>Date of
+                                            Birth</label>
+                                        {editingField !== 'dateOfBirth' ? (
                                             <div className="field-display">
-                                                <span>{formatDisplayDate(form.dateOfBirth)}</span>
+                                                <span>{formatDisplayDate(form?.dateOfBirth)}</span>
                                             </div>
                                         ) : (
                                             <div>
                                                 <Calendar
                                                     value={tempValue ? new Date(tempValue) : null}
-                                                    onChange={(e) =>
-                                                        setTempValue(e.value ? e.value.toISOString().slice(0, 10) : null)
-                                                    }
+                                                    onChange={(e) => setTempValue(e.value ? e.value.toISOString().slice(0, 10) : null)}
                                                     dateFormat="yy-mm-dd"
                                                     showIcon
                                                     maxDate={new Date()}
                                                     placeholder="YYYY-MM-DD"
                                                 />
                                                 {getValidationError('dateOfBirth', tempValue) &&
-                                                    <small className="field-error">{getValidationError('dateOfBirth', tempValue)}</small>
+                                                    <small
+                                                        className="field-error">{getValidationError('dateOfBirth', tempValue)}</small>
                                                 }
                                             </div>
                                         )}
@@ -287,25 +297,22 @@ export default function UserProfile() {
                                 <div className="field-actions">{renderActions('dateOfBirth')}</div>
                             </div>
 
-                            {/* Gender */}
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-male p-mr-2" />Gender</label>
-                                        {!editingField || editingField !== 'gender' ? (
+                                        <label className="form-label"><i className="pi pi-male p-mr-2"/>Gender</label>
+                                        {editingField !== 'gender' ? (
                                             <div className="field-display">
-                                                <span>{form.gender ? 'Male' : 'Female'}</span>
+                                                <span>{form?.gender ? 'Male' : 'Female'}</span>
                                             </div>
                                         ) : (
                                             <div>
-                                                <Dropdown
-                                                    value={tempValue}
-                                                    options={genderOptions}
-                                                    onChange={(e) => setTempValue(e.value)}
-                                                    placeholder="Select gender"
-                                                />
+                                                <Dropdown value={tempValue} options={genderOptions}
+                                                          onChange={(e) => setTempValue(e.value)}
+                                                          placeholder="Select gender"/>
                                                 {getValidationError('gender', tempValue) &&
-                                                    <small className="field-error">{getValidationError('gender', tempValue)}</small>
+                                                    <small
+                                                        className="field-error">{getValidationError('gender', tempValue)}</small>
                                                 }
                                             </div>
                                         )}
@@ -314,23 +321,22 @@ export default function UserProfile() {
                                 <div className="field-actions">{renderActions('gender')}</div>
                             </div>
 
-                            {/* Address */}
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-map-marker p-mr-2" />Address</label>
-                                        {!editingField || editingField !== 'address' ? (
+                                        <label className="form-label"><i
+                                            className="pi pi-map-marker p-mr-2"/>Address</label>
+                                        {editingField !== 'address' ? (
                                             <div className="field-display">
-                                                <span title={form.address || ''}>{form.address || '-'}</span>
+                                                <span title={form?.address || ''}>{form?.address || '-'}</span>
                                             </div>
                                         ) : (
                                             <div>
-                                                <InputText
-                                                    value={tempValue || ''}
-                                                    onChange={(e) => setTempValue(e.target.value)}
-                                                />
+                                                <InputText value={tempValue || ''}
+                                                           onChange={(e) => setTempValue(e.target.value)}/>
                                                 {getValidationError('address', tempValue) &&
-                                                    <small className="field-error">{getValidationError('address', tempValue)}</small>
+                                                    <small
+                                                        className="field-error">{getValidationError('address', tempValue)}</small>
                                                 }
                                             </div>
                                         )}
@@ -345,37 +351,35 @@ export default function UserProfile() {
                     <div className="p-col-12 p-md-6 p-p-3">
                         <div className="p-text-sm p-text-bold p-mb-2">Contact</div>
                         <div className="section-card">
-                            {/* Email */}
                             <div className="field-row p-mb-3">
-                                <div className="field-left" style={{ flex: 1 }}>
-                                    <div className="field-body" style={{ width: '100%' }}>
-                                        <label className="form-label"><i className="pi pi-envelope p-mr-2" />Email</label>
+                                <div className="field-left" style={{flex: 1}}>
+                                    <div className="field-body" style={{width: '100%'}}>
+                                        <label className="form-label"><i
+                                            className="pi pi-envelope p-mr-2"/>Email</label>
                                         <div className="field-display">
-                                            <span title={form.email || ''}>{form.email || '-'}</span>
+                                            <span title={form?.email || ''}>{form?.email || '-'}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="field-actions" />
+                                <div className="field-actions"/>
                             </div>
 
-                            {/* Phone */}
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-phone p-mr-2" />Phone</label>
-                                        {!editingField || editingField !== 'phone' ? (
+                                        <label className="form-label"><i className="pi pi-phone p-mr-2"/>Phone</label>
+                                        {editingField !== 'phone' ? (
                                             <div className="field-display">
-                                                <span title={form.phone || ''}>{form.phone || '-'}</span>
+                                                <span title={form?.phone || ''}>{form?.phone || '-'}</span>
                                             </div>
                                         ) : (
                                             <div>
-                                                <InputText
-                                                    value={tempValue || ''}
-                                                    onChange={(e) => setTempValue(e.target.value)}
-                                                />
+                                                <InputText value={tempValue || ''}
+                                                           onChange={(e) => setTempValue(e.target.value)}/>
                                                 <div className="field-hint">Example: +84912345678 or 0912345678</div>
                                                 {getValidationError('phone', tempValue) &&
-                                                    <small className="field-error">{getValidationError('phone', tempValue)}</small>
+                                                    <small
+                                                        className="field-error">{getValidationError('phone', tempValue)}</small>
                                                 }
                                             </div>
                                         )}
@@ -406,18 +410,15 @@ function FieldRow({
         <div className="field-row p-mb-3">
             <div className="field-left">
                 <div className="field-body">
-                    <label className="form-label"><i className={icon + ' p-mr-2'} />{label}</label>
-                    {!editingField || editingField !== fieldKey ? (
+                    <label className="form-label"><i className={icon + ' p-mr-2'}/>{label}</label>
+                    {editingField !== fieldKey ? (
                         <div className="field-display">
                             <span title={displayValue || ''}>{displayValue || '-'}</span>
                         </div>
                     ) : (
                         <div>
-                            <InputText
-                                value={tempValue || ''}
-                                onChange={(e) => setTempValue(e.target.value)}
-                                autoFocus
-                            />
+                            <InputText value={tempValue || ''} onChange={(e) => setTempValue(e.target.value)}
+                                       autoFocus/>
                             {getValidationError(fieldKey, tempValue) &&
                                 <small className="field-error">{getValidationError(fieldKey, tempValue)}</small>
                             }
