@@ -1,0 +1,27 @@
+[
+    {
+        "itemImageSrc": "https://t3.ftcdn.net/jpg/03/16/91/28/360_F_316912806_RCeHVmUx5LuBMi7MKYTY5arkE4I0DcpU.jpg",
+        "thumbnailImageSrc": "https://t3.ftcdn.net/jpg/03/16/91/28/360_F_316912806_RCeHVmUx5LuBMi7MKYTY5arkE4I0DcpU.jpg",
+        "alt": "Description 1"
+    },
+    {
+        "itemImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria2.jpg",
+        "thumbnailImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria2.jpg",
+        "alt": "Description 2"
+    },
+    {
+        "itemImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria3.jpg",
+        "thumbnailImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria3.jpg",
+        "alt": "Description 3"
+    },
+    {
+        "itemImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria4.jpg",
+        "thumbnailImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria4.jpg",
+        "alt": "Description 4"
+    },
+    {
+        "itemImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria5.jpg",
+        "thumbnailImageSrc": "https://primefaces.org/cdn/primereact/images/galleria/galleria5.jpg",
+        "alt": "Description 5"
+    }
+]
