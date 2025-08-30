@@ -9,4 +9,6 @@ import com.lmsservice.dto.response.course.StudentCourse;
 public interface StudentService {
     PageResponse<StudentCourse> getCoursesByStudentId(
             Long studentId, StudentCourseFilterRequest filter, Pageable pageable);
+
+    PageResponse<StudentCourse> getStudentCourses(StudentCourseFilterRequest filter, Pageable pageable);
 }
