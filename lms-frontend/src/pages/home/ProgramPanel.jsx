@@ -3,14 +3,26 @@ import { Divider } from "primereact/divider";
 import { Panel } from "primereact/panel";
 import { useNavigate } from "react-router-dom";
 import { programs } from "../../services/mockPrograms";
-
 //import { toSlug } from "utils/slugify";
 
 
 const ProgramPanel = () => {
     const navigate = useNavigate();
     return (<>
-        <div className="flex justify-content-center flex-wrap mt-4 mx-4 bg-white"><h2>Danh sách chương trình học </h2><Divider />
+
+        <div className="relative bg-white mt-4 mx-4 pb-2">
+            <div className=" flex justify-content-end flex-wrap">
+                <a
+                    className="hover:underline text-xl cursor-pointer  px-4 pt-4"
+                    onClick={() => navigate(`/program`)}
+                >
+                    Xem tất cả
+                </a>
+            </div>
+            <h2 className="text-3xl font-bold text-center">
+                Chương trình nỗi bật
+            </h2>
+            <Divider className="m-0" />
         </div>
         <Panel className="mx-4" >
             <div className="grid p-fluid">

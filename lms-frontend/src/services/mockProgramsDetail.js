@@ -9,7 +9,8 @@ export const programsDetail = [
         max_student: 20,
         description: "Khóa học nền tảng cho người mới bắt đầu luyện IELTS.",
         is_active: 1,
-        opening_date: "2024-09-15"
+        opening_date: "2024-09-15",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/002/176/122/small/people-are-studying-together-vector.jpg"
     },
     {
         id: 2,
@@ -20,7 +21,8 @@ export const programsDetail = [
         max_student: 20,
         description: "Khóa học nâng cao kỹ năng IELTS cho người đã có kiến thức cơ bản.",
         is_active: 1,
-        opening_date: "2024-10-01"
+        opening_date: "2024-10-01",
+        image: "https://images.stockcake.com/public/f/0/6/f06df0a9-588c-45b3-b670-92b498d9b7a1_large/group-study-session-stockcake.jpg"
     },
     {
         id: 3,
@@ -31,7 +33,8 @@ export const programsDetail = [
         max_student: 20,
         description: "Khóa học chuyên sâu giúp bạn đạt điểm cao trong kỳ thi IELTS.",
         is_active: 0,
-        opening_date: "2024-11-01"
+        opening_date: "2024-11-01",
+        image: "https://images.stockcake.com/public/c/d/5/cd574bec-3f26-4d67-bef4-cd3bd96f187c_large/group-study-session-stockcake.jpg"
     },
     {
         id: 4,
@@ -42,7 +45,8 @@ export const programsDetail = [
         max_student: 24,
         description: "Chương trình luyện thi TOEIC dành cho người mới bắt đầu.",
         is_active: 1,
-        opening_date: "2024-09-20"
+        opening_date: "2024-09-20",
+        image: "https://images.stockcake.com/public/7/d/4/7d469c92-0c09-4daa-af76-6b37cbc38a2f_medium/group-study-session-stockcake.jpg"
     },
     {
         id: 5,
@@ -53,7 +57,8 @@ export const programsDetail = [
         max_student: 26,
         description: "Khóa học tiếng Anh giao tiếp thực tế cho sinh viên và người đi làm.",
         is_active: 1,
-        opening_date: "2024-10-05"
+        opening_date: "2024-10-05",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/002/164/492/small/cute-kids-boy-and-girl-study-together-free-vector.jpg"
     },
     {
         id: 6,
@@ -63,6 +68,99 @@ export const programsDetail = [
         min_student: 10,
         max_student: 20,
         description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
-        is_active: 0
-    }
+        is_active: 0,
+        opening_date: "",
+        image: "https://thumbs.dreamstime.com/b/college-school-students-man-woman-reading-college-school-students-kids-man-woman-sitting-reading-big-pile-160505435.jpg"
+    },
+    {
+        id: 7,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 0,
+        opening_date: "",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/002/153/023/small_2x/student-studying-science-concept-free-vector.jpg"
+    },
+    {
+        id: 8,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 0,
+        opening_date: "",
+        image: "https://static.vecteezy.com/system/resources/thumbnails/003/019/310/small_2x/young-girl-studying-at-her-room-concept-free-vector.jpg"
+    }, {
+        id: 9,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 0,
+        opening_date: "",
+        image: "https://thumbs.dreamstime.com/b/upset-unhappy-sad-caucasian-depressed-teen-little-girl-child-kid-schoolgirl-school-student-pupil-learner-glasses-reading-book-364648530.jpg"
+    }, {
+        id: 10,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 0,
+        opening_date: "",
+        image: "https://thumbs.dreamstime.com/b/teenage-girl-writing-notes-library-study-table-using-laptop-computer-textbooks-education-learning-concentration-bookshelves-376447223.jpg"
+    }, {
+        id: 11,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 2,
+        opening_date: "",
+        image: "https://img.freepik.com/premium-vector/student-joins-study-groups-online_701961-6561.jpg"
+    }, {
+        id: 12,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 2,
+        opening_date: "",
+        image: "https://as2.ftcdn.net/jpg/05/37/67/71/1000_F_537677128_ETWavXCBuh9UfnHt7rSbsFZJw2GnVCgD.jpg"
+    },
+    {
+        id: 13,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 2,
+        opening_date: "",
+        image: "https://as2.ftcdn.net/jpg/05/37/67/71/1000_F_537677128_ETWavXCBuh9UfnHt7rSbsFZJw2GnVCgD.jpg"
+    }, {
+        id: 14,
+        title: "Business English",
+        fee: 11000000,
+        code: "PROG-20250822-G5678DEF",
+        min_student: 10,
+        max_student: 20,
+        description: "Khóa học tiếng Anh thương mại dành cho người đi làm trong môi trường quốc tế.",
+        is_active: 1,
+        opening_date: "",
+        image: "https://as2.ftcdn.net/jpg/05/37/67/71/1000_F_537677128_ETWavXCBuh9UfnHt7rSbsFZJw2GnVCgD.jpg"
+    },
 ];

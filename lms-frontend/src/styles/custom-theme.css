@@ -49,6 +49,35 @@ body {
     background: #eee;
 }
 
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-image-frame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    /* Thay đổi 4 / 3 hoặc 1 / 1 nếu muốn */
+    overflow: hidden;
+    border-top-left-radius: 0.5rem;
+    /* Bo tròn góc trên, tuỳ thích */
+    border-top-right-radius: 0.5rem;
+    background: #f8fafc;
+    /* Màu nền dự phòng nếu ảnh lỗi */
+    display: block;
+}
+
+.fee {
+    color: #006d49;
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    display: inline-block;
+}
+
 .badge {
 
     color: white;
