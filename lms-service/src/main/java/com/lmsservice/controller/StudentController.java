@@ -29,14 +29,12 @@ import lombok.experimental.FieldDefaults;
 public class StudentController {
     StudentService studentService;
 
-    @PreAuthorize("@studentPolicy.canReadCourses(authentication, #studentId)")
-    @GetMapping("/{studentId}/courses")
+    @GetMapping("/me/courses")
     public ResponseEntity<ApiResponse<PageResponse<StudentCourse>>> getStudentCourses(
-            @PathVariable Long studentId,
             @Valid @ParameterObject StudentCourseFilterRequest filter,
             @ParameterObject Pageable pageable) {
 
-        var response = studentService.getCoursesByStudentId(studentId, filter, pageable);
+        var response = studentService.getStudentCourses(filter, pageable);
         return ResponseEntity.ok(ApiResponse.<PageResponse<StudentCourse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get all course successfully")
