@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { programsDetail } from "../../services/mockProgramsDetail.js";
 import { Card } from "primereact/card";
@@ -10,7 +9,9 @@ import { useEffect } from "react";
 import { courses } from "../../services/mockCourses.js";
 import { teachers } from "../../services/mockTeachers.js";
 import { users } from "../../services/mockUsers.js";
-import { Panel } from "primereact/panel";
+import { subjects } from "../../services/mockSubject.js";
+import { Accordion, AccordionTab } from "primereact/accordion";
+import { lessons } from "../../services/mockLesson.js";
 
 const ProgramDetail = () => {
     const { id } = useParams();
@@ -32,7 +33,7 @@ const ProgramDetail = () => {
     const program = programsDetail.find(p => p.id === parseInt(id));
     if (!program) return <div>Không tìm thấy chương trình.</div>;
 
-    //CourseList trong ProgramDetail
+    //SubjectList trong ProgramDetail
     const getTeacherName = (teacherId) => {
         const teacher = teachers.find(t => t.id === teacherId);
         if (!teacher) return "Chưa có giáo viên";
@@ -51,63 +52,76 @@ const ProgramDetail = () => {
         }
     };
 
-    //Lọc courses cho program hiện tại
-    const programCourses = courses.filter(c => c.program_id === program.id);
+    //Lọc subject cho program hiện tại
+    const programSubjects = subjects.filter(c => c.program_id === program.id);
 
     return (
         <>
             <Card className="mt-2">
-                <img className=" landscape-image" src="https://www.dexerto.com/cdn-image/wp-content/uploads/2024/12/04/HSR-new-banner-1.jpg" />
+                <img className=" landscape-image shadow-4" src="https://www.dexerto.com/cdn-image/wp-content/uploads/2024/12/04/HSR-new-banner-1.jpg" />
                 <div className="grid align-items-center mb-3" >
                     <div className="col-4">
                         <h2>{program.title}</h2>
                     </div>
-                    <div className="col-4">
+                    <div className="col-4 flex justify-content-center">
                         <h2>{program.fee}</h2>
                     </div>
-                    <div className="col-4">
+                    <div className="col-4 flex justify-content-end">
                         {program.is_active === 1 ? (
-                            <h2 className="badge badge-open">Đang mở</h2>
+                            <h4 className="badge badge-open">Đang mở</h4>
                         ) : program.is_active === 0 ? (
-                            <h2 className="badge badge-closed">Đang đóng</h2>
+                            <h4 className="badge badge-closed">Đang đóng</h4>
                         ) : program.is_active === 2 ? (
-                            <h2 className="badge badge-upcoming">Sắp mở</h2>
+                            <h4 className="badge badge-upcoming">Sắp mở</h4>
                         ) : null}
                     </div>
                     <Divider />
-                    <div className="border-bottom">
-                        <div>{program.description}</div>
-                        <div className="flex justify-content-between text-sm text-gray-600">
-                            <span>Số học viên: {program.min_student} - {program.max_student}</span>
+                    <div className="grid col-12">
+                        <div className="col-6">
+                            {program.description}
+                            <div>
+                                <span>Số học viên: {program.min_student} - {program.max_student}</span>
+                            </div>
+                        </div>
+                        <div className="col-6 flex justify-content-end">
+                            <Button label="Đăng ký toàn chương trình" />
                         </div>
                     </div>
                 </div>
             </Card >
-            <div className="card mt-3">
-                <div className="font-semibold mb-2">Danh sách các khóa học và GV phụ trách:</div>
-                <div className="grid">
-                    {(programCourses.length ? programCourses : courses).map(course => (
-                        <div className="col-12" key={course.id}>
-                            <div className="flex flex-row align-items-center border-round p-3 mb-2 shadow-sm bg-white">
-                                <div className="col-8">
-                                    <div className="font-bold text-lg">{course.title}</div>
-                                    <div className="flex align-items-center gap-3 mt-1">
-                                        <span className="text-sm">Số buổi: <b>{course.planned_session}</b></span>
-                                        <span className="text-sm flex align-items-center">
-                                            GV: <b>{getTeacherName(course.teacher_id)}</b>
-                                        </span>
-                                        <span className="text-sm">Khai giảng: <b>{dateFormat(course.start_date)}</b></span>
-                                        <span className="text-sm">{getStatusBadge(course.status)}</span>
+            <Card className="mt-4">
+                <div className="font-semibold flex justify-content-center text-lg">Danh sách các môn trong chương trình</div>
+                <div className="card">
+                    {(programSubjects.length ? programSubjects : subjects).map(subject => (
+                        <div className="" key={subject.id}>
+                            <Accordion>
+                                <AccordionTab header={subject.title} >
+                                    <div className="grid col-12">
+                                        <p className="m-0 col-6">{subject.description} </p>
+                                        <div className="col-6 flex justify-content-end">
+                                            <Button label='Đăng ký môn này'></Button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-4 flex justify-content-end">
-                                    <Button label="Xem chi tiết" icon="pi pi-info-circle" severity="info" onClick={() => navigate(`/course/detail?id=${course.id}`)} />
-                                </div>
-                            </div>
+                                    {
+                                        lessons.filter(lesson => lesson.subject_id === subject.id).map(lesson => (
+                                            <div key={lesson.id} className="mb-3">
+                                                <div className="flex align-items-center justify-content-between">
+                                                    <div>
+                                                        <b>{lesson.title}</b>
+                                                    </div>
+                                                </div>
+                                                <div>{lesson.content}</div>
+                                                <div><i>{lesson.description}</i></div>
+                                                <Divider />
+                                            </div>
+                                        ))
+                                    }
+                                </AccordionTab>
+                            </Accordion>
                         </div>
                     ))}
                 </div>
-            </div>
+            </Card>
             <Card footer={footer}></Card>
 
         </>
