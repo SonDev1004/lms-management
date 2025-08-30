@@ -3,11 +3,14 @@ import LayoutHome from 'layouts/home/LayoutHome';
 import Login from 'pages/home/Login';
 import Register from 'pages/home/Register';
 import Guest from './pages/home/Guest';
+
+
 import './styles/custom-theme.css';
 
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 
 import LayoutStudent from 'layouts/student/LayoutStudent';
 import StudentDashboard from 'pages/roles/student/StudentDashboard';
@@ -38,6 +41,8 @@ import AMFeedback from 'pages/roles/academic_manager/AMFeedback';
 import AMSchedule from 'pages/roles/academic_manager/AMSchedule';
 import AMReport from 'pages/roles/academic_manager/AMReport';
 import AMNotification from 'pages/roles/academic_manager/AMNotification.jsx';
+import CourseStage from "pages/student/course/CourseStage.jsx";
+import ProgramDetail from './pages/home/ProgramDetail';
 
 import CourseHome from 'pages/course/CourseHome.jsx';
 import CourseDetailStudent from "pages/course/detail/CourseDetailStudent.jsx";
@@ -64,6 +69,11 @@ const App = () => {
 
                 </Route>
 
+                {/* Program Route (ngoài student) */}
+                <Route path='program' element={<LayoutHome />}>
+                    <Route path=':id' element={<ProgramDetail />} />
+                </Route>
+
                 {/* Student Route */}
                 <Route element={<ProtectedRoute allowedRoles={['STUDENT']}/>}>
                     <Route path='student' element={<LayoutStudent/>}>
@@ -77,6 +87,7 @@ const App = () => {
                         {/* Nested: student/course */}
                         <Route path="course">
                             <Route index element={<CourseHome/>}/>
+                            <Route path='stage' element={<CourseStage />} />
                             <Route path="detail" element={<CourseDetailStudent/>}/>
                         </Route>
                     </Route>
@@ -132,3 +143,4 @@ const App = () => {
 }
 
 export default App;
+
