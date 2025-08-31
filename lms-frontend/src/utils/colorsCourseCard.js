@@ -2,10 +2,18 @@
 
 // Danh sách màu pastel (tự chỉnh theo gu)
 export const PASTEL_PALETTE = [
-    '#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9',
-    '#BBDEFB', '#B3E5FC', '#B2EBF2', '#C8E6C9', '#DCEDC8',
-    '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC', '#D7CCC8',
-    '#F5F5F5', '#CFD8DC',
+    '#FF9FB2',
+    '#FFB7A5',
+    '#FFCF99',
+    '#FFD166',
+    '#D9F99D',
+    '#A7F3D0',
+    '#5EEAD4',
+    '#7DD3FC',
+    '#93C5FD',
+    '#A5B4FC',
+    '#C4B5FD',
+    '#FBCFE8'
 ];
 
 // Màu chữ tương phản (đen/trắng) theo nền
@@ -43,12 +51,24 @@ export function buildThemeFromAccent(accent) {
     return { accent, accentText, metaTextColor, metaBg };
 }
 
-// Fisher–Yates shuffle để xáo trộn bảng màu (random 1 lần khi mở trang)
-export function shuffle(arr, rnd = Math.random) {
-    const a = arr.slice(); // giữ nguyên input
-    for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(rnd() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+// Hash FNV-1a 32-bit
+export function hashStringToInt(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619) >>> 0;
     }
-    return a;
+    return h >>> 0;
+}
+
+// Chọn 1 màu pastel ổn định theo key (id/title)
+export function pickPastelByKey(key) {
+    const idx = hashStringToInt(String(key ?? 'x')) % PASTEL_PALETTE.length;
+    return PASTEL_PALETTE[idx];
+}
+
+// Theme từ course (không dùng subject)
+export function getCourseThemeStable(course) {
+    const accent = pickPastelByKey(course?.id || course?.title);
+    return buildThemeFromAccent(accent);
 }

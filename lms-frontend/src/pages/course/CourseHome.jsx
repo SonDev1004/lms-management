@@ -1,5 +1,5 @@
 // src/pages/course/CourseHome.jsx
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Tooltip } from "primereact/tooltip";
@@ -8,12 +8,19 @@ import "./CourseHome.css";
 
 import StudentService from "services/studentService.js";
 import {
-  PASTEL_PALETTE,
-  buildThemeFromAccent,
-  shuffle,
+    getCourseThemeStable
 } from "utils/colorsCourseCard.js";
 import { toSlug } from "utils/slugify.js";
 
+
+function splitSchedule(raw) {
+    if (!raw) return [];
+    return String(raw)
+        .split(/\s*\/\s*/g)            // tách theo dấu "/"
+        .map(p => p.replace(/-/g, "–") // đổi "-" thành "–" (en dash)
+            .trim())
+        .filter(Boolean);
+}
 function classifyReminder(text) {
   if (!text) return "normal";
   const t = text.toLowerCase();
@@ -53,10 +60,7 @@ export default function CourseHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Pastel ngẫu nhiên ổn định trong phiên
-  const paletteRef = useRef(shuffle(PASTEL_PALETTE));
-  const colorMapRef = useRef(new Map()); // id -> theme
-  const nextIdxRef = useRef(0);
+
 
   // Lấy dữ liệu
   useEffect(() => {
@@ -84,37 +88,27 @@ export default function CourseHome() {
   const now = useMemo(() => new Date(), []);
 
   // Tính toán UI + theme màu cho từng course
-  const uiCourses = useMemo(
-    () =>
-      courses.map((c) => {
-        if (!colorMapRef.current.has(c.id)) {
-          const idx = nextIdxRef.current % paletteRef.current.length;
-          nextIdxRef.current += 1;
-          const accent = paletteRef.current[idx];
-          colorMapRef.current.set(c.id, buildThemeFromAccent(accent));
-        }
-        const theme = colorMapRef.current.get(c.id);
+    const uiCourses = useMemo(
+        () =>
+            courses.map((c) => {
+                const theme = getCourseThemeStable(c); // <- luôn ổn định theo id/title
 
-        const startDate = c.start_date ? new Date(c.start_date) : null;
-        const hasStarted = startDate ? now >= startDate : false;
-        const hasFinished = startDate ? now > startDate && !c.is_active : false;
-        const clickable = Boolean(c.is_active && hasStarted && !hasFinished);
+                const startDate = c.start_date ? new Date(c.start_date) : null;
+                const hasStarted = startDate ? now >= startDate : false;
+                const hasFinished = startDate ? now > startDate && !c.is_active : false;
+                const clickable = Boolean(c.is_active && hasStarted && !hasFinished);
 
-        return {
-          ...c,
-          subjectColor: theme.accent,
-          accentText: theme.accentText,
-          metaTextColor: theme.metaTextColor,
-          metaBg: theme.metaBg,
-          startDate,
-          hasStarted,
-          hasFinished,
-          clickable,
-        };
-      }),
-    [courses, now],
-  );
-
+                return {
+                    ...c,
+                    subjectColor: theme.accent,
+                    accentText: theme.accentText,
+                    metaTextColor: theme.metaTextColor,
+                    metaBg: theme.metaBg,
+                    startDate, hasStarted, hasFinished, clickable,
+                };
+            }),
+        [courses, now]
+    );
   const counts = useMemo(
     () => ({
       "Tất cả": uiCourses.length,
@@ -200,44 +194,32 @@ export default function CourseHome() {
               navigate(`/student/courses/${slug}?id=${c.id}#materials`);
             };
 
-            const footer = (
-              <div className="card-footer">
-                <Button
-                  label="Tài liệu"
-                  icon="pi pi-folder"
-                  className="footer-btn btn-tooltip"
-                  data-pr-tooltip="Tài liệu"
-                  aria-label={`Tài liệu ${c.title}`}
-                  onClick={goMaterials}
-                  style={{
-                    background: accent,
-                    color: accentText,
-                    border: `1px solid ${accent}`,
-                  }}
-                />
-                <Button
-                  label="Chi tiết"
-                  icon="pi pi-info-circle"
-                  className="footer-btn btn-tooltip"
-                  data-pr-tooltip="Chi tiết"
-                  aria-label={`Chi tiết ${c.title}`}
-                  onClick={goDetail}
-                  style={{
-                    background: "transparent",
-
-                    color: '#111827',
-                    border: `3px solid ${accent}`,
-                  }}
-                />
-              </div>
-            );
+              const footer = (
+                  <div className="card-footer">
+                      <Button
+                          label="Tài liệu"
+                          icon="pi pi-folder"
+                          className="footer-btn btn-tooltip btn-primary"
+                          data-pr-tooltip="Tài liệu"
+                          aria-label={`Tài liệu ${c.title}`}
+                          onClick={goMaterials}
+                      />
+                      <Button
+                          label="Chi tiết"
+                          icon="pi pi-info-circle"
+                          className="footer-btn btn-tooltip btn-secondary"
+                          data-pr-tooltip="Chi tiết"
+                          aria-label={`Chi tiết ${c.title}`}
+                          onClick={goDetail}
+                      />
+                  </div>
+              );
 
             return (
               <Card
                 key={c.id}
                 className={`course-card ${c.clickable ? "clickable" : "disabled"}`}
-                style={{ height: "100%" }}
-                header={
+                style={{ height: "100%", "--accent": accent, "--accentText": accentText }}                header={
                   <div className="card-header" style={headerStyle}>
                     <div className="header-left">
                       <div className="title-wrap">
@@ -260,7 +242,13 @@ export default function CourseHome() {
                         <div
                           className="meta-row"
                           style={{ background: metaBg }}
+                        >  <div
+                            className="meta-row meta-room"
+                            style={{ background: "transparent" }}
                         >
+                            <i className="pi pi-home" aria-hidden="true" />
+                            <span className="meta-value">{c.room}</span>
+                        </div>
                           <i className="pi pi-user" aria-hidden="true" />
                           <div className="meta-text">
                             <strong className="meta-label">GV:</strong>
@@ -285,19 +273,6 @@ export default function CourseHome() {
                     </div>
 
                     <div className="header-right">
-                      <div
-                        className="room-badge"
-                        aria-hidden="true"
-                        style={{
-                          background:
-                            accentText === "#FAFAFA"
-                              ? "rgba(255,255,255,0.12)"
-                              : "rgba(0,0,0,0.06)",
-                          color: accentText,
-                        }}
-                      >
-                        {c.room}
-                      </div>
                       <div className="start-date" style={{ color: accentText }}>
                         Khai giảng: {formatDateISO(c.start_date)}
                       </div>
