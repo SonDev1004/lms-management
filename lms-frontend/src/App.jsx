@@ -55,7 +55,6 @@ import TeacherProfile from "pages/roles/teacher/TeacherProfile.jsx";
 import AdminProfile from "pages/roles/admin/AdminProfile.jsx";
 import Unauthorized from "pages/home/Unauthorized.jsx";
 
-
 const App = () => {
     return (
         <BrowserRouter>

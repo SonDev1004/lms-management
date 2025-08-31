@@ -1,27 +1,26 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import {useParams} from 'react-router-dom';
 import classNames from 'classnames';
-import { Avatar } from 'primereact/avatar';
-import { Button } from 'primereact/button';
-import { TabView, TabPanel } from 'primereact/tabview';
-import { ProgressBar } from 'primereact/progressbar';
-import { Dialog } from 'primereact/dialog';
-import { Tooltip } from 'primereact/tooltip';
-import { Card } from 'primereact/card';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { FileUpload } from 'primereact/fileupload';
-import { Badge } from 'primereact/badge';
-import { Tag } from 'primereact/tag';
-import { Toast } from 'primereact/toast';
-import { Panel } from 'primereact/panel';
+import {Avatar} from 'primereact/avatar';
+import {Button} from 'primereact/button';
+import {TabPanel, TabView} from 'primereact/tabview';
+import {ProgressBar} from 'primereact/progressbar';
+import {Dialog} from 'primereact/dialog';
+import {Tooltip} from 'primereact/tooltip';
+import {Card} from 'primereact/card';
+import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
+import {FileUpload} from 'primereact/fileupload';
+import {Badge} from 'primereact/badge';
+import {Tag} from 'primereact/tag';
+import {Toast} from 'primereact/toast';
+import {Panel} from 'primereact/panel';
 import './CourseDetailStudent.css';
 
 export default function CourseDetailStudent() {
-    const { courseId, studentId } = useParams();
-    const navigate = useNavigate();
+    const {courseId, studentId} = useParams();
     const toast = useRef(null);
-    //data course
+
     const course = {
         id: courseId || 'c1',
         title: 'IELTS Intermediate',
@@ -32,10 +31,10 @@ export default function CourseDetailStudent() {
         description: 'Lớp IELTS Intermediate dành cho học viên muốn đạt 6.0-6.5. Tập trung Reading & Writing, kèm Speaking practice.',
         pdfUrl: '/files/sample-syllabus.pdf',
         lessonsCompleted: 7,
-        totalLessons: 9
+        totalLessons: 10
     };
-    //data học viên
-    const [student, setStudent] = useState({
+
+    const [student] = useState({
         id: studentId || 'u2',
         name: 'Nguyễn Thị Y',
         avatar: 'N',
@@ -47,57 +46,302 @@ export default function CourseDetailStudent() {
         paymentStatus: 'paid',
         notes: 'Chú ý phần Writing: cấu trúc đoạn và lượng từ.'
     });
-    //data bài tập
+
     const [assignments, setAssignments] = useState([
-        { id: 'a1', title: 'Reading - Week 2', due: '2025-08-10', studentStatus: 'not_submitted' },
-        { id: 'a2', title: 'Writing Task 1', due: '2025-08-05', studentStatus: 'graded', grade: 7.5 },
-        { id: 'a3', title: 'Listening Quiz 1', due: '2025-08-12', studentStatus: 'submitted' },
-        { id: 'a4', title: 'Speaking: Short Presentation', due: '2025-08-18', studentStatus: 'not_submitted' },
-        { id: 'a5', title: 'Writing Task 2 (Essay)', due: '2025-08-22', studentStatus: 'graded', grade: 8 },
-        { id: 'a6', title: 'Vocabulary Quiz: Daily Activities', due: '2025-08-25', studentStatus: 'submitted' },
-        { id: 'a7', title: 'Grammar Worksheet — Past Simple', due: '2025-09-01', studentStatus: 'graded', grade: 7 }
+        {id: 'a1', title: 'Reading - Week 2', due: '2025-08-10', studentStatus: 'not_submitted'},
+        {id: 'a2', title: 'Writing Task 1', due: '2025-08-05', studentStatus: 'graded', grade: 7.5},
+        {id: 'a3', title: 'Listening Quiz 1', due: '2025-08-12', studentStatus: 'submitted'},
+        {id: 'a4', title: 'Speaking Practice 1', due: '2025-08-15', studentStatus: 'not_submitted'},
+        {id: 'a5', title: 'Grammar Quiz - Tenses', due: '2025-08-18', studentStatus: 'submitted'},
+        {id: 'a6', title: 'Vocabulary Assignment - Week 3', due: '2025-08-20', studentStatus: 'graded', grade: 8.0},
+        {id: 'a7', title: 'Reading Comprehension Test', due: '2025-08-22', studentStatus: 'not_submitted'},
+        {id: 'a8', title: 'Essay Writing - Task 2', due: '2025-08-25', studentStatus: 'graded', grade: 6.5},
+        {id: 'a9', title: 'Listening Quiz 2', due: '2025-08-27', studentStatus: 'submitted'},
+        {id: 'a10', title: 'Speaking Mock Test', due: '2025-08-30', studentStatus: 'not_submitted'},
+        {id: 'a11', title: 'Final Writing Exam', due: '2025-09-02', studentStatus: 'graded', grade: 7.0},
+        {id: 'a12', title: 'Midterm Reading Exam', due: '2025-09-05', studentStatus: 'not_submitted'},
+        {id: 'a13', title: 'Listening Dictation', due: '2025-09-07', studentStatus: 'submitted'}
     ]);
 
-    const [gradeDialog, setGradeDialog] = useState({ visible: false, assignment: null });
-    //data điểm danh
+    const [gradeDialog, setGradeDialog] = useState({visible: false, assignment: null});
+
     const [attendanceHistory] = useState([
-        { session: 1, date: '2025-06-01', present: true },
-        { session: 2, date: '2025-06-03', present: true },
-        { session: 3, date: '2025-06-07', present: false },
-        { session: 4, date: '2025-06-10', present: true },
-        { session: 5, date: '2025-06-12', present: true },
-        { session: 6, date: '2025-06-15', present: true },
-        { session: 7, date: '2025-06-18', present: false },
-        { session: 8, date: '2025-06-20', present: true },
-        { session: 9, date: '2025-06-24', present: true }
+        {session: 1, date: '2025-06-01', present: true},
+        {session: 2, date: '2025-06-03', present: true},
+        {session: 3, date: '2025-06-07', present: false},
+        {session: 4, date: '2025-06-10', present: true},
+        {session: 5, date: '2025-06-12', present: true},
+        {session: 6, date: '2025-06-14', present: false},
+        {session: 7, date: '2025-06-17', present: true},
+        {session: 8, date: '2025-06-20', present: true},
+        {session: 9, date: '2025-06-22', present: false},
+        {session: 10, date: '2025-06-25', present: true},
+        {session: 11, date: '2025-06-27', present: true},
+        {session: 12, date: '2025-06-29', present: true},
+        {session: 13, date: '2025-07-01', present: false}
     ]);
-    //data hoat động
+
     const [activities] = useState([
-        { id: 'act1', date: new Date(Date.now() - 2 * 60 * 60 * 1000), text: 'GV đã tải lên: Lesson 02 - Reading' },
-        { id: 'act2', date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), text: 'GV đã bình luận: Writing Task 1' },
-        { id: 'act3', date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), text: 'Bạn đã nộp Assignment: Reading - Week 2' },
-        { id: 'act4', date: new Date(Date.now() - 3 * 60 * 60 * 1000), text: 'GV đã tải lên: Lesson 03 - Listening' },
-        { id: 'act5', date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), text: 'GV đăng thông báo: Lịch thi giữa kỳ' },
-        { id: 'act6', date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), text: 'Bạn đã xem kết quả Writing Task 1' },
-        { id: 'act7', date: new Date(Date.now() - 30 * 60 * 1000), text: 'GV bình luận bài nộp: Reading - Week 2' }
+        {id: 'act1', date: new Date(Date.now() - 2 * 60 * 60 * 1000), text: 'GV đã tải lên: Lesson 02 - Reading'},
+        {id: 'act2', date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), text: 'GV đã bình luận: Writing Task 1'},
+        {id: 'act3', date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), text: 'GV đã chấm điểm: Listening Quiz 1'},
+        {id: 'act4', date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000), text: 'GV đã thêm: Lesson 03 - Vocabulary'},
+        {id: 'act5', date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000), text: 'HS đã nộp: Writing Task 2'},
+        {id: 'act6', date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), text: 'GV đã đăng: Pronunciation Audio'},
+        {id: 'act7', date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000), text: 'HS đã nộp: Grammar Quiz - Tenses'},
+        {id: 'act8', date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), text: 'GV đã bình luận: Essay Writing'},
+        {id: 'act9', date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), text: 'GV đã thêm: Lesson 05 - Listening'},
+        {id: 'act10', date: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000), text: 'HS đã tham gia Speaking Mock Test'},
+        {
+            id: 'act11',
+            date: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000),
+            text: 'GV đã tải lên: Reading Comprehension Test'
+        },
+        {
+            id: 'act12',
+            date: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+            text: 'GV đã chấm điểm: Vocabulary Assignment'
+        },
+        {id: 'act13', date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000), text: 'HS đã nộp: Listening Dictation'}
     ]);
-    //data giáo trình
+
     const syllabusData = [
-        { id: 'w1', week: 'Tuần 1 — Orientation & Diagnostic Test', desc: 'Đánh giá năng lực, giới thiệu lộ trình', detail: 'Học viên làm bài kiểm tra đầu vào, giới thiệu giáo trình, cách học và tiêu chí đánh giá.', objectives: ['Đánh giá trình độ', 'Hiểu lộ trình học', 'Thiết lập mục tiêu cá nhân'], activities: ['Test đầu vào (Listening & Reading)', 'Phỏng vấn ngắn Speaking'], materials: ['Syllabus PDF', 'Form test đầu vào'] },
-        { id: 'w2', week: 'Tuần 2 — Pronunciation & Phonics', desc: 'Làm quen phát âm chuẩn, luyện âm cơ bản', detail: 'Tập trung vào nguyên âm, phụ âm khó, ngữ điệu và luyện phát âm qua bài tập ngắn.', objectives: ['Nắm các âm cơ bản', 'Cải thiện phát âm rõ ràng'], activities: ['Bài luyện phát âm / minimal pairs', 'Thực hành theo cặp'], materials: ['Worksheet phát âm', 'Audio mẫu'] },
-        { id: 'w3', week: 'Tuần 3 — Basic Grammar: Present Simple', desc: 'Cấu trúc thì hiện tại đơn, luyện tập hội thoại', detail: 'Học cấu trúc khẳng định, phủ định, nghi vấn và áp dụng vào hội thoại ngắn.', objectives: ['Sử dụng Present Simple chính xác', 'Viết câu đơn giản đúng ngữ pháp'], activities: ['Bài tập cấu trúc', 'Role-play tình huống hàng ngày'], materials: ['Slides ngữ pháp', 'Exercise sheet'] },
-        { id: 'w4', week: 'Tuần 4 — Vocabulary: Daily Activities', desc: 'Từ vựng về sinh hoạt hằng ngày, luyện nói', detail: 'Mở rộng từ vựng chủ đề, collocations, và luyện mô tả thói quen.', objectives: ['Thuộc 40-50 từ chủ đề', 'Sử dụng collocations phù hợp'], activities: ['Flashcards', 'Speaking pair work'], materials: ['List từ vựng', 'Quiz nhanh'] },
-        { id: 'w5', week: 'Tuần 5 — Listening Skills 1', desc: 'Nghe hiểu các đoạn hội thoại ngắn', detail: 'Luyện nghe gist và detail cho các đoạn hội thoại ngắn, kỹ thuật dự đoán nội dung.', objectives: ['Bắt ý chính', 'Luyện nghe với tốc độ nói tự nhiên'], activities: ['Nghe đoạn hội thoại', 'Trắc nghiệm understanding'], materials: ['Audio scripts', 'Workbook exercises'] },
-        { id: 'w6', week: 'Tuần 6 — Grammar: Present Continuous', desc: 'Cấu trúc thì hiện tại tiếp diễn, luyện ngữ cảnh thực tế', detail: 'Ứng dụng Present Continuous để nói về hành động đang xảy ra và kế hoạch tương lai gần.', objectives: ['Sử dụng Present Continuous đúng ngữ cảnh'], activities: ['Bài tập chuyển đổi thì', 'Mini-dialogues'], materials: ['Grammar sheet', 'Exercises'] }
+        {
+            id: 'w1',
+            title: 'Tuần 1 — Orientation & Diagnostic Test',
+            desc: 'Đánh giá năng lực, giới thiệu lộ trình',
+            content: 'Đánh giá năng lực, giới thiệu giáo trình, cách học và tiêu chí đánh giá.',
+            teacher: 'Ms. Lan',
+            publishedAt: '2025-07-28',
+            updatedAt: '2025-07-29',
+            materials: ['Syllabus PDF', 'Form test đầu vào'],
+            subject: 'IELTS',
+            documents: [
+                {
+                    id: 'd-w1-1',
+                    name: 'Syllabus_Week1.pdf',
+                    type: 'pdf',
+                    url: '/files/ielts/week1/syllabus_week1.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Đánh giá trình độ', 'Hiểu lộ trình học'],
+            activities: ['Test đầu vào (Listening & Reading)', 'Phỏng vấn ngắn Speaking']
+        },
+        {
+            id: 'w2',
+            title: 'Tuần 2 — Pronunciation & Phonics',
+            desc: 'Làm quen phát âm chuẩn, luyện âm cơ bản',
+            content: 'Tập trung vào nguyên âm, phụ âm khó, ngữ điệu và luyện phát âm qua bài tập ngắn.',
+            teacher: 'Mr. Hùng',
+            publishedAt: '2025-08-04',
+            updatedAt: '2025-08-05',
+            materials: ['Worksheet phát âm', 'Audio mẫu'],
+            subject: 'Pronunciation',
+            documents: [
+                {
+                    id: 'd-w2-1',
+                    name: 'Pronunciation_Worksheet.pdf',
+                    type: 'pdf',
+                    url: '/files/pronunciation/week2/worksheet.pdf',
+                    download: true
+                },
+                {
+                    id: 'd-w2-2',
+                    name: 'MinimalPairs.jpg',
+                    type: 'image',
+                    url: '/files/pronunciation/week2/minimal_pairs.jpg',
+                    download: true
+                }
+            ],
+            objectives: ['Nắm các âm cơ bản', 'Cải thiện phát âm rõ ràng'],
+            activities: ['Bài luyện phát âm / minimal pairs', 'Thực hành theo cặp']
+        },
+        {
+            id: 'w3',
+            title: 'Tuần 3 — Vocabulary Building',
+            desc: 'Mở rộng vốn từ vựng theo chủ đề',
+            content: 'Học từ mới qua bài đọc và luyện tập viết câu.',
+            teacher: 'Ms. Hoa',
+            publishedAt: '2025-08-11',
+            updatedAt: '2025-08-12',
+            materials: ['Word list', 'Flashcards'],
+            subject: 'Vocabulary',
+            documents: [
+                {
+                    id: 'd-w3-1',
+                    name: 'Vocabulary_List.pdf',
+                    type: 'pdf',
+                    url: '/files/vocab/week3/vocab_list.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Mở rộng vốn từ', 'Dùng từ đúng ngữ cảnh'],
+            activities: ['Làm flashcards', 'Viết đoạn văn ngắn']
+        },
+        {
+            id: 'w4',
+            title: 'Tuần 4 — Reading Strategies',
+            desc: 'Chiến thuật đọc nhanh và hiểu sâu',
+            content: 'Luyện kỹ năng skimming, scanning và phân tích câu.',
+            teacher: 'Mr. Nam',
+            publishedAt: '2025-08-18',
+            updatedAt: '2025-08-19',
+            materials: ['Reading passages', 'Practice tests'],
+            subject: 'Reading',
+            documents: [
+                {
+                    id: 'd-w4-1',
+                    name: 'Reading_Practice.pdf',
+                    type: 'pdf',
+                    url: '/files/reading/week4/reading_practice.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Đọc nhanh', 'Nắm ý chính'],
+            activities: ['Làm bài đọc IELTS', 'Thảo luận nhóm']
+        },
+        {
+            id: 'w5',
+            title: 'Tuần 5 — Listening Comprehension',
+            desc: 'Nghe hiểu hội thoại và bài giảng',
+            content: 'Luyện nghe chi tiết và nghe ý chính.',
+            teacher: 'Ms. Mai',
+            publishedAt: '2025-08-25',
+            updatedAt: '2025-08-26',
+            materials: ['Audio files', 'Transcript'],
+            subject: 'Listening',
+            documents: [
+                {
+                    id: 'd-w5-1',
+                    name: 'Listening_Audio.mp3',
+                    type: 'audio',
+                    url: '/files/listening/week5/audio.mp3',
+                    download: false
+                }
+            ],
+            objectives: ['Nghe nắm ý chính', 'Trả lời câu hỏi chi tiết'],
+            activities: ['Nghe audio', 'Làm bài tập multiple choice']
+        },
+        {
+            id: 'w6',
+            title: 'Tuần 6 — Grammar in Use',
+            desc: 'Ngữ pháp trọng tâm: thì và cấu trúc',
+            content: 'Ôn tập thì cơ bản, nâng cao và cách áp dụng trong IELTS.',
+            teacher: 'Mr. Long',
+            publishedAt: '2025-09-01',
+            updatedAt: '2025-09-02',
+            materials: ['Grammar worksheets', 'Answer key'],
+            subject: 'Grammar',
+            documents: [
+                {
+                    id: 'd-w6-1',
+                    name: 'Grammar_Tenses.pdf',
+                    type: 'pdf',
+                    url: '/files/grammar/week6/tenses.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Nắm chắc thì', 'Áp dụng khi viết'],
+            activities: ['Bài tập chia thì', 'Viết đoạn văn']
+        },
+        {
+            id: 'w7',
+            title: 'Tuần 7 — Speaking Skills',
+            desc: 'Luyện nói Part 1, Part 2',
+            content: 'Phát triển ý tưởng và diễn đạt trôi chảy.',
+            teacher: 'Ms. Quỳnh',
+            publishedAt: '2025-09-08',
+            updatedAt: '2025-09-09',
+            materials: ['Cue cards', 'Sample answers'],
+            subject: 'Speaking',
+            documents: [
+                {
+                    id: 'd-w7-1',
+                    name: 'Speaking_CueCards.pdf',
+                    type: 'pdf',
+                    url: '/files/speaking/week7/cuecards.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Phát triển ý tưởng', 'Nói trôi chảy'],
+            activities: ['Nói theo cặp', 'Ghi âm luyện tập']
+        },
+        {
+            id: 'w8',
+            title: 'Tuần 8 — Writing Task 1',
+            desc: 'Phân tích biểu đồ và viết báo cáo',
+            content: 'Làm quen cấu trúc và ngôn ngữ học thuật.',
+            teacher: 'Mr. An',
+            publishedAt: '2025-09-15',
+            updatedAt: '2025-09-16',
+            materials: ['Sample charts', 'Writing templates'],
+            subject: 'Writing',
+            documents: [
+                {
+                    id: 'd-w8-1',
+                    name: 'Writing_Task1_Samples.pdf',
+                    type: 'pdf',
+                    url: '/files/writing/week8/task1.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Viết đúng cấu trúc', 'Sử dụng ngôn ngữ học thuật'],
+            activities: ['Viết báo cáo', 'Chữa bài tập nhóm']
+        },
+        {
+            id: 'w9',
+            title: 'Tuần 9 — Writing Task 2',
+            desc: 'Viết luận và phát triển ý',
+            content: 'Học cấu trúc bài luận, cách lập dàn ý.',
+            teacher: 'Ms. Thu',
+            publishedAt: '2025-09-22',
+            updatedAt: '2025-09-23',
+            materials: ['Essay outlines', 'Model essays'],
+            subject: 'Writing',
+            documents: [
+                {
+                    id: 'd-w9-1',
+                    name: 'Writing_Task2_Samples.pdf',
+                    type: 'pdf',
+                    url: '/files/writing/week9/task2.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Viết bài luận hoàn chỉnh', 'Trình bày ý logic'],
+            activities: ['Viết luận tại lớp', 'Chấm chéo']
+        },
+        {
+            id: 'w10',
+            title: 'Tuần 10 — Mock Test',
+            desc: 'Thi thử IELTS 4 kỹ năng',
+            content: 'Thi thử toàn bộ kỹ năng Listening, Reading, Writing, Speaking.',
+            teacher: 'All Teachers',
+            publishedAt: '2025-09-29',
+            updatedAt: '2025-09-30',
+            materials: ['Mock test paper', 'Answer sheets'],
+            subject: 'IELTS',
+            documents: [
+                {
+                    id: 'd-w10-1',
+                    name: 'MockTest_Full.pdf',
+                    type: 'pdf',
+                    url: '/files/mocktest/week10/full.pdf',
+                    download: true
+                }
+            ],
+            objectives: ['Đánh giá năng lực thực tế', 'Chuẩn bị thi chính thức'],
+            activities: ['Thi đủ 4 kỹ năng', 'Chấm điểm và phản hồi']
+        }
     ];
-    //ẩn hiện
+
+
     const [syllabusVisible, setSyllabusVisible] = useState(false);
     const [selectedSyllabus, setSelectedSyllabus] = useState(null);
     const [isMobile, setIsMobile] = useState(false);
-    const [expanded, setExpanded] = useState(() => new Set());
     const [assignmentFilter, setAssignmentFilter] = useState('all');
     const [animatedProgress, setAnimatedProgress] = useState(0);
-    //chạy process
+
     useEffect(() => {
         let raf;
         const start = performance.now();
@@ -113,7 +357,7 @@ export default function CourseDetailStudent() {
         raf = requestAnimationFrame(step);
         return () => cancelAnimationFrame(raf);
     }, [student.progress]);
-    //mobile ?
+
     useEffect(() => {
         const mq = window.matchMedia('(max-width: 980px)');
         const handler = (e) => setIsMobile(e.matches);
@@ -121,32 +365,27 @@ export default function CourseDetailStudent() {
         mq.addEventListener('change', handler);
         return () => mq.removeEventListener('change', handler);
     }, []);
-    //xử lí tạm đăng bt
+
     const onUploadHandler = (event, assignmentId) => {
         const file = event.files && event.files[0];
         if (!file) return;
         const a = assignments.find((x) => x.id === assignmentId);
         if (!a) return;
-        const st = getAssignmentStatus(a);
-        if (st.kind === 'overdue') {
-            const ok = window.confirm('Bài này đã quá hạn. Bạn vẫn muốn nộp?');
-            if (!ok) return;
-        }
-        toast.current && toast.current.show({ severity: 'info', summary: 'Đang tải lên', detail: file.name, life: 1200 });
+        toast.current && toast.current.show({severity: 'info', summary: 'Đang tải lên', detail: file.name, life: 1200});
         setTimeout(() => {
-            setAssignments((prev) => prev.map((it) => (it.id === assignmentId ? { ...it, studentStatus: 'submitted' } : it)));
-            toast.current && toast.current.show({ severity: 'success', summary: 'Nộp bài thành công', detail: a.title + ' đã nộp', life: 1600 });
+            setAssignments((prev) => prev.map((it) => (it.id === assignmentId ? {
+                ...it,
+                studentStatus: 'submitted'
+            } : it)));
+            toast.current && toast.current.show({
+                severity: 'success',
+                summary: 'Nộp bài thành công',
+                detail: a.title + ' đã nộp',
+                life: 1600
+            });
         }, 900);
     };
 
-    const remaining = Math.max(0, 100 - student.progress);
-    //xếp bt xep hạn
-    const nextDue = assignments
-        .filter((a) => new Date(a.due) >= new Date())
-        .sort((a, b) => new Date(a.due) - new Date(b.due))[0];
-
-    const nextSession = { date: '2025-08-12T18:00:00', topic: 'Lesson 08 - Writing Task 2' };
-    //định dạng này ( k b cần không )
     const formatDate = (d) => {
         if (!d) return '';
         const dt = d instanceof Date ? d : new Date(d);
@@ -156,7 +395,7 @@ export default function CourseDetailStudent() {
         const year = dt.getFullYear();
         return `${day}/${month}/${year}`;
     };
-    //thêm giờ '
+
     const formatFullDateTime = (d) => {
         if (!d) return '';
         const dt = d instanceof Date ? d : new Date(d);
@@ -168,7 +407,7 @@ export default function CourseDetailStudent() {
         const mm = String(dt.getMinutes()).padStart(2, '0');
         return `${day}/${month}/${year} • ${hh}:${mm}`;
     };
-    //ngày so với hnay
+
     const daysDiff = (d) => {
         if (!d) return null;
         const now = new Date();
@@ -177,26 +416,15 @@ export default function CourseDetailStudent() {
         const msPerDay = 24 * 60 * 60 * 1000;
         return Math.ceil(diffMs / msPerDay);
     };
-    //trạng thái bt
+
     const getAssignmentStatus = (a) => {
-        if (a.studentStatus === 'graded') return { kind: 'graded', label: `Điểm ${a.grade}`, variant: 'success' };
-        if (a.studentStatus === 'submitted') return { kind: 'submitted', label: 'Đã nộp', variant: 'info' };
+        if (a.studentStatus === 'graded') return {kind: 'graded', label: `Điểm ${a.grade}`, variant: 'success'};
+        if (a.studentStatus === 'submitted') return {kind: 'submitted', label: 'Đã nộp', variant: 'info'};
         const diff = daysDiff(a.due);
-        if (diff == null) return { kind: 'pending', label: 'Chưa nộp', variant: 'neutral' };
-        if (diff < 0) return { kind: 'overdue', label: `Quá hạn ${Math.abs(diff)} ngày`, variant: 'danger' };
-        if (diff <= 3) return { kind: 'due_soon', label: `Còn ${diff} ngày`, variant: 'warning' };
-        return { kind: 'pending', label: 'Chưa nộp', variant: 'neutral' };
-    };
-
-    const isCurrentWeek = (index) => index === Math.max(0, Math.min(syllabusData.length - 1, course.lessonsCompleted - 1));
-
-    const toggleExpanded = (id) => {
-        setExpanded((prev) => {
-            const copy = new Set(prev);
-            if (copy.has(id)) copy.delete(id);
-            else copy.add(id);
-            return copy;
-        });
+        if (diff == null) return {kind: 'pending', label: 'Chưa nộp', variant: 'neutral'};
+        if (diff < 0) return {kind: 'overdue', label: `Quá hạn ${Math.abs(diff)} ngày`, variant: 'danger'};
+        if (diff <= 3) return {kind: 'due_soon', label: `Còn ${diff} ngày`, variant: 'warning'};
+        return {kind: 'pending', label: 'Chưa nộp', variant: 'neutral'};
     };
 
     const filteredAssignments = assignments.filter((a) => {
@@ -213,7 +441,18 @@ export default function CourseDetailStudent() {
     const assignmentStatusBody = (row) => {
         const s = getAssignmentStatus(row);
         const severity = s.variant === 'danger' ? 'danger' : s.variant === 'success' ? 'success' : s.variant === 'info' ? 'info' : undefined;
-        return <Tag value={s.label} severity={severity} className="p-mr-2 p-py-2" />;
+        return <Tag value={s.label} severity={severity} className="p-mr-2 p-py-2"/>;
+    };
+
+    const assignmentIcon = (a) => {
+        const t = (a.subject || a.title || '').toLowerCase();
+        if (t.includes('reading')) return '📘';
+        if (t.includes('writing') || t.includes('essay')) return '✍️';
+        if (t.includes('listening')) return '🎧';
+        if (t.includes('speaking')) return '🎤';
+        if (t.includes('grammar')) return '📝';
+        if (t.includes('vocab') || t.includes('vocabulary')) return '📚';
+        return '📄';
     };
 
     function isRecent(d) {
@@ -228,41 +467,60 @@ export default function CourseDetailStudent() {
         return `${Math.floor(diff / 86400)} ngày trước`;
     }
 
-    // header template for Panel (week card) to keep actions on the right
-    const syllabusHeader = (item, open) => (
-        <div className="p-d-flex p-jc-between p-ai-center syllabus-card-main">
-            <div className="p-d-flex p-flex-column syllabus-info">
-                <div className="p-d-flex p-ai-center syllabus-head">
-                    <strong className="syllabus-week">{item.week}</strong>
-                </div>
-                <div className="small-muted syllabus-desc">{item.desc}</div>
-            </div>
-            <div className="syllabus-actions p-d-flex p-ai-center" role="group" aria-label="Hành động tuần">
-                <Button
-                    icon={open ? 'pi pi-chevron-up' : 'pi pi-eye'}
-                    className="p-button-rounded p-button-text cd-icon-btn"
-                    onClick={() => toggleExpanded(item.id)}
-                    aria-label={open ? 'Thu gọn' : 'Xem chi tiết'}
-                />
-            </div>
-        </div>
-    );
+    const openDetailModal = (item) => {
+        setSelectedSyllabus(item);
+        setSyllabusVisible(true);
+    };
 
+    const openDocPreview = (item, doc) => {
+        setSelectedSyllabus({...item, activeDoc: doc});
+        setSyllabusVisible(true);
+    };
+
+    const renderDocPreview = (doc) => {
+        if (!doc) return null;
+        if (doc.type === 'pdf') {
+            return <iframe title={doc.name} src={doc.url} style={{width: '100%', height: '60vh', border: 'none'}}/>;
+        }
+        if (doc.type === 'image') {
+            return <div style={{textAlign: 'center'}}><img src={doc.url} alt={doc.name}
+                                                           style={{maxWidth: '100%', maxHeight: '60vh'}}/></div>;
+        }
+        if (doc.type === 'audio') {
+            return <div style={{padding: 8}}><p>{doc.name}</p>
+                <audio controls src={doc.url} style={{width: '100%'}}/>
+            </div>;
+        }
+        return (
+            <div style={{padding: 8}}>
+                <p>Không hỗ trợ xem trực tiếp định dạng này.</p>
+                <a href={doc.url} target="_blank" rel="noopener noreferrer" download={doc.download}>Tải xuống</a>
+            </div>
+        );
+    };
+
+    const splitContentToBullets = (text) => {
+        if (!text) return [];
+        const parts = text.split(/[\n,·;]+/).map(s => s.trim()).filter(Boolean);
+        if (parts.length <= 3) return parts;
+        return parts.slice(0, 3);
+    };
 
     return (
         <div className="cd-root p-p-4">
-            <Toast ref={toast} />
-            <Tooltip target=".cd-progress" />
+            <Toast ref={toast}/>
+            <Tooltip target=".cd-progress"/>
             <Card className="cd-header p-d-flex p-ai-center p-p-4">
-                <div className="p-d-flex p-ai-center p-jc-start" style={{ gap: 16 }}>
-                    <Avatar label={course.title.charAt(0)} size="xlarge" shape="square" style={{ background: '#7e57c2', color: '#fff' }} aria-hidden="true" />
+                <div className="p-d-flex p-ai-center p-jc-start cd-header-left" style={{gap: 16}}>
+                    <Avatar label={course.title.charAt(0)} size="xlarge" shape="square" className="cd-avatar"
+                            aria-hidden="true"/>
                     <div className="cd-course-meta">
                         <h2 className="cd-course-title">🎓 {course.title}</h2>
-                        <div className="p-d-flex p-flex-wrap cd-pills" style={{ gap: 8 }}>
-                            <Tag icon="pi pi-user" className="cd-pill" severity="info" value={`GV: ${course.teacher}`} />
-                            <Tag icon="pi pi-map-marker" className="cd-pill" value={`Phòng: ${course.room}`} />
-                            <Tag icon="pi pi-calendar" className="cd-pill" value={course.schedule} />
-                            <Tag className="cd-pill tag-subject" value={course.subject} />
+                        <div className="p-d-flex p-flex-wrap cd-pills">
+                            <Tag icon="pi pi-user" className="cd-pill pill-teacher" value={`GV: ${course.teacher}`}/>
+                            <Tag icon="pi pi-map-marker" className="cd-pill pill-room" value={`Phòng: ${course.room}`}/>
+                            <Tag icon="pi pi-calendar" className="cd-pill pill-schedule" value={course.schedule}/>
+                            <Tag className="cd-pill tag-subject" value={course.subject}/>
                         </div>
                     </div>
                 </div>
@@ -271,91 +529,151 @@ export default function CourseDetailStudent() {
                 <main className="p-col-12 p-md-8 cd-main">
                     <div className="tabs-row">
                         <TabView>
-                            <TabPanel header={<span className="tab-header">📘<span className="tab-title">Giáo trình</span></span>}>
+                            <TabPanel header={<span className="tab-header">📘<span
+                                className="tab-title">Giáo trình</span></span>}>
                                 <div className="syllabus-list p-d-flex p-flex-column p-mt-2">
                                     {syllabusData.map((item, idx) => {
-                                        const open = expanded.has(item.id);
-                                        const isCurrent = isCurrentWeek(idx);
+                                        const isCurrent = (idx === Math.max(0, Math.min(syllabusData.length - 1, course.lessonsCompleted - 1)));
                                         return (
-                                            <Panel key={item.id} className={classNames('syllabus-card', { current: isCurrent })} header={syllabusHeader(item, open)} toggleable={false}>
-                                                {open && (
-                                                    <div className="syllabus-detail p-mt-3">
-                                                        <p className="small-muted">{item.detail}</p>
-                                                        <div className="syllabus-grid p-grid p-mt-2">
-                                                            <div className="p-col-12 p-md-6">
-                                                                <h6>Mục tiêu</h6>
-                                                                <ul>{item.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul>
-                                                            </div>
-                                                            <div className="p-col-12 p-md-6">
-                                                                <h6>Hoạt động</h6>
-                                                                <ul>{item.activities.map((a, i) => <li key={i}>{a}</li>)}</ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
+                                            <Panel key={item.id}
+                                                   className={classNames('syllabus-card', {current: isCurrent})}
+                                                   header={(
+                                                       <div
+                                                           className="p-d-flex p-jc-between p-ai-center syllabus-card-main">
+                                                           <div className="p-d-flex p-ai-center" style={{gap: 10}}>
+                                                               <strong className="syllabus-title"
+                                                                       style={{fontSize: 16}}>{item.title}</strong>
+                                                           </div>
+                                                           <div className="syllabus-actions p-d-flex p-ai-center"
+                                                                role="group" aria-label="Hành động tuần">
+                                                               <Button icon="pi pi-eye"
+                                                                       className="p-button-rounded p-button-text cd-icon-btn"
+                                                                       onClick={() => openDetailModal(item)}
+                                                                       aria-label="Xem chi tiết"/>
+                                                           </div>
+                                                       </div>
+                                                   )} toggleable={false}>
+                                                <div className="p-p-2 small-muted" style={{fontSize: 13}}>
+                                                    {item.desc && item.desc.length > 0 ? item.desc : 'Nhấn xem chi tiết để mở cửa sổ chứa mô tả, mục tiêu và tài liệu.'}
+                                                </div>
                                             </Panel>
                                         );
                                     })}
                                 </div>
                             </TabPanel>
 
-                            <TabPanel header={<span className="tab-header">📝<span className="tab-title">Bài tập</span></span>}>
-                                <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap" style={{ gap: 12 }}>
+                            <TabPanel header={<span className="tab-header">📝<span
+                                className="tab-title">Bài tập</span></span>}>
+                                <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap" style={{gap: 12}}>
                                     <div className="small-muted">Bộ lọc:</div>
                                     {['all', 'due_soon', 'overdue', 'not_submitted', 'submitted', 'graded'].map((k) => (
-                                        <Button key={k} className={classNames({ 'p-button-text': assignmentFilter !== k })} onClick={() => setAssignmentFilter(k)} label={k === 'all' ? 'Tất cả' : k === 'due_soon' ? 'Sắp hết hạn' : k === 'overdue' ? 'Quá hạn' : k === 'not_submitted' ? 'Chưa nộp' : k === 'submitted' ? 'Đã nộp' : 'Đã chấm'} />
+                                        <Button
+                                            key={k}
+                                            className={classNames('assign-filter-btn', {'p-button-text': assignmentFilter !== k})}
+                                            onClick={() => setAssignmentFilter(k)}
+                                            label={
+                                                k === 'all' ? 'Tất cả' :
+                                                    k === 'due_soon' ? 'Sắp hết hạn' :
+                                                        k === 'overdue' ? 'Quá hạn' :
+                                                            k === 'not_submitted' ? 'Chưa nộp' :
+                                                                k === 'submitted' ? 'Đã nộp' : 'Đã chấm'
+                                            }
+                                        />
                                     ))}
                                 </div>
 
-                                <Card className="assignments-table p-mt-2">
-                                    <DataTable value={filteredAssignments} responsiveLayout="stack" className="assignments-table" emptyMessage="Không có bài tập để hiển thị">
-                                        <Column field="title" header="Bài tập" body={(row) => <div className="assign-title">{row.title}</div>} />
-
-                                        <Column header="Hạn nộp" body={(row) => (
-                                            <div>
-                                                <div className="due-date">{formatDate(row.due)}</div>
-                                                <div className="due-meta">
-                                                    {(() => {
-                                                        const diff = daysDiff(row.due);
-                                                        if (diff == null) return '';
-                                                        if (diff < 0) return `Quá hạn ${Math.abs(diff)} ngày`;
-                                                        if (diff === 0) return 'Hôm nay';
-                                                        return `Còn ${diff} ngày`;
-                                                    })()}
-                                                </div>
-                                            </div>
-                                        )} />
-
-                                        <Column header="Trạng thái" body={(row) => assignmentStatusBody(row)} />
-
-                                        <Column header="Hành động" body={(row) => {
+                                <div className="assignments-table p-mt-2">
+                                    <ul className="assignments-list" role="list">
+                                        {filteredAssignments.map((row) => {
                                             const s = getAssignmentStatus(row);
-                                            if (s.kind === 'pending' || s.kind === 'due_soon' || s.kind === 'overdue') {
-                                                return (
-                                                    <FileUpload mode="basic" name="file" customUpload accept=".pdf,.doc,.docx" maxFileSize={20 * 1024 * 1024} chooseLabel="Nộp" uploadHandler={(e) => onUploadHandler(e, row.id)} multiple={false} auto={true} className="btn-upload" />
-                                                );
-                                            }
-                                            if (s.kind === 'submitted') {
-                                                return <Button label="Đã nộp" icon="pi pi-check" disabled className="btn-submitted" />;
-                                            }
-                                            if (s.kind === 'graded') {
-                                                return <Button className="p-button-text btn-view-grade" label={`Xem điểm ${row.grade}`} onClick={() => setGradeDialog({ visible: true, assignment: row })} />;
-                                            }
-                                            return null;
-                                        }} />
-                                    </DataTable>
-                                </Card>
+                                            const diff = daysDiff(row.due);
+                                            const overdue = diff != null && diff < 0;
+                                            return (
+                                                <li key={row.id}
+                                                    className={classNames('assignment-row', {overdue: overdue})}
+                                                    tabIndex={0} aria-label={`Bài tập ${row.title}`}>
+                                                    <div className="ar-col ar-col--title">
+                                                        <div className="assign-title">
+                                                            <span className="assign-icon"
+                                                                  aria-hidden>{assignmentIcon(row)}</span>
+                                                            <span className="assign-title-text">{row.title}</span>
+                                                        </div>
+                                                        <div
+                                                            className="assign-sub small-muted">{row.subject || ''}</div>
+                                                    </div>
 
+                                                    <div className="ar-col ar-col--due">
+                                                        <div className="due-date">{formatDate(row.due)}</div>
+                                                        <div className="due-meta small-muted">
+                                                            {(() => {
+                                                                if (diff == null) return '';
+                                                                if (diff < 0) return `Quá hạn ${Math.abs(diff)} ngày`;
+                                                                if (diff === 0) return 'Hôm nay';
+                                                                return `Còn ${diff} ngày`;
+                                                            })()}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="ar-col ar-col--status">
+                                                        {assignmentStatusBody(row)}
+                                                    </div>
+                                                    <div className="ar-col ar-col--action">
+                                                        {(s.kind === 'pending' || s.kind === 'due_soon' || s.kind === 'overdue') && (
+                                                            <div className="action-upload">
+                                                                <FileUpload
+                                                                    mode="basic"
+                                                                    name="file"
+                                                                    customUpload
+                                                                    accept=".pdf,.doc,.docx"
+                                                                    maxFileSize={20 * 1024 * 1024}
+                                                                    chooseLabel="Nộp"
+                                                                    uploadHandler={(e) => onUploadHandler(e, row.id)}
+                                                                    multiple={false}
+                                                                    auto={true}
+                                                                    className="btn-upload"
+                                                                />
+                                                            </div>
+                                                        )}
+
+                                                        {s.kind === 'submitted' && (
+                                                            <Button label="Đã nộp" icon="pi pi-check" disabled
+                                                                    className="btn-submitted"/>
+                                                        )}
+
+                                                        {s.kind === 'graded' && (
+                                                            <Button className="p-button-text btn-view-grade"
+                                                                    label={`Xem điểm ${row.grade}`}
+                                                                    onClick={() => setGradeDialog({
+                                                                        visible: true,
+                                                                        assignment: row
+                                                                    })}/>
+                                                        )}
+                                                    </div>
+                                                </li>
+                                            );
+                                        })}
+                                        {filteredAssignments.length === 0 &&
+                                            <li className="assign-empty small-muted">Không có bài tập phù hợp bộ
+                                                lọc.</li>}
+                                    </ul>
+                                </div>
                             </TabPanel>
 
                             <TabPanel header={<span className="tab-header">🗓️<span className="tab-title">Lịch sử điểm danh</span></span>}>
                                 <div className="attendance-summary p-mt-2">
-                                    <div className="p-mb-3 p-text-bold">Có mặt: {attendanceHistory.filter(a => a.present).length} • Vắng: {attendanceHistory.filter(a => !a.present).length} • Điểm danh: {student.attendancePct}%</div>
+                                    <div className="p-mb-3 p-text-bold">Có
+                                        mặt: {attendanceHistory.filter(a => a.present).length} •
+                                        Vắng: {attendanceHistory.filter(a => !a.present).length} • Điểm
+                                        danh: {student.attendancePct}%
+                                    </div>
                                     <Card>
-                                        <DataTable value={attendanceHistory} responsiveLayout="scroll" className="p-mt-2">
-                                            <Column field="session" header="Buổi" />
-                                            <Column field="date" header="Ngày" body={(row) => formatDate(row.date)} />
-                                            <Column body={(row) => row.present ? <Tag value="Có mặt" severity="success" /> : <Tag value="Vắng" severity="danger" />} header="Trạng thái" />
+                                        <DataTable value={attendanceHistory} responsiveLayout="scroll"
+                                                   className="p-mt-2">
+                                            <Column field="session" header="Buổi"/>
+                                            <Column field="date" header="Ngày" body={(row) => formatDate(row.date)}/>
+                                            <Column
+                                                body={(row) => row.present ? <Tag value="Có mặt" severity="success"/> :
+                                                    <Tag value="Vắng" severity="danger"/>} header="Trạng thái"/>
                                         </DataTable>
                                     </Card>
                                 </div>
@@ -364,15 +682,25 @@ export default function CourseDetailStudent() {
                             <TabPanel header={<span className="tab-header">🔥<span className="tab-title">Hoạt động</span></span>}>
                                 <div className="activity-list p-mt-2">
                                     {activities.map((a) => (
-                                        <Card key={a.id} className={classNames('activity-item', { recent: isRecent(a.date) })}>
+                                        <Card key={a.id}
+                                              className={classNames('activity-item', {recent: isRecent(a.date)})}>
                                             <div className="p-d-flex p-ai-start p-jc-between">
-                                                <div style={{ width: 64 }}>
-                                                    {isRecent(a.date) ? <Badge value="Mới" severity="success" className="activity-badge" /> : <div className="activity-spacer" />}
+                                                <div style={{width: 64}}>
+                                                    {isRecent(a.date) ? <Badge value="Mới" severity="success"
+                                                                               className="activity-badge"/> :
+                                                        <div className="activity-spacer"/>}
                                                 </div>
-                                                <div className="activity-content" style={{ flex: 1 }}>
+                                                <div className="activity-content" style={{flex: 1}}>
                                                     <div className="activity-top p-d-flex p-jc-between p-ai-start">
-                                                        <div className="activity-text"><strong className="activity-title">{a.text}</strong></div>
-                                                        <div className="activity-time small-muted">{formatFullDateTime(a.date)} <span style={{ marginLeft: 8, fontSize: 12, color: '#94a3b8' }}>({timeAgo(a.date)})</span></div>
+                                                        <div className="activity-text"><strong
+                                                            className="activity-title">{a.text}</strong></div>
+                                                        <div
+                                                            className="activity-time small-muted">{formatFullDateTime(a.date)}
+                                                            <span style={{
+                                                                marginLeft: 8,
+                                                                fontSize: 12,
+                                                                color: '#94a3b8'
+                                                            }}>({timeAgo(a.date)})</span></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -380,10 +708,10 @@ export default function CourseDetailStudent() {
                                     ))}
                                 </div>
                             </TabPanel>
-
                         </TabView>
                     </div>
                 </main>
+
                 <aside className="p-col-12 p-md-4 cd-sidebar">
                     <Card className="side-card p-shadow-3">
                         <div className="side-row p-d-flex p-jc-between p-ai-center">
@@ -392,7 +720,7 @@ export default function CourseDetailStudent() {
                         </div>
 
                         <div className="cd-progress-wrap p-mt-3">
-                            <ProgressBar value={animatedProgress} showValue={false} className="cd-progress" />
+                            <ProgressBar value={animatedProgress} showValue={false} className="cd-progress"/>
                             <div className="cd-progress-meta">
                                 <div>{animatedProgress}% hoàn thành</div>
                                 <div className="small-muted">{course.lessonsCompleted}/{course.totalLessons} buổi</div>
@@ -410,50 +738,127 @@ export default function CourseDetailStudent() {
                         </div>
 
                         <div className="student-quickinfo p-mt-3">
-                            <div className="qi-row p-d-flex p-ai-start">
+                            <div className="qi-row p-d-flex p-jc-between p-ai-center">
                                 <div className="qi-label">📅 <strong>Buổi tiếp theo</strong></div>
                                 <div className="qi-value">
-                                    <div className="qi-date">{formatFullDateTime(nextSession.date)}</div>
-                                    <div className="qi-topic">{nextSession.topic}</div>
+                                    <div className="qi-date">{formatFullDateTime('2025-08-12T18:00:00')}</div>
+                                    <div className="qi-topic">Lesson 08 - Writing Task 2</div>
                                 </div>
                             </div>
 
-                            <div className="qi-row p-d-flex p-ai-start p-mt-2">
+                            <div className="qi-row p-d-flex p-jc-between p-ai-center p-mt-2">
                                 <div className="qi-label">📚 <strong>Bài còn lại</strong></div>
                                 <div className="qi-value">{course.totalLessons - course.lessonsCompleted} buổi</div>
                             </div>
 
-                            {nextDue && (
-                                <div className={classNames('qi-row p-d-flex p-ai-start p-mt-2', { 'qi-overdue': daysDiff(nextDue.due) < 0 })}>
-                                    <div className="qi-label">⏳ <strong>Deadline kế tiếp</strong></div>
-                                    <div className="qi-value">
-                                        <div className="qi-date">{nextDue.title}</div>
-                                        <div className="qi-topic">{formatDate(nextDue.due)} {daysDiff(nextDue.due) < 0 ? `· Quá hạn ${Math.abs(daysDiff(nextDue.due))} ngày` : `· Còn ${daysDiff(nextDue.due)} ngày`}</div>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </Card>
                 </aside>
             </div>
 
-            <Dialog header={selectedSyllabus?.week || 'Chi tiết tuần'} visible={syllabusVisible} style={{ width: isMobile ? '95vw' : '50vw' }} modal onHide={() => setSyllabusVisible(false)} maximizable>
+            <Dialog
+                header={selectedSyllabus?.title || 'Chi tiết tuần'}
+                visible={syllabusVisible}
+                className="syllabus-modal"
+                style={{width: isMobile ? '95vw' : '80vw', maxWidth: '1100px'}}
+                modal
+                onHide={() => {
+                    setSyllabusVisible(false);
+                    setSelectedSyllabus(null);
+                }}
+                breakpoints={{'960px': '95vw'}}
+            >
                 {selectedSyllabus ? (
-                    <div>
-                        <p className="small-muted">{selectedSyllabus.desc}</p>
-                        <p>{selectedSyllabus.detail}</p>
-                        <h5>Mục tiêu</h5>
-                        <ul>{selectedSyllabus.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul>
-                        <h5>Hoạt động chính</h5>
-                        <ul>{selectedSyllabus.activities.map((a, i) => <li key={i}>{a}</li>)}</ul>
-                        <h5>Tài liệu</h5>
-                        <ul>{selectedSyllabus.materials.map((m, i) => <li key={i}>{m}</li>)}</ul>
+                    <div className="syllabus-modal-grid">
+                        <div>
+                            <div className="syllabus-modal-header">
+                                <h3 className="syllabus-modal-title">{selectedSyllabus.title}</h3>
+                                <div className="syllabus-modal-sub">
+                                    <div className="syllabus-shortdesc">{selectedSyllabus.desc}</div>
+                                    <div style={{
+                                        marginLeft: '6px',
+                                        color: '#94a3b8'
+                                    }}>📅 {formatDate(selectedSyllabus.publishedAt)} {selectedSyllabus.updatedAt ? `• Cập nhật ${formatDate(selectedSyllabus.updatedAt)}` : ''}</div>
+                                </div>
+                            </div>
+
+                            <ul className="syllabus-bullets">
+                                {splitContentToBullets(selectedSyllabus.content).map((x, i) => <li key={i}>{x}</li>)}
+                            </ul>
+
+                            <div className="syllabus-detail">
+                                <div className="syllabus-grid">
+                                    <div>
+                                        <h6>🎯 Mục tiêu</h6>
+                                        <ul>{selectedSyllabus.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul>
+                                    </div>
+                                    <div>
+                                        <h6>📝 Hoạt động</h6>
+                                        <ul>{selectedSyllabus.activities.map((a, i) => <li key={i}>{a}</li>)}</ul>
+                                    </div>
+                                </div>
+
+                                <h5>Tài liệu</h5>
+                                <div className="syllabus-docs">
+                                    {selectedSyllabus.activeDoc ? (
+                                        <div className="doc-preview">
+                                            {renderDocPreview(selectedSyllabus.activeDoc)}
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <h5>Tài liệu</h5>
+                                            <div className="syllabus-docs">
+                                                {selectedSyllabus.documents?.map(doc => (
+                                                    <div key={doc.id} className="doc-card"
+                                                         onClick={() => openDocPreview(selectedSyllabus, doc)}>
+                                                        <div className={`doc-icon`}
+                                                             aria-hidden>{doc.type === 'pdf' ? '📄' : doc.type === 'image' ? '🖼️' : '🔉'}</div>
+                                                        <div className="doc-text">{doc.name}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <aside className="syllabus-quickinfo">
+                            <div className="qi-row">
+                                <div className="qi-label">Chủ đề</div>
+                                <div className="qi-value">{selectedSyllabus.subject}</div>
+                            </div>
+                            <div className="qi-row">
+                                <div className="qi-label">GV</div>
+                                <div className="qi-value">{selectedSyllabus.teacher}</div>
+                            </div>
+                            <div className="qi-row">
+                                <div className="qi-label">Phát hành</div>
+                                <div className="qi-value">{formatDate(selectedSyllabus.publishedAt)}</div>
+                            </div>
+                            {selectedSyllabus.updatedAt && <div className="qi-row">
+                                <div className="qi-label">Cập nhật</div>
+                                <div className="qi-value">{formatDate(selectedSyllabus.updatedAt)}</div>
+                            </div>}
+                        </aside>
                     </div>
-                ) : (
-                    <p>Không có dữ liệu.</p>
-                )}
+                ) : <p>Không có dữ liệu.</p>}
             </Dialog>
 
+
+            <Dialog header={`Điểm: ${gradeDialog.assignment?.title || ''}`} visible={gradeDialog.visible} modal
+                    onHide={() => setGradeDialog({visible: false, assignment: null})}>
+                {gradeDialog.assignment ? (
+                    <div>
+                        <p>Bài: <strong>{gradeDialog.assignment.title}</strong></p>
+                        <p>Điểm: <strong>{gradeDialog.assignment.grade}</strong></p>
+                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <Button label="Đóng" className="p-button-text"
+                                    onClick={() => setGradeDialog({visible: false, assignment: null})}/>
+                        </div>
+                    </div>
+                ) : <p>Không có dữ liệu</p>}
+            </Dialog>
         </div>
     );
 }
