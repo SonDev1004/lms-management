@@ -4,10 +4,11 @@ import { MegaMenu } from 'primereact/megamenu';
 import { Menu } from 'primereact/menu';
 import { useRef } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import axiosClient from 'services/axiosClient';
-import roleToRoute from '../../services/roleToRoute';
+import axiosClient from '@/shared/api/axiosClient.js';
+import roleToRoute from '../../app/router/roleToRoute.js';
 
 import logo from 'assets/images/logo.png';
+import {AppConfig, AppUrls} from "@/shared/constants/index.js";
 
 const LayoutHome = () => {
     // States, hooks and refs
@@ -18,7 +19,7 @@ const LayoutHome = () => {
 
     // Functions
     const handleLogout = () => {
-        axiosClient.post('auth/logout')
+        axiosClient.post(AppUrls.logout)
             .then(res => {
                 localStorage.removeItem('username');
                 localStorage.removeItem('accessToken');
