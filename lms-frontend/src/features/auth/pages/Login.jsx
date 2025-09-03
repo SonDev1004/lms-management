@@ -34,6 +34,7 @@ const Login = () => {
                 navigate('/');
             })
             .catch(err => {
+                console.log("🚀 ~ handleLogin ~ err: ", err.response.data);
                 toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Đăng nhập thất bại', life: 3000 });
             })
     }
@@ -54,11 +55,11 @@ const Login = () => {
                     <Panel header='Đăng nhập'>
                         <div className='flex flex-column gap-2 mb-3'>
                             <label htmlFor='username'>Tên đăng nhập</label>
-                            <InputText id='username' value={username} onChange={(e) => setUsername(e.target.value)} autoFocus />
+                            <InputText id='username' className='max-w-full' value={username} onChange={(e) => setUsername(e.target.value)} autoFocus />
                         </div>
                         <div className='flex flex-column gap-2 mb-3'>
                             <label htmlFor='password'>Mật khẩu</label>
-                            <InputText id='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <InputText id='password' className='max-w-full' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>
                         <div className='flex flex-column gap-2 mb-3'>
                             <Button label='Đăng nhập' onClick={handleLogin} />
