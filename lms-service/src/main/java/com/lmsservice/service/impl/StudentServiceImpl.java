@@ -1,33 +1,29 @@
 package com.lmsservice.service.impl;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.lmsservice.mapper.StudentCourseMapper;
-import com.lmsservice.security.CurrentUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.common.paging.PageableUtils;
 import com.lmsservice.dto.request.course.StudentCourseFilterRequest;
 import com.lmsservice.dto.response.course.StudentCourse;
 import com.lmsservice.entity.Course;
-import com.lmsservice.entity.CourseTimeslot;
-import com.lmsservice.entity.Room;
+import com.lmsservice.mapper.StudentCourseMapper;
 import com.lmsservice.repository.CourseRepository;
 import com.lmsservice.repository.SessionRepository;
+import com.lmsservice.security.CurrentUserService;
 import com.lmsservice.service.StudentService;
 import com.lmsservice.spec.CourseSpecifications;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service // Đánh dấu đây là 1 Spring Service (bean quản lý logic nghiệp vụ)
 @RequiredArgsConstructor // Lombok: tự sinh constructor cho các field final
@@ -39,13 +35,12 @@ public class StudentServiceImpl implements StudentService {
     SessionRepository sessionRepository;
     StudentCourseMapper studentCourseMapper;
     CurrentUserService currentUserService;
+
     @Override
     public PageResponse<StudentCourse> getStudentCourses(StudentCourseFilterRequest filter, Pageable pageable) {
         Long studentId = currentUserService.requireStudentId();
         return getCoursesByStudentId(studentId, filter, pageable);
-
     }
-
 
     @Override
     public PageResponse<StudentCourse> getCoursesByStudentId(
@@ -64,14 +59,11 @@ public class StudentServiceImpl implements StudentService {
 
         // ===== 4. Map entity → DTO =====
         Page<StudentCourse> dtoPage = page.map(course -> {
-            long sessionsDone = sessionRepository
-                    .countByCourseIdAndDateLessThanEqual(course.getId(), LocalDate.now());
+            long sessionsDone = sessionRepository.countByCourseIdAndDateLessThanEqual(course.getId(), LocalDate.now());
             return studentCourseMapper.toDto(course, sessionsDone);
         });
 
         // ===== 5. Trả về PageResponse cho FE =====
         return PageResponse.from(dtoPage);
     }
-
-
 }

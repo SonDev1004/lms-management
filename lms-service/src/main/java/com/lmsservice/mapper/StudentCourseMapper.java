@@ -31,9 +31,7 @@ public class StudentCourseMapper {
         }
 
         // ===== Timeslots đang active =====
-        List<CourseTimeslot> active = Optional.ofNullable(course.getTimeslots())
-                .orElseGet(List::of)
-                .stream()
+        List<CourseTimeslot> active = Optional.ofNullable(course.getTimeslots()).orElseGet(List::of).stream()
                 .filter(ts -> Boolean.TRUE.equals(ts.getIsActive()))
                 .toList();
 
@@ -44,8 +42,7 @@ public class StudentCourseMapper {
                 .sorted()
                 .toList();
 
-        String dayText = days.isEmpty() ? null
-                : days.stream().map(d -> "T" + d).collect(Collectors.joining("-"));
+        String dayText = days.isEmpty() ? null : days.stream().map(d -> "T" + d).collect(Collectors.joining("-"));
 
         // ===== Thời gian học =====
         String timeText = buildTimeText(active);
@@ -64,12 +61,13 @@ public class StudentCourseMapper {
 
         // ===== Trạng thái lớp =====
         Integer status = course.getStatus();
-        String statusText = switch (status == null ? -1 : status) {
-            case 0 -> "Sắp khai giảng";
-            case 1 -> "Đang học";
-            case 2 -> "Đã học";
-            default -> "Khác";
-        };
+        String statusText =
+                switch (status == null ? -1 : status) {
+                    case 0 -> "Sắp khai giảng";
+                    case 1 -> "Đang học";
+                    case 2 -> "Đã học";
+                    default -> "Khác";
+                };
 
         // ===== Build DTO =====
         return StudentCourse.builder()
@@ -113,8 +111,7 @@ public class StudentCourseMapper {
         LocalTime e0 = active.get(0).getEndTime();
 
         boolean allSame = active.stream()
-                .allMatch(ts -> Objects.equals(ts.getStartTime(), s0)
-                        && Objects.equals(ts.getEndTime(), e0));
+                .allMatch(ts -> Objects.equals(ts.getStartTime(), s0) && Objects.equals(ts.getEndTime(), e0));
         if (allSame) return fmt(s0) + "-" + fmt(e0);
 
         return active.stream()
@@ -128,4 +125,3 @@ public class StudentCourseMapper {
         return String.format("%02d:%02d", t.getHour(), t.getMinute());
     }
 }
-
