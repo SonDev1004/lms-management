@@ -1,16 +1,9 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.lmsservice.repository.AssignmentRepository;
+import com.lmsservice.dto.response.AssignmentResponse;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class AssignmentService {
-    AssignmentRepository assignmentRepository;
+public interface AssignmentService {
+    List<AssignmentResponse> getAssignmentsByCourseId(Long courseId);
 }
