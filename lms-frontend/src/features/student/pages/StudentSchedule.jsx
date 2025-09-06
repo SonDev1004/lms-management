@@ -1,4 +1,4 @@
-import Schedule from "@/features/schedule/Schedule.jsx";
+import Schedule from "@/features/schedule/pages/Schedule.jsx";
 
 const StudentSchedule = () => {
 return <Schedule/>;
