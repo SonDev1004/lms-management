@@ -12,5 +12,8 @@ export default {
     profile:`${rootAPI}/user/profile`,
 
     //Endpoint Student
-    getStudentCourses:`${rootAPI}/student/me/courses`
+    getStudentCourses:`${rootAPI}/student/me/courses`,
+
+    //Lesson
+    lessonBySubject: (id) => `${rootAPI}/lesson/by-subject/${id}`,
 }
