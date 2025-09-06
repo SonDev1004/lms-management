@@ -15,7 +15,6 @@
     --action-gap: 8px;
 }
 
-/* Layout wrapper */
 .user-profile-root {
     font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg);
@@ -138,4 +137,16 @@
     }
     .section-card { padding: 10px; }
     .user-profile-card { padding: 0.5rem; }
+}
+.user-profile-card .form-label {
+    margin-bottom: 0.75rem;
+}
+
+.user-profile-card .field-body .field-display {
+    margin-top: 0.4rem;
+}
+
+@media (max-width: 640px) {
+    .user-profile-card .form-label { margin-bottom: 0.35rem; }
+    .user-profile-card .field-body .field-display { margin-top: 0.25rem; }
 }

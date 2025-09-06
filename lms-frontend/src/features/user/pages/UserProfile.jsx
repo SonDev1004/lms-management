@@ -1,4 +1,3 @@
-// UserProfile.jsx
 import React, {useState, useMemo, useRef, useEffect} from 'react';
 import {Card} from 'primereact/card';
 import {Avatar} from 'primereact/avatar';
@@ -24,9 +23,8 @@ const genderOptions = [
 ];
 
 export default function UserProfile() {
-    // === TẤT CẢ HOOK PHẢI KHỞI TẠO Ở ĐẦU ===
-    const [form, setForm] = useState({});          // lưu dữ liệu user
-    const [loading, setLoading] = useState(true);  // trạng thái load
+    const [form, setForm] = useState({});
+    const [loading, setLoading] = useState(true);
     const [editingField, setEditingField] = useState(null);
     const [tempValue, setTempValue] = useState(null);
     const [saving, setSaving] = useState(false);
@@ -34,7 +32,6 @@ export default function UserProfile() {
 
     const fullName = useMemo(() => `${form?.firstName || ''} ${form?.lastName || ''}`.trim(), [form]);
 
-    // lấy profile từ API
     useEffect(() => {
         axiosClient.get(AppUrls.profile)
             .then(response => {
