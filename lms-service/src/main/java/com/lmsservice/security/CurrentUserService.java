@@ -1,8 +1,8 @@
 package com.lmsservice.security;
 
-import com.lmsservice.entity.User;
-
 import java.util.Optional;
+
+import com.lmsservice.entity.User;
 
 public interface CurrentUserService {
 
@@ -20,6 +20,4 @@ public interface CurrentUserService {
     CustomUserDetails requireUserDetails();
 
     User requireUserEntity(boolean reloadFromDb);
-
-
 }

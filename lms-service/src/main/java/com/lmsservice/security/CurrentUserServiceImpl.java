@@ -1,17 +1,19 @@
 package com.lmsservice.security;
 
+import java.util.Optional;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.entity.Student;
 import com.lmsservice.entity.User;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.repository.StudentRepository;
 import com.lmsservice.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -83,4 +85,3 @@ public class CurrentUserServiceImpl implements CurrentUserService {
         return userRepository.findById(snap.getId()).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
-
