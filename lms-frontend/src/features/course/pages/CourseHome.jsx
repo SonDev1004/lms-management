@@ -131,7 +131,7 @@ export default function CourseHome() {
     if (["Enter", " ", "Spacebar"].includes(e.key)) {
       e.preventDefault();
       const slug = toSlug(c.title || c.subject || "khoa-hoc");
-      navigate(`/student/courses/${slug}?id=${c.id}`);
+      navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`);
     }
   };
 
@@ -187,7 +187,7 @@ export default function CourseHome() {
             const slug = toSlug(c.title || c.subject || "khoa-hoc");
             const goDetail = (e) => {
               e?.stopPropagation?.();
-              navigate(`/student/courses/${slug}?id=${c.id}`);
+              navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`);
             };
             const goMaterials = (e) => {
               e?.stopPropagation?.();
@@ -280,7 +280,7 @@ export default function CourseHome() {
                   </div>
                 }
                 footer={footer}
-                onClick={() => navigate(`/student/courses/${slug}?id=${c.id}`)}
+                onClick={() => navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`)}
                 role="listitem"
                 tabIndex={0}
                 onKeyDown={(e) => handleKeyActivate(e, c)}
