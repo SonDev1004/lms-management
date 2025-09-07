@@ -61,10 +61,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Nếu là URL công khai thì bỏ qua filter
         boolean isPublic = stream(SecurityConfig.PUBLIC_URLS).anyMatch(url -> pathMatcher.match(url, path));
 
-        //        if (isPublic) {
-        //            filterChain.doFilter(request, response);
-        //            return;
-        //        }
+//                if (isPublic) {
+//                    filterChain.doFilter(request, response);
+//                    return;
+//                }
 
         try {
             String token = getJwtFromRequest(request);

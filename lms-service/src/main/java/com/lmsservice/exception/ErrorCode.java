@@ -62,7 +62,8 @@ public enum ErrorCode {
     // Course
     COURSE_NOT_FOUND(1044, "Course not found", HttpStatus.NOT_FOUND),
     // Student
-    STUDENT_IS_NOT_ENROLLED(1045, "Student is not enrolled", HttpStatus.NOT_FOUND);
+    STUDENT_IS_NOT_ENROLLED(1045, "Student is not enrolled", HttpStatus.NOT_FOUND),
+    INVALID_REQUEST(1046, "Invalid request", HttpStatus.BAD_REQUEST);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
