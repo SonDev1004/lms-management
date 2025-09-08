@@ -1,6 +1,8 @@
 package com.lmsservice.service.impl;
 
 import com.lmsservice.entity.*;
+import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.repository.*;
 import com.lmsservice.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     public void confirmEnrollment(String txnRef) {
         PendingEnrollment pending = pendingRepo.findByTxnRef(txnRef)
-                .orElseThrow(() -> new RuntimeException("Pending not found"));
+                .orElseThrow(() -> new UnAuthorizeException(ErrorCode.PENDING_NOT_FOUND));
 
         Enrollment enrollment = new Enrollment();
 
@@ -44,14 +46,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         // Lấy Program
         if (pending.getProgramId() != null) {
             Program program = programRepo.findById(pending.getProgramId())
-                    .orElseThrow(() -> new RuntimeException("Program not found"));
+                    .orElseThrow(() -> new UnAuthorizeException(ErrorCode.PROGRAM_NOT_FOUND));
             enrollment.setProgram(program);
         }
 
         // Lấy Subject
         if (pending.getSubjectId() != null) {
             Subject subject = subjectRepo.findById(pending.getSubjectId())
-                    .orElseThrow(() -> new RuntimeException("Subject not found"));
+                    .orElseThrow(() -> new UnAuthorizeException(ErrorCode.SUBJECT_NOT_FOUND));
             enrollment.setSubject(subject);
         }
 

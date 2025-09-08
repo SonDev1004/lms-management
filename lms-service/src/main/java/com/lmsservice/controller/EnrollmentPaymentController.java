@@ -16,7 +16,6 @@ import com.lmsservice.service.VnpayService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 
+//XỬ LÝ phần thanh toán qua VNPAY (tạo link thanh toán, callback IPN, xử lý pending → success)
 @RestController
 @RequestMapping("/api/v1/enrollments")
 @RequiredArgsConstructor

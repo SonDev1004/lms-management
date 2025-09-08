@@ -2,6 +2,7 @@ package com.lmsservice.controller;
 
 import com.lmsservice.service.EnrollmentPaymentService;
 import com.lmsservice.service.VnpayService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ public class VnpayController {
     private final VnpayService vnpayService;
     private final EnrollmentPaymentService enrollmentPaymentService;
 
+    @Operation(summary = "Xử lý callback trả về từ VNPAY sau khi người dùng hoàn tất thanh toán")
     @GetMapping("/vnpay-return")
     public ResponseEntity<?> vnpayReturn(@RequestParam Map<String, String> params) {
         boolean valid = vnpayService.verifySignature(params);
@@ -44,6 +46,7 @@ public class VnpayController {
         }
     }
 
+    @Operation(summary = "Xử lý IPN (Instant Payment Notification) từ VNPAY để xác nhận trạng thái thanh toán")
     @RequestMapping(value = "/vnpay-ipn", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<?> vnpayIpn(@RequestParam Map<String, String> params) {
         boolean valid = vnpayService.verifySignature(params);

@@ -63,7 +63,13 @@ public enum ErrorCode {
     COURSE_NOT_FOUND(1044, "Course not found", HttpStatus.NOT_FOUND),
     // Student
     STUDENT_IS_NOT_ENROLLED(1045, "Student is not enrolled", HttpStatus.NOT_FOUND),
+    // Payment & Enrollment
+    PENDING_NOT_FOUND(1046, "Pending enrollment not found", HttpStatus.NOT_FOUND),
+    PAYMENT_HISTORY_NOT_FOUND(1047, "Payment history not found", HttpStatus.NOT_FOUND),
+    ENROLLMENT_NOT_FOUND(1048, "Enrollment not found", HttpStatus.NOT_FOUND),
+    PAYMENT_AMOUNT_MISMATCH(1049, "Payment amount does not match", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST(1046, "Invalid request", HttpStatus.BAD_REQUEST);
+
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
