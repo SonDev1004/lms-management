@@ -3,8 +3,33 @@ import React from 'react';
 import { Card } from 'primereact/card';
 import { Divider } from 'primereact/divider';
 import { Button } from 'primereact/button';
+import { SelectButton } from 'primereact/selectbutton';
 
-const OrderSummary = ({ selectedItem, formatPrice, discount = 0.1, onBack, onSubmit }) => {
+const paymentOptions = [
+    { label: 'VNPay', value: 'vnpay', icon: 'pi pi-credit-card' },
+    { label: 'MoMo', value: 'momo', icon: 'pi pi-mobile' },
+    { label: 'ZaloPay', value: 'zalopay', icon: 'pi pi-wallet' },
+    { label: 'Visa/Master', value: 'visa', icon: 'pi pi-credit-card' },
+    { label: 'Chuyển khoản', value: 'bank', icon: 'pi pi-building' },
+    { label: 'Tiền mặt', value: 'cash', icon: 'pi pi-money-bill' },
+];
+
+const itemTemplate = (option) => (
+    <div className="flex align-items-center gap-2">
+        <i className={`${option.icon}`} />
+        <span>{option.label}</span>
+    </div>
+);
+
+const OrderSummary = ({
+                          selectedItem,
+                          formatPrice,
+                          discount = 0.1,
+                          onBack,
+                          onSubmit,
+                          paymentMethod,        // <-- thêm
+                          onPaymentChange,      // <-- thêm
+                      }) => {
     if (!selectedItem) return null;
     const price = selectedItem.price || 0;
     const total = price * (1 - discount);
@@ -12,6 +37,29 @@ const OrderSummary = ({ selectedItem, formatPrice, discount = 0.1, onBack, onSub
     return (
         <>
             <h2 className="text-2xl font-bold mb-4">Hoàn Tất Đăng Ký</h2>
+
+            {/* Chọn phương thức thanh toán */}
+            <Card className="mb-4">
+                <h3 className="text-lg font-bold mb-3">Phương thức thanh toán</h3>
+                <SelectButton
+                    value={paymentMethod}
+                    onChange={(e) => onPaymentChange?.(e.value)}
+                    options={paymentOptions}
+                    optionLabel="label"
+                    optionValue="value"
+                    itemTemplate={itemTemplate}
+                    className="w-full"
+                />
+                <div className="mt-3 text-700 text-sm">
+                    {paymentMethod === 'vnpay' && (
+                        <span>
+              <i className="pi pi-info-circle mr-2" />
+              Thanh toán VNPay: hệ thống sẽ tạo mã thanh toán/QR hoặc chuyển hướng cổng VNPay (khi tích hợp thật).
+            </span>
+                    )}
+                </div>
+            </Card>
+
             <div className="grid">
                 <div className="col-12 md:col-8">
                     <Card className="bg-gray-50">
@@ -42,8 +90,8 @@ const OrderSummary = ({ selectedItem, formatPrice, discount = 0.1, onBack, onSub
 
             <div className="flex justify-content-between mt-4">
                 <Button label="Quay lại" icon="pi pi-arrow-left" outlined onClick={onBack} />
-                {/* 👉 Không có nút “Thanh toán ngay” — chỉ Hoàn tất đăng ký */}
-                <Button label="Hoàn tất đăng ký" icon="pi pi-check-circle" onClick={onSubmit} />
+                {/* Hoàn tất đăng ký (chưa redirect payment thật) */}
+                <Button label="Hoàn tất đăng ký" icon="pi pi-check-circle" onClick={() => onSubmit?.(paymentMethod)} />
             </div>
         </>
     );
