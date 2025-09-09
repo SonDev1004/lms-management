@@ -1,7 +1,7 @@
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { Panel } from 'primereact/panel';
-import { subjects } from '../../services/mockSubject';
+import { subjects } from '../../../mocks/mockSubject';
 
 // const courses = [
 //     {
