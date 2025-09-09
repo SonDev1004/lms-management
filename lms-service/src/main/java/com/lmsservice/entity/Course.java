@@ -1,5 +1,6 @@
 package com.lmsservice.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,14 @@ public class Course extends EntityAbstract {
      */
     @Column(name = "planned_session")
     Integer plannedSession;
+
+    @Column(name = "status", columnDefinition = "int default 0", nullable = false)
+    Integer status; // 0=PENDING, 1=ONGOING, 2=FINISHED
+
+    LocalDate startDate;
     // Subject
     @ManyToOne
-    @JoinColumn(name = "subject_id")
+    @JoinColumn(name = "subject_id", nullable = false)
     Subject subject;
     // Assignments
     @OneToMany(mappedBy = "course")
@@ -44,7 +50,7 @@ public class Course extends EntityAbstract {
 
     // Teacher
     @ManyToOne
-    @JoinColumn(name = "teacher_id", nullable = false)
+    @JoinColumn(name = "teacher_id")
     Teacher teacher;
 
     // Staff
@@ -55,7 +61,9 @@ public class Course extends EntityAbstract {
     @OneToMany(mappedBy = "course")
     List<CourseStudent> courseStudents;
 
-    /** Pattern lịch học hằng tuần (T2/T4/T6...), sinh từ bảng course_timeslot */
+    /**
+     * Pattern lịch học hằng tuần (T2/T4/T6...), sinh từ bảng course_timeslot
+     */
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     List<CourseTimeslot> timeslots = new ArrayList<>();
 }

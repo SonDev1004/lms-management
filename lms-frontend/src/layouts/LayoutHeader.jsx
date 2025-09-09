@@ -7,14 +7,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
 import { Menu } from 'primereact/menu';
 import logo from 'assets/images/logo.png';
-import axiosClient from 'services/axiosClient';
+import axiosClient from '@/shared/api/axiosClient.js';
+import {AppUrls} from "@/shared/constants/index.js";
 
 export default function TemplateDemo() {
     const navigate = useNavigate();
     const menuRight = useRef(null);
     // Functions
     const handleLogout = () => {
-        axiosClient.post('auth/logout')
+        axiosClient.post(AppUrls.logout)
             .then(res => {
                 localStorage.removeItem('role');
                 localStorage.removeItem('username');

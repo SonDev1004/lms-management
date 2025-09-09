@@ -1,150 +1,133 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import LayoutHome from 'layouts/home/LayoutHome';
-import Login from 'pages/home/Login';
-import Register from 'pages/home/Register';
-import Guest from './pages/home/Guest';
+
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LayoutHome from "layouts/home/LayoutHome";
+import Login from "@/features/auth/pages/Login.jsx";
+import Register from "@/features/auth/pages/Register.jsx";
+import Guest from "./features/home/pages/Guest.jsx";
+
+import "./styles/custom-theme.css";
+
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
+
+import LayoutStudent from "layouts/student/LayoutStudent";
+import StudentDashboard from "@/features/student/pages/StudentDashboard.jsx";
+import StudentCourses from "@/features/student/pages/StudentCourses.jsx";
+import StudentSchedule from "@/features/student/pages/StudentSchedule.jsx";
+import StudentEnrollment from "@/features/student/pages/StudentEnrollment.jsx";
+import StudentScore from "@/features/student/pages/StudentScore.jsx";
+
+import LayoutTeacher from "layouts/teacher/LayoutTeacher";
+import TeacherDashboard from "@/features/teacher/pages/TeacherDashboard.jsx";
+import TeacherCourses from "@/features/teacher/pages/TeacherCourses.jsx";
+import TeacherSchedule from "@/features/teacher/pages/TeacherSchedule.jsx";
+import TeacherNotification from "@/features/teacher/pages/TeacherNotification.jsx";
+
+import LayoutAdmin from "layouts/admin/LayoutAdmin";
+import AdminDashboard from "@/features/admin/pages/AdminDashboard.jsx";
+import AdminSystems from "@/features/admin/pages/AdminSystems.jsx";
+import AdminSecurity from "@/features/admin/pages/AdminSecurity.jsx";
+import AdminUpload from "@/features/admin/pages/AdminUpload.jsx";
 
 
-import './styles/custom-theme.css';
+import LayoutAcademicManager from "layouts/academic_manager/LayoutAcademicManager";
+import AMDashboard from "@/features/academic_manager/pages/AMDashboard.jsx";
+import AMProgram from "@/features/academic_manager/pages/AMProgram.jsx";
+import AMCourse from "@/features/academic_manager/pages/AMCourse.jsx";
+import AMTeacher from "@/features/academic_manager/pages/AMTeacher.jsx";
+import AMStudent from "@/features/academic_manager/pages/AMStudent.jsx";
+import AMFeedback from "@/features/academic_manager/pages/AMFeedback.jsx";
+import AMSchedule from "@/features/academic_manager/pages/AMSchedule.jsx";
+import AMReport from "@/features/academic_manager/pages/AMReport.jsx";
+import AMNotification from "@/features/academic_manager/pages/AMNotification.jsx";
+import ProgramDetail from "./features/program/pages/ProgramDetail.jsx";
 
-import 'primereact/resources/themes/lara-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
-
-import LayoutStudent from 'layouts/student/LayoutStudent';
-import StudentDashboard from 'pages/roles/student/StudentDashboard';
-import StudentCourses from 'pages/roles/student/StudentCourses';
-import StudentSchedule from 'pages/roles/student/StudentSchedule';
-import StudentEnrollment from 'pages/roles/student/StudentEnrollment';
-import StudentScore from 'pages/roles/student/StudentScore';
-
-import LayoutTeacher from 'layouts/teacher/LayoutTeacher';
-import TeacherDashboard from 'pages/roles/teacher/TeacherDashboard';
-import TeacherCourses from 'pages/roles/teacher/TeacherCourses';
-import TeacherSchedule from 'pages/roles/teacher/TeacherSchedule';
-import TeacherNotification from 'pages/roles/teacher/TeacherNotification.jsx';
-
-import LayoutAdmin from 'layouts/admin/LayoutAdmin';
-import AdminDashboard from 'pages/roles/admin/AdminDashboard';
-import AdminSystems from 'pages/roles/admin/AdminSystems';
-import AdminSecurity from 'pages/roles/admin/AdminSecutiry';
-import AdminUpload from 'pages/roles/admin/AdminUpload';
-
-import LayoutAcademicManager from 'layouts/academic_manager/LayoutAcademicManager';
-import AMDashboard from 'pages/roles/academic_manager/AMDashboard';
-import AMProgram from 'pages/roles/academic_manager/AMProgram';
-import AMCourse from 'pages/roles/academic_manager/AMCourse';
-import AMTeacher from 'pages/roles/academic_manager/AMTeacher';
-import AMStudent from 'pages/roles/academic_manager/AMStudent';
-import AMFeedback from 'pages/roles/academic_manager/AMFeedback';
-import AMSchedule from 'pages/roles/academic_manager/AMSchedule';
-import AMReport from 'pages/roles/academic_manager/AMReport';
-import AMNotification from 'pages/roles/academic_manager/AMNotification.jsx';
-import CourseStage from "pages/student/course/CourseStage.jsx";
-import ProgramDetail from './pages/home/ProgramDetail';
-
-import ProgramList from './pages/program/ProgramList';
-
-import CourseHome from 'pages/course/CourseHome.jsx';
-import CourseDetailStudent from "pages/course/detail/CourseDetailStudent.jsx";
-import UserProfile from "pages/profile/UserProfile.jsx";
-import StudentNotification from "pages/roles/student/StudentNotification.jsx";
-import StudentProfile from "pages/roles/student/StudentProfile.jsx";
-import ProtectedRoute from "components/ProtectedRoute.jsx";
-import AMProfile from "pages/roles/academic_manager/AMProfile.jsx";
-import TeacherProfile from "pages/roles/teacher/TeacherProfile.jsx";
-import AdminProfile from "pages/roles/admin/AdminProfile.jsx";
-import Unauthorized from "pages/home/Unauthorized.jsx";
-
+import CourseHome from "@/features/course/pages/CourseHome.jsx";
+import CourseDetailStudent from "@/features/course/pages/CourseDetailStudent.jsx";
+import StudentNotification from "@/features/student/pages/StudentNotification.jsx";
+import StudentProfile from "@/features/student/pages/StudentProfile.jsx";
+import ProtectedRoute from "@/app/router/ProtectedRoute.jsx";
+import AMProfile from "@/features/academic_manager/pages/AMProfile.jsx";
+import TeacherProfile from "@/features/teacher/pages/TeacherProfile.jsx";
+import AdminProfile from "@/features/admin/pages/AdminProfile.jsx";
+import Unauthorized from "@/features/auth/pages/Unauthorized.jsx";
+import StudentCourseDetail from "@/features/student/pages/StudentCourseDetail.jsx";
 
 
 const App = () => {
-    return (
-        <BrowserRouter>
-            <Routes>
-                {/* Home Route */}
-                <Route path='/' element={<LayoutHome />}>
-                    <Route index element={<Guest />} />
-                    <Route path='login' element={<Login />} />
-                    <Route path='register' element={<Register />} />
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Home Route */}
+        <Route path="/" element={<LayoutHome />}>
+          <Route index element={<Guest />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+        </Route>
+
+        {/* Program Route (ngoài student) */}
+        <Route path="program" element={<LayoutHome />}>
+          <Route path=":id" element={<ProgramDetail />} />
+        </Route>
+
+        {/* Student Route */}
+        <Route element={<ProtectedRoute allowedRoles={["STUDENT"]} />}>
+          <Route path="student" element={<LayoutStudent />}>
+            <Route index element={<StudentDashboard />} />
+            <Route path="courses" element={<StudentCourses />} />
+            <Route path="courses/:slug" element={<CourseDetailStudent />} />
+            <Route path="schedule" element={<StudentSchedule />} />
+            <Route path="score" element={<StudentScore />} />
+            <Route path="enrollment" element={<StudentEnrollment />} />
+            <Route path="notification" element={<StudentNotification />} />
+            <Route path="profile" element={<StudentProfile />} />
+          </Route>
+        </Route>
 
 
-                </Route>
+        {/* Teacher Route */}
+        <Route element={<ProtectedRoute allowedRoles={["TEACHER"]} />}>
+          <Route path="teacher" element={<LayoutTeacher />}>
+            <Route index element={<TeacherDashboard />} />
+            <Route path="courses" element={<TeacherCourses />} />
+            <Route path="schedule" element={<TeacherSchedule />} />
+            <Route path="notification" element={<TeacherNotification />} />
+            <Route path="profile" element={<TeacherProfile />} />
+          </Route>
+        </Route>
 
-                {/* Program Route (ngoài student) */}
-                <Route path='program' element={<LayoutHome />}>
-                    <Route index element={<ProgramList />} />
-                    <Route path=':id' element={<ProgramDetail />} />
-                </Route>
+        <Route element={<ProtectedRoute allowedRoles={["ACADEMIC_MANAGER"]} />}>
+          <Route path="staff" element={<LayoutAcademicManager />}>
+            <Route index element={<AMDashboard />} />
+            <Route path="program" element={<AMProgram />} />
+            <Route path="courses" element={<AMCourse />} />
+            <Route path="teacher" element={<AMTeacher />} />
+            <Route path="student" element={<AMStudent />} />
+            <Route path="feedback" element={<AMFeedback />} />
+            <Route path="schedule" element={<AMSchedule />} />
+            <Route path="report" element={<AMReport />} />
+            <Route path="notification" element={<AMNotification />} />
+            <Route path="profile" element={<AMProfile />} />
+          </Route>
+        </Route>
 
-                {/* Student Route */}
-                <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
-                    <Route path='student' element={<LayoutStudent />}>
-                        <Route index element={<StudentDashboard />} />
-                        <Route path='courses' element={<StudentCourses />} />
-                        <Route path='schedule' element={<StudentSchedule />} />
-                        <Route path='score' element={<StudentScore />} />
-                        <Route path='enrollment' element={<StudentEnrollment />} />
-                        <Route path='notification' element={<StudentNotification />} />
-                        <Route path="profile" element={<StudentProfile />} />
-                        {/* Nested: student/course */}
-                        <Route path="course">
-                            <Route index element={<CourseHome />} />
-                            <Route path='stage' element={<CourseStage />} />
-                            <Route path="detail" element={<CourseDetailStudent />} />
-                        </Route>
-                    </Route>
-                </Route>
-
-
-                {/* Course Route (ngoài student) */}
-                <Route path='course'>
-                    <Route path='home' element={<CourseHome />} />
-                </Route>
-
-
-                {/* Teacher Route */}
-                <Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
-                    <Route path='teacher' element={<LayoutTeacher />}>
-                        <Route index element={<TeacherDashboard />} />
-                        <Route path='courses' element={<TeacherCourses />} />
-                        <Route path='schedule' element={<TeacherSchedule />} />
-                        <Route path='notification' element={<TeacherNotification />} />
-                        <Route path="profile" element={<TeacherProfile />} />
-                    </Route>
-                </Route>
-
-                <Route element={<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']} />}>
-                    <Route path='staff' element={<LayoutAcademicManager />}>
-                        <Route index element={<AMDashboard />} />
-                        <Route path='program' element={<AMProgram />} />
-                        <Route path='courses' element={<AMCourse />} />
-                        <Route path='teacher' element={<AMTeacher />} />
-                        <Route path='student' element={<AMStudent />} />
-                        <Route path='feedback' element={<AMFeedback />} />
-                        <Route path='schedule' element={<AMSchedule />} />
-                        <Route path='report' element={<AMReport />} />
-                        <Route path='notification' element={<AMNotification />} />
-                        <Route path='profile' element={<AMProfile />} />
-                    </Route>
-                </Route>
-
-                {/* Admin Route */}
-                <Route element={<ProtectedRoute allowedRoles={['ADMIN_IT']} />}>
-                    <Route path='admin' element={<LayoutAdmin />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path='systems' element={<AdminSystems />} />
-                        <Route path='upload' element={<AdminUpload />} />
-                        <Route path='security' element={<AdminSecurity />} />
-                        <Route path="profile" element={<AdminProfile />} />
-                    </Route>
-                </Route>
-                <Route path="/unauthorized" element={<Unauthorized />} />
-            </Routes>
-        </BrowserRouter>
-    );
-}
+        {/* Admin Route */}
+        <Route element={<ProtectedRoute allowedRoles={["ADMIN_IT"]} />}>
+          <Route path="admin" element={<LayoutAdmin />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="systems" element={<AdminSystems />} />
+            <Route path="upload" element={<AdminUpload />} />
+            <Route path="security" element={<AdminSecurity />} />
+            <Route path="profile" element={<AdminProfile />} />
+          </Route>
+        </Route>
+        <Route path="/unauthorized" element={<Unauthorized />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default App;
-
