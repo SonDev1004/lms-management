@@ -1,5 +1,7 @@
+import Notifications from "@/features/notification/pages/Notifications.jsx";
+
 const TeacherNotification = () => {
-    return (<h1>News</h1>);
+    return <Notifications/>;
 }
 
 export default TeacherNotification;
