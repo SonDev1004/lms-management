@@ -1,48 +1,52 @@
-import { Divider } from 'primereact/divider';
-import { Panel } from 'primereact/panel';
+import { Button } from 'primereact/button';
 import GoogleMapView from '../GoogleMapView';
 
 const LayoutHomeFooter = () => {
     return (
-        <>
-            <div className='grid pt-6 pb-6 mt-6' style={{ backgroundColor: 'gray' }}>
-                <div className="col-6">
-                    <img src="https://miro.medium.com/v2/resize:fit:1100/format:webp/0*ROCi1imT71cQp0FZ.png" alt="" className="w-4" />
+        <div className="surface-100 p-4 text-center border-top-1 surface-border">
+            <div className="grid">
+                <div className="col-12 md:col-4">
+                    <h5>Liên hệ</h5>
+                    <p className="text-sm">
+                        📍 123 Đường ABC, Quận 1, TP.HCM<br />
+                        📞 (028) 1234 5678<br />
+                        ✉️ info@educenter.vn
+                    </p>
                 </div>
-                <div className="col-6"></div>
 
-                <div className='grid col-12 '>
-                    <div className="col-6">
-                        <Panel header='Thông tin liên hệ'>
-                            <div className="mb-3">
-                                <i className="pi pi-facebook"></i> <a href="http://www.facebook.com">http://www.facebook.com</a>
-                            </div>
-                            <div className="mb-3">
-                                <i className="pi pi-phone"></i> <a href="tel:0901234567">0901234567</a>
-                            </div>
-                            <div className="mb-3">
-                                <i className="pi pi-map-marker"></i> <a href=""><span>123 Nguyen Thi Minh Khai</span></a>
-                            </div>
-                        </Panel>
+                <div className="col-12 md:col-4">
+                    <h5>Liên kết</h5>
+                    <div className="flex flex-column gap-1">
+                        <a href="#" className="text-primary no-underline text-sm">Chính sách bảo mật</a>
+                        <a href="#" className="text-primary no-underline text-sm">Điều khoản sử dụng</a>
+                        <a href="#" className="text-primary no-underline text-sm">Hướng dẫn thanh toán</a>
                     </div>
+                </div>
 
-                    <div className="col-6">
-                        <Panel header='Khóa học IELTS'>
-                            <div className="mb-3">
-                                <a href="">IELTS 4.0</a>
-                            </div>
-                            <div className="mb-3">
-                                <a href="">IELTS 5.0</a>
-                            </div>
-                            <div className="mb-3">
-                                <a href="">IELTS 6.0</a>
-                            </div>
-                        </Panel>
+                <div className="col-12 md:col-4">
+                    <h5>Theo dõi chúng tôi</h5>
+                    <div className="flex justify-content-center md:justify-content-start gap-2">
+                        <Button icon="pi pi-facebook" rounded outlined size="small" />
+                        <Button icon="pi pi-youtube" rounded outlined size="small" />
+                        <Button icon="pi pi-instagram" rounded outlined size="small" />
                     </div>
                 </div>
             </div>
-        </>
+
+            {/* HÀNG BẢN ĐỒ */}
+            <div className="grid mt-3">
+                <div className="col-12">
+                    <div className="border-1 surface-border border-round overflow-hidden" style={{ height: 360 }}>
+                        <GoogleMapView />
+                    </div>
+                </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-top-1 surface-border">
+                <p className="text-sm text-500 m-0">© 2025 EduCenter. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
     );
-}
+};
 
 export default LayoutHomeFooter;
