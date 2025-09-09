@@ -1,11 +1,7 @@
-import React from 'react';
+import Notifications from "@/features/notification/pages/Notifications.jsx";
 
-function StudentNotification() {
-    return (
-        <div>
-            <h2>notification fsres</h2>
-        </div>
-    );
+const StudentNotification = () => {
+    return <Notifications/>;
 }
 
 export default StudentNotification;
