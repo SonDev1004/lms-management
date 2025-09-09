@@ -1,36 +1,16 @@
-// Ví dụ: src/components/GoogleMapView.jsx
+// src/components/GoogleMapView.jsx
 import { GoogleMap, LoadScript } from '@react-google-maps/api';
-import { useEffect } from 'react';
 
-const containerStyle = {
-    width: '100%',
-    height: '400px'
-};
-
-const center = {
-    lat: 51.508742,
-    lng: -0.120850
-};
+const containerStyle = { width: '100%', height: '400px' };
+const center = { lat: 10.762622, lng: 106.660172 };
 
 const GoogleMapView = () => {
-    useEffect(() => {
-        // Tạo script Google Maps
-        const script = document.createElement("script");
-        script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=myMap";
-        script.async = true;
-        window.myMap = function () {
-            new window.google.maps.Map(document.getElementById("googleMap"), {
-                center: { lat: 51.508742, lng: -0.120850 },
-                zoom: 5,
-            });
-        };
-        document.body.appendChild(script);
-        return () => {
-            delete window.myMap;
-        };
-    }, []);
-
-    return <div id="googleMap" style={{ width: "100%", height: "400px" }} />;
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    return (
+        <LoadScript googleMapsApiKey={apiKey}>
+            <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={12} />
+        </LoadScript>
+    );
 };
 
 export default GoogleMapView;

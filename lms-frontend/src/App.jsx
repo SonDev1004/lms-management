@@ -4,12 +4,13 @@ import Login from "@/features/auth/pages/Login.jsx";
 import Register from "@/features/auth/pages/Register.jsx";
 import Guest from "./features/home/pages/Guest.jsx";
 
-import "./styles/custom-theme.css";
+
 
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
+import "./styles/custom-theme.css";
 
 import LayoutStudent from "layouts/student/LayoutStudent";
 import StudentDashboard from "@/features/student/pages/StudentDashboard.jsx";
@@ -52,6 +53,12 @@ import TeacherProfile from "@/features/teacher/pages/TeacherProfile.jsx";
 import AdminProfile from "@/features/admin/pages/AdminProfile.jsx";
 import Unauthorized from "@/features/auth/pages/Unauthorized.jsx";
 import StudentCourseDetail from "@/features/student/pages/StudentCourseDetail.jsx";
+import FAQ from "@/features/home/pages/FAQ.jsx";
+import Blog from "@/features/home/pages/Blog.jsx";
+import About from "@/features/home/pages/About.jsx";
+import SubjectDetail from "@/features/subject/pages/SubjectDetail.jsx";
+import EnrollmentStepper from "@/features/enrollment/pages/EnrollmentStepper.jsx";
+import ThankYou from "@/features/enrollment/pages/ThankYou.jsx";
 
 const App = () => {
   return (
@@ -62,11 +69,20 @@ const App = () => {
           <Route index element={<Guest />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="about" element={<About />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="blog" element={<Blog />} />
+            <Route path="dang-ky" element={<EnrollmentStepper />} />
+            <Route path="cam-on" element={<ThankYou />} />
         </Route>
 
         {/* Program Route (ngoài student) */}
         <Route path="program" element={<LayoutHome />}>
           <Route path=":id" element={<ProgramDetail />} />
+        </Route>
+        {/* Subject Route (ngoài student) */}
+        <Route path="subject" element={<LayoutHome />}>
+          <Route path=":id" element={<SubjectDetail />} />
         </Route>
 
         {/* Student Route */}
