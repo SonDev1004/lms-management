@@ -1,14 +1,14 @@
 package com.lmsservice.service;
 
-import com.lmsservice.entity.Enrollment;
-import com.lmsservice.entity.PendingEnrollment;
-
 import java.math.BigDecimal;
 import java.util.Map;
 
+import com.lmsservice.entity.Enrollment;
+import com.lmsservice.entity.PendingEnrollment;
+
 public interface EnrollmentPaymentService {
-    PendingEnrollment createPending(Long userId, Long programId, Long subjectId,
-                                    BigDecimal amount, BigDecimal totalFee, String txnRef);
+    PendingEnrollment createPending(
+            Long userId, Long programId, Long subjectId, BigDecimal amount, BigDecimal totalFee, String txnRef);
 
     Enrollment finalizeSuccessfulPayment(String txnRef, Map<String, String> vnpParams);
 

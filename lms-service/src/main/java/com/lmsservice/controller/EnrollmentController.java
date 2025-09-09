@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-//XỬ LÝ (danh sách, xem chi tiết, update trạng thái học viên trong chương trình…)
+// XỬ LÝ (danh sách, xem chi tiết, update trạng thái học viên trong chương trình…)
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

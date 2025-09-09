@@ -1,9 +1,10 @@
 package com.lmsservice.repository;
 
-import com.lmsservice.entity.PendingEnrollment;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import com.lmsservice.entity.PendingEnrollment;
 
 public interface PendingEnrollmentRepository extends JpaRepository<PendingEnrollment, Long> {
     Optional<PendingEnrollment> findByTxnRef(String txnRef);

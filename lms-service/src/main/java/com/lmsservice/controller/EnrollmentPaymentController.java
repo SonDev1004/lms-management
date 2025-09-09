@@ -1,5 +1,17 @@
 package com.lmsservice.controller;
 
+import java.math.BigDecimal;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.lmsservice.config.VnpayProps;
 import com.lmsservice.dto.request.CreatePaymentRequest;
 import com.lmsservice.dto.response.ApiResponse;
@@ -13,20 +25,11 @@ import com.lmsservice.repository.SubjectRepository;
 import com.lmsservice.security.CustomUserDetails;
 import com.lmsservice.service.EnrollmentPaymentService;
 import com.lmsservice.service.VnpayService;
+
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-
-//XỬ LÝ phần thanh toán qua VNPAY (tạo link thanh toán, callback IPN, xử lý pending → success)
+// XỬ LÝ phần thanh toán qua VNPAY (tạo link thanh toán, callback IPN, xử lý pending → success)
 @RestController
 @RequestMapping("/api/v1/enrollments")
 @RequiredArgsConstructor
@@ -42,31 +45,29 @@ public class EnrollmentPaymentController {
             description = "API này cho phép người dùng tạo link thanh toán để đăng ký học phần hoặc chương trình. "
                     + "Người dùng có thể chọn đăng ký một học phần hoặc một chương trình, không được chọn cả hai cùng lúc. "
                     + "Nếu không chọn gì, hệ thống sẽ trả về lỗi. "
-                    + "Nếu số tiền gửi lên khác với phí của học phần/chương trình, hệ thống sẽ trả về lỗi."
-    )
+                    + "Nếu số tiền gửi lên khác với phí của học phần/chương trình, hệ thống sẽ trả về lỗi.")
     @PostMapping("/create-payment")
     public ApiResponse<CreatePaymentResponse> createPayment(
-            @RequestBody CreatePaymentRequest req,
-            HttpServletRequest servletRequest
-    ) {
+            @RequestBody CreatePaymentRequest req, HttpServletRequest servletRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Long userId = userDetails.getUser().getId();
 
         // Kiểm tra input
-        if ((req.getProgramId() == null && req.getSubjectId() == null) ||
-                (req.getProgramId() != null && req.getSubjectId() != null)) {
-            throw new AuthenticationException(ErrorCode.INVALID_REQUEST.getMessage()) {
-            };
+        if ((req.getProgramId() == null && req.getSubjectId() == null)
+                || (req.getProgramId() != null && req.getSubjectId() != null)) {
+            throw new AuthenticationException(ErrorCode.INVALID_REQUEST.getMessage()) {};
         }
 
         BigDecimal totalFee;
         if (req.getProgramId() != null) {
-            Program p = programRepo.findById(req.getProgramId())
+            Program p = programRepo
+                    .findById(req.getProgramId())
                     .orElseThrow(() -> new AuthenticationException(ErrorCode.PROGRAM_NOT_FOUND.getMessage()) {});
             totalFee = p.getFee();
         } else if (req.getSubjectId() != null) {
-            Subject s = subjectRepo.findById(req.getSubjectId())
+            Subject s = subjectRepo
+                    .findById(req.getSubjectId())
                     .orElseThrow(() -> new AuthenticationException(ErrorCode.SUBJECT_NOT_FOUND.getMessage()) {});
             totalFee = s.getFee();
         } else {
@@ -79,8 +80,7 @@ public class EnrollmentPaymentController {
 
         // Tạo PendingEnrollment để lưu trạng thái chờ
         PendingEnrollment pending = enrollmentPaymentService.createPending(
-                userId, req.getProgramId(), req.getSubjectId(), amount, totalFee, txnRef
-        );
+                userId, req.getProgramId(), req.getSubjectId(), amount, totalFee, txnRef);
 
         // Tạo URL thanh toán
         String orderInfo = "Enroll " + txnRef;
@@ -96,4 +96,3 @@ public class EnrollmentPaymentController {
                 .build();
     }
 }
-

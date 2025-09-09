@@ -23,7 +23,9 @@ public class VnpayService {
         params.put("vnp_Version", "2.1.0");
         params.put("vnp_Command", "pay");
         params.put("vnp_TmnCode", props.getTmnCode());
-        params.put("vnp_Amount", String.valueOf(amount.multiply(BigDecimal.valueOf(100)).longValue()));
+        params.put(
+                "vnp_Amount",
+                String.valueOf(amount.multiply(BigDecimal.valueOf(100)).longValue()));
         params.put("vnp_CurrCode", "VND");
         params.put("vnp_TxnRef", txnRef);
         params.put("vnp_OrderInfo", orderInfo);
@@ -42,10 +44,12 @@ public class VnpayService {
             String value = params.get(name);
             if (!hashData.isEmpty()) hashData.append('&');
             hashData.append(URLEncoder.encode(name, StandardCharsets.UTF_8))
-                    .append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                    .append('=')
+                    .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
             if (!query.isEmpty()) query.append('&');
             query.append(URLEncoder.encode(name, StandardCharsets.UTF_8))
-                    .append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                    .append('=')
+                    .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
         }
 
         String secureHash = VnpayUtils.hmacSHA512(props.getHashSecret(), hashData.toString());
@@ -66,11 +70,11 @@ public class VnpayService {
             String value = params.get(name);
             if (!hashData.isEmpty()) hashData.append('&');
             hashData.append(URLEncoder.encode(name, StandardCharsets.UTF_8))
-                    .append('=').append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                    .append('=')
+                    .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
         }
 
         String calcHash = VnpayUtils.hmacSHA512(props.getHashSecret(), hashData.toString());
         return calcHash.equalsIgnoreCase(receivedHash);
     }
 }
-
