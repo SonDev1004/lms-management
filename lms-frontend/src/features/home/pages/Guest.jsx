@@ -3,14 +3,29 @@ import LayoutHomeFooter from "layouts/home/LayoutHomeFooter.jsx";
 import CourseList from "./CourseList.jsx";
 import ProgramPanel from "../../program/pages/ProgramPanel.jsx";
 import Introduce from "./Introduce.jsx";
-import {
-  featuredPrograms,
-  featuredSubjects,
-} from "@/mocks/homeDataMock.js";
-import ProgramCard from "@/features/home/component/ProgramCard.jsx";
+import { featuredSubjects } from "@/mocks/homeDataMock.js";
+
 import SubjectCard from "@/features/home/component/SubjectCard.jsx";
 
+import { getListProgram } from "@/features/program/api/programService.js";
+import { useEffect, useState } from "react";
+import ProgramCard from "@/features/home/component/ProgramCard.jsx";
+
 export const Guest = () => {
+  const [programs, setPrograms] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { items } = await getListProgram();
+        const shuffled = [...items].sort(() => 0.5 - Math.random());
+        setPrograms(shuffled.slice(0, 3));
+      } catch (err) {
+        console.error("Lỗi khi load programs:", err);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <>
       <Banner />
@@ -20,7 +35,7 @@ export const Guest = () => {
           Chương Trình Nổi Bật
         </h2>
         <div className="grid">
-          {featuredPrograms.map((p) => (
+          {programs.map((p) => (
             <div key={p.id} className="col-12 md:col-6 lg:col-4">
               <ProgramCard program={p} />
             </div>
