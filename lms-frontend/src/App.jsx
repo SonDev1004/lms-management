@@ -1,11 +1,8 @@
-
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LayoutHome from "layouts/home/LayoutHome";
 import Login from "@/features/auth/pages/Login.jsx";
 import Register from "@/features/auth/pages/Register.jsx";
 import Guest from "./features/home/pages/Guest.jsx";
-
-
 
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -31,7 +28,6 @@ import AdminDashboard from "@/features/admin/pages/AdminDashboard.jsx";
 import AdminSystems from "@/features/admin/pages/AdminSystems.jsx";
 import AdminSecurity from "@/features/admin/pages/AdminSecurity.jsx";
 import AdminUpload from "@/features/admin/pages/AdminUpload.jsx";
-
 
 import LayoutAcademicManager from "layouts/academic_manager/LayoutAcademicManager";
 import AMDashboard from "@/features/academic_manager/pages/AMDashboard.jsx";
@@ -61,10 +57,9 @@ import About from "@/features/home/pages/About.jsx";
 import SubjectDetail from "@/features/subject/pages/SubjectDetail.jsx";
 import EnrollmentStepper from "@/features/enrollment/pages/EnrollmentStepper.jsx";
 import ThankYou from "@/features/enrollment/pages/ThankYou.jsx";
-
+import ProgramList from "@/features/program/pages/ProgramList.jsx";
 
 const App = () => {
-
   return (
     <BrowserRouter>
       <Routes>
@@ -76,8 +71,9 @@ const App = () => {
           <Route path="about" element={<About />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="blog" element={<Blog />} />
-            <Route path="dang-ky" element={<EnrollmentStepper />} />
-            <Route path="cam-on" element={<ThankYou />} />
+          <Route path="programs" element={<ProgramList />} />
+          <Route path="dang-ky" element={<EnrollmentStepper />} />
+          <Route path="cam-on" element={<ThankYou />} />
         </Route>
 
         {/* Program Route (ngoài student) */}
@@ -102,7 +98,6 @@ const App = () => {
             <Route path="profile" element={<StudentProfile />} />
           </Route>
         </Route>
-
 
         {/* Teacher Route */}
         <Route element={<ProtectedRoute allowedRoles={["TEACHER"]} />}>
