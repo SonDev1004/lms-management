@@ -1,5 +1,7 @@
+import Dashboard from "@/features/dashboard/pages/Dashboard.jsx";
+
 const StudentDashboard = () => {
-    return (<h1>StudentDashboard</h1>);
+    return <Dashboard />
 }
 
 export default StudentDashboard;
