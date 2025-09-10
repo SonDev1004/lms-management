@@ -38,6 +38,7 @@ const LayoutHome = () => {
         {
             label: 'Chương trình',
             icon: 'pi pi-book',
+            command: () => navigate('/programs'),
             items: [
                 [
                     { label: 'Frontend Cơ Bản', items: [

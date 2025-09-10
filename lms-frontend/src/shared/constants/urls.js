@@ -16,4 +16,7 @@ export default {
 
     //Lesson
     lessonBySubject: (id) => `${rootAPI}/lesson/by-subject/${id}`,
+
+    //program
+    listProgram: `${rootAPI}/program/all-program`,
 }
