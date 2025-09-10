@@ -1,7 +1,7 @@
+import Schedule from "@/features/schedule/pages/Schedule.jsx";
+
 const StudentSchedule = () => {
-    return (
-        <h1>Student Schedule</h1>
-    );
+return <Schedule/>;
 }
 
 export default StudentSchedule;
