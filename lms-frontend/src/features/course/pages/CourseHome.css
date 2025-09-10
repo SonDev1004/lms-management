@@ -1,12 +1,11 @@
 :root {
-    --card-header-height: 148px;       /* gọn hơn 180px */
+    --card-header-height: 148px;
     --card-footer-height: 68px;
     --card-gap: 20px;
     --card-border-radius: 12px;
     --font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* ================= WRAPPER & CONTROLS ================ */
 .course-wrapper {
     width: 100%;
     display: flex;
@@ -20,28 +19,33 @@
 
 .filter-btn {
     border: 1px solid #e6e6e6; background: #fff; color: #37474f;
-    padding: 6px 12px; border-radius: 10px; font-weight: 700; cursor: pointer;
-    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
-    display: inline-flex; align-items: center; gap: 8px; line-height: 1; font-size: .92rem;
+    padding: 8px 14px; border-radius: 12px; font-weight: 800; cursor: pointer;
+    transition: transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+    display: inline-flex; align-items: center; gap: 8px; line-height: 1; font-size: .95rem;
 }
 .filter-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(14,30,50,.06); }
 .filter-btn.is-active {
-    background: linear-gradient(180deg, rgba(0,123,138,.12), rgba(0,123,138,.06));
-    color: #005b60; border-color: rgba(0,123,138,.18); box-shadow: 0 8px 20px rgba(0,123,138,.08);
+    background: linear-gradient(180deg, rgba(0,123,138,.14), rgba(0,123,138,.08));
+    color: #00373a; border-color: rgba(0,123,138,.22); box-shadow: 0 8px 20px rgba(0,123,138,.06);
+    position: relative;
+}
+.filter-btn.is-active::after {
+    content: '';
+    position: absolute; left: 12px; right: 12px; bottom: -10px; height: 4px;
+    background: rgba(0,123,138,.12); border-radius: 6px;
 }
 
-/* ===================== GRID LAYOUT =================== */
 .course-grid {
     display: grid; gap: var(--card-gap);
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     align-items: stretch; justify-items: stretch; width: 100%; grid-auto-rows: 1fr;
 }
+@media (min-width: 768px) { .course-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 1440px) { .course-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 700px) { .course-grid { grid-template-columns: 1fr; gap: 16px; } }
 
-/* ======================== CARD ======================= */
 .course-card {
-    --accent: #4f46e5; --accentText: #ffffff;  /* Fallback nếu chưa truyền biến từ JSX */
+    --accent: #4f46e5; --accentText: #ffffff;
     background: #fff; border-radius: var(--card-border-radius); overflow: hidden;
     box-shadow: 0 2px 6px rgba(0,0,0,.06);
     transition: transform .18s ease, box-shadow .18s ease;
@@ -49,110 +53,98 @@
     align-self: stretch; border: none; position: relative;
 }
 .course-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(14,30,50,.12); }
-.course-card.disabled { opacity: .9; cursor: default; }
+.course-card.disabled { opacity: .95; cursor: default; }
 .course-card.disabled:hover { transform: none; box-shadow: 0 2px 6px rgba(0,0,0,.06); }
 .course-card:focus-visible { outline: 3px solid rgba(67,160,71,.18); outline-offset: 2px; }
 
-/* ==================== CARD HEADER ==================== */
 .card-header {
-    position: relative;
-    padding: 14px 18px; display: flex; align-items: flex-start; color: #fff;
+    position: relative; padding: 16px 18px; display: flex; align-items: flex-start; color: #fff;
     min-height: var(--card-header-height); box-sizing: border-box;
 }
 .card-header::after {
     content: ""; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.06));
+    background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.04));
     pointer-events: none; mix-blend-mode: multiply;
 }
 .header-left { flex: 1 1 auto; min-width: 0; }
 .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 116px; }
 
 .title {
-    margin: 0; font-size: 1.12rem; font-weight: 900; line-height: 1.14; color: inherit;
+    margin: 0; font-size: 1.15rem; font-weight: 800; line-height: 1.14; color: inherit;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; text-overflow: ellipsis;
 }
 .subtitle {
-    margin: 6px 0 8px; font-size: .85rem; font-weight: 700; opacity: .95; color: inherit;
+    margin: 6px 0 8px; font-size: .875rem; font-weight: 700; opacity: .98; color: inherit;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.card-header .subtitle { opacity: 1; }  /* tăng rõ ràng phụ đề trong header */
+.card-header .subtitle { opacity: 1; }
 
-.header-meta { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.header-meta { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
 .meta-row {
-    display: flex; align-items: center; gap: 8px; font-size: .79rem; line-height: 1;
-    background: rgba(255,255,255,.1); padding: 6px 10px; border-radius: 999px; color: inherit;
+    display: flex; align-items: center; gap: 8px; font-size: .85rem; line-height: 1;
+    background: rgba(255,255,255,.12); padding: 8px 12px; border-radius: 999px; color: inherit;
     border: 1px solid rgba(255,255,255,.14);
 }
-.meta-row i { font-size: .95rem; opacity: .95; }
+.meta-row i { font-size: 1rem; opacity: .95; }
 .meta-row.meta-room {
     border: 1px solid rgba(255,255,255,.38);
-    background: transparent;
-    font-weight: 800;
+    background: transparent; font-weight: 800;
 }
-.meta-schedule .sched-line { display: block; }
 
 .room-badge { background: rgba(255,255,255,.12); color: inherit; padding: 6px 10px; border-radius: 8px; font-weight: 800; font-size: .88rem; z-index: 6; }
-.start-date { font-size: .84rem; color: rgba(255,255,255,.92); }
+.start-date { font-size: .88rem; color: rgba(255,255,255,.95); }
 
-/* ===================== CARD BODY ===================== */
 .course-card .p-card-body { padding: 0; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
 
 .card-body.fixed-layout {
-    flex: 1 1 auto; min-height: 0; display: flex; gap: 12px;
-    padding: 12px 18px; background: #fff; overflow: hidden;
+    flex: 1 1 auto; min-height: 0; display: flex; gap: 18px;
+    padding: 14px 18px; background: #fff; overflow: hidden;
 }
 .card-body.fixed-layout .body-left {
-    flex: 2 1 0%; min-width: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+    flex: 2 1 0%; min-width: 0; display: flex; flex-direction: column; gap: 12px; overflow: hidden;
 }
 .card-body.fixed-layout .body-right {
-    flex: 1 1 0%; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; min-width: 0; gap: 8px;
+    flex: 1 1 0%; display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; min-width: 0; gap: 12px;
 }
 
-.desc-wrapper { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.desc-wrapper { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 
-/* Mô tả 3 dòng, bỏ thanh cuộn để cân đối */
 .desc {
-    font-size: .95rem; line-height: 1.45; color: #2b2b2b;
+    font-size: .95rem; line-height: 1.5; color: #222222;
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
     overflow: hidden; word-break: break-word; padding-right: 0; max-height: none;
 }
 
-/* Nhắc nhở thoáng hơn, vẫn giới hạn chiều cao hộp */
 .reminder-list {
     list-style: none; padding: 0; margin: 0;
     display: flex; flex-direction: column; gap: 8px;
-    max-height: 8.5rem; overflow: auto; padding-right: 4px;
+    max-height: 9rem; overflow: auto; padding-right: 4px;
 }
 .reminder-item {
     display: flex; align-items: center; gap: 10px; line-height: 1.2;
-    font-size: .86rem; padding: 8px 10px; border-radius: 8px;
-    color: #455a64; border-left: 4px solid transparent; background: #f7f9f9;
+    font-size: .88rem; padding: 8px 10px; border-radius: 8px;
+    color: #23323a; border-left: 4px solid transparent; background: #f7f9f9;
 }
 .reminder-urgent { background: #fff6f6; border-left-color: #ff5252; color: #5a2b2b; font-weight: 700; }
 .reminder-prepare { background: #fffaf3; border-left-color: #fbc02d; color: #5b4b20; font-weight: 700; }
 .reminder-review { background: #f1fbf6; border-left-color: #43a047; color: #234a31; font-weight: 700; }
-.reminder-normal { background: #f4fbff; border-left-color: #03a9f4; color: #455a64; font-weight: 600; }
+.reminder-normal { background: #f4fbff; border-left-color: #03a9f4; color: #0b3b4a; font-weight: 700; }
 .reminder-icon { font-size: 1.1rem; width: 26px; text-align: center; }
 .reminder-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .reminder-empty {
-    background: #f1f5f9; color: #64748b; border-left-color: transparent; font-style: italic;
+    background: #f1f5f9; color: #1f2937; border-left-color: transparent; font-style: italic; font-weight: 600;
 }
 
-/* Nhãn/đếm */
 .info-row { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 100%; }
-.muted { color: #455a64; font-weight: 700; }
+.muted { color: #374151; font-weight: 700; }
 
-.status-pill { display: inline-block; padding: 8px 12px; border-radius: 999px; font-weight: 800; font-size: .85rem; }
-.status-pill.active   { background: #43a047; color: #fff; }
-.status-pill.upcoming {
-    background: #FACC15; /* vàng sáng hơn */
-    color: #1f2937;      /* slate-800 */
-    border: 1px solid rgba(0,0,0,.08);
-}
-.status-pill.finished { background: #9e9e9e; color: #fff; }
+.status-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; font-weight: 800; font-size: .92rem; }
+.status-pill.active   { background: #16a34a; color: #fff; }
+.status-pill.upcoming { background: #FACC15; color: #1f2937; border: 1px solid rgba(0,0,0,.08); }
+.status-pill.finished { background: #6b7280; color: #fff; }
+.status-icon { font-size: 1rem; }
 
-/* ======================== FOOTER ===================== */
 .card-footer {
     padding: 12px 18px; border-top: 1px solid #f5f5f5;
     display: flex; gap: 12px; justify-content: flex-end; align-items: center; background: #fff;
@@ -161,35 +153,28 @@
 }
 .footer-btn {
     --p-button-padding: .56rem .9rem; --p-button-border-radius: 10px;
-    font-size: .95rem; min-height: 40px; font-weight: 800;
-    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    font-size: .98rem; min-height: 44px; font-weight: 800;
+    display: inline-flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 14px;
 }
 .footer-btn.btn-primary {
-    background: var(--accent); color: var(--accentText);
-    border: 1px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    background: var(--accent); color: var(--accentText); border: 1px solid var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
 .footer-btn.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,.12); }
 .footer-btn.btn-secondary { background: transparent; border: 2px solid var(--accent); color: #111827; }
-.footer-btn:focus-visible { outline: 3px solid rgba(0,123,138,.25); outline-offset: 2px; }
+.footer-btn:focus-visible { outline: 3px solid rgba(0,123,138,.18); outline-offset: 2px; }
 
-/* ===================== SCROLLBARS ==================== */
 .card-body .desc::-webkit-scrollbar,
 .reminder-list::-webkit-scrollbar,
 .card-body .scrollable-left::-webkit-scrollbar { width: 8px; }
 .card-body .desc::-webkit-scrollbar-thumb,
 .reminder-list::-webkit-scrollbar-thumb,
 .card-body .scrollable-left::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 8px; }
-.card-body .desc::-webkit-scrollbar-track,
-.reminder-list::-webkit-scrollbar-track,
-.card-body .scrollable-left::-webkit-scrollbar-track { background: transparent; }
 
-/* ============ ACCESSIBILITY & MOTION (A11Y) ========== */
 @media (prefers-reduced-motion: reduce) {
     .filter-btn, .course-card { transition: none; }
     .course-card:hover { transform: none; }
 }
 
-/* ===================== MOBILE TWEAKS ================= */
 @media (max-width: 700px) {
     :root { --card-header-height: 104px; --card-footer-height: 62px; }
 
@@ -201,14 +186,17 @@
     .card-body.fixed-layout .body-left .reminder-list { max-height: none; }
     .card-body.fixed-layout .body-right { width: 100%; align-items: flex-start; padding-top: 4px; }
 
-    /* pill không rớt dòng; dễ đọc hơn */
     .status-pill { white-space: nowrap; }
-    .status-pill.upcoming { font-size: .82rem; padding: 8px 12px; }
+    .status-pill.upcoming { font-size: .86rem; padding: 8px 12px; }
 
-    /* footer nút full-width */
     .card-footer { gap: 10px; justify-content: stretch; }
     .card-footer .footer-btn { flex: 1 1 0%; width: 100%; justify-content: center; }
 }
 
-/* ================= SMALL TWEAKS (7→11) =============== */
-.reminders > strong { display: block; margin-bottom: 10px; } /* (7) tiêu đề cách list 10px */
+.reminders > strong { display: block; margin-bottom: 10px; }
+
+.p-segmentedbutton { max-width: 880px; }
+
+.card-footer { display:flex; gap:12px; justify-content:flex-end; align-items:center; }
+
+.p-tag { font-weight:700; }

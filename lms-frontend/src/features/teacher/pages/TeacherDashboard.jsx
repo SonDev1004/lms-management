@@ -1,5 +1,9 @@
+import TeacherCalendarView from '../components/TeacherCalendarView'
+
 const TeacherDashboard = () => {
-    return (<h1>Teacher Dashboard</h1>);
+    return (<h1>
+        <TeacherCalendarView />
+    </h1>);
 }
 
 export default TeacherDashboard;

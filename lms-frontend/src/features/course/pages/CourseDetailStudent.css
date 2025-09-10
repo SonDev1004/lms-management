@@ -34,7 +34,7 @@
     font-weight: 800;
     display: flex;
     gap: 8px;
-    align-items: center
+    align-items: center;
 }
 
 .cd-pills {
@@ -507,14 +507,17 @@
 }
 
 .activity-item {
+    position: relative;
     display: flex;
     gap: 12px;
     align-items: flex-start;
     padding: 12px;
+    padding-right: 88px;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 6px 12px rgba(12, 18, 30, 0.03);
     border: 1px solid #f1f5f9;
+    overflow: visible;
 }
 
 .activity-item + .activity-item {
@@ -522,25 +525,39 @@
 }
 
 .activity-badge-wrap {
-    width: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    display: block;
+    width: auto;
+    pointer-events: none;
 }
 
 .activity-badge {
+    pointer-events: auto;
     font-weight: 800;
-    padding: 6px 8px;
+    padding: 6px 10px;
     border-radius: 999px;
+    display: inline-block;
+    background: #10b981;
+    color: #fff;
+    font-size: 0.85rem;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(2,10,10,0.06);
 }
 
 .activity-spacer {
-    width: 64px;
+    width: 12px;
     height: 1px;
 }
 
 .activity-content {
     flex: 1;
+}
+
+.activity-item.recent {
+    border-left: none;
+    border-right: 4px solid #10b981;
 }
 
 .activity-top {
@@ -558,10 +575,6 @@
 .activity-time {
     font-size: 0.85rem;
     color: #64748b;
-}
-
-.activity-item.recent {
-    border-left: 4px solid #10b981;
 }
 
 .p-button:focus, .fileupload-basic .p-button:focus {
@@ -584,8 +597,13 @@
         font-size: 1.05rem;
     }
 
+    .activity-item {
+        padding-right: 72px;
+    }
+
     .activity-badge-wrap {
-        width: 48px;
+        right: 10px;
+        top: 10px;
     }
 }
 
@@ -613,7 +631,7 @@
     font-weight: 900;
     display: flex;
     gap: 8px;
-    align-items: center
+    align-items: center;
 }
 
 .cd-layout {
