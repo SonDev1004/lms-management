@@ -1,18 +1,20 @@
 package com.lmsservice.controller;
 
+import com.lmsservice.common.paging.PageResponse;
+import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import jakarta.validation.Valid;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.lmsservice.dto.request.CreateSubjectRequest;
 import com.lmsservice.dto.response.ApiResponse;
-import com.lmsservice.dto.response.SubjectResponse;
+import com.lmsservice.dto.response.subject.SubjectResponse;
 import com.lmsservice.service.SubjectService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,7 @@ public class SubjectController {
             summary = "Tạo môn học mới",
             description =
                     "API dùng để tạo một môn học mới, bao gồm tiêu đề, số buổi, học phí, số lượng học viên, mô tả và ảnh minh hoạ.")
-    // Todo: Duy chưa viết Swagger document
+
     public ResponseEntity<ApiResponse> createSubject(@Valid @RequestBody CreateSubjectRequest requestDTO) {
         SubjectResponse responseDTO = subjectService.createSubject(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -42,5 +44,19 @@ public class SubjectController {
                         .message("Subject created successfully")
                         .result(responseDTO)
                         .build());
+    }
+
+    @Operation(summary = "Lấy danh sách môn học", description = "Lọc / search / sort / paging các môn học")
+    @GetMapping("/all-subject")
+    public ResponseEntity<ApiResponse<PageResponse<SubjectResponse>>> getAllSubjects(
+            @ParameterObject SubjectFilterRequest f,
+            @ParameterObject @PageableDefault(size = 10, sort = "id")  Pageable pageable) {
+
+        var response = subjectService.getAllSubjects(f, pageable);
+        return ResponseEntity.ok(ApiResponse.<PageResponse<SubjectResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get all subjects successfully")
+                .result(response)
+                .build());
     }
 }
