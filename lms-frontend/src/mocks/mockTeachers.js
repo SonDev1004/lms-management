@@ -6,7 +6,7 @@ export const teachers = [
         code: 31,
         note: 4,
         is_full_time: 2,
-        user_id: 36,
+        user_id: 39,
     },
     {
         id: 2,

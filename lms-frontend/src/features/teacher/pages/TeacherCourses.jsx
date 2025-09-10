@@ -1,5 +1,7 @@
+import CourseHomeTeacher from "../../course/pages/CourseHomeTeacher"
+
 const TeacherCourses = () => {
-    return (<h1>Teacher Courses</h1>);
+    return (<CourseHomeTeacher />);
 }
 
 export default TeacherCourses;
