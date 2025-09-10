@@ -1,4 +1,4 @@
-package com.lmsservice.dto.response;
+package com.lmsservice.dto.response.subject;
 
 import java.math.BigDecimal;
 
