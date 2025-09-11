@@ -63,6 +63,7 @@ const LayoutHome = () => {
         {
             label: 'Môn học',
             icon: 'pi pi-graduation-cap',
+            command: () => navigate('/subjects'),
             items: [
                 [
                     { label: 'Kỹ năng', items: [
