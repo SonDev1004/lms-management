@@ -48,6 +48,8 @@ public class SecurityConfig {
         "/api/auth/logout**",
         "/api/files/**",
         "/api/program/**",
+        "/api/v1/payments/**",
+        "/api/subject/**",
         "/actuator/prometheus"
     };
 
@@ -66,6 +68,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URLS)
                         .permitAll()
+                        .requestMatchers("/api/v1/enrollments/**")
+                        .hasAnyRole("GUEST", "STUDENT")
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()
                         .requestMatchers("/api/user/profile")

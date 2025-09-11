@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { PanelMenu } from 'primereact/panelmenu';
-import roleToRoute from '../services/roleToRoute'
+import roleToRoute from '../app/router/roleToRoute.js'
 const LayoutNavbar = ({ role }) => {
     const navigate = useNavigate();
     const items = [

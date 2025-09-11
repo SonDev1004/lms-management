@@ -2,20 +2,32 @@ package com.lmsservice.service.impl;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateSubjectRequest;
-import com.lmsservice.dto.response.SubjectResponse;
+import com.lmsservice.dto.request.subject.SubjectFilterRequest;
+import com.lmsservice.dto.response.subject.SubjectResponse;
 import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.repository.SubjectRepository;
+import com.lmsservice.security.policy.SubjectPolicy;
 import com.lmsservice.service.SubjectService;
+import com.lmsservice.spec.SubjectSpecifications;
 
 import lombok.RequiredArgsConstructor;
 
@@ -82,6 +94,54 @@ public class SubjectServiceImpl implements SubjectService {
                 .description(savedSubject.getDescription())
                 .isActive(savedSubject.getIsActive())
                 .build();
+    }
+
+    private final SubjectPolicy subjectPolicy;
+
+    @Override
+    public PageResponse<SubjectResponse> getAllSubjects(SubjectFilterRequest f, Pageable pageable) {
+        pageable = sanitize(pageable);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean canViewAll = subjectPolicy.canViewAll(auth);
+
+        if (!canViewAll) {
+            if (f == null) f = new SubjectFilterRequest();
+            f.setIsActive(true);
+        }
+
+        var spec = SubjectSpecifications.from(f);
+        var page = subjectRepository.findAll(spec, pageable);
+
+        Page<SubjectResponse> dtoPage = page.map(s -> SubjectResponse.builder()
+                .id(s.getId())
+                .title(s.getTitle())
+                .code(s.getCode())
+                .sessionNumber(s.getSessionNumber())
+                .fee(s.getFee())
+                .image(s.getImage())
+                .minStudent(s.getMinStudent())
+                .maxStudent(s.getMaxStudent())
+                .description(s.getDescription())
+                .isActive(s.getIsActive())
+                .build());
+        return PageResponse.from(dtoPage);
+    }
+
+    private static final List<String> SUBJECT_SORTABLE =
+            List.of("title", "code", "fee", "sessionNumber", "isActive", "id");
+
+    private Pageable sanitize(Pageable pageable) {
+        Sort safeSort = Sort.unsorted();
+        if (pageable.getSort().isSorted()) {
+            List<Sort.Order> safe = new ArrayList<>();
+            for (Sort.Order o : pageable.getSort()) {
+                if (SUBJECT_SORTABLE.contains(o.getProperty())) {
+                    safe.add(o);
+                }
+            }
+            if (!safe.isEmpty()) safeSort = Sort.by(safe);
+        }
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), safeSort);
     }
 
     private String generateCode() {
