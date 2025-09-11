@@ -1,6 +1,9 @@
+import CourseList from "../../course/components/CourseList";
+
+
 const AdminCourses = () => {
     return (<>
-        <h1>This is Admin Course</h1>
+        return <CourseList role="admin" />;
     </>);
 }
 

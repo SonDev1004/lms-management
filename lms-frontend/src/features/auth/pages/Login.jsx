@@ -11,7 +11,7 @@ import roleToRoute from '@/app/router/roleToRoute.js';
 
 
 import bg from 'assets/images/bg-login.png';
-import {AppUrls} from "@/shared/constants/index.js";
+import { AppUrls } from "@/shared/constants/index.js";
 
 const Login = () => {
     // States, hooks and refs

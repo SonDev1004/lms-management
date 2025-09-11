@@ -27,7 +27,6 @@ public final class PermissionNames {
 
     // Program permissions
     public static final String PROGRAM_VIEW_ALL = "PROGRAM_VIEW_ALL";
-
-    // Ví dụ thêm (sau này):
-    // public static final String PROGRAM_SUBJECT_ASSIGN = "PROGRAM_SUBJEC_
+    //Subject permissions
+    public static final String SUBJECT_VIEW_ALL = "SUBJECT_VIEW_ALL";
 }
