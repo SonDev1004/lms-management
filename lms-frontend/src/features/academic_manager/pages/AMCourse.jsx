@@ -1,5 +1,7 @@
+import CourseList from "../../course/components/CourseList";
+
 const AMCourse = () => {
-    return (<h1>Course Management</h1>);
+    return (<CourseList role="academic_manager" />);
 }
 
 export default AMCourse;
