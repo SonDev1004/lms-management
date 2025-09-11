@@ -13,11 +13,11 @@ export default function CourseCard({ course }) {
     const goDetail = (e) => {
         e?.stopPropagation?.();
         // truyền state để CourseDetail render nhanh (tuỳ bạn)
-        navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`, { state: { course: c } });
+        navigate(`/teacher/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`, { state: { course: c } });
     };
     const goMaterials = (e) => {
         e?.stopPropagation?.();
-        navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}#materials`, { state: { course: c } });
+        navigate(`/teacher/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}#materials`, { state: { course: c } });
     };
 
     const headerStyle = { background: c.subjectColor, color: c.accentText };
@@ -25,9 +25,9 @@ export default function CourseCard({ course }) {
     const footer = (
         <div className="card-footer">
             <Button label="Tài liệu" icon="pi pi-folder" className="footer-btn btn-tooltip btn-primary"
-                    data-pr-tooltip="Tài liệu" aria-label={`Tài liệu ${c.title}`} onClick={goMaterials} />
+                data-pr-tooltip="Tài liệu" aria-label={`Tài liệu ${c.title}`} onClick={goMaterials} />
             <Button label="Chi tiết" icon="pi pi-info-circle" className="footer-btn btn-tooltip btn-secondary"
-                    data-pr-tooltip="Chi tiết" aria-label={`Chi tiết ${c.title}`} onClick={goDetail} />
+                data-pr-tooltip="Chi tiết" aria-label={`Chi tiết ${c.title}`} onClick={goDetail} />
         </div>
     );
 
