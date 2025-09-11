@@ -1,0 +1,72 @@
+:root{
+    --bg:#f3f6f8;
+    --card-bg:#ffffff;
+    --muted:#6b7280;
+    --accent:#3b82f6;
+    --accent-2:#00bfa5;
+    --success:#3aa76d;
+    --danger:#ff7043;
+    --soft:#eef4fb;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-pill:999px;
+    --shadow-1: 0 6px 18px rgba(28,43,54,0.06);
+    --shadow-2: 0 8px 24px rgba(27,40,59,0.06);
+    --gap:1rem;
+}
+
+.sd-container { padding: 2rem; background: var(--bg); min-height: 100vh; font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+
+.sd-header { color: #586370; font-weight: 800; margin-bottom: 1rem; letter-spacing:0.4px; }
+
+.sd-grid { display: grid; grid-template-columns: 4fr 1fr; gap: 1.25rem; align-items:start; }
+
+@media (max-width: 1024px){ .sd-grid { grid-template-columns: 1fr; } }
+
+.sd-card { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); border: 1px solid rgba(20,34,56,0.04); }
+.sd-small-card { padding: 1rem; border-radius: var(--radius-md); }
+.sd-compact { padding: .9rem; }
+
+.summary-pill { display:inline-flex; align-items:center; gap:0.6rem; padding:0.55rem 0.9rem; border-radius:var(--radius-pill); background:var(--card-bg); border:1px solid rgba(10,22,34,0.04); box-shadow: none; font-size:0.95rem; color:#111827; }
+.summary-pill .pi { font-size:1.05rem; color:var(--muted); }
+
+.course-card { padding: 1.6rem; border-radius: var(--radius-lg); }
+.course-top { display:flex; gap:1rem; align-items:flex-start; }
+.course-logo { width:84px; height:44px; object-fit:contain; border-radius:8px; background:#fafafa; }
+.course-title { font-size:1.4rem; font-weight:800; color:#0f1724; margin:0.3rem 0 0.6rem; }
+.meta-row { color:var(--muted); display:flex; gap:1rem; align-items:center; margin-top:6px; }
+.meta-row i { color:var(--muted); }
+
+.tag-day { padding:0.45rem 0.7rem; border-radius:10px; border:1px solid rgba(22,32,44,0.04); background:var(--card-bg); display:inline-block; margin-right:0.5rem; font-weight:600; color:#111827; }
+
+.next-session { background:var(--soft); padding:1rem; border-radius:10px; margin-top:1rem; }
+.next-session .label { font-weight:700; color:#1f3a8a; }
+.next-session .line { display:flex; justify-content:space-between; margin-top:.6rem; color:var(--muted); }
+
+.progress-track { display:flex; gap:8px; align-items:center; margin-top:1.15rem; }
+.progress-seg { width: calc((100% - 60px) / 12); height:10px; background:transparent; border-radius:8px; overflow:hidden; border: 1px solid rgba(15,23,36,0.04); }
+.progress-seg .fill { height:100%; width:0%; background:var(--success); border-radius:8px; transition: width .45s ease; }
+.progress-counter { min-width:66px; text-align:right; color:var(--muted); font-weight:600; }
+
+.assignment-card { border-radius:14px; padding:1rem; width:220px; box-shadow: var(--shadow-1); border:1px solid rgba(10,22,34,0.03); }
+.assignment-card .status-dot { width:10px; height:10px; border-radius:50%; border:2px solid var(--accent); }
+.assignment-card .btn { margin-top:0.6rem; }
+
+.sidebar-card { padding:1rem; border-radius:12px; margin-bottom:1rem; box-shadow: var(--shadow-1); }
+.sidebar-card .muted { color:var(--muted); font-size:0.95rem; }
+.sidebar-card .title { font-weight:800; font-size:1rem; }
+
+.profile-progress { margin-top:10px; }
+.profile-progress .p-progressbar { height:0.8rem; border-radius:8px; }
+
+.circular-box { min-width:68px; text-align:center; }
+.circular-number { font-weight:800; font-size:1.05rem; }
+
+.suggest-card { display:flex; gap:1rem; align-items:center; border-radius:12px; padding:0.9rem; }
+.suggest-ico { width:72px; height:72px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; }
+
+.muted-2 { color: #94a3b8; }
+.section-title { color:#546477; font-weight:700; margin-bottom:0.6rem; }
+.sd-card:hover { transform: translateY(-2px); transition: transform .18s ease; }
+
+@media (max-width: 640px){ :root{ --gap: .6rem } .course-title { font-size:1.05rem; } .course-logo { width:64px; height:34px; } }
