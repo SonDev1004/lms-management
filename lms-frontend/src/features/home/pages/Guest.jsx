@@ -1,18 +1,17 @@
 import Banner from "./Banner.jsx";
 import LayoutHomeFooter from "layouts/home/LayoutHomeFooter.jsx";
-import CourseList from "./CourseList.jsx";
-import ProgramPanel from "../../program/pages/ProgramPanel.jsx";
 import Introduce from "./Introduce.jsx";
-import { featuredSubjects } from "@/mocks/homeDataMock.js";
 
 import SubjectCard from "@/features/home/component/SubjectCard.jsx";
 
 import { getListProgram } from "@/features/program/api/programService.js";
 import { useEffect, useState } from "react";
 import ProgramCard from "@/features/home/component/ProgramCard.jsx";
+import {getListSubject} from "@/features/subject/api/subjectService.js";
 
 export const Guest = () => {
   const [programs, setPrograms] = useState([]);
+    const [subjects, setSubject] = useState([])
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,7 +24,18 @@ export const Guest = () => {
     };
     fetchData();
   }, []);
-
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { items } = await getListSubject();
+                const shuffled = [...items].sort(() => 0.5 - Math.random());
+                setSubject(shuffled.slice(0, 3));
+            } catch (err) {
+                console.error("Lỗi khi load subject:", err);
+            }
+        };
+        fetchData();
+    }, []);
   return (
     <>
       <Banner />
@@ -48,7 +58,7 @@ export const Guest = () => {
             Môn Học Nổi Bật
           </h2>
           <div className="grid">
-            {featuredSubjects.map((s) => (
+            {subjects.map((s) => (
               <div key={s.id} className="col-12 md:col-6 lg:col-4">
                 <SubjectCard subject={s} />
               </div>
