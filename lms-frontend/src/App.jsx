@@ -16,6 +16,7 @@ import StudentCourses from "@/features/student/pages/StudentCourses.jsx";
 import StudentSchedule from "@/features/student/pages/StudentSchedule.jsx";
 import StudentEnrollment from "@/features/student/pages/StudentEnrollment.jsx";
 import StudentScore from "@/features/student/pages/StudentScore.jsx";
+import StudentList from "@/features/student/components/StudentList.jsx";
 
 import LayoutTeacher from "layouts/teacher/LayoutTeacher";
 import TeacherDashboard from "@/features/teacher/pages/TeacherDashboard.jsx";
@@ -104,6 +105,7 @@ const App = () => {
           <Route path="teacher" element={<LayoutTeacher />}>
             <Route index element={<TeacherDashboard />} />
             <Route path="courses" element={<TeacherCourses />} />
+            <Route path="courses/:courseId/student-list" element={<StudentList />} />
             <Route path="schedule" element={<TeacherSchedule />} />
             <Route path="notification" element={<TeacherNotification />} />
             <Route path="profile" element={<TeacherProfile />} />
