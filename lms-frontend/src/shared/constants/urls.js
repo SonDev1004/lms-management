@@ -19,4 +19,7 @@ export default {
 
     //program
     listProgram: `${rootAPI}/program/all-program`,
+
+    //subject
+    listSubject: `${rootAPI}/subject/all-subject`,
 }
