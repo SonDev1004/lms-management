@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.lmsservice.util.CourseStatus;
 import org.springframework.stereotype.Component;
 
 import com.lmsservice.dto.response.course.StudentCourse;
@@ -60,14 +61,14 @@ public class StudentCourseMapper {
         }
 
         // ===== Trạng thái lớp =====
-        Integer status = course.getStatus();
-        String statusText =
-                switch (status == null ? -1 : status) {
-                    case 0 -> "Sắp khai giảng";
-                    case 1 -> "Đang học";
-                    case 2 -> "Đã học";
-                    default -> "Khác";
-                };
+        CourseStatus statusEnum = course.getStatus();
+        Integer status = (statusEnum != null ? statusEnum.getCode() : null);
+        String statusText = (statusEnum == null) ? "Khác" : switch (statusEnum) {
+            case DRAFT, SCHEDULED -> "Sắp khai giảng";
+            case ENROLLING, WAITLIST -> "Đang tuyển sinh";
+            case IN_PROGRESS -> "Đang học";
+            case COMPLETED -> "Đã học";
+        };
 
         // ===== Build DTO =====
         return StudentCourse.builder()

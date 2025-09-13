@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lmsservice.util.CourseStatus;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -31,9 +32,16 @@ public class Course extends EntityAbstract {
     Integer plannedSession;
 
     @Column(name = "status", columnDefinition = "int default 0", nullable = false)
-    Integer status; // 0=PENDING, 1=ONGOING, 2=FINISHED
+    CourseStatus status;
 
     LocalDate startDate;
+
+    @Column(name = "track_code", length = 50)
+    private String trackCode;
+
+    @Column(name = "curriculum_order")
+    private Integer curriculumOrder;
+
     // Subject
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
@@ -47,6 +55,11 @@ public class Course extends EntityAbstract {
 
     @OneToMany(mappedBy = "course")
     List<Feedback> feedbacks = new ArrayList<>();
+
+    //program
+    @ManyToOne()
+    @JoinColumn(name = "program_id")
+    private Program program;
 
     // Teacher
     @ManyToOne

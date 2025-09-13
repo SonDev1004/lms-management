@@ -10,12 +10,20 @@ import com.lmsservice.entity.Curriculum;
 
 @Repository
 public interface CurriculumRepository extends JpaRepository<Curriculum, Long> {
-    boolean existsByProgramIdAndSubjectId(Long subjectId, Long programId);
+    // tồn tại cặp (program, subject) ?
+    boolean existsByProgram_IdAndSubject_Id(Long programId, Long subjectId);
 
-    boolean existsByProgramIdAndOrderNumber(Long programId, Integer orderNumber);
+    // tồn tại orderNumber trong 1 program ?
+    boolean existsByProgram_IdAndOrderNumber(Long programId, Integer orderNumber);
 
-    List<Curriculum> findByProgramId(Long programId);
+    // lấy list curriculum theo program, có sắp xếp
+    List<Curriculum> findByProgram_IdOrderByOrderNumberAsc(Long programId);
 
-    @Query("SELECT MAX(c.orderNumber) FROM Curriculum c WHERE c.program.id = :programId")
+    // nếu cần list không sắp xếp:
+    List<Curriculum> findByProgram_Id(Long programId);
+
+    @Query("select max(c.orderNumber) from Curriculum c where c.program.id = :programId")
     Integer findMaxOrderNumberByProgramId(Long programId);
+
+
 }
