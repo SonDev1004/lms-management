@@ -1,4 +1,6 @@
 export const fetchAssignments = (courseId, studentId) => {
+    void courseId;
+    void studentId;
     const assignments = [
         {id: 'a1', title: 'Reading - Week 2', due: '2025-08-10', studentStatus: 'not_submitted'},
         {id: 'a2', title: 'Writing Task 1', due: '2025-08-05', studentStatus: 'graded', grade: 7.5},

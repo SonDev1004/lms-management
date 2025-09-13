@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import {Avatar} from 'primereact/avatar';
 import {Button} from 'primereact/button';
@@ -14,7 +14,6 @@ import './CourseDetailStudent.css';
 
 export default function CourseDetailStudent() {
     const {courseId, studentId} = useParams();
-    const toast = useRef(null);
 
     const course = {
         id: courseId || 'c1',

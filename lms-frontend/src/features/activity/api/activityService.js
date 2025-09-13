@@ -1,4 +1,6 @@
 export const fetchActivities = (courseId, studentId) => {
+    void courseId;
+    void studentId;
     const activities = [
         {id: 'act1', date: new Date(Date.now() - 2 * 60 * 60 * 1000), text: 'GV đã tải lên: LessonView 02 - Reading'},
         {id: 'act2', date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000), text: 'GV đã bình luận: Writing Task 1'},

@@ -1,10 +1,11 @@
+// features/assignment/components/AssignmentList.jsx
 import React from 'react';
 import classNames from 'classnames';
 import {FileUpload} from 'primereact/fileupload';
 import {Button} from 'primereact/button';
 import {Tag} from 'primereact/tag';
 
-const AssignmentList = ({assignments, filteredAssignments, getAssignmentStatus, onUploadHandler, onViewGrade}) => {
+const AssignmentList = ({ filteredAssignments, getAssignmentStatus, onUploadHandler, onViewGrade}) => {
     const assignmentIcon = (a) => {
         const t = (a.subject || a.title || '').toLowerCase();
         if (t.includes('reading')) return '📘';

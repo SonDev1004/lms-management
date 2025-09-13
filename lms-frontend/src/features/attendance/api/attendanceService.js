@@ -1,4 +1,6 @@
 export const fetchAttendanceHistory = (courseId, studentId) => {
+    void courseId;
+    void studentId;
     const history = [
         {session: 1, date: '2025-06-01', present: true},
         {session: 2, date: '2025-06-03', present: true},

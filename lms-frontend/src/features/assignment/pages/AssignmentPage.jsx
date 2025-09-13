@@ -2,7 +2,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Button} from 'primereact/button';
 import {Toast} from 'primereact/toast';
 import {Dialog} from 'primereact/dialog';
-import {Tag} from 'primereact/tag';
+// import {Tag} from 'primereact/tag';
 import classNames from 'classnames';
 import AssignmentList from '../components/AssignmentList';
 import {fetchAssignments} from '../api/assignmentService';
@@ -110,11 +110,11 @@ const AssignmentPage = ({course, student}) => {
             </div>
 
             <AssignmentList
-                assignments={assignments}
                 filteredAssignments={filteredAssignments}
                 getAssignmentStatus={getAssignmentStatus}
                 onUploadHandler={onUploadHandler}
                 onViewGrade={onViewGrade}
+                formatDate={formatDate}
             />
 
             <Dialog header={`Điểm: ${gradeDialog.assignment?.title || ''}`} visible={gradeDialog.visible} modal
