@@ -10,12 +10,13 @@ import {Tooltip} from 'primereact/tooltip';
 import {Card} from 'primereact/card';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
-import {FileUpload} from 'primereact/fileupload';
 import {Badge} from 'primereact/badge';
-import {Tag} from 'primereact/tag';
-import {Toast} from 'primereact/toast';
 import './CourseDetailStudent.css';
+import {Toast} from "primereact/toast";
+import {Tag} from "primereact/tag";
 import LessonPage from '@/features/lesson/pages/LessonPage.jsx';
+import AssignmentPage from '@/features/assignment/pages/AssignmentPage.jsx';
+
 
 export default function CourseDetailStudent() {
     const {courseId, studentId} = useParams();
@@ -257,101 +258,8 @@ export default function CourseDetailStudent() {
                                 <LessonPage />
                             </TabPanel>
 
-                            <TabPanel header={<span className="tab-header">📝<span
-                                className="tab-title">Bài tập</span></span>}>
-                                <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap" style={{gap: 12}}>
-                                    <div className="small-muted">Bộ lọc:</div>
-                                    {['all', 'due_soon', 'overdue', 'not_submitted', 'submitted', 'graded'].map((k) => (
-                                        <Button
-                                            key={k}
-                                            className={classNames('assign-filter-btn', {'p-button-text': assignmentFilter !== k})}
-                                            onClick={() => setAssignmentFilter(k)}
-                                            label={
-                                                k === 'all' ? 'Tất cả' :
-                                                    k === 'due_soon' ? 'Sắp hết hạn' :
-                                                        k === 'overdue' ? 'Quá hạn' :
-                                                            k === 'not_submitted' ? 'Chưa nộp' :
-                                                                k === 'submitted' ? 'Đã nộp' : 'Đã chấm'
-                                            }
-                                        />
-                                    ))}
-                                </div>
-
-                                <div className="assignments-table p-mt-2">
-                                    <ul className="assignments-list" role="list">
-                                        {filteredAssignments.map((row) => {
-                                            const s = getAssignmentStatus(row);
-                                            const diff = daysDiff(row.due);
-                                            const overdue = diff != null && diff < 0;
-                                            return (
-                                                <li key={row.id}
-                                                    className={classNames('assignment-row', {overdue: overdue})}
-                                                    tabIndex={0} aria-label={`Bài tập ${row.title}`}>
-                                                    <div className="ar-col ar-col--title">
-                                                        <div className="assign-title">
-                                                            <span className="assign-icon"
-                                                                  aria-hidden>{assignmentIcon(row)}</span>
-                                                            <span className="assign-title-text">{row.title}</span>
-                                                        </div>
-                                                        <div
-                                                            className="assign-sub small-muted">{row.subject || ''}</div>
-                                                    </div>
-
-                                                    <div className="ar-col ar-col--due">
-                                                        <div className="due-date">{formatDate(row.due)}</div>
-                                                        <div className="due-meta small-muted">
-                                                            {(() => {
-                                                                if (diff == null) return '';
-                                                                if (diff < 0) return `Quá hạn ${Math.abs(diff)} ngày`;
-                                                                if (diff === 0) return 'Hôm nay';
-                                                                return `Còn ${diff} ngày`;
-                                                            })()}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="ar-col ar-col--status">
-                                                        {assignmentStatusBody(row)}
-                                                    </div>
-                                                    <div className="ar-col ar-col--action">
-                                                        {(s.kind === 'pending' || s.kind === 'due_soon' || s.kind === 'overdue') && (
-                                                            <div className="action-upload">
-                                                                <FileUpload
-                                                                    mode="basic"
-                                                                    name="file"
-                                                                    customUpload
-                                                                    accept=".pdf,.doc,.docx"
-                                                                    maxFileSize={20 * 1024 * 1024}
-                                                                    chooseLabel="Nộp"
-                                                                    uploadHandler={(e) => onUploadHandler(e, row.id)}
-                                                                    multiple={false}
-                                                                    auto={true}
-                                                                    className="btn-upload"
-                                                                />
-                                                            </div>
-                                                        )}
-
-                                                        {s.kind === 'submitted' && (
-                                                            <Button label="Đã nộp" icon="pi pi-check" disabled
-                                                                    className="btn-submitted"/>
-                                                        )}
-
-                                                        {s.kind === 'graded' && (
-                                                            <Button className="p-button-text btn-view-grade"
-                                                                    label={`Xem điểm ${row.grade}`}
-                                                                    onClick={() => setGradeDialog({
-                                                                        visible: true,
-                                                                        assignment: row
-                                                                    })}/>
-                                                        )}
-                                                    </div>
-                                                </li>
-                                            );
-                                        })}
-                                        {filteredAssignments.length === 0 &&
-                                            <li className="assign-empty small-muted">Không có bài tập phù hợp bộ
-                                                lọc.</li>}
-                                    </ul>
-                                </div>
+                            <TabPanel header={<span className="tab-header">📝<span className="tab-title">Bài tập</span></span>}>
+                                <AssignmentPage course={course} student={student} />
                             </TabPanel>
 
                             <TabPanel header={<span className="tab-header">🗓️<span className="tab-title">Lịch sử điểm danh</span></span>}>
