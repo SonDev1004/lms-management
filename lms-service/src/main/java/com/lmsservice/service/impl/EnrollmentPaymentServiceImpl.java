@@ -2,8 +2,10 @@ package com.lmsservice.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,4 +144,17 @@ public class EnrollmentPaymentServiceImpl implements EnrollmentPaymentService {
         pending.setStatus("CANCELLED");
         pendingRepo.save(pending);
     }
+    // Timeout: chuyển PENDING sang EXPIRED sau 15 phút
+    @Scheduled(fixedRate = 60000)
+    @Override// chạy mỗi phút
+    @Transactional
+    public void expirePendingEnrollments() {
+        LocalDateTime expiryTime = LocalDateTime.now().minusMinutes(15);
+        List<PendingEnrollment> expired = pendingRepo.findAllByStatusAndCreatedAtBefore("PENDING", expiryTime);
+        expired.forEach(p -> {
+            p.setStatus("EXPIRED");
+            pendingRepo.save(p);
+        });
+    }
+
 }
