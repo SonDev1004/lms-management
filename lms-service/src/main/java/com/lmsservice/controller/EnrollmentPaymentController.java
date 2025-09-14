@@ -80,10 +80,33 @@ public class EnrollmentPaymentController {
 
         String paymentUrl = vnpayService.createPaymentUrl(amount, orderInfo, txnRef, ipAddr);
 
+        CreatePaymentResponse response = CreatePaymentResponse.builder()
+                .paymentUrl(paymentUrl)
+                .txnRef(txnRef)
+                .id(pending.getId())
+                .status(pending.getStatus())
+                .totalFee(totalFee)
+                .amount(amount)
+                .currency("VND")
+                .createdAt(pending.getCreatedAt())
+                .expiresAt(pending.getCreatedAt().plusMinutes(vnpayProps.getTimeoutMinutes()))
+                .timeoutSeconds(vnpayProps.getTimeoutMinutes() * 60)
+                .userId(userId)
+                .programName(req.getProgramId() != null
+                        ? programRepo.findById(req.getProgramId()).map(Program::getTitle).orElse(null)
+                        : null)
+                .subjectName(req.getSubjectId() != null
+                        ? subjectRepo.findById(req.getSubjectId()).map(Subject::getTitle).orElse(null)
+                        : null)
+                .orderInfo(orderInfo)
+                .locale("vn")
+                .build();
+
         return ApiResponse.<CreatePaymentResponse>builder()
                 .message("Tạo link thanh toán thành công")
-                .result(new CreatePaymentResponse(paymentUrl, txnRef))
+                .result(response)
                 .build();
+
     }
 
     // ----------------------------
