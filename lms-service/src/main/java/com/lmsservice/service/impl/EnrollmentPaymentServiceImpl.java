@@ -1,21 +1,19 @@
 package com.lmsservice.service.impl;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.lmsservice.entity.*;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.repository.*;
 import com.lmsservice.service.EnrollmentPaymentService;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -144,7 +142,7 @@ public class EnrollmentPaymentServiceImpl implements EnrollmentPaymentService {
         pending.setStatus("CANCELLED");
         pendingRepo.save(pending);
     }
-    // Timeout: chuyển PENDING sang EXPIRED sau 15 phút
+    // Timeout: chuyển PENDING sang EXPIRED sau 30 phút
     @Scheduled(fixedRate = 60000)
     @Override// chạy mỗi phút
     @Transactional

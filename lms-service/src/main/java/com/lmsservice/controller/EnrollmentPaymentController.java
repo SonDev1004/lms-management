@@ -18,14 +18,11 @@ import com.lmsservice.service.VnpayService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -114,12 +111,18 @@ public class EnrollmentPaymentController {
     // ----------------------------
     @GetMapping("/status/{txnRef}")
     @Operation(summary = "Lấy trạng thái giao dịch theo txnRef")
-    public ResponseEntity<?> getStatus(@PathVariable String txnRef) {
+    public ApiResponse<?> getStatus(@PathVariable String txnRef) {
         return pendingRepo.findByTxnRef(txnRef)
-                .map(p -> ResponseEntity.ok(Map.of(
-                        "txnRef", txnRef,
-                        "status", p.getStatus()
-                )))
-                .orElse(ResponseEntity.status(404).body(Map.of("message", "Not found")));
+                .map(p -> ApiResponse.builder()
+                        .message("Found")
+                        .result(Map.of(
+                                "txnRef", txnRef,
+                                "status", p.getStatus()
+                        ))
+                        .build())
+                .orElse(ApiResponse.builder()
+                        .message("Not found")
+                        .result(null)
+                        .build());
     }
 }

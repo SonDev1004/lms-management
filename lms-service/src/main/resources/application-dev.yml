@@ -54,3 +54,6 @@ vnpay:
   payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   returnUrl: ${RETURN_URL:http://localhost:8081/api/v1/payments/vnpay-return}
   ipnUrl: ${IPN_URL:http://localhost:8081/api/v1/payments/vnpay-ipn}
+
+client:
+  domain: ${DOMAIN:http://localhost:5173}
