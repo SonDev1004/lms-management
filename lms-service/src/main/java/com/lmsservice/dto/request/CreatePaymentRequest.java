@@ -20,13 +20,4 @@ public class CreatePaymentRequest {
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than 0")
     BigDecimal amount;
-
-    // Thêm các field hữu ích cho FE
-    String description;
-    String returnUrl; // FE có thể custom return URL
-    String cancelUrl; // URL khi user cancel
-
-    // Metadata cho tracking
-    String userAgent;
-    String ipAddress;
 }
