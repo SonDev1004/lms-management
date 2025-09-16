@@ -22,4 +22,8 @@ export default {
 
     //subject
     listSubject: `${rootAPI}/subject/all-subject`,
+
+    //payment
+    payment: `${rootAPI}/v1/enrollments/create-payment`,
+    vnpayReturn:(txnRef) => `${rootAPI}/v1/payments/vnpay-return/${txnRef}`,
 }

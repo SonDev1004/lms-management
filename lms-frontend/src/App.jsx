@@ -60,6 +60,10 @@ import ThankYou from "@/features/enrollment/pages/ThankYou.jsx";
 import ProgramList from "@/features/program/pages/ProgramList.jsx";
 import CourseList from "@/features/home/pages/CourseList.jsx";
 import SubjectList from "@/features/subject/pages/SubjectList.jsx";
+import DangKyHoc from "@/payment/DangKyHoc.jsx";
+import PaymentSuccess from "@/payment/PaymentSuccess.jsx";
+import PaymentFailed from "@/payment/PaymentFailed.jsx";
+import PaymentCancelled from "@/payment/PaymentCancelled.jsx";
 
 const App = () => {
   return (
@@ -77,6 +81,10 @@ const App = () => {
           <Route path="subjects" element={<SubjectList />} />
           <Route path="dang-ky" element={<EnrollmentStepper />} />
           <Route path="cam-on" element={<ThankYou />} />
+          <Route path="payment" element={<DangKyHoc />} />
+          <Route path="payment-success" element={<PaymentSuccess />} />
+          <Route path="payment-failed" element={<PaymentFailed />} />
+          <Route path="payment-cancelled" element={<PaymentCancelled />} />
         </Route>
 
         {/* Program Route (ngoài student) */}
