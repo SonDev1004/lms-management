@@ -18,8 +18,8 @@ import axiosClient from '@/shared/api/axiosClient.js';
 import {AppUrls} from "@/shared/constants/index.js";
 
 const genderOptions = [
-    {label: 'Male', value: true},
-    {label: 'Female', value: false}
+    {label: 'Nam', value: true},
+    {label: 'Nữ', value: false}
 ];
 
 export default function UserProfile() {
@@ -43,8 +43,8 @@ export default function UserProfile() {
                 console.error('Lỗi khi gọi API:', error);
                 toast.current?.show({
                     severity: 'error',
-                    summary: 'Error',
-                    detail: 'Không lấy được profile',
+                    summary: 'Lỗi',
+                    detail: 'Không lấy được hồ sơ',
                     life: 3000
                 });
             })
@@ -56,17 +56,17 @@ export default function UserProfile() {
     const labelForKey = (key) => {
         switch (key) {
             case 'firstName':
-                return 'First name';
+                return 'Tên';
             case 'lastName':
-                return 'Last name';
+                return 'Họ';
             case 'dateOfBirth':
-                return 'Date of Birth';
+                return 'Ngày sinh';
             case 'gender':
-                return 'Gender';
+                return 'Giới tính';
             case 'address':
-                return 'Address';
+                return 'Địa chỉ';
             case 'phone':
-                return 'Phone';
+                return 'Điện thoại';
             default:
                 return key;
         }
@@ -80,20 +80,20 @@ export default function UserProfile() {
 
     const getValidationError = (key, value) => {
         if (key === 'phone') {
-            if (!value || String(value).trim().length === 0) return 'Phone cannot be empty.';
-            if (!isPhoneValid(value)) return 'Phone must contain 8–15 digits, may include leading +.';
+            if (!value || String(value).trim().length === 0) return 'Số điện thoại không được để trống.';
+            if (!isPhoneValid(value)) return 'Số điện thoại phải có 8–15 chữ số, có thể bắt đầu bằng +.';
             return null;
         }
         if (key === 'dateOfBirth') {
-            if (!value) return 'Please select a date.';
+            if (!value) return 'Vui lòng chọn ngày.';
             return null;
         }
         if (key === 'gender') {
-            if (value !== true && value !== false) return 'Please select gender.';
+            if (value !== true && value !== false) return 'Vui lòng chọn giới tính.';
             return null;
         }
         if (value === null || value === undefined || String(value).trim().length === 0) {
-            return `${labelForKey(key)} cannot be empty.`;
+            return `${labelForKey(key)} không được để trống.`;
         }
         return null;
     };
@@ -102,7 +102,7 @@ export default function UserProfile() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 if (key === 'phone' && !isPhoneValid(value)) {
-                    reject(new Error('Invalid phone format on server.'));
+                    reject(new Error('Định dạng số điện thoại không hợp lệ (máy chủ).'));
                 } else {
                     resolve({ok: true, key, value});
                 }
@@ -120,13 +120,13 @@ export default function UserProfile() {
         if (saving) return;
         setEditingField(null);
         setTempValue(null);
-        toast.current?.show({severity: 'info', summary: 'Cancelled', detail: 'Edit cancelled', life: 1500});
+        toast.current?.show({severity: 'info', summary: 'Đã huỷ', detail: 'Đã hủy chỉnh sửa', life: 1500});
     };
 
     const saveEdit = async (key) => {
         const error = getValidationError(key, tempValue);
         if (error) {
-            toast.current?.show({severity: 'warn', summary: 'Invalid', detail: error, life: 3500});
+            toast.current?.show({severity: 'warn', summary: 'Không hợp lệ', detail: error, life: 3500});
             return;
         }
 
@@ -140,18 +140,18 @@ export default function UserProfile() {
                 setTempValue(null);
                 toast.current?.show({
                     severity: 'success',
-                    summary: 'Saved',
-                    detail: `${labelForKey(key)} updated.`,
+                    summary: 'Đã lưu',
+                    detail: `${labelForKey(key)} đã được cập nhật.`,
                     life: 3000
                 });
             } else {
-                toast.current?.show({severity: 'error', summary: 'Error', detail: 'Save failed', life: 4000});
+                toast.current?.show({severity: 'error', summary: 'Lỗi', detail: 'Lưu thất bại', life: 4000});
             }
         } catch (err) {
             toast.current?.show({
                 severity: 'error',
-                summary: 'Error',
-                detail: err?.message || 'Save failed',
+                summary: 'Lỗi',
+                detail: err?.message || 'Lưu thất bại',
                 life: 4000
             });
         } finally {
@@ -169,7 +169,7 @@ export default function UserProfile() {
                     <Button
                         icon="pi pi-check"
                         className="p-button-rounded"
-                        aria-label="Save"
+                        aria-label="Lưu"
                         onClick={() => saveEdit(key)}
                         disabled={disabled}
                         loading={saving}
@@ -178,7 +178,7 @@ export default function UserProfile() {
                     <Button
                         icon="pi pi-times"
                         className="p-button-rounded p-button-secondary"
-                        aria-label="Cancel"
+                        aria-label="Hủy"
                         onClick={cancelEdit}
                         disabled={saving}
                     />
@@ -191,7 +191,7 @@ export default function UserProfile() {
             <Button
                 icon="pi pi-pencil"
                 className="p-button-rounded p-button-text edit-right"
-                aria-label={`Edit ${key}`}
+                aria-label={`Chỉnh sửa ${labelForKey(key)}`}
                 onClick={() => startEdit(key)}
                 disabled={editDisabled}
             />
@@ -228,7 +228,7 @@ export default function UserProfile() {
                         <div className="user-role-wrap p-mt-2">
                             <div className="role-badge p-d-inline-flex p-ai-center">
                                 <span className="role-icon" aria-hidden>🎓</span>
-                                <span className="role-text">{(form?.role || 'Unknown').toUpperCase()}</span>
+                                <span className="role-text">{(form?.role || 'Không xác định').toUpperCase()}</span>
                             </div>
                         </div>
                     </div>
@@ -239,10 +239,10 @@ export default function UserProfile() {
                 <div className="p-grid p-nogutter p-align-start p-justify-between">
                     {/* Personal */}
                     <div className="p-col-12 p-md-6 p-p-3">
-                        <div className="p-text-sm p-text-bold p-mb-2">Personal</div>
+                        <div className="p-text-sm p-text-bold p-mb-2">Thông tin cá nhân</div>
                         <div className="section-card">
                             <FieldRow
-                                label="First name"
+                                label="Tên"
                                 icon="pi pi-user"
                                 displayValue={form?.firstName}
                                 editingField={editingField}
@@ -254,7 +254,7 @@ export default function UserProfile() {
                             />
 
                             <FieldRow
-                                label="Last name"
+                                label="Họ"
                                 icon="pi pi-id-card"
                                 displayValue={form?.lastName}
                                 editingField={editingField}
@@ -268,8 +268,7 @@ export default function UserProfile() {
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-calendar p-mr-2"/>Date of
-                                            Birth</label>
+                                        <label className="form-label"><i className="pi pi-calendar p-mr-2"/>Ngày sinh</label>
                                         {editingField !== 'dateOfBirth' ? (
                                             <div className="field-display">
                                                 <span>{formatDisplayDate(form?.dateOfBirth)}</span>
@@ -298,16 +297,16 @@ export default function UserProfile() {
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-male p-mr-2"/>Gender</label>
+                                        <label className="form-label"><i className="pi pi-male p-mr-2"/>Giới tính</label>
                                         {editingField !== 'gender' ? (
                                             <div className="field-display">
-                                                <span>{form?.gender ? 'Male' : 'Female'}</span>
+                                                <span>{form?.gender ? 'Nam' : 'Nữ'}</span>
                                             </div>
                                         ) : (
                                             <div>
                                                 <Dropdown value={tempValue} options={genderOptions}
                                                           onChange={(e) => setTempValue(e.value)}
-                                                          placeholder="Select gender"/>
+                                                          placeholder="Chọn giới tính"/>
                                                 {getValidationError('gender', tempValue) &&
                                                     <small
                                                         className="field-error">{getValidationError('gender', tempValue)}</small>
@@ -323,7 +322,7 @@ export default function UserProfile() {
                                 <div className="field-left">
                                     <div className="field-body">
                                         <label className="form-label"><i
-                                            className="pi pi-map-marker p-mr-2"/>Address</label>
+                                            className="pi pi-map-marker p-mr-2"/>Địa chỉ</label>
                                         {editingField !== 'address' ? (
                                             <div className="field-display">
                                                 <span title={form?.address || ''}>{form?.address || '-'}</span>
@@ -347,7 +346,7 @@ export default function UserProfile() {
 
                     {/* Contact */}
                     <div className="p-col-12 p-md-6 p-p-3">
-                        <div className="p-text-sm p-text-bold p-mb-2">Contact</div>
+                        <div className="p-text-sm p-text-bold p-mb-2">Liên hệ</div>
                         <div className="section-card">
                             <div className="field-row p-mb-3">
                                 <div className="field-left" style={{flex: 1}}>
@@ -365,7 +364,7 @@ export default function UserProfile() {
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-phone p-mr-2"/>Phone</label>
+                                        <label className="form-label"><i className="pi pi-phone p-mr-2"/>Điện thoại</label>
                                         {editingField !== 'phone' ? (
                                             <div className="field-display">
                                                 <span title={form?.phone || ''}>{form?.phone || '-'}</span>
@@ -374,7 +373,7 @@ export default function UserProfile() {
                                             <div>
                                                 <InputText value={tempValue || ''}
                                                            onChange={(e) => setTempValue(e.target.value)}/>
-                                                <div className="field-hint">Example: +84912345678 or 0912345678</div>
+                                                <div className="field-hint">Ví dụ: +84912345678 hoặc 0912345678</div>
                                                 {getValidationError('phone', tempValue) &&
                                                     <small
                                                         className="field-error">{getValidationError('phone', tempValue)}</small>
