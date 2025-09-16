@@ -18,10 +18,10 @@ import com.lmsservice.security.permission.PermissionNames;
  *      @PreAuthorize("@programPolicy.canViewAll(authentication)")
  *      public PageResponse<ProgramResponse> exportAll(...) { ... }
  *
- *  - Dùng trực tiếp trong Service (ví dụ để ép isActive = true nếu thiếu quyền):
+ *  - Dùng trực tiếp trong Service (ví dụ để ép status = true nếu thiếu quyền):
  *      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
  *      boolean canViewAll = programPolicy.canViewAll(auth);
- *      if (!canViewAll) { spec = spec.and(ProgramSpecifications.isActive(true)); }
+ *      if (!canViewAll) { spec = spec.and(ProgramSpecifications.status(true)); }
  *
  * Lưu ý:
  *  - Kiểm tra dựa trên permission trong GrantedAuthority, KHÔNG dựa vào ROLE_.
@@ -41,8 +41,8 @@ public class ProgramPolicy {
     }
 
     /**
-     * Có quyền này mới xem được cả true + false (ví dụ: trả mọi Program bất kể isActive)
-     * - Nếu KHÔNG có quyền: service nên ép isActive=true để bảo mật và đúng phân trang.
+     * Có quyền này mới xem được cả true + false (ví dụ: trả mọi Program bất kể status)
+     * - Nếu KHÔNG có quyền: service nên ép status=true để bảo mật và đúng phân trang.
      */
     public boolean canViewAll(Authentication auth) {
         return has(auth, PermissionNames.PROGRAM_VIEW_ALL);

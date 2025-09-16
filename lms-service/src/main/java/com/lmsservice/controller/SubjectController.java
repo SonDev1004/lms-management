@@ -14,6 +14,7 @@ import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateSubjectRequest;
 import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import com.lmsservice.dto.response.ApiResponse;
+import com.lmsservice.dto.response.subject.SubjectDetailResponse;
 import com.lmsservice.dto.response.subject.SubjectResponse;
 import com.lmsservice.service.SubjectService;
 
@@ -56,6 +57,17 @@ public class SubjectController {
                 .code(HttpStatus.OK.value())
                 .message("Get all subjects successfully")
                 .result(response)
+                .build());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<SubjectDetailResponse>> getSubjectDetail(
+            @PathVariable Long id, @RequestParam(defaultValue = "true") boolean onlyUpcoming) {
+        var result = subjectService.getDetail(id, onlyUpcoming);
+        return ResponseEntity.ok(ApiResponse.<SubjectDetailResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get subject detail successfully")
+                .result(result)
                 .build());
     }
 }

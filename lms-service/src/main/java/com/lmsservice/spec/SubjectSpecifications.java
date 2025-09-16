@@ -38,7 +38,7 @@ public final class SubjectSpecifications {
         }
 
         if (f.getIsActive() != null) {
-            spec = spec.and((root, q, cb) -> cb.equal(root.get("isActive"), f.getIsActive()));
+            spec = spec.and((root, q, cb) -> cb.equal(root.get("status"), f.getIsActive()));
         }
         return spec;
     }

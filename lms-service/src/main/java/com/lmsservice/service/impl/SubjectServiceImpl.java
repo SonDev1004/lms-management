@@ -1,14 +1,23 @@
 package com.lmsservice.service.impl;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import com.lmsservice.common.paging.PageResponse;
+import com.lmsservice.dto.request.CreateSubjectRequest;
+import com.lmsservice.dto.request.subject.SubjectFilterRequest;
+import com.lmsservice.dto.response.subject.SubjectDetailResponse;
+import com.lmsservice.dto.response.subject.SubjectResponse;
+import com.lmsservice.entity.Course;
+import com.lmsservice.entity.Subject;
+import com.lmsservice.exception.AppException;
+import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.repository.CourseRepository;
+import com.lmsservice.repository.SubjectRepository;
+import com.lmsservice.security.policy.SubjectPolicy;
+import com.lmsservice.service.SubjectService;
+import com.lmsservice.spec.SubjectSpecifications;
+import com.lmsservice.util.CourseStatus;
+import com.lmsservice.util.ScheduleFormatter;
 import jakarta.transaction.Transactional;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,24 +26,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.lmsservice.common.paging.PageResponse;
-import com.lmsservice.dto.request.CreateSubjectRequest;
-import com.lmsservice.dto.request.subject.SubjectFilterRequest;
-import com.lmsservice.dto.response.subject.SubjectResponse;
-import com.lmsservice.entity.Subject;
-import com.lmsservice.exception.AppException;
-import com.lmsservice.exception.ErrorCode;
-import com.lmsservice.repository.SubjectRepository;
-import com.lmsservice.security.policy.SubjectPolicy;
-import com.lmsservice.service.SubjectService;
-import com.lmsservice.spec.SubjectSpecifications;
-
-import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectRepository subjectRepository;
+    private final CourseRepository courseRepository;
 
     @Override
     @Transactional
@@ -127,8 +128,79 @@ public class SubjectServiceImpl implements SubjectService {
         return PageResponse.from(dtoPage);
     }
 
+    @Override
+    public SubjectDetailResponse getDetail(Long id, boolean onlyUpcoming) {
+
+        var s = subjectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+
+        List<Course> courses = courseRepository.findBySubject_IdOrderByStatusDescStartDateAscIdAsc(s.getId());
+
+        if (onlyUpcoming) {
+            LocalDate today = LocalDate.now();
+            courses = courses.stream()
+                    .filter(c -> c.getStartDate() == null || !c.getStartDate().isBefore(today))
+                    .toList();
+        }
+        courses = courses.stream()
+                .filter(c -> VISIBLE.contains(c.getStatus()))
+                .sorted(
+                        Comparator
+                                .comparing((Course c) -> c.getStatus().getCode(), Comparator.reverseOrder())
+                                .thenComparing(Course::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                                .thenComparing(Course::getId)
+                )
+                .toList();
+
+        // Map Course -> DTO
+        var classItems = courses.stream()
+                .map(c -> {
+                    var activeSlots = Optional.ofNullable(c.getTimeslots())
+                            .orElseGet(List::of).stream()
+                            .filter(ts -> Boolean.TRUE.equals(ts.getIsActive()))
+                            .toList();
+                    String schedule = ScheduleFormatter.format(activeSlots);
+
+                    CourseStatus statusEnum = c.getStatus();
+                    Integer status = (statusEnum != null ? statusEnum.getCode() : null);
+                    String statusName = (statusEnum == null) ? "Khác" : switch (statusEnum) {
+                        case DRAFT, SCHEDULED -> "Sắp khai giảng";
+                        case ENROLLING, WAITLIST -> "Đang tuyển sinh";
+                        case IN_PROGRESS -> "Đang học";
+                        case COMPLETED -> "Đã học";
+                    };
+
+                    return SubjectDetailResponse.CourseItem.builder()
+                            .courseId(c.getId())
+                            .courseTitle(c.getTitle())
+                            .courseCode(c.getCode())
+                            .plannedSessions(c.getPlannedSession())
+                            .capacity(c.getCapacity())
+                            .startDate(c.getStartDate())
+                            .status(status)
+                            .statusName(statusName)
+                            .schedule(schedule)
+                            .build();
+                })
+                .toList();
+
+        return SubjectDetailResponse.builder()
+                .id(s.getId())
+                .codeSubject(s.getCode())
+                .subjectTitle(s.getTitle())
+                .subjectDescription(s.getDescription())
+                .sessionNumber(s.getSessionNumber())
+                .fee(s.getFee())
+                .imgUrl(s.getImage()) // tùy entity
+                .maxStudents(s.getMaxStudent())
+                .minStudents(s.getMinStudent())
+                .isActive(Boolean.TRUE.equals(s.getIsActive()))
+                .classes(classItems)
+                .build();
+    }
+    private static final java.util.EnumSet<CourseStatus> VISIBLE =
+            java.util.EnumSet.of(CourseStatus.SCHEDULED, CourseStatus.ENROLLING, CourseStatus.WAITLIST);
     private static final List<String> SUBJECT_SORTABLE =
-            List.of("title", "code", "fee", "sessionNumber", "isActive", "id");
+            List.of("title", "code", "fee", "sessionNumber", "status", "id");
 
     private Pageable sanitize(Pageable pageable) {
         Sort safeSort = Sort.unsorted();
