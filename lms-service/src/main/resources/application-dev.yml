@@ -56,4 +56,4 @@ vnpay:
   ipnUrl: ${IPN_URL:http://localhost:8081/api/v1/payments/vnpay-ipn}
 
 client:
-  domain: ${DOMAIN:http://localhost:5173}
+  domain: http://localhost:5173

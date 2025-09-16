@@ -35,7 +35,7 @@ public final class ProgramSpecifications {
      * Tiện ích: gói status cho dễ đọc (dùng SpecUtils.eq như bạn đang làm)
      */
     public static Specification<Program> isActive(Boolean value) {
-        return SpecUtils.eq("status", value);
+        return SpecUtils.eq("isActive", value);
     }
 
     /**
