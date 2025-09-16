@@ -11,7 +11,7 @@ public final class ProgramSpecifications {
     private ProgramSpecifications() {}
 
     /**
-     * Chỉ build các filter KHÁC isActive (đến đoạn quyền mới quyết định isActive)
+     * Chỉ build các filter KHÁC status (đến đoạn quyền mới quyết định status)
      */
     private static Specification<Program> baseFilters(ProgramFilterRequest f) {
         Specification<Program> spec = Specification.where(null);
@@ -32,16 +32,16 @@ public final class ProgramSpecifications {
     }
 
     /**
-     * Tiện ích: gói isActive cho dễ đọc (dùng SpecUtils.eq như bạn đang làm)
+     * Tiện ích: gói status cho dễ đọc (dùng SpecUtils.eq như bạn đang làm)
      */
     public static Specification<Program> isActive(Boolean value) {
-        return SpecUtils.eq("isActive", value);
+        return SpecUtils.eq("status", value);
     }
 
     /**
-     * Quyết định isActive dựa vào quyền:
-     * - canViewAll = true  → tôn trọng f.isActive (nếu client có gửi)
-     * - canViewAll = false → luôn ép isActive = true
+     * Quyết định status dựa vào quyền:
+     * - canViewAll = true  → tôn trọng f.status (nếu client có gửi)
+     * - canViewAll = false → luôn ép status = true
      */
     private static Specification<Program> visibility(boolean canViewAll, Boolean requestedIsActive) {
         if (canViewAll) {
@@ -55,7 +55,7 @@ public final class ProgramSpecifications {
      * ✅ Entry point DUY NHẤT để build spec (khuyến nghị dùng ở mọi nơi)
      */
     public static Specification<Program> from(ProgramFilterRequest f, boolean canViewAll) {
-        Specification<Program> spec = baseFilters(f); // KHÔNG chứa isActive
+        Specification<Program> spec = baseFilters(f); // KHÔNG chứa status
         if (canViewAll) {
             if (f != null && f.getIsActive() != null) {
                 spec = spec.and(isActive(f.getIsActive()));

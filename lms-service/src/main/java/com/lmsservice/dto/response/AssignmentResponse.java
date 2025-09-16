@@ -20,4 +20,5 @@ public class AssignmentResponse {
     boolean isActive;
     Long courseId;
     String courseTitle;
+    Boolean status;
 }

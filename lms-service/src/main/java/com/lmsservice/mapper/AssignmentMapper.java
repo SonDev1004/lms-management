@@ -11,6 +11,6 @@ public interface AssignmentMapper {
 
     @Mapping(source = "course.id", target = "courseId")
     @Mapping(source = "course.title", target = "courseTitle")
-    @Mapping(source = "active", target = "isActive")
+    @Mapping(source = "active", target = "status")
     AssignmentResponse toResponse(Assignment assignment);
 }
