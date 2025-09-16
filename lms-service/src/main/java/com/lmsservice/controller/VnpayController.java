@@ -51,7 +51,6 @@ public class VnpayController {
                         .build();
             } else if ("24".equals(code)) { // user cancelled
                 enrollmentPaymentService.markPendingCancelled(txnRef, "Cancelled by user");
-                enrollmentPaymentService.markPendingCancelled(txnRef, "Cancelled by user");
                 return ResponseEntity.status(302)
                         .header("Location", clientDomain + "/payment-cancelled?txnRef=" + txnRef)
                         .build();
