@@ -15,4 +15,5 @@ public interface EnrollmentPaymentService {
     void markPendingFailed(String txnRef, String reason);
 
     void markPendingCancelled(String txnRef, String reason);
+    void expirePendingEnrollments();
 }

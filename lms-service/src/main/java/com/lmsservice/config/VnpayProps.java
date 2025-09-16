@@ -19,4 +19,5 @@ public class VnpayProps {
     String payUrl;
     String returnUrl;
     String ipnUrl;
+    Integer timeoutMinutes = 30;
 }
