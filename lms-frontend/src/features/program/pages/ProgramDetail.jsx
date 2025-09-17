@@ -1,88 +1,79 @@
-import React, { useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+// src/features/program/pages/ProgramDetail.jsx
+import React from "react";
 import { Toast } from "primereact/toast";
-import { Divider } from "primereact/divider";
+import useProgramDetail from "../hook/useProgramDetail.js";
 
-import { programs } from "@/mocks/homeDataMock.js";
 import ProgramHero from "../components/ProgramHero";
-import ProgramSteps from "../components/ProgramSteps";
 import ProgramTracks from "../components/ProgramTracks";
-import ProgramDetails from "../components/ProgramDetails";
 
 const ProgramDetail = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const toast = useRef(null);
+    const {
+        program, loading, error, toastRef,
+        onConsult, onRegisterTrack, onSelectCourse, loadCoursesByTrack, goBack,
+    } = useProgramDetail();
 
-    const program = programs?.[id];
-
-    if (!program) {
+    // Loading state — đơn giản, tinh gọn
+    if (loading) {
         return (
-            <div className="p-6 text-center">
-                <h2>Không tìm thấy chương trình</h2>
-                <button className="p-button" onClick={() => navigate("/")}>
-                    Về trang chủ
+            <div className="flex flex-column align-items-center justify-content-center p-6">
+                <Toast ref={toastRef} />
+                <i className="pi pi-spin pi-spinner text-4xl text-primary mb-3" />
+                <span className="text-lg">Đang tải chương trình...</span>
+            </div>
+        );
+    }
+
+    // Error/empty state
+    if (error || !program) {
+        return (
+            <div className="text-center p-6">
+                <Toast ref={toastRef} />
+                <h3 className="mb-3">{error || "Không có dữ liệu chương trình"}</h3>
+                <button className="p-button" onClick={goBack}>
+                    <i className="pi pi-arrow-left mr-2" />
+                    Quay lại
                 </button>
             </div>
         );
     }
 
-    const onConsult = () => {
-        toast.current?.show({
-            severity: "success",
-            summary: "Thành công",
-            detail: "Chúng tôi sẽ liên hệ với bạn trong 24h",
-        });
-    };
-
-    const onRegisterTrack = (trackId) => {
-        const selectedTrack = program.tracks.find((t) => t.id === trackId);
-        if (!selectedTrack) {
-            toast.current?.show({
-                severity: 'warn',
-                summary: 'Không tìm thấy lịch',
-                detail: 'Vui lòng chọn lại.',
-            });
-            return;
-        }
-
-        const payload = {
-            type: 'program',
-            programId: program.id,
-            trackId,
-            title: `${program.title} - ${selectedTrack.label}`,
-            price: program.price,
-            startDate: selectedTrack.start,
-            schedule: `${selectedTrack.dow} ${selectedTrack.time}`,
-            meta: { totalHours: program.totalHours, track: selectedTrack },
-        };
-
-        // 👉 Điều hướng sang trang Đăng ký (enrollment)
-        navigate('/dang-ky', { state: { selectedItem: payload } });
-    };
     return (
-        <div className="p-4">
-            <Toast ref={toast} />
+        <section className="p-4">
+            <Toast ref={toastRef} />
+
+            {/* Container trung tâm, rộng “đủ đẹp” cho layout 2 cột */}
             <div className="max-w-6xl mx-auto">
-                <ProgramHero program={program} onConsult={onConsult} />
 
-                <ProgramSteps steps={program.steps} />
+                {/* Action bar tối giản */}
+                <div className="flex align-items-center justify-content-between mb-3">
+                    <button className="p-button p-button-text" onClick={goBack}>
+                        <i className="pi pi-arrow-left mr-2" />
+                        Quay lại
+                    </button>
+                </div>
 
-                <div className="grid">
+                {/* ROW: HERO (trái) + TRACKS (phải) */}
+                <div className="grid md:align-start md:gap-3">
+                    {/* Cột trái: Hero lớn, nổi bật */}
                     <div className="col-12 md:col-8">
-                        {/* Có thể đặt Steps ở đây nếu muốn, nhưng UI hiện giữ như trên */}
-                        <Divider />
-                        <ProgramDetails details={program.details} />
+                        <ProgramHero program={program} onConsult={onConsult} />
                     </div>
-                    <div className="col-12 md:col-4">
-                        <ProgramTracks
-                            tracks={program.tracks}
-                            onRegisterTrack={onRegisterTrack}
-                        />
-                    </div>
+
+                    {/* Cột phải: Tracks sticky để CTA luôn hiện */}
+                    <aside className="col-12 md:col-4">
+                        <div className="md:sticky md:top-3">
+                            <ProgramTracks
+                                tracks={program.tracks}
+                                subjects={program.subjects}
+                                loadCourses={loadCoursesByTrack}
+                                onRegisterTrack={onRegisterTrack}
+                                onSelectCourse={onSelectCourse}
+                            />
+                        </div>
+                    </aside>
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 
