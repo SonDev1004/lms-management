@@ -25,5 +25,5 @@ export default {
 
     //payment
     payment: `${rootAPI}/v1/enrollments/create-payment`,
-    vnpayReturn:(txnRef) => `${rootAPI}/v1/payments/vnpay-return/${txnRef}`,
+    resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
 }

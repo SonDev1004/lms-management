@@ -4,11 +4,13 @@ import com.lmsservice.config.VnpayProps;
 import com.lmsservice.dto.request.CreatePaymentRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.CreatePaymentResponse;
+import com.lmsservice.dto.response.PaymentResultResponse;
 import com.lmsservice.entity.PendingEnrollment;
 import com.lmsservice.entity.Program;
 import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.repository.EnrollmentRepository;
 import com.lmsservice.repository.PendingEnrollmentRepository;
 import com.lmsservice.repository.ProgramRepository;
 import com.lmsservice.repository.SubjectRepository;
@@ -35,6 +37,7 @@ public class EnrollmentPaymentController {
     private final SubjectRepository subjectRepo;
     private final PendingEnrollmentRepository pendingRepo;
     private final VnpayProps vnpayProps;
+    private final EnrollmentPaymentService enrollmentRepo;
 
     // ----------------------------
     // 1. Tạo link thanh toán
@@ -125,4 +128,24 @@ public class EnrollmentPaymentController {
                         .result(null)
                         .build());
     }
+
+    @GetMapping("/result/{txnRef}")
+    @Operation(summary = "Lấy kết quả thanh toán theo txnRef")
+    public ApiResponse<PaymentResultResponse> getPaymentResult(@PathVariable String txnRef) {
+        PaymentResultResponse result = enrollmentRepo.getPaymentResult(txnRef);
+        if (result == null) {
+            throw new AppException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+        return ApiResponse.<PaymentResultResponse>builder()
+                .message("Lấy kết quả thanh toán thành công")
+                .result(result)
+                .build();
+    }
+
+
+
 }
+
+
+
+

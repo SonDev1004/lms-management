@@ -3,6 +3,7 @@ package com.lmsservice.service;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import com.lmsservice.dto.response.PaymentResultResponse;
 import com.lmsservice.entity.Enrollment;
 import com.lmsservice.entity.PendingEnrollment;
 
@@ -16,4 +17,5 @@ public interface EnrollmentPaymentService {
 
     void markPendingCancelled(String txnRef, String reason);
     void expirePendingEnrollments();
+    PaymentResultResponse getPaymentResult(String txnRef);
 }

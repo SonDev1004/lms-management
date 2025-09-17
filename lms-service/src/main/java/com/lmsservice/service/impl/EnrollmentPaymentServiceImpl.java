@@ -1,5 +1,6 @@
 package com.lmsservice.service.impl;
 
+import com.lmsservice.dto.response.PaymentResultResponse;
 import com.lmsservice.entity.*;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.exception.UnAuthorizeException;
@@ -154,5 +155,37 @@ public class EnrollmentPaymentServiceImpl implements EnrollmentPaymentService {
             pendingRepo.save(p);
         });
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PaymentResultResponse getPaymentResult(String txnRef) {
+        PendingEnrollment pending = pendingRepo.findByTxnRef(txnRef)
+                .orElseThrow(() -> new UnAuthorizeException(ErrorCode.PENDING_NOT_FOUND));
+
+        Long enrollmentId = paymentHistoryRepo.findByReferenceNumber(txnRef)
+                .map(ph -> ph.getEnrollment().getId())
+                .orElse(null);
+
+        return PaymentResultResponse.builder()
+                .txnRef(txnRef)
+                .status(pending.getStatus())
+                .amount(pending.getAmount())
+                .totalFee(pending.getTotalFee())
+                .programId(pending.getProgramId())
+                .programName(pending.getProgramId() != null
+                        ? programRepo.findById(pending.getProgramId()).map(Program::getTitle).orElse(null)
+                        : null)
+                .subjectId(pending.getSubjectId())
+                .subjectName(pending.getSubjectId() != null
+                        ? subjectRepo.findById(pending.getSubjectId()).map(Subject::getTitle).orElse(null)
+                        : null)
+                .enrollmentId(enrollmentId)
+                .message("SUCCESS".equalsIgnoreCase(pending.getStatus())
+                        ? "Thanh toán thành công"
+                        : "Giao dịch " + pending.getStatus())
+                .build();
+    }
+
+
 
 }

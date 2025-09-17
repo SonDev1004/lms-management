@@ -1,35 +1,35 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import axiosClient from "@/shared/api/axiosClient";
-import urls from "@/shared/constants/urls";
+import axios from "axios";
+import urls from "@/shared/constants/urls.js";
 
-const PaymentSuccess = () => {
+export default function PaymentSuccess() {
     const [searchParams] = useSearchParams();
-    const [transaction, setTransaction] = useState(null);
+    const txnRef = searchParams.get("txnRef");
+    const [result, setResult] = useState(null);
 
     useEffect(() => {
-        const txnRef = searchParams.get("txnRef");
         if (txnRef) {
-            axiosClient.get(`${urls.vnpayReturn}?txnRef=${txnRef}`)
-                .then(res => setTransaction(res.data.result))
+            axios.get(urls.resultPayment)
+                .then(res => setResult(res.data.result))
                 .catch(err => console.error(err));
         }
-    }, [searchParams]);
+    }, [txnRef]);
+
+    if (!result) return <p>Đang kiểm tra kết quả...</p>;
 
     return (
         <div>
-            <h1>Thanh toán thành công</h1>
-            {transaction ? (
-                <div>
-                    <p>Mã giao dịch: {transaction.txnRef}</p>
-                    <p>Số tiền: {transaction.amount} VND</p>
-                    <p>Trạng thái: {transaction.status}</p>
-                </div>
-            ) : (
-                <p>Đang tải thông tin giao dịch...</p>
+            <h1>Kết quả thanh toán</h1>
+            <p>Mã giao dịch: {result.txnRef}</p>
+            <p>Trạng thái: {result.status}</p>
+            <p>Số tiền: {result.amount} {result.currency}</p>
+            {result.status === "SUCCESS" && (
+                <p>Đăng ký thành công! Mã enrollment: {result.enrollmentId}</p>
+            )}
+            {result.status !== "SUCCESS" && (
+                <p>Thanh toán không thành công. Vui lòng thử lại.</p>
             )}
         </div>
     );
-};
-
-export default PaymentSuccess;
+}
