@@ -61,6 +61,7 @@ import ThankYou from "@/features/enrollment/pages/ThankYou.jsx";
 import ProgramList from "@/features/program/pages/ProgramList.jsx";
 import CourseList from "@/features/home/pages/CourseList.jsx";
 import SubjectList from "@/features/subject/pages/SubjectList.jsx";
+import AttendancePanel from "./features/teacher/components/AttendancePanel.jsx";
 
 const App = () => {
   return (
@@ -109,6 +110,7 @@ const App = () => {
             <Route index element={<TeacherDashboard />} />
             <Route path="courses" element={<TeacherCourses />} />
             <Route path="courses/:courseId/student-list" element={<StudentList />} />
+            <Route path="courses/:courseId/attendance" element={<AttendancePanel />} />
             <Route path="schedule" element={<TeacherSchedule />} />
             <Route path="notification" element={<TeacherNotification />} />
             <Route path="profile" element={<TeacherProfile />} />
