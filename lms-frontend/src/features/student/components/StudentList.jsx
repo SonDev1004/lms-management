@@ -34,6 +34,8 @@ const StudentList = () => {
                 </DataTable >
                 <Button className='mt-2'
                     label="Quay lại" onClick={() => navigate(-1)} />
+                <Button className='ml-2'
+                    label="Điểm danh" onClick={() => navigate(`/teacher/courses/${courseId}/attendance`)} />
             </div >
         </div>
     );

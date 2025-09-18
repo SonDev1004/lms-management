@@ -5,7 +5,13 @@ import axiosClient from "@/shared/api/axiosClient.js";
 export async function getListProgram({ page = 1, size = 10 } = {}) {
     const url = AppUrls.listProgram;
     try {
-        const res = await axiosClient.get(url, { params: { page, size } });
+        const token = localStorage.getItem("token")
+        const res = await axiosClient.get(url, {
+            params: { page, size },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         const data = res?.data ?? res;
         const result = data?.result ?? {};
 
