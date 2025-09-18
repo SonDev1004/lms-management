@@ -50,7 +50,7 @@ public class StudentServiceImpl implements StudentService {
 
         // ===== 2. Chỉ cho phép sort theo field "root" của Course =====
         Set<String> whitelist =
-                PageableUtils.toWhitelist("id", "title", "code", "status", "startDate", "plannedSession");
+                PageableUtils.toWhitelist("id", "title", "code", "status", "startDate", "plannedSessions");
         Sort fallback = Sort.by(Sort.Order.desc("id")); // mặc định sort theo id DESC
         Pageable safe = PageableUtils.sanitizeSort(pageable, whitelist, fallback);
 

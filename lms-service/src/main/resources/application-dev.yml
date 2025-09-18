@@ -47,3 +47,13 @@ minio:
   secretKey: ${MINIO_SECRET_KEY:minioadmin}
   bucketName: ${MINIO_BUCKET_NAME:lms-bucket}
   region: ${MINIO_REGION:us-east-1}
+
+vnpay:
+  tmnCode: ${VNPAY_TMN_CODE:0GK43HDP}
+  hashSecret: ${VNPAY_HASH_SECRET:OLBPY32TY1VB9MAG2UGSPHGGI7F4HPEM}
+  payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  returnUrl: ${RETURN_URL:http://localhost:8081/api/v1/payments/vnpay-return}
+  ipnUrl: ${IPN_URL:http://localhost:8081/api/v1/payments/vnpay-ipn}
+
+client:
+  domain: http://localhost:5173

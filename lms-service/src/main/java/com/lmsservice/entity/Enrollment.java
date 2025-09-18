@@ -27,7 +27,7 @@ public class Enrollment extends EntityAbstract {
     Student student;
     // Staff
     @ManyToOne()
-    @JoinColumn(name = "staff_id", nullable = false)
+    @JoinColumn(name = "staff_id")
     Staff staff;
     // Program
     @ManyToOne()

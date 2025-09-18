@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.lmsservice.dto.request.CreateSubjectRequest;
-import com.lmsservice.dto.response.SubjectResponse;
+import com.lmsservice.dto.response.subject.SubjectResponse;
 import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
