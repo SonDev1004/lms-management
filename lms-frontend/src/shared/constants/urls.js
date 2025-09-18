@@ -8,11 +8,11 @@ export default {
     login: `${rootAPI}/auth/login`,
     logout: `${rootAPI}/auth/logout`,
     register: `${rootAPI}/auth/register`,
-    refresh:`${rootAPI}/auth/refresh`,
-    profile:`${rootAPI}/user/profile`,
+    refresh: `${rootAPI}/auth/refresh`,
+    profile: `${rootAPI}/user/profile`,
 
     //Endpoint Student
-    getStudentCourses:`${rootAPI}/student/me/courses`,
+    getStudentCourses: `${rootAPI}/student/me/courses`,
 
     //Lesson
     lessonBySubject: (id) => `${rootAPI}/lesson/by-subject/${id}`,
@@ -29,4 +29,5 @@ export default {
 
     //payment
     payment: `${rootAPI}/v1/enrollments/create-payment`,
-    vnpayReturn:(txnRef) => `${rootAPI}/v1/payments/vnpay-return/${txnRef}`,
+    vnpayReturn: (txnRef) => `${rootAPI}/v1/payments/vnpay-return/${txnRef}`,
+}
