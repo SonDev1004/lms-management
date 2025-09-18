@@ -39,3 +39,45 @@ function mapSubject(item) {
         isActive: Boolean(item.isActive),
     };
 }
+
+export async function getSubjectDetail(subjectId) {
+    const url = AppUrls.getDetailSubject(subjectId);
+    try {
+        const res = await axiosClient.get(url);
+        const data = res?.data?.result ?? null;
+        return mapSubjectDetail(data);
+    } catch (error) {
+        console.error("❌ Lỗi khi gọi getSubjectDetail:", error);
+        return null;
+    }
+}
+
+export function mapSubjectDetail(data) {
+    if (!data) return null;
+
+    return {
+        id: data.id,
+        code: data.codeSubject,
+        title: data.subjectTitle,
+        description: data.subjectDescription,
+        sessionNumber: Number(data.sessionNumber) || 0,
+        fee: Number(data.fee) || 0,
+        image: data.imgUrl || "/noimg.png",
+        maxStudent: Number(data.maxStudents) || 0,
+        minStudent: Number(data.minStudents) || 0,
+        isActive: Boolean(data.isActive),
+        classes: Array.isArray(data.classes)
+            ? data.classes.map(cls => ({
+                courseId: cls.courseId,
+                courseTitle: cls.courseTitle,
+                courseCode: cls.courseCode,
+                plannedSessions: Number(cls.plannedSessions) || 0,
+                capacity: Number(cls.capacity) || 0,
+                startDate: cls.startDate,
+                schedule: cls.schedule,
+                status: cls.status,
+                statusName: cls.statusName
+            }))
+            : []
+    };
+}
