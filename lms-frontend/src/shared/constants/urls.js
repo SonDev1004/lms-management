@@ -19,7 +19,9 @@ export default {
 
     //program
     listProgram: `${rootAPI}/program/all-program`,
+    getDetailProgram: (id) => `${rootAPI}/program/${id}/detail`,
 
     //subject
     listSubject: `${rootAPI}/subject/all-subject`,
+    getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 }
