@@ -5,17 +5,18 @@ import { Badge } from "primereact/badge";
 import { statusMap, statusLabelMap, statusSeverityMap } from "../lib/courseStatus.js";
 import CourseActions from "./CourseAction.jsx";
 import { Button } from "primereact/button";
-
+import { useNavigate } from "react-router-dom";
 
 export default function CourseCardOverall({ course, role, onAction }) {
     const statusText = statusMap[course.status] || "unknown";
     const footer = (<CourseActions role={role} course={course} onAction={onAction} />);
+    const navigate = useNavigate();
     return (
         <Card
             title={
                 <div className="flex align-items-center justify-between">
                     <span className="text-xl font-bold">{course.title}</span>
-                    <Button severity="secondary" label={`Học viên: ${course.student_count}/${course.student_capacity}`} />
+                    <Button severity="secondary" label={`Học viên: ${course.student_count}/${course.student_capacity}`} onClick={() => navigate(`/teacher/courses/${course.id}/student-list`)} />
                 </div>
             }
             subTitle={<span className="text-sm">{course.subject_name}</span>}
