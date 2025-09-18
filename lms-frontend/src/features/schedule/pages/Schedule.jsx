@@ -1,4 +1,3 @@
-// pages/Schedule.jsx
 import React, { useRef, useState } from 'react';
 import moment from 'moment-timezone';
 import { momentLocalizer } from 'react-big-calendar';
@@ -32,8 +31,29 @@ export default function SchedulePage() {
     const handleApply = () => toastRef.current && toastRef.current.show({ severity: 'info', summary: 'Bộ lọc', detail: 'Đã áp dụng bộ lọc.' });
     const handleClear = () => setFilters({ types: [], teachers: [], search: '' });
 
+    const isPastEvent = (event) => {
+        try {
+            const end = new Date(event.end);
+            const today = new Date();
+            const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            return end < startOfToday;
+        } catch {
+            return false;
+        }
+    };
+
+
     const eventStyleGetter = (event) => {
-        const base = { style: { borderRadius: '8px', padding: '6px 8px', border: 'none', boxShadow: 'none' } };
+        const base = {
+            style: {
+                borderRadius: '8px',
+                padding: '6px 8px',
+                border: 'none',
+                boxShadow: 'none',
+                opacity: 0.98,
+            }
+        };
+
         switch (event.type) {
             case 'Practice':
                 base.style.background = '#fffaf0'; base.style.color = '#7a4a00'; break;
@@ -44,11 +64,16 @@ export default function SchedulePage() {
             default:
                 base.style.background = '#e6fffa'; base.style.color = '#065f46';
         }
-        base.style.opacity = 0.98;
+
+        if (isPastEvent(event)) {
+            base.style.opacity = 0.45;
+            base.style.filter = 'grayscale(60%)';
+            return { ...base, className: 'rbc-event-past' };
+        }
+
         return base;
     };
 
-    // when event card clicked -> anchor overlay to element
     const handleEventClick = (event, target) => {
         setSelectedEvent(event);
         if (overlayRef.current && target) {
@@ -58,7 +83,6 @@ export default function SchedulePage() {
 
     const handleCreate = async (payload) => {
         try {
-            // try to parse ISO strings as in original
             const normalized = {
                 ...payload,
                 start: new Date(payload.start).toISOString(),

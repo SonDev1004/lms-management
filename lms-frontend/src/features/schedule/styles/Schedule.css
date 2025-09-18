@@ -321,3 +321,43 @@
 .filter-card .p-grid {
     gap: 10px;
 }
+
+.rbc-day-past {
+    position: relative;
+}
+.rbc-day-past::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.65);
+    z-index: 1;
+    pointer-events: none;
+    border-radius: inherit;
+}
+.rbc-day-past .rbc-date,
+.rbc-day-past .rbc-off-range {
+    color: #6b7280 !important;
+    position: relative;
+    z-index: 3;
+}
+.rbc-day-past .rbc-day-bg,
+.rbc-day-past .rbc-day-slot {
+    background-color: transparent;
+}
+.rbc-day-past .rbc-event,
+.rbc-day-past .rbc-event * {
+    position: relative;
+    z-index: 5 !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    color: inherit !important;
+}
+.rbc-day-past .rbc-show-more,
+.rbc-day-past .rbc-event-label,
+.rbc-day-past .rbc-event-continues-earlier,
+.rbc-day-past .rbc-event-continues-later {
+    position: relative;
+    z-index: 5 !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}
