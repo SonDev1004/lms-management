@@ -1,60 +1,120 @@
-// Chọn lich học
-import React from 'react';
-import { Card } from 'primereact/card';
-import { Button } from 'primereact/button';
-import { Tag } from 'primereact/tag';
+// src/features/program/components/ProgramTracks.jsx
+import React, { useState, useCallback } from "react";
+import { Card } from "primereact/card";
+import { Button } from "primereact/button";
+import { Tag } from "primereact/tag";
+import TrackCoursesDialog from "./TrackCoursesDialog";
 
-const ProgramTracks = ({ tracks = [], onRegisterTrack }) => {
-    if (!tracks.length) return null;
+/** Ghép loader mặc định: lọc courses theo trackCode (trim + lowercase an toàn) */
+const defaultLoadCourses =
+    (subjects = []) =>
+        async (track) => {
+            const all = subjects.flatMap((s) => s.courses || []);
+            const code = (track?.code || "").trim().toLowerCase();
+            return all
+                .filter((c) => (c.trackCode || "").trim().toLowerCase() === code)
+                .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
+        };
+
+/** UI: danh sách lịch học (track) + popup xem lớp theo lịch */
+const ProgramTracks = ({
+                           title = "Chọn Lịch Học",
+                           tracks = [],                // [{ code, label }]
+                           subjects = [],              // để fallback loadCourses
+                           loadCourses,                // async (track) => Course[]
+                           onRegisterTrack,            // (trackCode) => void
+                           onSelectCourse,             // (course) => void
+                       }) => {
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [selectedTrack, setSelectedTrack] = useState(null);
+
+    const loadCoursesImpl = useCallback(
+        loadCourses || defaultLoadCourses(subjects),
+        [loadCourses, subjects]
+    );
+
+    const openDialog = (track) => {
+        setSelectedTrack(track);
+        setDialogOpen(true);
+    };
+
+    if (!tracks?.length) {
+        return (
+            <Card className="shadow-2 border-round-2xl">
+                <h2 className="text-2xl font-bold mb-2">{title}</h2>
+                <p className="text-700 mb-3">Hiện chưa có lịch học nào cho chương trình này.</p>
+                <Button
+                    label="Nhận tư vấn lịch học"
+                    icon="pi pi-phone"
+                    className="w-full"
+                    onClick={() => openDialog(null)}
+                    disabled
+                />
+            </Card>
+        );
+    }
 
     return (
-        <div className="mb-4">
-            <h2 className="text-2xl font-bold mb-4">Chọn Lịch Học</h2>
-            <div className="grid">
-                {tracks.map((track) => (
-                    <div key={track.id} className="col-12 md:col-6">
-                        <Card className="h-full">
-                            <div className="text-center mb-4">
-                                <h3 className="text-xl font-bold text-primary">{track.label}</h3>
-                                <div className="flex justify-content-center gap-2 mb-3">
-                                    <Tag value={track.dow} severity="info" />
-                                    <Tag value={track.time} severity="warning" />
-                                </div>
-                                <p className="text-lg font-semibold text-900">Khai giảng: {track.start}</p>
-                            </div>
+        <div className="mb-5">
+            <h2 className="text-2xl font-bold mb-4">{title}</h2>
 
-                            {/* Mini timeline */}
-                            <div className="mb-4">
-                                <h4 className="text-sm font-bold text-600 mb-2">Tiến độ dự kiến:</h4>
-                                <div className="flex flex-column gap-2">
-                                    {track.mini?.map((item, index) => (
-                                        <div key={index} className="flex align-items-center gap-2">
-                                            <div
-                                                className={`w-2rem h-2rem border-circle flex align-items-center justify-content-center text-xs font-bold ${
-                                                    index === 0 ? 'bg-primary text-white' : 'bg-gray-200 text-gray-600'
-                                                }`}
-                                            >
-                                                {index + 1}
-                                            </div>
-                                            <div className="flex-1">
-                                                <span className="font-semibold">{item.label}</span>
-                                                <span className="text-sm text-600 ml-2">{item.range}</span>
-                                            </div>
-                                        </div>
-                                    ))}
+            <div className="flex flex-column gap-3">
+                {tracks.map((t) => (
+                    <Card
+                        key={t.code}
+                        className="shadow-2 border-round-2xl"
+                        title={
+                            <div className="flex align-items-center justify-content-between gap-3">
+                                <div className="flex flex-column">
+                                    <span className="text-xl font-bold text-primary">{t.label}</span>
+                                    <small className="text-600 mt-1">
+                                        <Tag value={`Mã lịch: ${t.code}`} severity="info" rounded />
+                                    </small>
+                                </div>
+                                <div className="hidden md:flex gap-2">
+                                    <Button
+                                        label="Xem lớp"
+                                        icon="pi pi-search"
+                                        outlined
+                                        onClick={() => openDialog(t)}
+                                    />
+                                    <Button
+                                        label="Đăng ký"
+                                        icon="pi pi-shopping-cart"
+                                        onClick={() => onRegisterTrack?.(t.code)}
+                                    />
                                 </div>
                             </div>
-
+                        }
+                    >
+                        {/* CTA cho mobile (stack dọc) */}
+                        <div className="flex md:hidden gap-2 mt-2">
                             <Button
-                                label={`Đăng ký ${track.label}`}
-                                icon="pi pi-shopping-cart"
-                                className="w-full"
-                                onClick={() => onRegisterTrack(track.id)}
+                                label="Xem lớp"
+                                icon="pi pi-search"
+                                outlined
+                                className="w-6"
+                                onClick={() => openDialog(t)}
                             />
-                        </Card>
-                    </div>
+                            <Button
+                                label="Đăng ký"
+                                icon="pi pi-shopping-cart"
+                                className="w-6"
+                                onClick={() => onRegisterTrack?.(t.code)}
+                            />
+                        </div>
+                    </Card>
                 ))}
             </div>
+
+            {/* Popup xem lớp theo lịch */}
+            <TrackCoursesDialog
+                visible={dialogOpen}
+                track={selectedTrack}
+                onHide={() => setDialogOpen(false)}
+                loadCourses={loadCoursesImpl}
+                onSelectCourse={onSelectCourse}
+            />
         </div>
     );
 };

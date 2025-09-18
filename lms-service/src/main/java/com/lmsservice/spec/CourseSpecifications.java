@@ -64,7 +64,7 @@ public final class CourseSpecifications {
         return (root, q, cb) -> {
             Join<Course, CourseTimeslot> ts = root.join("timeslots", JoinType.INNER);
             q.distinct(true);
-            return cb.and(cb.isTrue(ts.get("isActive")), ts.get("dayOfWeek").in(days));
+            return cb.and(cb.isTrue(ts.get("status")), ts.get("dayOfWeek").in(days));
         };
     }
 
@@ -73,7 +73,7 @@ public final class CourseSpecifications {
         return (root, q, cb) -> {
             Join<Course, CourseTimeslot> ts = root.join("timeslots", JoinType.INNER);
             q.distinct(true);
-            return cb.and(cb.isTrue(ts.get("isActive")), cb.equal(ts.get("room").get("id"), roomId));
+            return cb.and(cb.isTrue(ts.get("status")), cb.equal(ts.get("room").get("id"), roomId));
         };
     }
 

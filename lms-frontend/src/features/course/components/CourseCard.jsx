@@ -12,12 +12,11 @@ export default function CourseCard({ course }) {
 
     const goDetail = (e) => {
         e?.stopPropagation?.();
-        // truyền state để CourseDetail render nhanh (tuỳ bạn)
-        navigate(`/teacher/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`, { state: { course: c } });
+        navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}`, { state: { course: c } });
     };
     const goMaterials = (e) => {
         e?.stopPropagation?.();
-        navigate(`/teacher/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}#materials`, { state: { course: c } });
+        navigate(`/student/courses/${slug}?id=${c.id}&subjectId=${c._subjectId}#materials`, { state: { course: c } });
     };
 
     const headerStyle = { background: c.subjectColor, color: c.accentText };
