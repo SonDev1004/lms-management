@@ -1,7 +1,6 @@
 import React from "react";
 import { Card } from "primereact/card";
 import { Badge } from "primereact/badge";
-//import trạng thái từ file courseStatus.js
 import { statusMap, statusLabelMap, statusSeverityMap } from "../lib/courseStatus.js";
 import CourseActions from "./CourseAction.jsx";
 import { Button } from "primereact/button";

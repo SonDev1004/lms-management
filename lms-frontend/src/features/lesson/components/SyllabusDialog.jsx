@@ -64,18 +64,6 @@ export default function SyllabusDialog({ value, visible, onHide, onOpenDoc }) {
                         </ul>
 
                         <div className="syllabus-detail">
-                            <div className="syllabus-grid">
-                                <div>
-                                    <h6>🎯 Mục tiêu</h6>
-                                    <ul>{(item.objectives ?? []).map((o, i) => <li key={i}>{o}</li>)}</ul>
-                                </div>
-                                <div>
-                                    <h6>📝 Hoạt động</h6>
-                                    <ul>{(item.activities ?? []).map((a, i) => <li key={i}>{a}</li>)}</ul>
-                                </div>
-                            </div>
-
-                            <h5>Tài liệu</h5>
                             <div className="syllabus-docs">
                                 {item.activeDoc ? (
                                     <div className="doc-preview"><DocPreview doc={item.activeDoc} /></div>
