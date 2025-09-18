@@ -1,7 +1,5 @@
 package com.lmsservice.controller;
 
-import com.lmsservice.common.paging.PageResponse;
-import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -12,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateSubjectRequest;
+import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.subject.SubjectResponse;
 import com.lmsservice.service.SubjectService;
@@ -35,7 +35,6 @@ public class SubjectController {
             summary = "Tạo môn học mới",
             description =
                     "API dùng để tạo một môn học mới, bao gồm tiêu đề, số buổi, học phí, số lượng học viên, mô tả và ảnh minh hoạ.")
-
     public ResponseEntity<ApiResponse> createSubject(@Valid @RequestBody CreateSubjectRequest requestDTO) {
         SubjectResponse responseDTO = subjectService.createSubject(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,7 +49,7 @@ public class SubjectController {
     @GetMapping("/all-subject")
     public ResponseEntity<ApiResponse<PageResponse<SubjectResponse>>> getAllSubjects(
             @ParameterObject SubjectFilterRequest f,
-            @ParameterObject @PageableDefault(size = 10, sort = "id")  Pageable pageable) {
+            @ParameterObject @PageableDefault(size = 10, sort = "id") Pageable pageable) {
 
         var response = subjectService.getAllSubjects(f, pageable);
         return ResponseEntity.ok(ApiResponse.<PageResponse<SubjectResponse>>builder()

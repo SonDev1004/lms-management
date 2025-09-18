@@ -44,7 +44,6 @@ public class PendingEnrollment {
 
     LocalDateTime updatedAt;
 
-
     @PrePersist
     void prePersist() {
         this.createdAt = LocalDateTime.now();

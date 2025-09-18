@@ -1,9 +1,11 @@
 package com.lmsservice.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.service.EnrollmentService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

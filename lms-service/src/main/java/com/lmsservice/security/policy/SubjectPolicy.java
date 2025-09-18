@@ -1,9 +1,10 @@
 package com.lmsservice.security.policy;
 
-import com.lmsservice.security.permission.PermissionNames;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+
+import com.lmsservice.security.permission.PermissionNames;
 
 @Component
 public class SubjectPolicy {

@@ -7,28 +7,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.lmsservice.common.paging.PageResponse;
-import com.lmsservice.dto.request.subject.SubjectFilterRequest;
-import com.lmsservice.security.policy.SubjectPolicy;
-import com.lmsservice.spec.SubjectSpecifications;
 import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateSubjectRequest;
+import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import com.lmsservice.dto.response.subject.SubjectResponse;
 import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.repository.SubjectRepository;
+import com.lmsservice.security.policy.SubjectPolicy;
 import com.lmsservice.service.SubjectService;
+import com.lmsservice.spec.SubjectSpecifications;
 
 import lombok.RequiredArgsConstructor;
 
@@ -96,7 +95,9 @@ public class SubjectServiceImpl implements SubjectService {
                 .isActive(savedSubject.getIsActive())
                 .build();
     }
+
     private final SubjectPolicy subjectPolicy;
+
     @Override
     public PageResponse<SubjectResponse> getAllSubjects(SubjectFilterRequest f, Pageable pageable) {
         pageable = sanitize(pageable);
@@ -122,14 +123,12 @@ public class SubjectServiceImpl implements SubjectService {
                 .maxStudent(s.getMaxStudent())
                 .description(s.getDescription())
                 .isActive(s.getIsActive())
-                .build()
-        );
+                .build());
         return PageResponse.from(dtoPage);
     }
 
-    private static final List<String> SUBJECT_SORTABLE = List.of(
-            "title", "code", "fee", "sessionNumber", "isActive", "id"
-    );
+    private static final List<String> SUBJECT_SORTABLE =
+            List.of("title", "code", "fee", "sessionNumber", "isActive", "id");
 
     private Pageable sanitize(Pageable pageable) {
         Sort safeSort = Sort.unsorted();

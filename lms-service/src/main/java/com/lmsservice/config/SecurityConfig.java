@@ -50,6 +50,8 @@ public class SecurityConfig {
             "/api/program/**",
             "/api/v1/payments/**",
             "/api/subject/**",
+            "/api/v1/enrollments/result/**",
+            "/api/v1/enrollments/status/**"
     };
 
     /**

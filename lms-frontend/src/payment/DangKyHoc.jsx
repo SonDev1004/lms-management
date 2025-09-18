@@ -35,8 +35,7 @@ const DangKyHoc = () => {
         try {
             const res = await axiosClient.post(urls.payment, {
                 programId: selectedProgram,
-                subjectId: selectedSubject,
-                amount: 150000,
+                subjectId: selectedSubject
             });
 
             console.log("📌 API Response:", res.data);

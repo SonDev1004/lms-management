@@ -1,9 +1,9 @@
 package com.lmsservice.dto.response;
 
+import java.math.BigDecimal;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -13,18 +13,17 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class PaymentResultResponse {
     String txnRef;
-    String status;      // PENDING / SUCCESS / FAILED / CANCELLED / EXPIRED
+    String status; // PENDING / SUCCESS / FAILED / CANCELLED / EXPIRED
     BigDecimal amount;
     BigDecimal totalFee;
     Long programId;
     String programName;
     Long subjectId;
     String subjectName;
-    Long enrollmentId;  // null nếu chưa thành công
+    Long enrollmentId; // null nếu chưa thành công
     String message;
 
     Long userId;
     String orderInfo;
     String currency;
 }
-

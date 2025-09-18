@@ -10,7 +10,7 @@ export default function PaymentSuccess() {
 
     useEffect(() => {
         if (txnRef) {
-            axios.get(urls.resultPayment)
+            axios.get(urls.resultPayment(txnRef))   // ✅ phải truyền txnRef
                 .then(res => setResult(res.data.result))
                 .catch(err => console.error(err));
         }
@@ -23,7 +23,7 @@ export default function PaymentSuccess() {
             <h1>Kết quả thanh toán</h1>
             <p>Mã giao dịch: {result.txnRef}</p>
             <p>Trạng thái: {result.status}</p>
-            <p>Số tiền: {result.amount} {result.currency}</p>
+            <p>Số tiền: {result.totalFee} {result.currency}</p> {/* ✅ dùng totalFee */}
             {result.status === "SUCCESS" && (
                 <p>Đăng ký thành công! Mã enrollment: {result.enrollmentId}</p>
             )}
