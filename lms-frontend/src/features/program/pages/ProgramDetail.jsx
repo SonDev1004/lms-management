@@ -12,7 +12,6 @@ const ProgramDetail = () => {
         onConsult, onRegisterTrack, onSelectCourse, loadCoursesByTrack, goBack,
     } = useProgramDetail();
 
-    // Loading state — đơn giản, tinh gọn
     if (loading) {
         return (
             <div className="flex flex-column align-items-center justify-content-center p-6">
@@ -23,7 +22,7 @@ const ProgramDetail = () => {
         );
     }
 
-    // Error/empty state
+
     if (error || !program) {
         return (
             <div className="text-center p-6">

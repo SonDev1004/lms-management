@@ -20,6 +20,7 @@ const EnrollmentStepper = () => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
+
         if (location.state?.selectedItem) setSelectedItem(location.state.selectedItem);
         else navigate('/'); // không có payload → quay về Home
     }, [location.state, navigate]);

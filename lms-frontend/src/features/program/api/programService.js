@@ -47,10 +47,8 @@ export async function getDetailProgram(programId) {
     try {
         const res = await axiosClient.get(url);
         const data = res?.data?.result ?? null;
-
         const program = mapProgramDetail(data);
 
-        console.log("📌 Mapped program:", program);
         return program;
     } catch (error) {
         console.error("❌ Lỗi khi gọi getDetailProgram:", error);

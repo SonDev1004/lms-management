@@ -23,4 +23,5 @@ export default {
 
     //subject
     listSubject: `${rootAPI}/subject/all-subject`,
+    getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 }
