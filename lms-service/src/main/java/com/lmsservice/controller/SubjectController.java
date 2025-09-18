@@ -60,7 +60,7 @@ public class SubjectController {
                 .build());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/detail")
     public ResponseEntity<ApiResponse<SubjectDetailResponse>> getSubjectDetail(
             @PathVariable Long id, @RequestParam(defaultValue = "true") boolean onlyUpcoming) {
         var result = subjectService.getDetail(id, onlyUpcoming);
