@@ -1,6 +1,7 @@
 package com.lmsservice.spec;
 
 import org.springframework.data.jpa.domain.Specification;
+
 import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import com.lmsservice.entity.Subject;
 
@@ -26,8 +27,7 @@ public final class SubjectSpecifications {
             spec = spec.and((root, q, cb) -> cb.or(
                     cb.like(cb.lower(root.get("title")), kw),
                     cb.like(cb.lower(root.get("description")), kw),
-                    cb.like(cb.lower(root.get("code")), kw)
-            ));
+                    cb.like(cb.lower(root.get("code")), kw)));
         }
 
         if (f.getFeeMin() != null) {

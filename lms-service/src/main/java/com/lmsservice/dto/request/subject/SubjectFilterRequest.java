@@ -1,9 +1,9 @@
 package com.lmsservice.dto.request.subject;
 
+import java.math.BigDecimal;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
 
 @Setter
 @Getter

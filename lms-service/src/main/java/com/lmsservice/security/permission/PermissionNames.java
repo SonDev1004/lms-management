@@ -27,6 +27,6 @@ public final class PermissionNames {
 
     // Program permissions
     public static final String PROGRAM_VIEW_ALL = "PROGRAM_VIEW_ALL";
-    //Subject permissions
+    // Subject permissions
     public static final String SUBJECT_VIEW_ALL = "SUBJECT_VIEW_ALL";
 }
