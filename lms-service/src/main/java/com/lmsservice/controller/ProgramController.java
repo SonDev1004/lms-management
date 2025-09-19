@@ -2,6 +2,7 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
+import com.lmsservice.dto.response.program.ProgramDetailResponse;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -77,6 +78,20 @@ public class ProgramController {
                 .code(HttpStatus.OK.value())
                 .message("Get all programs successfully")
                 .result(response)
+                .build());
+    }
+
+    @GetMapping("/{id}/detail")
+    public ResponseEntity<ApiResponse<ProgramDetailResponse>> getProgramDetail(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "false") boolean onlyUpcoming) {
+
+        var result = programService.getProgramDetail(id, onlyUpcoming);
+
+        return ResponseEntity.ok(ApiResponse.<ProgramDetailResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get program detail successfully")
+                .result(result)
                 .build());
     }
 }

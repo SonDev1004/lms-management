@@ -3,7 +3,13 @@ package com.lmsservice.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.lmsservice.dto.response.program.ProgramDetailResponse;
+import com.lmsservice.entity.Course;
+import com.lmsservice.repository.CourseRepository;
+import com.lmsservice.util.CourseStatus;
+import com.lmsservice.util.ScheduleFormatter;
 import jakarta.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -47,6 +53,7 @@ public class ProgramServiceImpl implements ProgramService {
     CurriculumRepository curriculumRepository;
     SubjectRepository subjectRepository;
     ProgramPolicy programPolicy;
+    private final CourseRepository courseRepository;
 
     public ProgramResponse createProgram(ProgramRequest programRequest) {
 
@@ -162,7 +169,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         // Cho phép sort theo các field ROOT của Program
         Set<String> whitelist = PageableUtils.toWhitelist(
-                "id", "title", "fee", "code", "minStudent", "maxStudent", "isActive", "createdAt", "updatedAt");
+                "id", "title", "fee", "code", "minStudent", "maxStudent", "status", "createdAt", "updatedAt");
         Sort fallback = Sort.by(Sort.Order.desc("id")); // sort mặc định khi client không truyền/hoặc truyền sai
         Pageable safe = PageableUtils.sanitizeSort(pageable, whitelist, fallback);
 
@@ -179,6 +186,113 @@ public class ProgramServiceImpl implements ProgramService {
                 .isActive(p.getIsActive())
                 .build());
         return PageResponse.from(dtoPage);
+    }
+
+    @Override
+    public ProgramDetailResponse getProgramDetail(Long programId, boolean onlyUpcoming) {
+
+        Program program = programRepository.findById(programId).orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
+        if (program == null) {
+            throw new AppException(ErrorCode.PROGRAM_NOT_FOUND);
+        }
+        if (program.getIsActive() == false) {
+            throw new AppException(ErrorCode.PROGRAM_NOT_ACTIVE);
+        }
+        //lấy curriculums theo  order
+        var curriculums = curriculumRepository.findByProgram_IdOrderByOrderNumberAsc(programId);
+        //Tất cả courses trong program
+        var allCourses = courseRepository.findByProgram_Id(programId);
+
+        if (onlyUpcoming) {
+            var today = java.time.LocalDate.now();
+            allCourses = allCourses.stream()
+                    .filter(c -> c.getStartDate() == null || !c.getStartDate().isBefore(today))
+                    .toList();
+        }
+
+        allCourses = allCourses.stream()
+                .sorted(
+                        java.util.Comparator
+                                .comparingInt((Course c) -> c.getStatus() != null ? c.getStatus().getCode() : -1).reversed()
+                                .thenComparing(Course::getStartDate, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
+                                .thenComparing(Course::getId)
+                )
+                .toList();
+
+        //lấy track
+        var trackCodes = allCourses.stream()
+                .map(Course::getTrackCode)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .toList();
+        var trackItems = trackCodes.stream()
+                .map(trk -> ProgramDetailResponse.TrackItem.builder()
+                        .trackCode(trk)
+                        .trackLabel(trk)
+                        .build())
+                .toList();
+        var bySubject = allCourses.stream()
+                .collect(Collectors.groupingBy(c -> c.getSubject().getId()));
+
+
+        var subjectItems = new ArrayList<ProgramDetailResponse.SubjectItem>();
+        for (var cur : curriculums) {
+            var sid = cur.getSubject().getId();
+            var subjectCourses = bySubject.getOrDefault(sid, List.of());
+
+
+            var courseItems = subjectCourses.stream()
+                    .map(c -> {
+                        CourseStatus statusEnum = c.getStatus();
+                        Integer status = (statusEnum != null ? statusEnum.getCode() : null);
+                        String statusName = (statusEnum == null) ? "Khác" : switch (statusEnum) {
+                            case DRAFT -> "Nháp";
+                            case SCHEDULED -> "Sắp khai giảng";
+                            case ENROLLING -> "Đang tuyển sinh";
+                            case WAITLIST -> "Danh sách chờ";
+                            case IN_PROGRESS -> "Đang học";
+                            case COMPLETED -> "Đã kết thúc";
+                        };
+
+                        return ProgramDetailResponse.CourseItem.builder()
+                                .courseId(c.getId())
+                                .courseTitle(c.getTitle())
+                                .courseCode(c.getCode())
+                                .plannedSessions(c.getPlannedSession())
+                                .capacity(c.getCapacity())
+                                .startDate(c.getStartDate())
+                                .schedule(ScheduleFormatter.format(c.getTimeslots()))
+                                .status(status)
+                                .statusName(statusName)
+                                .trackCode(c.getTrackCode())
+                                .build();
+                    })
+                    .toList();
+
+            subjectItems.add(
+                    ProgramDetailResponse.SubjectItem.builder()
+                            .subjectId(sid)
+                            .subjectTitle(cur.getSubject().getTitle())
+                            .order(cur.getOrderNumber())
+                            .courses(courseItems)
+                            .build()
+            );
+        }
+
+
+        return ProgramDetailResponse.builder()
+                .id(program.getId())
+                .titleProgram(program.getTitle())
+                .codeProgram(program.getCode())
+                .descriptionProgram(program.getDescription())
+                .fee(program.getFee())
+                .minStudents(program.getMinStudent())
+                .maxStudents(program.getMaxStudent())
+                .imgUrl(program.getImageUrl())
+                .isActive(program.getIsActive())
+                .tracks(trackItems)
+                .subjectList(subjectItems)
+                .build();
     }
 
     // Generate a unique code for the program

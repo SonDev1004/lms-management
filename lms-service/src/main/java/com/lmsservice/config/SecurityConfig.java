@@ -42,12 +42,16 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     public static final String[] PUBLIC_URLS = {
-        "/api/auth/login**",
-        "/api/auth/register**",
-        "/api/auth/refresh**",
-        "/api/auth/logout**",
-        "/api/files/**",
-        "/api/program/**",
+            "/api/auth/login**",
+            "/api/auth/register**",
+            "/api/auth/refresh**",
+            "/api/auth/logout**",
+            "/api/files/**",
+            "/api/program/**",
+            "/api/v1/payments/**",
+            "/api/subject/**",
+            "/api/v1/enrollments/result/**",
+            "/api/v1/enrollments/status/**"
     };
 
     /**
@@ -65,6 +69,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_URLS)
                         .permitAll()
+                        .requestMatchers("/api/v1/enrollments/**")
+                        .hasAnyRole("GUEST", "STUDENT")
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()
                         .requestMatchers("/api/user/profile")

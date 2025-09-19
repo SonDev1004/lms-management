@@ -42,6 +42,7 @@ import AMReport from '@/features/academic_manager/pages/AMReport.jsx';
 import AMNotification from '@/features/academic_manager/pages/AMNotification.jsx';
 import ProgramDetail from './features/program/pages/ProgramDetail.jsx';
 
+
 import CourseHome from '@/features/course/pages/CourseHome.jsx';
 import CourseDetailStudent from '@/features/course/pages/CourseDetailStudent.jsx';
 import StudentNotification from '@/features/student/pages/StudentNotification.jsx';
@@ -51,37 +52,41 @@ import AMProfile from '@/features/academic_manager/pages/AMProfile.jsx';
 import TeacherProfile from '@/features/teacher/pages/TeacherProfile.jsx';
 import AdminProfile from '@/features/admin/pages/AdminProfile.jsx';
 import Unauthorized from '@/features/auth/pages/Unauthorized.jsx';
-import StudentCourseDetail from '@/features/student/pages/StudentCourseDetail.jsx';
 import FAQ from '@/features/home/pages/FAQ.jsx';
 import Blog from '@/features/home/pages/Blog.jsx';
 import About from '@/features/home/pages/About.jsx';
 import SubjectDetail from '@/features/subject/pages/SubjectDetail.jsx';
-import EnrollmentStepper from '@/features/enrollment/pages/EnrollmentStepper.jsx';
-import ThankYou from '@/features/enrollment/pages/ThankYou.jsx';
 import ProgramList from '@/features/program/pages/ProgramList.jsx';
-import CourseList from '@/features/home/pages/CourseList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
 import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
 import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
 import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
+import PaymentForm from "@/features/payment/PaymentForm.jsx";
+import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
+import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
+import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
 
 const App = () => {
+
 	return (
 		<BrowserRouter>
 			<Routes>
 				{/* Home Route */}
-				<Route path='/' element={<LayoutHome />}>
+				<Route path="/" element={<LayoutHome />}>
 					<Route index element={<Guest />} />
-					<Route path='login' element={<Login />} />
-					<Route path='register' element={<Register />} />
-					<Route path='about' element={<About />} />
-					<Route path='faq' element={<FAQ />} />
-					<Route path='blog' element={<Blog />} />
-					<Route path='programs' element={<ProgramList />} />
-					<Route path='subjects' element={<SubjectList />} />
-					<Route path='dang-ky' element={<EnrollmentStepper />} />
-					<Route path='cam-on' element={<ThankYou />} />
+					<Route path="login" element={<Login />} />
+					<Route path="register" element={<Register />} />
+					<Route path="about" element={<About />} />
+					<Route path="faq" element={<FAQ />} />
+					<Route path="blog" element={<Blog />} />
+					<Route path="programs" element={<ProgramList />} />
+					<Route path="subjects" element={<SubjectList />} />
+					<Route path="payment" element={<PaymentForm />} />
+					<Route path="payment-success" element={<PaymentSuccess />} />
+					<Route path="payment-failed" element={<PaymentFailed />} />
+					<Route path="payment-cancelled" element={<PaymentCancelled />} />
 				</Route>
+
 
 				{/* Program Route (ngoài student) */}
 				<Route path='program' element={<LayoutHome />}>
@@ -180,6 +185,7 @@ const App = () => {
 			</Routes>
 		</BrowserRouter>
 	);
+
 };
 
 export default App;

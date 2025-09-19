@@ -2,6 +2,7 @@ package com.lmsservice.service;
 
 import java.util.List;
 
+import com.lmsservice.dto.response.program.ProgramDetailResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,6 @@ public interface ProgramService {
     List<CurriculumResponse> addSubjectsToProgram(Long programId, List<CurriculumRequest> requests);
 
     PageResponse<ProgramResponse> getAllPrograms(ProgramFilterRequest f, Pageable pageable);
+
+    ProgramDetailResponse getProgramDetail(Long programId, boolean onlyUpcoming);
 }
