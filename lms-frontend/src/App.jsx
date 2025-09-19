@@ -66,48 +66,6 @@ import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
 import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
 
 const App = () => {
-	return (
-		<BrowserRouter>
-			<Routes>
-				{/* Home Route */}
-				<Route path='/' element={<LayoutHome />}>
-					<Route index element={<Guest />} />
-					<Route path='login' element={<Login />} />
-					<Route path='register' element={<Register />} />
-					<Route path='about' element={<About />} />
-					<Route path='faq' element={<FAQ />} />
-					<Route path='blog' element={<Blog />} />
-					<Route path='programs' element={<ProgramList />} />
-					<Route path='subjects' element={<SubjectList />} />
-					<Route path='dang-ky' element={<EnrollmentStepper />} />
-					<Route path='cam-on' element={<ThankYou />} />
-				</Route>
-
-import CourseHome from "@/features/course/pages/CourseHome.jsx";
-import CourseDetailStudent from "@/features/course/pages/CourseDetailStudent.jsx";
-import StudentNotification from "@/features/student/pages/StudentNotification.jsx";
-import StudentProfile from "@/features/student/pages/StudentProfile.jsx";
-import ProtectedRoute from "@/app/router/ProtectedRoute.jsx";
-import AMProfile from "@/features/academic_manager/pages/AMProfile.jsx";
-import TeacherProfile from "@/features/teacher/pages/TeacherProfile.jsx";
-import AdminProfile from "@/features/admin/pages/AdminProfile.jsx";
-import Unauthorized from "@/features/auth/pages/Unauthorized.jsx";
-import StudentCourseDetail from "@/features/student/pages/StudentCourseDetail.jsx";
-import FAQ from "@/features/home/pages/FAQ.jsx";
-import Blog from "@/features/home/pages/Blog.jsx";
-import About from "@/features/home/pages/About.jsx";
-import SubjectDetail from "@/features/subject/pages/SubjectDetail.jsx";
-import EnrollmentStepper from "@/features/enrollment/pages/EnrollmentStepper.jsx";
-import ThankYou from "@/features/enrollment/pages/ThankYou.jsx";
-import ProgramList from "@/features/program/pages/ProgramList.jsx";
-import CourseList from "@/features/home/pages/CourseList.jsx";
-import SubjectList from "@/features/subject/pages/SubjectList.jsx";
-import DangKyHoc from "@/payment/DangKyHoc.jsx";
-import PaymentSuccess from "@/payment/PaymentSuccess.jsx";
-import PaymentFailed from "@/payment/PaymentFailed.jsx";
-import PaymentCancelled from "@/payment/PaymentCancelled.jsx";
-
-const App = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -123,10 +81,10 @@ const App = () => {
           <Route path="subjects" element={<SubjectList />} />
           <Route path="dang-ky" element={<EnrollmentStepper />} />
           <Route path="cam-on" element={<ThankYou />} />
-          <Route path="payment" element={<DangKyHoc />} />
-          <Route path="payment-success" element={<PaymentSuccess />} />
-          <Route path="payment-failed" element={<PaymentFailed />} />
-          <Route path="payment-cancelled" element={<PaymentCancelled />} />
+          {/*<Route path="payment" element={<DangKyHoc />} />*/}
+          {/*<Route path="payment-success" element={<PaymentSuccess />} />*/}
+          {/*<Route path="payment-failed" element={<PaymentFailed />} />*/}
+          {/*<Route path="payment-cancelled" element={<PaymentCancelled />} />*/}
         </Route>
 
 
