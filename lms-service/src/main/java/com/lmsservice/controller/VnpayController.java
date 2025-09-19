@@ -1,16 +1,18 @@
 package com.lmsservice.controller;
 
-import com.lmsservice.dto.response.ApiResponse;
-import com.lmsservice.service.EnrollmentPaymentService;
-import com.lmsservice.service.VnpayService;
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.lmsservice.dto.response.ApiResponse;
+import com.lmsservice.service.EnrollmentPaymentService;
+import com.lmsservice.service.VnpayService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -31,13 +33,12 @@ public class VnpayController {
         Map<String, String> copy = new HashMap<>(params);
         boolean valid = vnpayService.verifySignature(copy);
         if (!valid) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.builder()
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.builder()
                             .code(400)
                             .message("Invalid signature")
                             .result(Map.of("status", "ERROR", "message", "Invalid signature"))
-                            .build()
-            );
+                            .build());
         }
 
         String code = params.get("vnp_ResponseCode");
@@ -56,28 +57,26 @@ public class VnpayController {
                         .build();
             } else {
                 enrollmentPaymentService.markPendingFailed(txnRef, code);
-                String reason = switch (code) {
-                    case "12" -> "Invalid transaction";
-                    default -> "Transaction failed (" + code + ")";
-                };
+                String reason =
+                        switch (code) {
+                            case "12" -> "Invalid transaction";
+                            default -> "Transaction failed (" + code + ")";
+                        };
                 return ResponseEntity.status(302)
                         .header("Location", clientDomain + "/payment-failed?txnRef=" + txnRef + "&reason=" + reason)
                         .build();
             }
         } catch (IllegalStateException e) {
-            return ResponseEntity.ok(
-                    ApiResponse.builder()
-                            .message("Already processed")
-                            .result(Map.of("status", "ALREADY_PROCESSED", "txnRef", txnRef))
-                            .build()
-            );
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .message("Already processed")
+                    .result(Map.of("status", "ALREADY_PROCESSED", "txnRef", txnRef))
+                    .build());
         } catch (Exception ex) {
-            return ResponseEntity.internalServerError().body(
-                    ApiResponse.builder()
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.builder()
                             .message(ex.getMessage())
                             .result(Map.of("status", "ERROR"))
-                            .build()
-            );
+                            .build());
         }
     }
 
@@ -85,7 +84,9 @@ public class VnpayController {
             summary = "Xử lý IPN từ VNPAY",
             description = "API này xử lý các thông báo không đồng bộ (IPN) từ VNPAY về trạng thái thanh toán. "
                     + "Hệ thống sẽ xác thực chữ ký và cập nhật trạng thái thanh toán tương ứng trong hệ thống.")
-    @RequestMapping(value = "/vnpay-ipn", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(
+            value = "/vnpay-ipn",
+            method = {RequestMethod.GET, RequestMethod.POST})
     public ApiResponse<?> vnpayIpn(@RequestParam Map<String, String> params) {
         Map<String, String> resp = new HashMap<>();
         Map<String, String> copy = new HashMap<>(params);
@@ -121,9 +122,6 @@ public class VnpayController {
             resp.put("RspCode", "99");
             resp.put("Message", "Error: " + e.getMessage());
         }
-        return ApiResponse.builder()
-                .message("IPN processed")
-                .result(resp)
-                .build();
+        return ApiResponse.builder().message("IPN processed").result(resp).build();
     }
 }

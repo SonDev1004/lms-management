@@ -1,15 +1,29 @@
 package com.lmsservice.dto.response;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import java.math.BigDecimal;
+
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentResultResponse extends  CreatePaymentResponse{
-    String status; // SUCCESS, FAILED, CANCELLED
+@AllArgsConstructor
+@NoArgsConstructor
+public class PaymentResultResponse {
+    String txnRef;
+    String status; // PENDING / SUCCESS / FAILED / CANCELLED / EXPIRED
+    BigDecimal amount;
+    BigDecimal totalFee;
+    Long programId;
+    String programName;
+    Long subjectId;
+    String subjectName;
+    Long enrollmentId; // null nếu chưa thành công
+    String message;
 
+    Long userId;
+    String orderInfo;
+    String currency;
 }

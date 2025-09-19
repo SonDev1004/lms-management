@@ -9,6 +9,7 @@ import com.lmsservice.dto.request.subject.SubjectFilterRequest;
 import com.lmsservice.dto.response.subject.SubjectDetailResponse;
 import com.lmsservice.dto.response.subject.SubjectResponse;
 
+
 @Service
 public interface SubjectService {
     SubjectResponse createSubject(CreateSubjectRequest requestDTO);

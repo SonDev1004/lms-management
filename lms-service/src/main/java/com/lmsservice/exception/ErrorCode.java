@@ -68,7 +68,8 @@ public enum ErrorCode {
     PAYMENT_HISTORY_NOT_FOUND(1047, "Payment history not found", HttpStatus.NOT_FOUND),
     ENROLLMENT_NOT_FOUND(1048, "Enrollment not found", HttpStatus.NOT_FOUND),
     PAYMENT_AMOUNT_MISMATCH(1049, "Payment amount does not match", HttpStatus.BAD_REQUEST),
-    INVALID_REQUEST(1046, "Invalid request", HttpStatus.BAD_REQUEST);
+    INVALID_REQUEST(1046, "Invalid request", HttpStatus.BAD_REQUEST),
+    PAYMENT_NOT_FOUND(1050, "Payment not found", HttpStatus.NOT_FOUND);
 
     private final int code;
     private final String message;
