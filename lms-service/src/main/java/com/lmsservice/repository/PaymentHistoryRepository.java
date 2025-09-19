@@ -9,5 +9,5 @@ import com.lmsservice.entity.PaymentHistory;
 
 @Repository
 public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long> {
-    Optional<PaymentHistory> findTopByReferenceNumberOrderByIdDesc(String referenceNumber);
+    Optional<PaymentHistory> findByReferenceNumber(String referenceNumber);
 }

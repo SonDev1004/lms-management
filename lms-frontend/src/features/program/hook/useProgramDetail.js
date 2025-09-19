@@ -130,7 +130,7 @@ export default function useProgramDetail() {
         console.log("Payload gửi sang /dang-ky:", payload);
 
         // 🚫 Tránh lồng thêm { payload } không cần thiết, để đồng bộ với các nơi khác
-        navigate("/dang-ky", { state: { selectedItem: payload } });
+        navigate("/payment", { state: { selectedItem: payload } });
 
     }, [navigate, program]);
 

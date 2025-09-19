@@ -25,7 +25,11 @@ export default {
 
   getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
-  //payment
-  payment: `${rootAPI}/v1/enrollments/create-payment`,
-  vnpayReturn: (txnRef) => `${rootAPI}/v1/payments/vnpay-return/${txnRef}`,
-};
+    getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
+
+
+    //payment
+    payment: `${rootAPI}/v1/enrollments/create-payment`,
+    resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
+}
+
