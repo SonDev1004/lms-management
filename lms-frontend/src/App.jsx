@@ -66,6 +66,7 @@ import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
 
 const App = () => {
+
     return (
         <BrowserRouter>
             <Routes>
@@ -179,6 +180,7 @@ const App = () => {
             </Routes>
         </BrowserRouter>
     );
+ 
 };
 
 export default App;
