@@ -85,7 +85,7 @@ const SubjectDetail = () => {
         };
 
         console.log("Payload đăng ký (subject):", payload);
-        navigate("/dang-ky", { state: { selectedItem: payload } });
+        navigate("/payment", { state: { selectedItem: payload } });
     };
 
 
