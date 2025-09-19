@@ -1,17 +1,18 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {Button} from 'primereact/button';
-import {Toast} from 'primereact/toast';
-import {Dialog} from 'primereact/dialog';
-// import {Tag} from 'primereact/tag';
+// features/assignment/AssignmentPage.jsx
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
+import { Dialog } from 'primereact/dialog';
 import classNames from 'classnames';
 import AssignmentList from '../components/AssignmentList';
-import {fetchAssignments} from '../api/assignmentService';
+import { fetchAssignments } from '../api/assignmentService';
+import '../styles/Assignment.css';
 
-const AssignmentPage = ({course, student}) => {
+const AssignmentPage = ({ course, student }) => {
     const toast = useRef(null);
     const [assignments, setAssignments] = useState([]);
     const [assignmentFilter, setAssignmentFilter] = useState('all');
-    const [gradeDialog, setGradeDialog] = useState({visible: false, assignment: null});
+    const [gradeDialog, setGradeDialog] = useState({ visible: false, assignment: null });
 
     useEffect(() => {
         let mounted = true;
@@ -21,16 +22,6 @@ const AssignmentPage = ({course, student}) => {
         });
         return () => { mounted = false; };
     }, [course, student]);
-
-    const formatDate = (d) => {
-        if (!d) return '';
-        const dt = d instanceof Date ? d : new Date(d);
-        if (isNaN(dt)) return d;
-        const day = String(dt.getDate()).padStart(2, '0');
-        const month = String(dt.getMonth() + 1).padStart(2, '0');
-        const year = dt.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
 
     const daysDiff = (d) => {
         if (!d) return null;
@@ -42,13 +33,14 @@ const AssignmentPage = ({course, student}) => {
     };
 
     const getAssignmentStatus = (a) => {
-        if (a.studentStatus === 'graded') return {kind: 'graded', label: `Điểm ${a.grade}`, variant: 'success'};
-        if (a.studentStatus === 'submitted') return {kind: 'submitted', label: 'Đã nộp', variant: 'info'};
+        // priority: graded -> submitted -> then by due date
+        if (a.studentStatus === 'graded') return { kind: 'graded', label: `Đã chấm`, variant: 'success' };
+        if (a.studentStatus === 'submitted') return { kind: 'submitted', label: 'Đã nộp', variant: 'info' };
         const diff = daysDiff(a.due);
-        if (diff == null) return {kind: 'pending', label: 'Chưa nộp', variant: 'neutral'};
-        if (diff < 0) return {kind: 'overdue', label: `Quá hạn ${Math.abs(diff)} ngày`, variant: 'danger'};
-        if (diff <= 3) return {kind: 'due_soon', label: `Còn ${diff} ngày`, variant: 'warning'};
-        return {kind: 'pending', label: 'Chưa nộp', variant: 'neutral'};
+        if (diff == null) return { kind: 'pending', label: 'Chưa nộp', variant: 'neutral' };
+        if (diff < 0) return { kind: 'overdue', label: `Chưa nộp`, variant: 'danger' }; // label kept simple; overdue text shown in list
+        if (diff <= 3) return { kind: 'due_soon', label: `Còn ${diff} ngày`, variant: 'warning' };
+        return { kind: 'pending', label: 'Chưa nộp', variant: 'neutral' };
     };
 
     const filteredAssignments = useMemo(() => {
@@ -69,7 +61,7 @@ const AssignmentPage = ({course, student}) => {
         if (!file) return;
         const a = assignments.find((x) => x.id === assignmentId);
         if (!a) return;
-        toast.current && toast.current.show({severity: 'info', summary: 'Đang tải lên', detail: file.name, life: 1200});
+        toast.current && toast.current.show({ severity: 'info', summary: 'Đang tải lên', detail: file.name, life: 1200 });
         setTimeout(() => {
             setAssignments((prev) => prev.map((it) => (it.id === assignmentId ? {
                 ...it,
@@ -85,13 +77,13 @@ const AssignmentPage = ({course, student}) => {
     };
 
     const onViewGrade = (row) => {
-        setGradeDialog({visible: true, assignment: row});
+        setGradeDialog({ visible: true, assignment: row });
     };
 
     return (
         <div className="assignment-root">
-            <Toast ref={toast}/>
-            <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap" style={{gap: 12}}>
+            <Toast ref={toast} />
+            <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap assign-filter-row" style={{gap: 12}}>
                 <div className="small-muted">Bộ lọc:</div>
                 {['all', 'due_soon', 'overdue', 'not_submitted', 'submitted', 'graded'].map((k) => (
                     <Button
@@ -114,18 +106,17 @@ const AssignmentPage = ({course, student}) => {
                 getAssignmentStatus={getAssignmentStatus}
                 onUploadHandler={onUploadHandler}
                 onViewGrade={onViewGrade}
-                formatDate={formatDate}
             />
 
             <Dialog header={`Điểm: ${gradeDialog.assignment?.title || ''}`} visible={gradeDialog.visible} modal
-                    onHide={() => setGradeDialog({visible: false, assignment: null})}>
+                    onHide={() => setGradeDialog({ visible: false, assignment: null })}>
                 {gradeDialog.assignment ? (
                     <div>
                         <p>Bài: <strong>{gradeDialog.assignment.title}</strong></p>
                         <p>Điểm: <strong>{gradeDialog.assignment.grade}</strong></p>
                         <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                             <Button label="Đóng" className="p-button-text"
-                                    onClick={() => setGradeDialog({visible: false, assignment: null})}/>
+                                    onClick={() => setGradeDialog({ visible: false, assignment: null })}/>
                         </div>
                     </div>
                 ) : <p>Không có dữ liệu</p>}
