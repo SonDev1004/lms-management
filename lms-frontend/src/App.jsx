@@ -63,6 +63,7 @@ import CourseList from '@/features/home/pages/CourseList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
 import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
 import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
+import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
 
 const App = () => {
 	return (
@@ -119,17 +120,21 @@ const App = () => {
 					<Route path='teacher' element={<LayoutTeacher />}>
 						<Route index element={<TeacherDashboard />} />
 						<Route path='courses' element={<TeacherCourses />} />
-						<Route
-							path='courses/:courseId/student-list'
-							element={<StudentList />}
-						/>
-						<Route path='courses/:courseId/attendance'>
-							<Route index element={<AttendancePanel />} />
+						<Route path='courses/:courseId'>
+							<Route index element={<CourseDetailTeacher />} />
 							<Route
-								path='full'
-								element={<AttendanceSummary />}
+								path='student-list'
+								element={<StudentList />}
 							/>
+							<Route path='attendance'>
+								<Route index element={<AttendancePanel />} />
+								<Route
+									path='full'
+									element={<AttendanceSummary />}
+								/>
+							</Route>
 						</Route>
+
 						<Route path='schedule' element={<TeacherSchedule />} />
 						<Route
 							path='notification'

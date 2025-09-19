@@ -3,32 +3,56 @@ import { Card } from "primereact/card";
 import { Badge } from "primereact/badge";
 //import trạng thái từ file courseStatus.js
 import { statusMap, statusLabelMap, statusSeverityMap } from "../lib/courseStatus.js";
-import CourseActions from "./CourseAction.jsx";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 
+
 export default function CourseCardOverall({ course, role, onAction }) {
     const statusText = statusMap[course.status] || "unknown";
-    const footer = (<CourseActions role={role} course={course} onAction={onAction} />);
+    const footer = (<Button label="Chi tiết" onClick={() => navigate(`/teacher/courses/${course.id}`)} />);
     const navigate = useNavigate();
+    //Đổi format Date
+    function formatDateToDDMM(dateStr) {
+        if (!dateStr) return "";
+        const [yyyy, mm, dd] = dateStr.split("-");
+        return `${dd}/${mm}`;
+    }
+    //Hiển thị thứ và thời gian của khóa học:
+    const days = (course.schedule || []).map(s => s.day).join(", ");
+    const times = Array.from(new Set((course.schedule || []).map(s => s.time)));
+    const scheduleStr = times.length === 1
+        ? `${days}, ${times[0]}`
+        : `${days} | ${times.join(", ")}`;
+
     return (
+        //Thuộc tính thẻ a trong Card
         <Card
             title={
-                <div className="flex align-items-center justify-between">
-                    <span className="text-xl font-bold">{course.title}</span>
-                    <Button severity="secondary" label={`Học viên: ${course.student_count}/${course.student_capacity}`} onClick={() => navigate(`/teacher/courses/${course.id}/student-list`)} />
+                <div>
+                    <a
+                        className="text-xl font-bold hover:underline hover:text-blue-600 cursor-pointer"
+                        onClick={() => navigate(`/teacher/courses/${course.id}`)}
+                    >
+                        {course.title}
+                    </a>
                 </div>
             }
-            subTitle={<span className="text-sm">{course.subject_name}</span>}
-            className="mb-3 shadow-2 rounded-2xl"
+            subTitle={<div className="text-sm">{course.subject_name}</div>}
+            className=" mb-3 shadow-2 rounded-2xl h-full"
             footer={footer}
         >
-            <div className="mb-2">
-                <i className="pi pi-calendar"></i> {course.start_date} - {course.end_date}
-                <span className="ml-3"><i className="pi pi-clock"></i>
-                    {(course.schedule || []).map(s => `${s.day} ${s.time}`).join(", ")}
-                </span>
-                <span className="ml-3"><i className="pi pi-building"></i> {course.room}</span>
+            <div className="">
+                <ul className="list-none p-0">
+                    <li><i className="pi pi-calendar mr-2"></i>
+                        {formatDateToDDMM(course.start_date)} - {formatDateToDDMM(course.end_date)}
+                    </li>
+                    <li><span className=""><i className="pi pi-clock mr-2"></i>
+                        {scheduleStr}
+                    </span></li>
+                    <li><span className=""><i className="pi pi-building mr-2"></i>
+                        {course.room}</span>
+                    </li>
+                </ul>
             </div>
             <div className="mb-2 text-gray-700">{course.description}</div>
             <div className="mb-2">
