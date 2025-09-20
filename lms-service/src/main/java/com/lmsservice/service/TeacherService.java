@@ -1,16 +1,14 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-import com.lmsservice.repository.TeacherRepository;
+import com.lmsservice.common.paging.PageResponse;
+import com.lmsservice.dto.request.course.TeacherCourseFilterRequest;
+import com.lmsservice.dto.response.course.TeacherCourse;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+public interface TeacherService {
+    PageResponse<TeacherCourse> getTeacherCourses(TeacherCourseFilterRequest filter, Pageable pageable);
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TeacherService {
-    TeacherRepository teacherRepository;
+    PageResponse<TeacherCourse> getCoursesByTeacherId(
+            Long teacherId, TeacherCourseFilterRequest filter, Pageable pageable);
 }

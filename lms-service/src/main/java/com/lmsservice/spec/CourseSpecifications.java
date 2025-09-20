@@ -83,4 +83,22 @@ public final class CourseSpecifications {
     private static <T> Specification<Course> equal(String path, T value) {
         return value == null ? null : SpecUtils.eq(path, value);
     }
+
+    public static Specification<Course> forTeacher(Long teacherId, StudentCourseFilterRequest f) {
+        return Specification
+                // chỉ lấy các lớp do giáo viên này phụ trách
+                .where(equal("teacher.id", teacherId))
+                // keyword: title/code course, subject.title, teacher.user.{firstName,lastName}
+                .and(keyword(f.getKeyword()))
+                // status, subject
+                .and(equal("status", f.getStatus()))
+                .and(equal("subject.id", f.getSubjectId()))
+                // có thể filter thêm theo teacherId trong request (cho admin dùng)
+                .and(equal("teacher.id", f.getTeacherId()))
+                // range startDate
+                .and(SpecUtils.between("startDate", f.getStartDateFrom(), f.getStartDateTo()))
+                // lọc theo ngày học & phòng (từ timeslot đang active)
+                .and(byDaysOfWeek(f.getDaysOfWeek()))
+                .and(byRoomId(f.getRoomId()));
+    }
 }
