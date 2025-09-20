@@ -294,8 +294,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>21</source>
+                    <target>21</target>
                     <!--Việc kết hợp Lombok và MapStruct yêu cầu một plugin bổ sung để xử lý các annotation của Lombok khi biên dịch MapStruct.
                      MapStruct cần nhận diện được các getter/setter được Lombok tự động tạo ra.-->
                     <annotationProcessorPaths>
@@ -319,8 +319,7 @@
                             <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
-                    <compilerArgs>
-                        <!--Tắt việc chèn timestamp vào file sinh ra bởi MapStruct. Điều này có thể giúp tránh các thay đổi không cần thiết trong file khi chỉ cần biên dịch lại mà không có thay đổi logic.-->
+                    <compilerArgs>--enable-preview
                         <arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
                         <!--Chỉ định rằng các mapper sẽ được quản lý bởi Spring. Điều này có nghĩa là bạn có thể sử dụng @Autowired để tiêm các mapper vào trong các class khác.-->
                         <arg>-Amapstruct.defaultComponentModel=spring</arg>

@@ -2,7 +2,6 @@ package com.lmsservice.service;
 
 import java.util.List;
 
-import com.lmsservice.dto.response.program.ProgramDetailResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +11,7 @@ import com.lmsservice.dto.request.program.ProgramFilterRequest;
 import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
+import com.lmsservice.dto.response.program.ProgramDetailResponse;
 
 @Service
 public interface ProgramService {

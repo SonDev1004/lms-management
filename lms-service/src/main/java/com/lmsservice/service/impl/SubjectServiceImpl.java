@@ -1,5 +1,20 @@
 package com.lmsservice.service.impl;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
+
+import jakarta.transaction.Transactional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
 import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateSubjectRequest;
 import com.lmsservice.dto.request.subject.SubjectFilterRequest;
@@ -16,20 +31,8 @@ import com.lmsservice.service.SubjectService;
 import com.lmsservice.spec.SubjectSpecifications;
 import com.lmsservice.util.CourseStatus;
 import com.lmsservice.util.ScheduleFormatter;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.*;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -143,31 +146,29 @@ public class SubjectServiceImpl implements SubjectService {
         }
         courses = courses.stream()
                 .filter(c -> VISIBLE.contains(c.getStatus()))
-                .sorted(
-                        Comparator
-                                .comparing((Course c) -> c.getStatus().getCode(), Comparator.reverseOrder())
-                                .thenComparing(Course::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                                .thenComparing(Course::getId)
-                )
+                .sorted(Comparator.comparing((Course c) -> c.getStatus().getCode(), Comparator.reverseOrder())
+                        .thenComparing(Course::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                        .thenComparing(Course::getId))
                 .toList();
 
         // Map Course -> DTO
         var classItems = courses.stream()
                 .map(c -> {
-                    var activeSlots = Optional.ofNullable(c.getTimeslots())
-                            .orElseGet(List::of).stream()
+                    var activeSlots = Optional.ofNullable(c.getTimeslots()).orElseGet(List::of).stream()
                             .filter(ts -> Boolean.TRUE.equals(ts.getIsActive()))
                             .toList();
                     String schedule = ScheduleFormatter.format(activeSlots);
 
                     CourseStatus statusEnum = c.getStatus();
                     Integer status = (statusEnum != null ? statusEnum.getCode() : null);
-                    String statusName = (statusEnum == null) ? "Khác" : switch (statusEnum) {
-                        case DRAFT, SCHEDULED -> "Sắp khai giảng";
-                        case ENROLLING, WAITLIST -> "Đang tuyển sinh";
-                        case IN_PROGRESS -> "Đang học";
-                        case COMPLETED -> "Đã học";
-                    };
+                    String statusName = (statusEnum == null)
+                            ? "Khác"
+                            : switch (statusEnum) {
+                                case DRAFT, SCHEDULED -> "Sắp khai giảng";
+                                case ENROLLING, WAITLIST -> "Đang tuyển sinh";
+                                case IN_PROGRESS -> "Đang học";
+                                case COMPLETED -> "Đã học";
+                            };
 
                     return SubjectDetailResponse.CourseItem.builder()
                             .courseId(c.getId())
@@ -197,6 +198,7 @@ public class SubjectServiceImpl implements SubjectService {
                 .classes(classItems)
                 .build();
     }
+
     private static final java.util.EnumSet<CourseStatus> VISIBLE =
             java.util.EnumSet.of(CourseStatus.SCHEDULED, CourseStatus.ENROLLING, CourseStatus.WAITLIST);
     private static final List<String> SUBJECT_SORTABLE =
