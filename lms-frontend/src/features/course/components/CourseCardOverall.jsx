@@ -7,21 +7,30 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function CourseCardOverall({ course, role, onAction }) {
-    const statusText = statusMap[course.status] || "unknown";
-    const footer = (<Button label="Chi tiết" onClick={() => navigate(`/teacher/courses/${course.id}`)} />);
     const navigate = useNavigate();
+
+    const payload = {
+        courseId: course.id,
+        courseTitle: course.title,
+        students: course.students ?? []
+    };
+    const goDetail = () => {
+        navigate(`/teacher/courses/${course.id}`, { state: { payload } });
+    };
+    const footer = (<Button label="Chi tiết" onClick={goDetail} />);
+    const statusText = statusMap[course.status] || "unknown";
+
     //Đổi format Date
     function formatDateToDDMM(dateStr) {
         if (!dateStr) return "";
         const [yyyy, mm, dd] = dateStr.split("-");
-        return `${dd}/${mm}`;
+        return `${dd}/${mm}/${yyyy}`;
     }
     //Hiển thị thứ và thời gian của khóa học:
-    const days = (course.schedule || []).map(s => s.day).join(", ");
-    const times = Array.from(new Set((course.schedule || []).map(s => s.time)));
-    const scheduleStr = times.length === 1
-        ? `${days}, ${times[0]}`
-        : `${days} | ${times.join(", ")}`;
+    const days = course.daysText || "";
+    const times = course.timeText || "";
+
+    const scheduleStr = days && times ? `${days}, ${times}` : days || times;
 
     return (
         //Thuộc tính thẻ a trong Card
@@ -30,7 +39,7 @@ export default function CourseCardOverall({ course, role, onAction }) {
                 <div>
                     <a
                         className="text-xl font-bold hover:underline hover:text-blue-600 cursor-pointer"
-                        onClick={() => navigate(`/teacher/courses/${course.id}`)}
+                        onClick={goDetail}
                     >
                         {course.title}
                     </a>
@@ -43,25 +52,24 @@ export default function CourseCardOverall({ course, role, onAction }) {
             <div className="">
                 <ul className="list-none p-0">
                     <li><i className="pi pi-calendar mr-2"></i>
-                        {formatDateToDDMM(course.start_date)} - {formatDateToDDMM(course.end_date)}
+                        {formatDateToDDMM(course.startDate)}
                     </li>
                     <li><span className=""><i className="pi pi-clock mr-2"></i>
                         {scheduleStr}
                     </span></li>
                     <li><span className=""><i className="pi pi-building mr-2"></i>
-                        {course.room}</span>
+                        {course.roomName}</span>
                     </li>
                 </ul>
             </div>
             <div className="mb-2 text-gray-700">{course.description}</div>
             <div className="mb-2">
-                <Badge value={`Buổi: ${course.current_session}/${course.total_session}`} className="mr-2" />
+                <Badge value={`Buổi: ${course.sessionsDone}/${course.plannedSession}`} className="mr-2" />
                 <Badge
                     value={statusLabelMap[statusText]}
                     severity={statusSeverityMap[statusText]}
                 />
             </div>
-
         </Card>
     );
 }
