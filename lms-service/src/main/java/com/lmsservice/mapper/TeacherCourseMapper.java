@@ -24,43 +24,48 @@ import lombok.experimental.FieldDefaults;
 public class TeacherCourseMapper {
 
     SessionRepository sessionRepository;
-
+    StudentCourseMapper studentCourseMapper;
     public TeacherCourse toDto(Course course) {
-        int planned = course.getPlannedSession() == null ? 0 : course.getPlannedSession();
 
-        long sessionDone = sessionRepository.countByCourseIdAndDateLessThanEqual(course.getId(), LocalDate.now());
+        long sessionsDone = sessionRepository
+                .countByCourseIdAndDateLessThanEqual(course.getId(), LocalDate.now());
 
-        // map danh sách học viên
+
+        var base = studentCourseMapper.toDto(course, sessionsDone);
+
+
+        int planned = base.getPlannedSession() == null ? 0 : base.getPlannedSession();
         List<TeacherCourse.StudentList> students = buildStudentList(course.getCourseStudents(), planned);
-
-        // sĩ số học sinh trong lớp
         int studentNumber = countActiveStudents(course.getCourseStudents());
 
-        // lấy status text
-        CourseStatus statusEnum = course.getStatus(); // enum CourseStatus
+
+        var statusEnum = course.getStatus();
         Integer statusCode = (statusEnum != null) ? statusEnum.getCode() : null;
         String statusText = (statusEnum != null) ? statusEnum.getTeacherText() : "Không xác định";
 
+
         return TeacherCourse.builder()
-                .courseId(course.getId())
-                .courseCode(course.getCode())
-                .courseTitle(course.getTitle())
-                .subjectId(course.getSubject() != null ? course.getSubject().getId() : null)
-                .subjectName(course.getSubject() != null ? course.getSubject().getTitle() : null)
-                .teacherId(course.getTeacher() != null ? course.getTeacher().getId() : null)
-                .teacherName(
-                        course.getTeacher() != null && course.getTeacher().getUser() != null
-                                ? (course.getTeacher().getUser().getFirstName() + " "
-                                                + course.getTeacher().getUser().getLastName())
-                                        .trim()
-                                : null)
-                .startDate(course.getStartDate())
-                .plannedSession(planned)
-                .sessionsDone((int) sessionDone)
+
+                .courseId(base.getCourseId())
+                .courseCode(base.getCourseCode())
+                .courseTitle(base.getCourseTitle())
+                .subjectId(base.getSubjectId())
+                .subjectName(base.getSubjectName())
+                .description(base.getDescription())
+                .teacherId(base.getTeacherId())
+                .teacherName(base.getTeacherName())
+                .roomId(base.getRoomId())
+                .roomName(base.getRoomName())
+                .days(base.getDays())
+                .daysText(base.getDaysText())
+                .timeText(base.getTimeText())
+                .startDate(base.getStartDate())
+                .plannedSession(base.getPlannedSession())
+                .sessionsDone(base.getSessionsDone())
+                // Status teacher
                 .status(statusCode)
                 .statusText(statusText)
-
-                // Dto listStudent
+                // List student
                 .studentNumber(studentNumber)
                 .studentList(students)
                 .build();
