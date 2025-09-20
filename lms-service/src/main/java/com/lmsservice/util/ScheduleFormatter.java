@@ -1,14 +1,14 @@
 package com.lmsservice.util;
 
-import com.lmsservice.entity.CourseTimeslot;
-
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.lmsservice.entity.CourseTimeslot;
+
 public final class ScheduleFormatter {
-    private ScheduleFormatter(){}
+    private ScheduleFormatter() {}
 
     public static String format(List<CourseTimeslot> active) {
         if (active == null || active.isEmpty()) return null;
