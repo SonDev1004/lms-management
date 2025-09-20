@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function CourseCardOverall({ course, role, onAction }) {
+    console.log("CourseCardOverall", course, role, onAction);
+
     const statusText = statusMap[course.status] || "unknown";
     const footer = (<Button label="Chi tiết" onClick={() => navigate(`/teacher/courses/${course.id}`)} />);
     const navigate = useNavigate();
@@ -55,7 +57,7 @@ export default function CourseCardOverall({ course, role, onAction }) {
             </div>
             <div className="mb-2 text-gray-700">{course.description}</div>
             <div className="mb-2">
-                <Badge value={`Buổi: ${course.current_session}/${course.total_session}`} className="mr-2" />
+                <Badge value={`Buổi: ${course.current_session}/${course.plannedSession}`} className="mr-2" />
                 <Badge
                     value={statusLabelMap[statusText]}
                     severity={statusSeverityMap[statusText]}
