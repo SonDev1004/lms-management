@@ -65,6 +65,7 @@ import PaymentForm from "@/features/payment/PaymentForm.jsx";
 import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
+import SessionList from './features/session/components/SessionList.jsx';
 
 const App = () => {
 
@@ -125,8 +126,8 @@ const App = () => {
 					<Route path='teacher' element={<LayoutTeacher />}>
 						<Route index element={<TeacherDashboard />} />
 						<Route path='courses' element={<TeacherCourses />} />
-						<Route path='courses/:courseId'>
-							<Route index element={<CourseDetailTeacher />} />
+						<Route path='courses/:courseId' element={<CourseDetailTeacher />} >
+							<Route index element={<SessionList />} />
 							<Route
 								path='student-list'
 								element={<StudentList />}

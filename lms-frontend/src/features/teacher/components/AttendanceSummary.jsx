@@ -5,11 +5,13 @@ import { useEffect, useState } from 'react';
 import { attendanceData } from '../../../mocks/mockAttendance';
 import { Column } from 'primereact/column';
 import { Badge } from 'primereact/badge';
+import { useNavigate } from "react-router-dom";
+import { Button } from 'primereact/button';
 
 const AttendanceSummary = () => {
 	const [sessions, setSessions] = useState([]);
 	const [students, setStudents] = useState([]);
-
+	const navigate = useNavigate();
 	useEffect(() => {
 		setSessions(attendanceData.sessions);
 		setStudents(attendanceData.students);
@@ -53,26 +55,30 @@ const AttendanceSummary = () => {
 
 	return (
 		<>
-			<div className='grid mt-2'>
-				<div className='col-9'>
-					<Card title={header()}>
-						<DataTable value={students}>
-							<Column header='Mã HV' field='code' />
+			<div className='mt-2'>
+
+				<Card title={header()}>
+					<DataTable value={students}>
+						<Column header='Mã HV' field='code' />
+						<Column
+							header='Họ tên'
+							body={st => `${st.firstname} ${st.lastname}`}
+						/>
+						{sessions.map((ss, index) => (
 							<Column
-								header='Họ tên'
-								body={st => `${st.firstname} ${st.lastname}`}
+								header={shortDate(ss.date)}
+								body={st =>
+									formatIcon(st.attendancelist[index])
+								}
 							/>
-							{sessions.map((ss, index) => (
-								<Column
-									header={shortDate(ss.date)}
-									body={st =>
-										formatIcon(st.attendancelist[index])
-									}
-								/>
-							))}
-						</DataTable>
-					</Card>
-				</div>
+						))}
+					</DataTable>
+				</Card>
+				<Button
+					className="mt-2"
+					label='Quay lại'
+					onClick={() => navigate(-1)}
+				/>
 			</div>
 		</>
 	);
