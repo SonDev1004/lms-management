@@ -1,6 +1,6 @@
-const AMDashboard = () => {
-    return (<>
-        <h1>Dashboard Academic Manager</h1></>);
-}
+import React from 'react';
+import DashboardStaff from '@/features/dashboardstaff/pages/DashboardStaff.jsx';
 
-export default AMDashboard;
+export default function AMDashboard(){
+    return <DashboardStaff />;
+}

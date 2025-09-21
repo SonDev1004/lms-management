@@ -1,0 +1,166 @@
+.p-card {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(20, 30, 40, 0.06);
+    padding: 18px;
+}
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 12px;
+}
+.table-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #2d3b45;
+    font-weight: 600;
+}
+.table-header .p-button {
+    border-radius: 8px;
+    padding: 8px 14px;
+    border: 1px solid #12a6c8;
+    color: #0b7285;
+    background: transparent;
+}
+.table-header .p-button.p-button-outlined {
+    background: white;
+}
+.avatar-circle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 14px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+.p-datatable-tbody > tr:nth-child(4n) .avatar-circle { background: #9ba8ff; }
+.p-datatable-tbody > tr:nth-child(4n+1) .avatar-circle { background: #6ad5d8; }
+.p-datatable-tbody > tr:nth-child(4n+2) .avatar-circle { background: #f19e9a; }
+.p-datatable-tbody > tr:nth-child(4n+3) .avatar-circle { background: #7ddf8a; }
+.p-datatable .p-datatable-tbody > tr > td:first-child {
+    padding-left: 18px;
+    width: 70px;
+}
+.students-table .p-datatable-thead > tr > th {
+    background: #fbfdfe;
+    border-bottom: 1px solid rgba(30,40,50,0.04);
+    color: #52606d;
+    font-weight: 600;
+    text-transform: none;
+    padding: 14px 12px;
+}
+.students-table .p-datatable-tbody > tr > td {
+    padding: 18px 12px;
+    vertical-align: middle;
+    color: #33475b;
+    border-bottom: 1px solid rgba(30,40,50,0.04);
+}
+.students-table .p-datatable-tbody > tr:hover {
+    background: linear-gradient(90deg, rgba(16,176,192,0.03), rgba(16,176,192,0.01));
+}
+.students-table .p-paginator {
+    margin-top: 18px;
+}
+.progress-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 160px;
+}
+.progress-cell .p-progressbar {
+    flex: 1;
+    height: 16px;
+    border-radius: 999px;
+    background: #e9edf0;
+    overflow: hidden;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+.progress-cell .p-progressbar .p-progressbar-value {
+    border-radius: 999px;
+    box-shadow: none;
+}
+.progress-percent {
+    font-size: 13px;
+    color: #2b4752;
+    min-width: 36px;
+    text-align: right;
+}
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+    min-width: 74px;
+    text-align: center;
+}
+.badge--active { background: rgba(14,150,160,0.12); color: #0e96a0; border: 1px solid rgba(14,150,160,0.14); }
+.badge--completed { background: rgba(23,120,240,0.10); color: #1778f0; border: 1px solid rgba(23,120,240,0.12); }
+.badge--inactive { background: rgba(120,120,130,0.08); color: #70707a; border: 1px solid rgba(120,120,130,0.06); }
+.p-datatable .date-cell {
+    font-size: 13px;
+    color: #657a87;
+}
+@media (max-width: 880px) {
+    .students-table .p-datatable-thead {
+        display: none;
+    }
+    .students-table .p-datatable-tbody > tr {
+        display: block;
+        margin-bottom: 12px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 6px 14px rgba(20,30,40,0.03);
+        padding: 12px;
+    }
+    .students-table .p-datatable-tbody > tr > td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-bottom: none;
+    }
+    .students-table .p-datatable-tbody > tr > td .p-column-title {
+        display: none;
+    }
+    .students-table .p-datatable-tbody > tr > td:first-child {
+        padding-left: 0;
+    }
+    .row-left {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex: 1 1 60%;
+    }
+    .row-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .row-right {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+        min-width: 90px;
+    }
+    .progress-cell { width: 100%; margin-top: 6px; }
+}
+.student-name {
+    font-weight: 600;
+    color: #243b46;
+}
+.student-course {
+    font-size: 13px;
+    color: #586e78;
+}
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable .p-datatable-thead > tr > th {
+    line-height: 1.3;
+}
