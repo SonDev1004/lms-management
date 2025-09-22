@@ -1,0 +1,66 @@
+:root{
+    --card-bg: #ffffff;
+    --title: #0f172a;
+    --muted: #6b7280;
+    --accent-blue: #3b82f6;
+    --accent-pink: #fb7185;
+    --radius: 14px;
+    --card-shadow: 0 8px 24px rgba(15,23,42,0.06);
+}
+.big-card,
+.p-card.big-card,
+.big-card.p-card {
+    background: linear-gradient(180deg, var(--card-bg), var(--card-bg));
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(15,23,42,0.03);
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+.big-card h3 {
+    margin: 0 0 12px 4px;
+    font-size: 20px;
+    color: var(--title);
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+.chart-container {
+    position: relative;
+    height: 360px;
+    width: 100%;
+}
+.big-card canvas.chartjs-render-monitor {
+    width: 100% !important;
+    height: 360px !important;
+    display: block;
+}
+.big-card .chart-legend {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+}
+.big-card .legend-item {
+    display:flex;
+    gap:8px;
+    align-items:center;
+    font-size:13px;
+    color:var(--muted);
+}
+.big-card .legend-swatch {
+    width:18px; height:10px; border-radius:3px; display:inline-block;
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.06);
+}
+.big-card:hover {
+    transform: translateY(-4px);
+    transition: transform .12s ease;
+    box-shadow: 0 14px 36px rgba(15,23,42,0.08);
+}
+@media (max-width: 1000px) {
+    .chart-container, .big-card canvas.chartjs-render-monitor { height: 320px !important; }
+}
+@media (max-width: 560px) {
+    .chart-container, .big-card canvas.chartjs-render-monitor { height: 260px !important; }
+    .big-card h3 { font-size: 18px; }
+}
