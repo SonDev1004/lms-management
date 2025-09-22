@@ -1,9 +1,14 @@
 package com.lmsservice.service.impl;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.lmsservice.dto.request.MarkAttendanceRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -33,7 +38,18 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public List<AttendanceItemDTO> getAttendanceByDate(Long courseId, LocalDate date) {
+    public List<AttendanceItemDTO> getAttendanceByDate(Long courseId, String dateStr) {
+        LocalDate date;
+        if (dateStr == null || dateStr.trim().isEmpty() || dateStr.equals("{}")) {
+            // Nếu rỗng => mặc định hôm nay
+            date = LocalDate.now();
+        } else {
+            try {
+                date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
+            } catch (DateTimeParseException e) {
+                throw new AppException(ErrorCode.INVALID_DATE);
+            }
+        }
         Session session = sessionRepository
                 .findByCourseIdAndDate(courseId, date)
                 .orElseThrow(() -> new AppException(ErrorCode.SESSION_NOT_FOUND));
@@ -126,5 +142,60 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .sessions(sessionInfos)
                 .students(studentInfos)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void markAttendance(MarkAttendanceRequest request) {
+        LocalDate sessionDate;
+        if (request.getDate() == null || request.getDate().trim().isEmpty()
+                || request.getDate().equals("{}")) {
+            // FE gửi trống hoặc {}
+            sessionDate = LocalDate.now();
+        } else {
+            try {
+                sessionDate = LocalDate.parse(request.getDate(), DateTimeFormatter.ISO_DATE);
+            } catch (DateTimeParseException e) {
+                throw new AppException(ErrorCode.INVALID_DATE);
+            }
+        }
+        // 1️⃣ Tìm buổi học theo courseId + date
+        Session session = sessionRepository
+                .findByCourseIdAndDate(request.getCourseId(), sessionDate)
+                .orElseThrow(() -> new AppException(ErrorCode.SESSION_NOT_FOUND));
+
+        int order = session.getOrderSession(); // Buổi thứ mấy
+
+        // 2️⃣ Cập nhật trạng thái điểm danh cho từng học viên
+        for (AttendanceItemDTO dto : request.getStudents()) {
+            CourseStudent cs = courseStudentRepository
+                    .findByCourseIdAndStudentId(request.getCourseId(), dto.getId())
+                    .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_COURSE));
+
+            List<Integer> attList = new ArrayList<>();
+            try {
+                if (cs.getAttendanceList() != null) {
+                    attList = objectMapper.readValue(
+                            cs.getAttendanceList(),
+                            new TypeReference<List<Integer>>() {}
+                    );
+                }
+            } catch (Exception ignored) {}
+
+            // Bổ sung độ dài nếu cần
+            while (attList.size() < order) attList.add(null);
+
+            // Ghi trạng thái của buổi hiện tại
+            attList.set(order - 1, dto.getAttendance());
+
+            try {
+                cs.setAttendanceList(objectMapper.writeValueAsString(attList));
+            } catch (JsonProcessingException e) {
+                throw new AppException(ErrorCode.INTERNAL_ERROR);
+            }
+            cs.setNote(dto.getNote());
+
+            courseStudentRepository.save(cs);
+        }
     }
 }
