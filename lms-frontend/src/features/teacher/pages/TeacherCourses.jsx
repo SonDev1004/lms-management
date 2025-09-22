@@ -1,42 +1,45 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import CourseList from "../../course/components/CourseList";
-import { courses } from "../../../mocks/mockCourses.js";
 import { statusMap } from "../../course/lib/courseStatus.js";
+import TeacherService from "@/features/teacher/api/teacherService.js";
 
 const TeacherCourses = () => {
-    // Giả lập id giáo viên login (vd: teacher01 là id 39)
-    const teacherId = 39;
-    // Filter courses đúng giáo viên
-    const coursesByTeacher = courses.filter(c => c.teacher_id === teacherId);
+
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [status, setStatus] = useState("all");
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                setLoading(true);
+                const data = await TeacherService.getMyCourses();
+                console.log(data);
+                if (!mounted) return;
+                setCourses(data.items ?? data.content ?? []);
+            } catch (err) {
+                console.error("Error loading teacher courses", err);
+            } finally {
+                setLoading(false);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []);
 
     // Tab trạng thái
-    const [status, setStatus] = useState("all");
     const visibleCourses = status === "all"
-        ? coursesByTeacher
-        : coursesByTeacher.filter(c => statusMap[c.status] === status);
-
-    //Khai báo hàm handleCourseAction để test n
-    const handleCourseAction = (action, course) => {
-        // Tùy vào action, bạn mở dialog, điều hướng, hoặc xử lý tùy ý
-        if (action === "students") {
-            alert(`Xem danh sách học viên cho lớp: ${course.title}`);
-        } else if (action === "grading") {
-            alert(`Chấm điểm lớp: ${course.title}`);
-        } else if (action === "documents") {
-            alert(`Xem tài liệu lớp: ${course.title}`);
-        }
-        // ... Xử lý thêm các action khác
-        console.log("Action:", action, "Course:", course);
-    };
+        ? courses
+        : courses.filter(c => statusMap[c.status] === status);
 
     return (
         <CourseList
             courses={visibleCourses}
-            loading={false}
+            loading={loading}
             status={status}
             setStatus={setStatus}
             role="teacher"
-            onAction={handleCourseAction} />
+         />
     );
 }
 
