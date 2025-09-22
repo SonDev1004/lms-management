@@ -84,54 +84,54 @@ const AttendancePanel = () => {
 	return (
 		<>
 			<div className='grid mt-2'>
-				<div className='col-9'>
-					<Card title={header()}>
-						<div className='formgrid grid'>
-							<div className='field col'>
-								<label htmlFor='session'>Buổi học</label>
-								<Calendar
-									id='session'
-									value={selectedDate}
-									dateFormat='dd/mm/yy'
-									showIcon
-									showButtonBar
-									onChange={e => setSelectedDate(e.value)}
-								/>
-							</div>
-							<div className='field col'>
-								<label htmlFor='session'>Ca học</label>
-								<InputText value={selectedShift} readOnly />
-							</div>
+
+				<Card title={header()}>
+					<div className='formgrid grid'>
+						<div className='field col'>
+							<label htmlFor='session'>Buổi học</label>
+							<Calendar
+								id='session'
+								value={selectedDate}
+								dateFormat='dd/mm/yy'
+								showIcon
+								showButtonBar
+								onChange={e => setSelectedDate(e.value)}
+							/>
 						</div>
-						<AttendanceTable
-							attendanceList={attendanceData}
-							attendance_types={attendance_types}
-							handleAttendanceChange={handleAttendanceChange}
-							// handleReasonChange={handleReasonChange}
-							renderFooter={renderFooter}
-						/>
-						<div className='flex justify-content-between flex-wrap mt-4'>
-							<div className='flex align-items-center justify-content-center'>
-								<Button
-									label='Quay lại'
-									onClick={() => navigate(-1)}
-								/>
-								<Button
-									label='Refresh'
-									className='ml-2'
-									// onClick={handleRefresh}
-								/>
-							</div>
-							<div className='flex align-items-center justify-content-center'>
-								<Button
-									label='Lưu'
-									onClick={() => handleSaveAttendance()}
-								/>
-							</div>
+						<div className='field col'>
+							<label htmlFor='session'>Ca học</label>
+							<InputText value={selectedShift} readOnly />
 						</div>
-					</Card>
-				</div>
+					</div>
+					<AttendanceTable
+						attendanceList={attendanceData}
+						attendance_types={attendance_types}
+						handleAttendanceChange={handleAttendanceChange}
+						// handleReasonChange={handleReasonChange}
+						renderFooter={renderFooter}
+					/>
+					<div className='flex justify-content-between flex-wrap mt-4'>
+						<div className='flex align-items-center justify-content-center'>
+							<Button
+								label='Quay lại'
+								onClick={() => navigate(-1)}
+							/>
+							<Button
+								label='Refresh'
+								className='ml-2'
+							// onClick={handleRefresh}
+							/>
+						</div>
+						<div className='flex align-items-center justify-content-center'>
+							<Button
+								label='Lưu'
+								onClick={() => handleSaveAttendance()}
+							/>
+						</div>
+					</div>
+				</Card>
 			</div>
+
 		</>
 	);
 };
