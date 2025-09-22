@@ -155,7 +155,7 @@ const App = () => {
 					}
 				>
 					<Route path='staff' element={<LayoutAcademicManager />}>
-						<Route index element={<AMDashboard />} />
+						<Route index element={<AMDashboard   />} />
 						<Route path='program' element={<AMProgram />} />
 						<Route path='courses' element={<AMCourse />} />
 						<Route path='teacher' element={<AMTeacher />} />
