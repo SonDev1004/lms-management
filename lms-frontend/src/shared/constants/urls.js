@@ -32,6 +32,7 @@ export default {
     resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
 
   // Attendance
+  getTeacherCourses: `${rootAPI}/teacher/me/courses`,
   getSessionsByDate: `${rootAPI}/attendance/sessions`,              // GET ?courseId&date
   getAttendanceBySession: (sessionId) => `${rootAPI}/attendance/by-session?sessionId=${sessionId}`, // GET
   markAttendance: `${rootAPI}/attendance/mark`,                     // POST

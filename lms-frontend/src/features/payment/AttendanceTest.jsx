@@ -71,23 +71,30 @@ export default function AttendanceTest() {
         }
         try {
             setLoading(true);
-            await axiosClient.post(urls.markAttendance, {
+
+            const payload = {
                 sessionId: selectedSession,
                 students: students.map((s) => ({
                     id: s.id,
                     attendance: s.attendance ?? null,
                     note: s.note || null,
                 })),
-            });
+            };
+
+            console.log("📤 Payload gửi lên:", payload);  // <== thêm log này
+
+            await axiosClient.post(urls.markAttendance, payload);
+
             alert("Điểm danh thành công");
             await loadAttendance(selectedSession);
         } catch (err) {
-            console.error(err);
+            console.error("❌ Axios error:", err);
             alert(err.response?.data?.message || "Save attendance failed");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div style={{ padding: 20, fontFamily: "sans-serif" }}>
