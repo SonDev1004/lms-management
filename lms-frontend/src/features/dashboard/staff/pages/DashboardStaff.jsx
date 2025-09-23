@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import useStaffDashboard from '../hooks/useStaffDashboard';
-import Sidebar from '../components/Sidebar';
-import SummaryPills from '../components/SummaryPills';
-import EnrollmentChart from '../components/EnrollmentChart';
-import LevelDonut from '../components/LevelDonut';
-import NewStudentsTable from '../components/NewStudentsTable';
-import LeaveApprovalPanel from '../components/LeaveApprovalPanel';
+import useStaffDashboard from '../hooks/useStaffDashboard.js';
+import Sidebar from '../components/Sidebar.jsx';
+import SummaryPills from '../components/SummaryPills.jsx';
+import EnrollmentChart from '../components/EnrollmentChart.jsx';
+import LevelDonut from '../components/LevelDonut.jsx';
+import NewStudentsTable from '../components/NewStudentsTable.jsx';
+import LeaveApprovalPanel from '../components/LeaveApprovalPanel.jsx';
 import '../styles/dashboard.css';
 
 export default function DashboardStaff() {

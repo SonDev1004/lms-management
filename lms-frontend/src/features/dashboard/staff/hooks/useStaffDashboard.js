@@ -1,6 +1,6 @@
 // src/features/dashboardstaff/hooks/useStaffDashboard.js
 import { useState, useMemo } from 'react';
-import * as mock from '../mocks/mockData';
+import * as mock from '../mocks/mockData.js';
 
 export default function useStaffDashboard() {
     const [summary] = useState(mock.summary);
