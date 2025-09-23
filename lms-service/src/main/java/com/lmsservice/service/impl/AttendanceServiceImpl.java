@@ -1,9 +1,7 @@
 package com.lmsservice.service.impl;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.transaction.Transactional;
 
@@ -34,26 +32,42 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final CourseStudentRepository courseStudentRepository;
     private final ObjectMapper objectMapper;
 
+    /**
+     * 🔹 Lấy danh sách session trong 1 ngày
+     */
     @Override
-    public List<AttendanceItemDTO> getAttendanceByDate(Long courseId, String dateStr) {
-        LocalDate date;
-        if (dateStr == null || dateStr.trim().isEmpty() || dateStr.equals("{}")) {
-            // Nếu rỗng => mặc định hôm nay
-            date = LocalDate.now();
-        } else {
-            try {
-                date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
-            } catch (DateTimeParseException e) {
-                throw new AppException(ErrorCode.INVALID_DATE);
-            }
+    public List<SessionInfoDTO> getSessionsByDate(Long courseId, String dateStr) {
+        List<Session> sessions = sessionRepository.findByCourseIdAndDate(courseId, java.time.LocalDate.parse(dateStr));
+        if (sessions.isEmpty()) {
+            throw new AppException(ErrorCode.SESSION_NOT_FOUND);
         }
-        Session session = sessionRepository
-                .findByCourseIdAndDate(courseId, date)
-                .orElseThrow(() -> new AppException(ErrorCode.SESSION_NOT_FOUND));
+
+        return sessions.stream()
+                .map(s -> SessionInfoDTO.builder()
+                        .id(s.getId())
+                        .order(s.getOrderSession())
+                        .date(s.getDate() != null ? s.getDate().toString() : null)
+                        .starttime(s.getStartTime() != null ? s.getStartTime().toString() : null)
+                        .endtime(s.getEndTime() != null ? s.getEndTime().toString() : null)
+                        .room(s.getRoom() != null ? s.getRoom().getName() : null)
+                        .description(s.getDescription())
+                        .isabsent(s.isAbsent())
+                        .build())
+                .toList();
+    }
+
+    /**
+     * 🔹 Lấy danh sách điểm danh theo sessionId
+     */
+    @Override
+    public List<AttendanceItemDTO> getAttendanceBySession(Long sessionId) {
+        Session session =
+                sessionRepository.findById(sessionId).orElseThrow(() -> new AppException(ErrorCode.SESSION_NOT_FOUND));
 
         int order = session.getOrderSession();
-        List<CourseStudent> courseStudents = courseStudentRepository.findByCourseId(courseId);
+        Long courseId = session.getCourse().getId();
 
+        List<CourseStudent> courseStudents = courseStudentRepository.findByCourseId(courseId);
         if (courseStudents.isEmpty()) {
             throw new AppException(ErrorCode.COURSE_NOT_FOUND);
         }
@@ -64,6 +78,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                     User u = st.getUser();
                     Integer attendance = null;
                     String note = null;
+
                     try {
                         List<AttendanceRecordDTO> list = objectMapper.readValue(
                                 cs.getAttendanceList(), new TypeReference<List<AttendanceRecordDTO>>() {});
@@ -93,6 +108,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .toList();
     }
 
+    /**
+     * 🔹 Xem tổng hợp điểm danh toàn course
+     */
     @Override
     public AttendanceSummaryDTO getAttendanceSummary(Long courseId) {
         List<Session> sessions = sessionRepository.findByCourseIdOrderByOrderSessionAsc(courseId);
@@ -113,7 +131,6 @@ public class AttendanceServiceImpl implements AttendanceService {
                         .build())
                 .toList();
 
-        // map students
         List<StudentInfoDTO> studentInfos = courseStudents.stream()
                 .map(cs -> {
                     Student st = cs.getStudent();
@@ -146,30 +163,16 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     @Transactional
     public void markAttendance(MarkAttendanceRequest request) {
-        LocalDate sessionDate;
-        if (request.getDate() == null
-                || request.getDate().trim().isEmpty()
-                || request.getDate().equals("{}")) {
-            // FE gửi trống hoặc {}
-            sessionDate = LocalDate.now();
-        } else {
-            try {
-                sessionDate = LocalDate.parse(request.getDate(), DateTimeFormatter.ISO_DATE);
-            } catch (DateTimeParseException e) {
-                throw new AppException(ErrorCode.INVALID_DATE);
-            }
-        }
-        // 1️⃣ Tìm buổi học theo courseId + date
         Session session = sessionRepository
-                .findByCourseIdAndDate(request.getCourseId(), sessionDate)
+                .findById(request.getSessionId())
                 .orElseThrow(() -> new AppException(ErrorCode.SESSION_NOT_FOUND));
 
-        int order = session.getOrderSession(); // Buổi thứ mấy
+        int order = session.getOrderSession();
+        Long courseId = session.getCourse().getId();
 
-        // 2️⃣ Cập nhật trạng thái điểm danh cho từng học viên
         for (AttendanceItemDTO dto : request.getStudents()) {
             CourseStudent cs = courseStudentRepository
-                    .findByCourseIdAndStudentId(request.getCourseId(), dto.getId())
+                    .findByCourseIdAndStudentId(courseId, dto.getId())
                     .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_COURSE));
 
             List<AttendanceRecordDTO> attList = new ArrayList<>();
@@ -181,10 +184,8 @@ public class AttendanceServiceImpl implements AttendanceService {
             } catch (Exception ignored) {
             }
 
-            // Bổ sung độ dài nếu cần
             while (attList.size() < order) attList.add(null);
 
-            // Ghi trạng thái + note của buổi hiện tại
             attList.set(
                     order - 1,
                     AttendanceRecordDTO.builder()

@@ -18,6 +18,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MarkAttendanceRequest {
     @NotNull
+    Long sessionId;
+
+    @NotNull
     Long courseId;
 
     @NotNull

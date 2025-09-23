@@ -4,22 +4,43 @@ import urls from "@/shared/constants/urls.js";
 
 export default function AttendanceTest() {
     const [courseId, setCourseId] = useState("");
-    const [date, setDate] = useState(""); // yyyy-MM-dd hoặc để trống => hôm nay
+    const [date, setDate] = useState(""); // yyyy-MM-dd
+    const [sessions, setSessions] = useState([]);
+    const [selectedSession, setSelectedSession] = useState(null);
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Load danh sách học viên điểm danh
-    const loadAttendance = async () => {
-        if (!courseId) {
-            alert("Vui lòng nhập Course ID");
+    // Load sessions trong ngày
+    const loadSessions = async () => {
+        if (!courseId || !date) {
+            alert("Nhập Course ID và Date");
             return;
         }
         try {
             setLoading(true);
-            const params = { courseId: courseId.trim() };
-            if (date) params.date = date; // BE chấp nhận yyyy-MM-dd hoặc bỏ trống
-            const res = await axiosClient.get(urls.GetAttendance, { params });
+            const res = await axiosClient.get(urls.getSessionsByDate, {
+                params: { courseId, date },
+            });
+            setSessions(res.data.result || []);
+            setSelectedSession(null);
+            setStudents([]);
+        } catch (err) {
+            console.error(err);
+            alert(err.response?.data?.message || "Load sessions failed");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load attendance của session đã chọn
+    const loadAttendance = async (sessionId) => {
+        try {
+            setLoading(true);
+            const res = await axiosClient.get(
+                urls.getAttendanceBySession(sessionId)
+            );
             setStudents(res.data.result || []);
+            setSelectedSession(sessionId);
         } catch (err) {
             console.error(err);
             alert(err.response?.data?.message || "Load attendance failed");
@@ -28,14 +49,14 @@ export default function AttendanceTest() {
         }
     };
 
-    // Cập nhật trạng thái điểm danh của 1 học viên
+    // Cập nhật trạng thái điểm danh
     const handleAttendanceChange = (index, value) => {
         const copy = [...students];
         copy[index].attendance = value;
         setStudents(copy);
     };
 
-    // Cập nhật ghi chú
+    // Cập nhật note
     const handleNoteChange = (index, value) => {
         const copy = [...students];
         copy[index].note = value;
@@ -44,30 +65,22 @@ export default function AttendanceTest() {
 
     // Lưu điểm danh
     const saveAttendance = async () => {
-        if (!courseId) {
-            alert("Vui lòng nhập Course ID");
+        if (!selectedSession) {
+            alert("Chưa chọn session");
             return;
         }
         try {
             setLoading(true);
-            await axiosClient.post(urls.attendance, {
-                courseId: Number(courseId),
-                date: date || new Date().toISOString().split("T")[0], // yyyy-MM-dd
-                students: students.map(s => ({
+            await axiosClient.post(urls.markAttendance, {
+                sessionId: selectedSession,
+                students: students.map((s) => ({
                     id: s.id,
-                    code: s.code,
-                    firstname: s.firstname,
-                    lastname: s.lastname,
-                    gender: s.gender,
-                    dateofbirth: s.dateofbirth,
-                    avatar: s.avatar,
                     attendance: s.attendance ?? null,
-                    note: s.note || null
-                }))
+                    note: s.note || null,
+                })),
             });
             alert("Điểm danh thành công");
-            // Reload để cập nhật giao diện mới nhất
-            await loadAttendance();
+            await loadAttendance(selectedSession);
         } catch (err) {
             console.error(err);
             alert(err.response?.data?.message || "Save attendance failed");
@@ -84,23 +97,38 @@ export default function AttendanceTest() {
                 <label>Course ID:&nbsp;</label>
                 <input
                     value={courseId}
-                    onChange={e => setCourseId(e.target.value)}
+                    onChange={(e) => setCourseId(e.target.value)}
                     placeholder="VD: 1"
                 />
             </div>
 
             <div style={{ marginBottom: 12 }}>
-                <label>Date (yyyy-MM-dd, optional):&nbsp;</label>
+                <label>Date:&nbsp;</label>
                 <input
                     type="date"
                     value={date}
-                    onChange={e => setDate(e.target.value)}
+                    onChange={(e) => setDate(e.target.value)}
                 />
             </div>
 
-            <button disabled={loading} onClick={loadAttendance}>
-                {loading ? "Đang tải..." : "Load Attendance"}
+            <button disabled={loading} onClick={loadSessions}>
+                {loading ? "Đang tải..." : "Load Sessions"}
             </button>
+
+            {sessions.length > 0 && (
+                <div style={{ marginTop: 20 }}>
+                    <h3>Danh sách sessions</h3>
+                    <ul>
+                        {sessions.map((s) => (
+                            <li key={s.id}>
+                                <button onClick={() => loadAttendance(s.id)}>
+                                    {s.description} | {s.starttime}-{s.endtime} | {s.room}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
 
             {students.length > 0 && (
                 <>
@@ -122,7 +150,9 @@ export default function AttendanceTest() {
                         <tbody>
                         {students.map((s, idx) => (
                             <tr key={s.id}>
-                                <td>{s.firstname} {s.lastname}</td>
+                                <td>
+                                    {s.firstname} {s.lastname}
+                                </td>
                                 <td style={{ textAlign: "center" }}>
                                     <input
                                         type="radio"
@@ -151,7 +181,9 @@ export default function AttendanceTest() {
                                     <input
                                         style={{ width: "90%" }}
                                         value={s.note || ""}
-                                        onChange={e => handleNoteChange(idx, e.target.value)}
+                                        onChange={(e) =>
+                                            handleNoteChange(idx, e.target.value)
+                                        }
                                         placeholder="Ghi chú"
                                     />
                                 </td>

@@ -15,5 +15,8 @@ public class SessionInfoDTO {
     String date;
     String starttime;
     String endtime;
+    String room;
+    String description;
     boolean isabsent;
+    Integer status;
 }
