@@ -64,6 +64,7 @@ import PaymentForm from "@/features/payment/PaymentForm.jsx";
 import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
+import AttendanceTest from "@/features/payment/AttendanceTest.jsx";
 
 const App = () => {
 
@@ -84,6 +85,7 @@ const App = () => {
                     <Route path="payment-success" element={<PaymentSuccess/>}/>
                     <Route path="payment-failed" element={<PaymentFailed/>}/>
                     <Route path="payment-cancelled" element={<PaymentCancelled/>}/>
+                    <Route path="attendance" element={<AttendanceTest />}/>
                 </Route>
 
 

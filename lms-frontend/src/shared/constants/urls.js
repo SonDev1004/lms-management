@@ -25,11 +25,13 @@ export default {
 
   getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
-    getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
 
     //payment
     payment: `${rootAPI}/v1/enrollments/create-payment`,
     resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
+
+    GetAttendance:`${rootAPI}/attendance/by-date`,
+    attendance:`${rootAPI}/attendance/mark`,
 }
 

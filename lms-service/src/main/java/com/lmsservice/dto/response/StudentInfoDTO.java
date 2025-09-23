@@ -17,6 +17,5 @@ public class StudentInfoDTO {
     String firstname;
     String lastname;
     String avatar;
-    List<Integer> attendancelist;
-    String note;
+    List<AttendanceRecordDTO> attendancelist;
 }

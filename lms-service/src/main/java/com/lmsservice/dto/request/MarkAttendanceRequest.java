@@ -1,13 +1,14 @@
 package com.lmsservice.dto.request;
 
-import com.lmsservice.dto.response.AttendanceItemDTO;
+import java.util.List;
+
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
+import com.lmsservice.dto.response.AttendanceItemDTO;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,8 +19,10 @@ import java.util.List;
 public class MarkAttendanceRequest {
     @NotNull
     Long courseId;
+
     @NotNull
     String date;
-    @NotEmpty// Ngày buổi học
+
+    @NotEmpty // Ngày buổi học
     List<AttendanceItemDTO> students; // Danh sách học viên + trạng thái điểm danh
 }

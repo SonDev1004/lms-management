@@ -1,6 +1,5 @@
 package com.lmsservice.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.lmsservice.dto.request.MarkAttendanceRequest;

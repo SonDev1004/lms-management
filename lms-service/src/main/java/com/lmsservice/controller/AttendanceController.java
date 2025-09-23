@@ -1,20 +1,19 @@
 package com.lmsservice.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import com.lmsservice.dto.request.MarkAttendanceRequest;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.springframework.format.annotation.DateTimeFormat;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.lmsservice.dto.request.MarkAttendanceRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AttendanceItemDTO;
 import com.lmsservice.dto.response.AttendanceSummaryDTO;
 import com.lmsservice.service.AttendanceService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,14 +22,12 @@ import lombok.RequiredArgsConstructor;
 public class AttendanceController {
     private final AttendanceService attendanceService;
 
-
     @Operation(summary = "Lấy danh sách")
     @GetMapping("/by-date")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
     public ApiResponse<List<AttendanceItemDTO>> getAttendanceByDate(
             @RequestParam Long courseId, @RequestParam(required = false) String date) {
-        List<AttendanceItemDTO> data = attendanceService.getAttendanceByDate(courseId,
-                date);
+        List<AttendanceItemDTO> data = attendanceService.getAttendanceByDate(courseId, date);
         return ApiResponse.<List<AttendanceItemDTO>>builder()
                 .message("Lấy danh sách điểm danh thành công")
                 .result(data)

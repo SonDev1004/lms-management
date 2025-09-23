@@ -4,19 +4,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lmsservice.dto.request.MarkAttendanceRequest;
 import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lmsservice.dto.response.AttendanceItemDTO;
-import com.lmsservice.dto.response.AttendanceSummaryDTO;
-import com.lmsservice.dto.response.SessionInfoDTO;
-import com.lmsservice.dto.response.StudentInfoDTO;
+import com.lmsservice.dto.request.MarkAttendanceRequest;
+import com.lmsservice.dto.response.*;
 import com.lmsservice.entity.CourseStudent;
 import com.lmsservice.entity.Session;
 import com.lmsservice.entity.Student;
@@ -66,13 +63,18 @@ public class AttendanceServiceImpl implements AttendanceService {
                     Student st = cs.getStudent();
                     User u = st.getUser();
                     Integer attendance = null;
+                    String note = null;
                     try {
-                        List<Integer> list =
-                                objectMapper.readValue(cs.getAttendanceList(), new TypeReference<List<Integer>>() {});
-                        if (order <= list.size()) attendance = list.get(order - 1);
+                        List<AttendanceRecordDTO> list = objectMapper.readValue(
+                                cs.getAttendanceList(), new TypeReference<List<AttendanceRecordDTO>>() {});
+                        if (order <= list.size() && list.get(order - 1) != null) {
+                            attendance = list.get(order - 1).getStatus();
+                            note = list.get(order - 1).getNote();
+                        }
                     } catch (Exception e) {
                         throw new AppException(ErrorCode.INTERNAL_ERROR);
                     }
+
                     return AttendanceItemDTO.builder()
                             .id(st.getId())
                             .code(st.getCode())
@@ -85,7 +87,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                                             : null)
                             .avatar(u.getAvatar())
                             .attendance(attendance)
-                            .note(cs.getNote())
+                            .note(note)
                             .build();
                 })
                 .toList();
@@ -93,16 +95,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public AttendanceSummaryDTO getAttendanceSummary(Long courseId) {
-        // Danh sách buổi học
         List<Session> sessions = sessionRepository.findByCourseIdOrderByOrderSessionAsc(courseId);
-        if (sessions.isEmpty()) {
-            throw new AppException(ErrorCode.SESSION_NOT_FOUND);
-        }
+        if (sessions.isEmpty()) throw new AppException(ErrorCode.SESSION_NOT_FOUND);
+
         List<CourseStudent> courseStudents = courseStudentRepository.findByCourseId(courseId);
-        if (courseStudents.isEmpty()) {
-            throw new AppException(ErrorCode.COURSE_NOT_FOUND);
-        }
-        // Map danh sách session
+        if (courseStudents.isEmpty()) throw new AppException(ErrorCode.COURSE_NOT_FOUND);
+
+        // map sessions
         List<SessionInfoDTO> sessionInfos = sessions.stream()
                 .map(s -> SessionInfoDTO.builder()
                         .id(s.getId())
@@ -112,18 +111,19 @@ public class AttendanceServiceImpl implements AttendanceService {
                         .endtime(s.getEndTime() != null ? s.getEndTime().toString() : null)
                         .isabsent(s.isAbsent())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
-        // Map danh sách học viên + trạng thái điểm danh của từng buổi
+        // map students
         List<StudentInfoDTO> studentInfos = courseStudents.stream()
                 .map(cs -> {
                     Student st = cs.getStudent();
                     User u = st.getUser();
-
-                    List<Integer> attList = new ArrayList<>();
+                    List<AttendanceRecordDTO> attList = new ArrayList<>();
                     try {
-                        attList = objectMapper.readValue(cs.getAttendanceList(), new TypeReference<List<Integer>>() {});
-                    } catch (Exception ignored) {
+                        attList = objectMapper.readValue(
+                                cs.getAttendanceList(), new TypeReference<List<AttendanceRecordDTO>>() {});
+                    } catch (Exception e) {
+                        throw new AppException(ErrorCode.INTERNAL_ERROR);
                     }
 
                     return StudentInfoDTO.builder()
@@ -133,10 +133,9 @@ public class AttendanceServiceImpl implements AttendanceService {
                             .lastname(u.getLastName())
                             .avatar(u.getAvatar())
                             .attendancelist(attList)
-                            .note(cs.getNote())
                             .build();
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         return AttendanceSummaryDTO.builder()
                 .sessions(sessionInfos)
@@ -148,7 +147,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Transactional
     public void markAttendance(MarkAttendanceRequest request) {
         LocalDate sessionDate;
-        if (request.getDate() == null || request.getDate().trim().isEmpty()
+        if (request.getDate() == null
+                || request.getDate().trim().isEmpty()
                 || request.getDate().equals("{}")) {
             // FE gửi trống hoặc {}
             sessionDate = LocalDate.now();
@@ -172,28 +172,31 @@ public class AttendanceServiceImpl implements AttendanceService {
                     .findByCourseIdAndStudentId(request.getCourseId(), dto.getId())
                     .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_COURSE));
 
-            List<Integer> attList = new ArrayList<>();
+            List<AttendanceRecordDTO> attList = new ArrayList<>();
             try {
                 if (cs.getAttendanceList() != null) {
                     attList = objectMapper.readValue(
-                            cs.getAttendanceList(),
-                            new TypeReference<List<Integer>>() {}
-                    );
+                            cs.getAttendanceList(), new TypeReference<List<AttendanceRecordDTO>>() {});
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
 
             // Bổ sung độ dài nếu cần
             while (attList.size() < order) attList.add(null);
 
-            // Ghi trạng thái của buổi hiện tại
-            attList.set(order - 1, dto.getAttendance());
+            // Ghi trạng thái + note của buổi hiện tại
+            attList.set(
+                    order - 1,
+                    AttendanceRecordDTO.builder()
+                            .status(dto.getAttendance())
+                            .note(dto.getNote())
+                            .build());
 
             try {
                 cs.setAttendanceList(objectMapper.writeValueAsString(attList));
             } catch (JsonProcessingException e) {
                 throw new AppException(ErrorCode.INTERNAL_ERROR);
             }
-            cs.setNote(dto.getNote());
 
             courseStudentRepository.save(cs);
         }
