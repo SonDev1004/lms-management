@@ -12,6 +12,7 @@ import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AttendanceItemDTO;
 import com.lmsservice.dto.response.AttendanceSummaryDTO;
 import com.lmsservice.dto.response.SessionInfoDTO;
+import com.lmsservice.security.annotation.CheckTeacherPermission;
 import com.lmsservice.service.AttendanceService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,7 @@ public class AttendanceController {
     @Operation(summary = "Lấy danh sách session trong ngày")
     @GetMapping("/sessions")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
+    @CheckTeacherPermission // Check quyền theo courseId
     public ApiResponse<List<SessionInfoDTO>> getSessionsByDate(@RequestParam Long courseId, @RequestParam String date) {
 
         List<SessionInfoDTO> data = attendanceService.getSessionsByDate(courseId, date);
@@ -45,6 +47,7 @@ public class AttendanceController {
     @Operation(summary = "Lấy danh sách điểm danh theo session")
     @GetMapping("/by-session")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
+    @CheckTeacherPermission // Check quyền theo sessionId
     public ApiResponse<List<AttendanceItemDTO>> getAttendanceBySession(@RequestParam Long sessionId) {
         List<AttendanceItemDTO> data = attendanceService.getAttendanceBySession(sessionId);
         return ApiResponse.<List<AttendanceItemDTO>>builder()
@@ -59,6 +62,7 @@ public class AttendanceController {
     @Operation(summary = "Điểm danh cho session")
     @PostMapping("/mark")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
+    @CheckTeacherPermission // Check quyền theo sessionId
     public ApiResponse<String> markAttendance(@Valid @RequestBody MarkAttendanceRequest request) {
         attendanceService.markAttendance(request);
         return ApiResponse.<String>builder()
@@ -73,6 +77,7 @@ public class AttendanceController {
     @Operation(summary = "Xem tổng hợp điểm danh toàn course")
     @GetMapping("/summary")
     @PreAuthorize("hasAnyRole('TEACHER','ACADEMIC_MANAGER')")
+    @CheckTeacherPermission // Check quyền theo courseId
     public ApiResponse<AttendanceSummaryDTO> getAttendanceSummary(@RequestParam Long courseId) {
         AttendanceSummaryDTO summary = attendanceService.getAttendanceSummary(courseId);
         return ApiResponse.<AttendanceSummaryDTO>builder()
