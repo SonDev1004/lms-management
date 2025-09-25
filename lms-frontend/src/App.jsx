@@ -42,8 +42,6 @@ import AMReport from '@/features/academic_manager/pages/AMReport.jsx';
 import AMNotification from '@/features/academic_manager/pages/AMNotification.jsx';
 import ProgramDetail from './features/program/pages/ProgramDetail.jsx';
 
-
-import CourseHome from '@/features/course/pages/CourseHome.jsx';
 import CourseDetailStudent from '@/features/course/pages/CourseDetailStudent.jsx';
 import StudentNotification from '@/features/student/pages/StudentNotification.jsx';
 import StudentProfile from '@/features/student/pages/StudentProfile.jsx';
