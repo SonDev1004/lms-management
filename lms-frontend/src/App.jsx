@@ -42,8 +42,6 @@ import AMReport from '@/features/academic_manager/pages/AMReport.jsx';
 import AMNotification from '@/features/academic_manager/pages/AMNotification.jsx';
 import ProgramDetail from './features/program/pages/ProgramDetail.jsx';
 
-
-import CourseHome from '@/features/course/pages/CourseHome.jsx';
 import CourseDetailStudent from '@/features/course/pages/CourseDetailStudent.jsx';
 import StudentNotification from '@/features/student/pages/StudentNotification.jsx';
 import StudentProfile from '@/features/student/pages/StudentProfile.jsx';
@@ -64,7 +62,6 @@ import PaymentForm from "@/features/payment/PaymentForm.jsx";
 import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
-import AttendanceTest from "@/features/payment/AttendanceTest.jsx";
 
 const App = () => {
 
@@ -85,7 +82,6 @@ const App = () => {
                     <Route path="payment-success" element={<PaymentSuccess/>}/>
                     <Route path="payment-failed" element={<PaymentFailed/>}/>
                     <Route path="payment-cancelled" element={<PaymentCancelled/>}/>
-                    <Route path="attendance" element={<AttendanceTest />}/>
                 </Route>
 
 
