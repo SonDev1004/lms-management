@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lmsservice.dto.response.course.TeacherCourse;
 import com.lmsservice.entity.*;
 import com.lmsservice.repository.SessionRepository;
-import com.lmsservice.util.CourseStatus;
 import com.lmsservice.util.CourseStudentStatus;
 
 import lombok.AccessLevel;
@@ -25,27 +24,22 @@ public class TeacherCourseMapper {
 
     SessionRepository sessionRepository;
     StudentCourseMapper studentCourseMapper;
+
     public TeacherCourse toDto(Course course) {
 
-        long sessionsDone = sessionRepository
-                .countByCourseIdAndDateLessThanEqual(course.getId(), LocalDate.now());
-
+        long sessionsDone = sessionRepository.countByCourseIdAndDateLessThanEqual(course.getId(), LocalDate.now());
 
         var base = studentCourseMapper.toDto(course, sessionsDone);
-
 
         int planned = base.getPlannedSession() == null ? 0 : base.getPlannedSession();
         List<TeacherCourse.StudentList> students = buildStudentList(course.getCourseStudents(), planned);
         int studentNumber = countActiveStudents(course.getCourseStudents());
 
-
         var statusEnum = course.getStatus();
         Integer statusCode = (statusEnum != null) ? statusEnum.getCode() : null;
         String statusText = (statusEnum != null) ? statusEnum.getTeacherText() : "Không xác định";
 
-
         return TeacherCourse.builder()
-
                 .courseId(base.getCourseId())
                 .courseCode(base.getCourseCode())
                 .courseTitle(base.getCourseTitle())
