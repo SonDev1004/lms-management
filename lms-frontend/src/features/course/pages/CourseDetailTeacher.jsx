@@ -71,8 +71,9 @@ const CourseDetailTeacher = () => {
                         <li><i className="pi pi-calendar pr-2" style={{ fontSize: '1.5rem' }}></i> {shortDate(course.start_date)} - {shortDate(course.end_date)}</li>
                     </ul>
                     <Divider />
-                    <Button label="Danh sách học viên" onClick={() => navigate('student-list')} className="mr-2 text-xs" />
-                    <Button label="Bảng điểm danh" onClick={() => navigate('attendance')} className="mt-2 text-base" />
+                    <Button label="Danh sách học viên" onClick={() => navigate('student-list')} className="p-button-lg w-full mt-2" />
+                    <Button label="Bảng điểm danh" onClick={() => navigate('attendance')} className="p-button-lg w-full mt-2" />
+                    <Button label="Danh sách bài giảng" onClick={() => navigate('lesson')} className="p-button-lg w-full mt-2" />
                 </Panel>
             </div>
         </div >

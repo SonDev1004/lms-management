@@ -1,29 +1,37 @@
 //React
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
-import { InputTextarea } from "primereact/inputtextarea";
 import { Toast } from 'primereact/toast';
 
 //mock
 import { sessions } from "../../../mocks/mockSession";
 import { useNavigate } from "react-router-dom";
 
+//Component
+import EditSession from "./EditSession";
+import AddSession from "./AddSession";
 
 const SessionList = () => {
     const navigate = useNavigate();
 
     // State
     const [showAdd, setShowAdd] = useState(false);
+    const [editingId, setEditingId] = useState(null);
     const [sessionList, setSessionList] = useState([...sessions]);
-    const [date, setDate] = useState(null);
-    const [description, setDescription] = useState("");
-    const toast = useRef(null);
+    // const [date, setDate] = useState(null);
+    // const [description, setDescription] = useState("");
+    const [activeIndexes, setActiveIndexes] = useState([]);
 
     //Toast
-    const show = () => {
-        toast.current.show({ severity: 'info', summary: 'Info', detail: 'Message Content' });
+    const toast = useRef(null);
+    const show = (order) => {
+        toast.current.show({
+            severity: 'info',
+            summary: 'Info',
+            detail: `Bạn vừa bấm sửa buổi số ${order}`,
+            life: 2000
+        });
     };
 
     // Hàm format ngày thành dd/mm
@@ -37,93 +45,102 @@ const SessionList = () => {
             .replace(/-/g, '/');
     };
 
-    // Xử lý lưu
-    const handleSave = () => {
-        if (!date || !description) {
-            alert("Vui lòng nhập ngày và nội dung!");
-            return;
-        }
-        const newSession = {
+    //Handle
+    //Xử lí thêm
+    const handleAdd = (newSession) => {
+        setSessionList(list => [...list, {
+            ...newSession,
             id: Date.now(),
-            order: sessionList.length + 1,
-            date: date,
-            description: description,
-            student_count: sessionList[0]?.student_count || 0,
-            disabled: false, // Đảm bảo có field này
-        };
-        setSessionList([...sessionList, newSession]);
+            order: list.length + 1,
+            student_count: list[0]?.student_count || 0,
+            disabled: false,
+        }]);
         setShowAdd(false);
-        setDate(null);
-        setDescription("");
-    };
+        toast.current.show({
+            severity: "success",
+            summary: "Đã thêm buổi học",
+            detail: "Thêm thành công!",
+            life: 1200
+        });
+        console.log("[Session Add] Added:", newSession);
+    }
+
+    //Xử lí update:
+    const handleUpdate = (id, changedFields, newValues) => {
+        setSessionList(list => list.map(item => item.id === id ? { ...item, ...newValues } : item));
+        //Toast udpate thành công:
+        toast.current.show({
+            severity: "success",
+            summary: "Đã cập nhật",
+            detail: "Cập nhật thành công!",
+            life: 1200
+        });
+        setEditingId(null);
+        console.log("[Session Inline Edit] Fields changed:", changedFields);
+    }
+
+    useEffect(() => {
+        console.log("Updated activeIndexes:", activeIndexes);
+    }, [activeIndexes]);
 
     const showSessionList = () => {
-        return sessionList.filter(Boolean).map(session => {
-            if (!session) return null;
-            return (
-                <AccordionTab key={session.id} disabled={session.disabled}
-                    header={<div className="flex justify-content-between align-items-center w-full">
-                        <div className="flex align-items-center gap-2">Buổi {session.order}: {shortDate(session.date)}
-                            <Button onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toast.current?.show({
-                                    severity: 'info',
-                                    summary: 'Chỉnh sửa buổi học',
-                                    detail: `Buổi ${session.order} - ${shortDate(session.date)}`,
-                                    life: 2500,
-                                });
-                            }}>
-                                <i className="pi pi-pencil" style={{ fontSize: '1rem' }}></i>
-                            </Button>
-                        </div>
-
-                        <div className="flex">Sĩ số: {session.student_count}/{session.student_count} </div>
+        return sessionList.filter(Boolean).map((session, index) =>
+            <AccordionTab key={index} disabled={session.disabled}
+                header={<div className="flex justify-content-between align-items-center w-full">
+                    <div className="flex align-items-center gap-2">Buổi {session.order}: {shortDate(session.date)}
+                        <Button onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setEditingId(session.id);
+                            setActiveIndexes(prev => (prev.includes(index)) ? prev : [...prev, index]);
+                        }}>
+                            <i className="pi pi-pencil" style={{ fontSize: '1rem' }}></i>
+                        </Button>
                     </div>
-                    }
-                >
-                    {session.description}
-                </AccordionTab >
-
-            );
-        })
+                    <div className="flex">Sĩ số: {session.student_count}/{session.student_count} </div>
+                </div>
+                }
+            >{editingId === session.id ? (
+                <EditSession
+                    session={session}
+                    onCancel={() => setEditingId(null)}
+                    onSave={handleUpdate}
+                />
+            ) : (
+                <div>{session.description}</div>
+            )}
+            </AccordionTab >
+        );
     };
 
     return (
         <div>
             <h1>Danh sách buổi học</h1>
-            <Button
-                className="mb-2"
-                label="Thêm buổi"
-                onClick={() => setShowAdd((v) => !v)}
-            />
+            {!showAdd && (
+                <Button
+                    className="mb-2"
+                    label="Thêm buổi"
+                    onClick={() => setShowAdd(true)}
+                />
+            )}
             {showAdd && (
-                <div className="mb-3 p-3 shadow-4">
-                    <div className="grid">
-                        <div className="col-4 md:col-4">
-                            <label className="block mb-2">Lựa chọn ngày</label>
-                            <Calendar value={date} onChange={e => setDate(e.value)} showIcon dateFormat="dd/mm/yy" />
-                        </div>
-                        <div className="col-8">
-                            <label className="block mb-2">Nội dung buổi học</label>
-                            <InputTextarea value={description} onChange={e => setDescription(e.target.value)} />
-                        </div>
-                        <div className="col-12 mt-3">
-                            <Button label="Lưu buổi học" icon="pi pi-check" onClick={handleSave} />
-                        </div>
-                    </div>
-                </div>
+                <AddSession
+                    onCancel={() => setShowAdd(false)}
+                    onSave={handleAdd}
+                />
             )}
 
 
-            <Accordion>{showSessionList()}</Accordion>
+            <Accordion activeIndex={activeIndexes} multiple onTabChange={(e) => setActiveIndexes(e.index)}>
+                {showSessionList()}
+            </Accordion>
             <Button
                 className="mt-2"
                 label='Quay lại'
                 onClick={() => navigate(-1)}
             />
             <Toast ref={toast} />
-        </div>);
+        </div >);
 }
 
 export default SessionList;
