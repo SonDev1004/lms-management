@@ -32,8 +32,8 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
 
     const statusBody = (row) => (
         <span className={`status-badge ${row.present ? 'present' : 'absent'}`}>
-      {row.present ? '✔ Có mặt' : '✖ Vắng'}
-    </span>
+            {row.present ? '✔ Có mặt' : '✖ Vắng'}
+        </span>
     );
 
     const dateBody = (row) => <div className="date-cell">{formatDate(row.date)}</div>;
@@ -55,14 +55,14 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
                 </div>
 
                 <div className="search-group">
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText
-                placeholder="Tìm theo ngày (vd: 01/06/2025) hoặc buổi"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-            />
-          </span>
+                    <span className="p-input-icon-left">
+                        <i className="pi pi-search" />
+                        <InputText
+                            placeholder="Tìm theo ngày (vd: 01/06/2025) hoặc buổi"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </span>
                 </div>
             </div>
         </div>

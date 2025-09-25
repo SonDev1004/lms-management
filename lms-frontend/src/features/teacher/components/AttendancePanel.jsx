@@ -1,6 +1,6 @@
 //use and React:
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Card, Button } from 'primereact';
 import { Calendar } from 'primereact/calendar';
 import { InputText } from 'primereact/inputtext';
@@ -24,8 +24,22 @@ import {
 
 const AttendancePanel = () => {
 	const navigate = useNavigate();
+	//TEST --Begin--
+	const location = useLocation();
+	let dateFromSession = null;
+	if (location.state && location.state.date) {
+		dateFromSession = location.state.date;
+	} else if (location.search) {
+		const params = new URLSearchParams(location.search);
+		if (params.get('date')) dateFromSession = params.get('date');
+	}
+	const [selectedDate, setSelectedDate] = useState(
+		dateFromSession ? new Date(dateFromSession) : new Date()
+	);
+	//TEST --End--
+
 	// Ngày đang chọn trong Calendar
-	const [selectedDate, setSelectedDate] = useState(new Date());
+	// const [selectedDate, setSelectedDate] = useState(new Date());
 	// Ca học tương ứng của ngày đó
 	const [selectedShift, setSelectedShift] = useState('');
 

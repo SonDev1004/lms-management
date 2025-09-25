@@ -96,6 +96,14 @@ const SessionList = () => {
                         }}>
                             <i className="pi pi-pencil" style={{ fontSize: '1rem' }}></i>
                         </Button>
+                        <Button
+                            label="Điểm danh"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navigate('attendance', { state: { date: session.date } });
+                            }}
+                        />
                     </div>
                     <div className="flex">Sĩ số: {session.student_count}/{session.student_count} </div>
                 </div>
