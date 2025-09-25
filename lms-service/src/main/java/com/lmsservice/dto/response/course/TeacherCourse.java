@@ -16,10 +16,13 @@ import lombok.experimental.SuperBuilder;
 public class TeacherCourse extends StudentCourse {
     Integer studentNumber;
     List<StudentList> studentList;
+    Long staffId;
+    String staffName;
 
     @Data
     @Builder
     public static class StudentList {
+        Long studentId;
         String studentCode;
         String studentName;
         String studentPhone;
