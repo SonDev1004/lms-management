@@ -39,6 +39,12 @@ public class TeacherCourseMapper {
         Integer statusCode = (statusEnum != null) ? statusEnum.getCode() : null;
         String statusText = (statusEnum != null) ? statusEnum.getTeacherText() : "Không xác định";
 
+        Long staffId = (course.getStaff() != null) ? course.getStaff().getId() : null;
+        String staffName = (course.getStaff() != null && course.getStaff().getUser() != null)
+                ? course.getStaff().getUser().getFirstName() + " "
+                        + course.getStaff().getUser().getLastName()
+                : null;
+
         return TeacherCourse.builder()
                 .courseId(base.getCourseId())
                 .courseCode(base.getCourseCode())
@@ -62,6 +68,8 @@ public class TeacherCourseMapper {
                 // List student
                 .studentNumber(studentNumber)
                 .studentList(students)
+                .staffId(staffId)
+                .staffName(staffName)
                 .build();
     }
 
@@ -111,6 +119,7 @@ public class TeacherCourseMapper {
                             .statusName(statusName)
                             .presentCount(presentCount)
                             .plannedSessions(plannedSessions)
+                            .studentId((st != null) ? st.getId() : null)
                             .build();
                 })
                 .sorted(java.util.Comparator.comparing(sl -> sl.getStudentName() == null ? "" : sl.getStudentName()))
@@ -136,7 +145,6 @@ public class TeacherCourseMapper {
                             break;
                         case 0: // vắng
                         default:
-                            // do nothing
                     }
                 }
             }
