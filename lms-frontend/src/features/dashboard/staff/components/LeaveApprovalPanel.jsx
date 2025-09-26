@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import RecentActivity from './RecentActivity';
-import UpcomingActivities from './UpcomingActivities';
+import RecentActivity from './RecentActivity.jsx';
+import UpcomingActivities from './UpcomingActivities.jsx';
 import '../styles/LeaveApprovalPanel.css';
 
 export default function LeaveApprovalPanel({

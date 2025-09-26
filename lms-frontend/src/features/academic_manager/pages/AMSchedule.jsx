@@ -1,6 +1,8 @@
+import React from "react";
+import SchedulePage from "@/features/schedule/pages/Schedule.jsx";
+
 const AMSchedule = () => {
-    return (<>
-        <h1>Show schedule and notification</h1></>);
-}
+    return <SchedulePage />;
+};
 
 export default AMSchedule;

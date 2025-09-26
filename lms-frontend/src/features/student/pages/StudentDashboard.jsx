@@ -1,4 +1,4 @@
-import Dashboard from "@/features/dashboard/pages/Dashboard.jsx";
+import Dashboard from "@/features/dashboard/student/pages/Dashboard.jsx";
 
 const StudentDashboard = () => {
     return <Dashboard />

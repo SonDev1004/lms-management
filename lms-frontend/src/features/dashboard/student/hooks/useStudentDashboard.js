@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { course as mockCourse, assignments as mockAssignments, suggestions as mockSuggestions } from '../mocks/mockData';
+import { course as mockCourse, assignments as mockAssignments, suggestions as mockSuggestions } from '../mocks/mockData.js';
 
 export default function useStudentDashboard() {
     const [loading, setLoading] = useState(true);

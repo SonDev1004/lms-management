@@ -5,11 +5,11 @@ import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import '../styles/dashboard.css';
 
-import useStudentDashboard from '../hooks/useStudentDashboard';
-import SummaryPills from '../components/SummaryPills';
-import CourseCard from '../components/CourseCard';
-import AssignmentCard from '../components/AssignmentCard';
-import Sidebar from '../components/Sidebar';
+import useStudentDashboard from '../hooks/useStudentDashboard.js';
+import SummaryPills from '../components/SummaryPills.jsx';
+import CourseCard from '../components/CourseCard.jsx';
+import AssignmentCard from '../components/AssignmentCard.jsx';
+import Sidebar from '../components/Sidebar.jsx';
 
 export default function DashboardPage() {
     const { loading, course, assignments, suggestions, filledCount } = useStudentDashboard();
