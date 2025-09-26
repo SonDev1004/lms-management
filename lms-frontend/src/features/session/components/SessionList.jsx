@@ -1,154 +1,176 @@
-//React
 import { useEffect, useRef, useState } from "react";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { Button } from "primereact/button";
-import { Toast } from 'primereact/toast';
+import { Toast } from "primereact/toast";
+import { useNavigate, useParams } from "react-router-dom";
 
-//mock
-import { sessions } from "../../../mocks/mockSession";
-import { useNavigate } from "react-router-dom";
-
-//Component
 import EditSession from "./EditSession";
 import AddSession from "./AddSession";
 
+import SessionService from "@/features/session/api/sessionService.js";
+
 const SessionList = () => {
     const navigate = useNavigate();
+    const { courseId } = useParams(); // lấy từ URL: /teacher/courses/:courseId/sessions
 
     // State
     const [showAdd, setShowAdd] = useState(false);
     const [editingId, setEditingId] = useState(null);
-    const [sessionList, setSessionList] = useState([...sessions]);
-    // const [date, setDate] = useState(null);
-    // const [description, setDescription] = useState("");
+    const [sessionList, setSessionList] = useState([]);
     const [activeIndexes, setActiveIndexes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     //Toast
     const toast = useRef(null);
-    const show = (order) => {
-        toast.current.show({
-            severity: 'info',
-            summary: 'Info',
-            detail: `Bạn vừa bấm sửa buổi số ${order}`,
-            life: 2000
-        });
-    };
 
-    // Hàm format ngày thành dd/mm
-    const shortDate = date => {
+    // Format ngày dd/mm
+    const shortDate = (date) => {
         const d = new Date(date);
-        return new Intl.DateTimeFormat('vi-VN', {
-            day: '2-digit',
-            month: '2-digit'
-        })
-            .format(d)
-            .replace(/-/g, '/');
+        return new Intl.DateTimeFormat("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+        }).format(d);
     };
 
-    //Handle
-    //Xử lí thêm
+    // Load sessions từ API
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                setLoading(true);
+                const data = await SessionService.getSessionsByCourse(courseId);
+                console.log("Sessions API data:", data);
+                if (mounted) setSessionList(data);
+            } catch (err) {
+                if (mounted) setError(err.message || "Không tải được danh sách buổi học");
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+        return () => { mounted = false };
+    }, [courseId]);
+
+
+    // Thêm buổi (demo, chưa gọi API create)
     const handleAdd = (newSession) => {
-        setSessionList(list => [...list, {
-            ...newSession,
-            id: Date.now(),
-            order: list.length + 1,
-            student_count: list[0]?.student_count || 0,
-            disabled: false,
-        }]);
+        setSessionList((list) => [
+            ...list,
+            {
+                ...newSession,
+                id: Date.now(),
+                index: list.length + 1,
+                studentCount: list[0]?.studentCount || 0,
+                disabled: false,
+            },
+        ]);
         setShowAdd(false);
         toast.current.show({
             severity: "success",
             summary: "Đã thêm buổi học",
             detail: "Thêm thành công!",
-            life: 1200
+            life: 1200,
         });
-        console.log("[Session Add] Added:", newSession);
-    }
+    };
 
-    //Xử lí update:
+    // Update buổi (demo, chưa call API update)
     const handleUpdate = (id, changedFields, newValues) => {
-        setSessionList(list => list.map(item => item.id === id ? { ...item, ...newValues } : item));
-        //Toast udpate thành công:
+        setSessionList((list) =>
+            list.map((item) => (item.id === id ? { ...item, ...newValues } : item))
+        );
         toast.current.show({
             severity: "success",
             summary: "Đã cập nhật",
             detail: "Cập nhật thành công!",
-            life: 1200
+            life: 1200,
         });
         setEditingId(null);
-        console.log("[Session Inline Edit] Fields changed:", changedFields);
-    }
-
-    useEffect(() => {
-        console.log("Updated activeIndexes:", activeIndexes);
-    }, [activeIndexes]);
-
-    const showSessionList = () => {
-        return sessionList.filter(Boolean).map((session, index) =>
-            <AccordionTab key={index} disabled={session.disabled}
-                header={<div className="flex justify-content-between align-items-center w-full">
-                    <div className="flex align-items-center gap-2">Buổi {session.order}: {shortDate(session.date)}
-                        <Button onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setEditingId(session.id);
-                            setActiveIndexes(prev => (prev.includes(index)) ? prev : [...prev, index]);
-                        }}>
-                            <i className="pi pi-pencil" style={{ fontSize: '1rem' }}></i>
-                        </Button>
-                        <Button
-                            label="Điểm danh"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                navigate('attendance', { state: { date: session.date } });
-                            }}
-                        />
-                    </div>
-                    <div className="flex">Sĩ số: {session.student_count}/{session.student_count} </div>
-                </div>
-                }
-            >{editingId === session.id ? (
-                <EditSession
-                    session={session}
-                    onCancel={() => setEditingId(null)}
-                    onSave={handleUpdate}
-                />
-            ) : (
-                <div>{session.description}</div>
-            )}
-            </AccordionTab >
-        );
     };
+
+    const showSessionList = () =>
+        sessionList.map((session, index) => (
+            <AccordionTab
+                key={session.id}
+                disabled={session.disabled}
+                header={
+                    <div className="flex justify-content-between align-items-center w-full">
+                        <div className="flex align-items-center gap-2">
+                            Buổi {session.index}: {shortDate(session.date)}
+                            <Button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setEditingId(session.id);
+                                    setActiveIndexes((prev) =>
+                                        prev.includes(index) ? prev : [...prev, index]
+                                    );
+                                }}
+                            >
+                                <i className="pi pi-pencil" style={{ fontSize: "1rem" }}></i>
+                            </Button>
+                            <Button
+                                label="Điểm danh"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    navigate(`/teacher/sessions/${session.id}/attendance`);
+                                }}
+                            />
+                        </div>
+                        <div className="flex">
+                            Sĩ số: {session.studentCount}/{session.studentCount}
+                        </div>
+                    </div>
+                }
+            >
+                {editingId === session.id ? (
+                    <EditSession
+                        session={session}
+                        onCancel={() => setEditingId(null)}
+                        onSave={handleUpdate}
+                    />
+                ) : (
+                    <div>{session.description}</div>
+                )}
+            </AccordionTab>
+        ));
 
     return (
         <div>
             <h1>Danh sách buổi học</h1>
-            {!showAdd && (
-                <Button
-                    className="mb-2"
-                    label="Thêm buổi"
-                    onClick={() => setShowAdd(true)}
-                />
-            )}
-            {showAdd && (
-                <AddSession
-                    onCancel={() => setShowAdd(false)}
-                    onSave={handleAdd}
-                />
+            {loading && <div>Đang tải...</div>}
+            {error && <div className="text-red-500">{error}</div>}
+
+            {!loading && !error && (
+                <>
+                    {!showAdd && (
+                        <Button
+                            className="mb-2"
+                            label="Thêm buổi"
+                            onClick={() => setShowAdd(true)}
+                        />
+                    )}
+                    {showAdd && (
+                        <AddSession
+                            onCancel={() => setShowAdd(false)}
+                            onSave={handleAdd}
+                        />
+                    )}
+
+                    <Accordion
+                        activeIndex={activeIndexes}
+                        multiple
+                        onTabChange={(e) => setActiveIndexes(e.index)}
+                    >
+                        {showSessionList()}
+                    </Accordion>
+                </>
             )}
 
-
-            <Accordion activeIndex={activeIndexes} multiple onTabChange={(e) => setActiveIndexes(e.index)}>
-                {showSessionList()}
-            </Accordion>
-            <Button
-                className="mt-2"
-                label='Quay lại'
-                onClick={() => navigate(-1)}
-            />
+            <Button className="mt-2" label="Quay lại" onClick={() => navigate(-1)} />
             <Toast ref={toast} />
-        </div >);
-}
+        </div>
+    );
+};
 
 export default SessionList;

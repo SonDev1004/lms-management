@@ -33,6 +33,7 @@ export default {
 
   //Attendance
   getTeacherCourses: `${rootAPI}/teacher/me/courses`,
+  getCourseSessions: (courseId) => `${rootAPI}/courses/${courseId}/sessions`,  // GET
   getSessionsByDate: `${rootAPI}/attendance/sessions`,              // GET ?courseId&date
   getAttendanceBySession: (sessionId) => `${rootAPI}/attendance/by-session?sessionId=${sessionId}`, // GET
   markAttendance: `${rootAPI}/attendance/mark`,                     // POST

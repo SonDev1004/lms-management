@@ -1,18 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import AttendanceTable from '../components/AttendanceTable';
-import {fetchAttendanceHistory} from '../api/attendanceService';
+import AttendanceService from '../api/attendanceService';
 
-const AttendancePage = ({course, student}) => {
+const AttendancePage = ({ sessionId }) => {
     const [attendanceHistory, setAttendanceHistory] = useState([]);
 
     useEffect(() => {
         let mounted = true;
-        fetchAttendanceHistory(course?.id, student?.id).then((res) => {
-            if (!mounted) return;
-            setAttendanceHistory(res);
-        });
-        return () => { mounted = false; };
-    }, [course, student]);
+        if (sessionId) {
+            AttendanceService.getAttendanceBySession(sessionId).then((res) => {
+                if (!mounted) return;
+                setAttendanceHistory(res);
+            });
+        }
+        return () => {
+            mounted = false;
+        };
+    }, [sessionId]);
 
     const formatDate = (d) => {
         if (!d) return '';
@@ -24,7 +28,12 @@ const AttendancePage = ({course, student}) => {
         return `${day}/${month}/${year}`;
     };
 
-    return <AttendanceTable attendanceHistory={attendanceHistory} formatDate={formatDate} />;
+    return (
+        <AttendanceTable
+            attendanceList={attendanceHistory}
+            formatDate={formatDate}
+        />
+    );
 };
 
 export default AttendancePage;
