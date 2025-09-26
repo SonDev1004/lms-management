@@ -1,0 +1,113 @@
+/* Assignment.css - styles cho trang assignment */
+
+/* container */
+.assignment-root {
+    padding: 12px;
+    font-family: inherit;
+}
+
+/* filter row */
+.assign-filter-row .assign-filter-btn {
+    padding: 4px 8px;     /* thu nhỏ nút */
+    font-size: 0.78rem;   /* chữ nhỏ hơn */
+    height: 30px;
+    line-height: 1;
+    border-radius: 6px;
+}
+
+/* danh sách */
+.assignments-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* mỗi dòng */
+.assignment-row {
+    display: grid;
+    grid-template-columns: 1fr 140px 200px 180px; /* title | due | status | action */
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+}
+
+/* responsive: stacked on small screens */
+@media (max-width: 800px) {
+    .assignment-row {
+        grid-template-columns: 1fr;
+        row-gap: 8px;
+    }
+    .ar-col--due, .ar-col--status, .ar-col--action {
+        margin-top: 4px;
+    }
+}
+
+/* title column */
+.ar-col--title .assign-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.assign-icon {
+    font-size: 1.5rem;
+}
+.assign-title-text {
+    font-weight: 600;
+}
+.assign-sub {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* due column */
+.ar-col--due .due-date {
+    font-weight: 500;
+}
+
+/* status column */
+.status-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.status-tag {
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+.overdue-text {
+    color: #dc2626; /* danger red */
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* action column */
+.action-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+}
+.btn-view {
+    min-width: 84px;
+}
+.btn-upload .p-button {
+    /* FileUpload basic mode uses internal button - keep default small */
+}
+.btn-grade {
+    min-width: 56px;
+    border-radius: 10px;
+}
+
+/* empty */
+.assign-empty {
+    padding: 12px;
+    color: #6b7280;
+}
+
+/* highlight overdue row slightly */
+.assignment-row.overdue {
+    background: rgba(253, 208, 217, 0.35);
+}

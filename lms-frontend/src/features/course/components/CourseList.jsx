@@ -2,7 +2,6 @@ import React from "react";
 import { TabMenu } from "primereact/tabmenu";
 import CourseCardOverall from "./CourseCardOverall";
 import { ProgressSpinner } from "primereact/progressspinner";
-//import trạng thái từ file courseStatus.js
 import { statusLabelMap } from "../lib/courseStatus";
 
 const courseStatus = [

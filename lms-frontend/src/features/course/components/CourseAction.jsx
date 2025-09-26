@@ -1,9 +1,7 @@
-// CourseActions.jsx
 import React from "react";
 import { Button } from "primereact/button";
 
 export default function CourseActions({ role, course, onAction }) {
-    // Define action list cho từng role
     let actions = [];
     if (role === "teacher") {
         actions = [
@@ -24,7 +22,6 @@ export default function CourseActions({ role, course, onAction }) {
             { label: "Chi tiết", icon: "pi pi-info-circle", action: "details" }
         ];
     }
-    //Thêm Staff sau. 
 
     return (
         <div className="flex flex-wrap gap-2 mt-2">

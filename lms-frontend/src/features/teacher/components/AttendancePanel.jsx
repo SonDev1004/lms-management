@@ -1,6 +1,6 @@
 //use and React:
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Card, Button } from 'primereact';
 import { Calendar } from 'primereact/calendar';
 import { InputText } from 'primereact/inputtext';
@@ -24,8 +24,22 @@ import {
 
 const AttendancePanel = () => {
 	const navigate = useNavigate();
+	//TEST --Begin--
+	const location = useLocation();
+	let dateFromSession = null;
+	if (location.state && location.state.date) {
+		dateFromSession = location.state.date;
+	} else if (location.search) {
+		const params = new URLSearchParams(location.search);
+		if (params.get('date')) dateFromSession = params.get('date');
+	}
+	const [selectedDate, setSelectedDate] = useState(
+		dateFromSession ? new Date(dateFromSession) : new Date()
+	);
+	//TEST --End--
+
 	// Ngày đang chọn trong Calendar
-	const [selectedDate, setSelectedDate] = useState(new Date());
+	// const [selectedDate, setSelectedDate] = useState(new Date());
 	// Ca học tương ứng của ngày đó
 	const [selectedShift, setSelectedShift] = useState('');
 
@@ -84,54 +98,54 @@ const AttendancePanel = () => {
 	return (
 		<>
 			<div className='grid mt-2'>
-				<div className='col-9'>
-					<Card title={header()}>
-						<div className='formgrid grid'>
-							<div className='field col'>
-								<label htmlFor='session'>Buổi học</label>
-								<Calendar
-									id='session'
-									value={selectedDate}
-									dateFormat='dd/mm/yy'
-									showIcon
-									showButtonBar
-									onChange={e => setSelectedDate(e.value)}
-								/>
-							</div>
-							<div className='field col'>
-								<label htmlFor='session'>Ca học</label>
-								<InputText value={selectedShift} readOnly />
-							</div>
+
+				<Card title={header()}>
+					<div className='formgrid grid'>
+						<div className='field col'>
+							<label htmlFor='session'>Buổi học</label>
+							<Calendar
+								id='session'
+								value={selectedDate}
+								dateFormat='dd/mm/yy'
+								showIcon
+								showButtonBar
+								onChange={e => setSelectedDate(e.value)}
+							/>
 						</div>
-						<AttendanceTable
-							attendanceList={attendanceData}
-							attendance_types={attendance_types}
-							handleAttendanceChange={handleAttendanceChange}
-							// handleReasonChange={handleReasonChange}
-							renderFooter={renderFooter}
-						/>
-						<div className='flex justify-content-between flex-wrap mt-4'>
-							<div className='flex align-items-center justify-content-center'>
-								<Button
-									label='Quay lại'
-									onClick={() => navigate(-1)}
-								/>
-								<Button
-									label='Refresh'
-									className='ml-2'
-									// onClick={handleRefresh}
-								/>
-							</div>
-							<div className='flex align-items-center justify-content-center'>
-								<Button
-									label='Lưu'
-									onClick={() => handleSaveAttendance()}
-								/>
-							</div>
+						<div className='field col'>
+							<label htmlFor='session'>Ca học</label>
+							<InputText value={selectedShift} readOnly />
 						</div>
-					</Card>
-				</div>
+					</div>
+					<AttendanceTable
+						attendanceList={attendanceData}
+						attendance_types={attendance_types}
+						handleAttendanceChange={handleAttendanceChange}
+						// handleReasonChange={handleReasonChange}
+						renderFooter={renderFooter}
+					/>
+					<div className='flex justify-content-between flex-wrap mt-4'>
+						<div className='flex align-items-center justify-content-center'>
+							<Button
+								label='Quay lại'
+								onClick={() => navigate(-1)}
+							/>
+							<Button
+								label='Refresh'
+								className='ml-2'
+							// onClick={handleRefresh}
+							/>
+						</div>
+						<div className='flex align-items-center justify-content-center'>
+							<Button
+								label='Lưu'
+								onClick={() => handleSaveAttendance()}
+							/>
+						</div>
+					</div>
+				</Card>
 			</div>
+
 		</>
 	);
 };

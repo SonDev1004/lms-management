@@ -25,6 +25,7 @@ export default {
 
   getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
+    getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
 
     //payment

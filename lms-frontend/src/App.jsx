@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from '@/features/auth/pages/Login.jsx';
 import Register from '@/features/auth/pages/Register.jsx';
@@ -58,127 +58,133 @@ import ProgramList from '@/features/program/pages/ProgramList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
 import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
 import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
+import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
 import PaymentForm from "@/features/payment/PaymentForm.jsx";
 import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
+import SessionList from './features/session/components/SessionList.jsx';
 
 const App = () => {
 
-    return (
-        <BrowserRouter>
-            <Routes>
-                {/* Home Route */}
-                <Route path="/" element={<LayoutHome/>}>
-                    <Route index element={<Guest/>}/>
-                    <Route path="login" element={<Login/>}/>
-                    <Route path="register" element={<Register/>}/>
-                    <Route path="about" element={<About/>}/>
-                    <Route path="faq" element={<FAQ/>}/>
-                    <Route path="blog" element={<Blog/>}/>
-                    <Route path="programs" element={<ProgramList/>}/>
-                    <Route path="subjects" element={<SubjectList/>}/>
-                    <Route path="payment" element={<PaymentForm/>}/>
-                    <Route path="payment-success" element={<PaymentSuccess/>}/>
-                    <Route path="payment-failed" element={<PaymentFailed/>}/>
-                    <Route path="payment-cancelled" element={<PaymentCancelled/>}/>
-                </Route>
+	return (
+		<BrowserRouter>
+			<Routes>
+				{/* Home Route */}
+				<Route path="/" element={<LayoutHome />}>
+					<Route index element={<Guest />} />
+					<Route path="login" element={<Login />} />
+					<Route path="register" element={<Register />} />
+					<Route path="about" element={<About />} />
+					<Route path="faq" element={<FAQ />} />
+					<Route path="blog" element={<Blog />} />
+					<Route path="programs" element={<ProgramList />} />
+					<Route path="subjects" element={<SubjectList />} />
+					<Route path="payment" element={<PaymentForm />} />
+					<Route path="payment-success" element={<PaymentSuccess />} />
+					<Route path="payment-failed" element={<PaymentFailed />} />
+					<Route path="payment-cancelled" element={<PaymentCancelled />} />
+				</Route>
 
 
-                {/* Program Route (ngoài student) */}
-                <Route path='program' element={<LayoutHome/>}>
-                    <Route path=':id' element={<ProgramDetail/>}/>
-                </Route>
-                {/* Subject Route (ngoài student) */}
-                <Route path='subject' element={<LayoutHome/>}>
-                    <Route path=':id' element={<SubjectDetail/>}/>
-                </Route>
+				{/* Program Route (ngoài student) */}
+				<Route path='program' element={<LayoutHome />}>
+					<Route path=':id' element={<ProgramDetail />} />
+				</Route>
+				{/* Subject Route (ngoài student) */}
+				<Route path='subject' element={<LayoutHome />}>
+					<Route path=':id' element={<SubjectDetail />} />
+				</Route>
 
-                {/* Student Route */}
-                <Route element={<ProtectedRoute allowedRoles={['STUDENT']}/>}>
-                    <Route path='student' element={<LayoutStudent/>}>
-                        <Route index element={<StudentDashboard/>}/>
-                        <Route path='courses' element={<StudentCourses/>}/>
-                        <Route
-                            path='courses/:slug'
-                            element={<CourseDetailStudent/>}
-                        />
-                        <Route path='schedule' element={<StudentSchedule/>}/>
-                        <Route path='score' element={<StudentScore/>}/>
-                        <Route
-                            path='enrollment'
-                            element={<StudentEnrollment/>}
-                        />
-                        <Route
-                            path='notification'
-                            element={<StudentNotification/>}
-                        />
-                        <Route path='profile' element={<StudentProfile/>}/>
-                    </Route>
-                </Route>
+				{/* Student Route */}
+				<Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+					<Route path='student' element={<LayoutStudent />}>
+						<Route index element={<StudentDashboard />} />
+						<Route path='courses' element={<StudentCourses />} />
+						<Route
+							path='courses/:slug'
+							element={<CourseDetailStudent />}
+						/>
+						<Route path='schedule' element={<StudentSchedule />} />
+						<Route path='score' element={<StudentScore />} />
+						<Route
+							path='enrollment'
+							element={<StudentEnrollment />}
+						/>
+						<Route
+							path='notification'
+							element={<StudentNotification />}
+						/>
+						<Route path='profile' element={<StudentProfile />} />
+					</Route>
+				</Route>
 
-                {/* Teacher Route */}
-                <Route element={<ProtectedRoute allowedRoles={['TEACHER']}/>}>
-                    <Route path='teacher' element={<LayoutTeacher/>}>
-                        <Route index element={<TeacherDashboard/>}/>
-                        <Route path='courses' element={<TeacherCourses/>}/>
-                        <Route
-                            path='courses/:courseId/student-list'
-                            element={<StudentList/>}
-                        />
-                        <Route path='courses/:courseId/attendance'>
-                            <Route index element={<AttendancePanel/>}/>
-                            <Route
-                                path='full'
-                                element={<AttendanceSummary/>}
-                            />
-                        </Route>
-                        <Route path='schedule' element={<TeacherSchedule/>}/>
-                        <Route
-                            path='notification'
-                            element={<TeacherNotification/>}
-                        />
-                        <Route path='profile' element={<TeacherProfile/>}/>
-                    </Route>
-                </Route>
+				{/* Teacher Route */}
+				<Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
+					<Route path='teacher' element={<LayoutTeacher />}>
+						<Route index element={<TeacherDashboard />} />
+						<Route path='courses' element={<TeacherCourses />} />
+						<Route path='courses/:courseId' element={<CourseDetailTeacher />} >
+							<Route index element={<SessionList />} />
+							<Route
+								path='student-list'
+								element={<StudentList />}
+							/>
+							<Route path='attendance'>
+								<Route index element={<AttendancePanel />} />
+								<Route
+									path='full'
+									element={<AttendanceSummary />}
+								/>
+							</Route>
+						</Route>
 
-                <Route
-                    element={
-                        <ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']}/>
-                    }
-                >
-                    <Route path='staff' element={<LayoutAcademicManager/>}>
-                        <Route index element={<AMDashboard/>}/>
-                        <Route path='program' element={<AMProgram/>}/>
-                        <Route path='courses' element={<AMCourse/>}/>
-                        <Route path='teacher' element={<AMTeacher/>}/>
-                        <Route path='student' element={<AMStudent/>}/>
-                        <Route path='feedback' element={<AMFeedback/>}/>
-                        <Route path='schedule' element={<AMSchedule/>}/>
-                        <Route path='report' element={<AMReport/>}/>
-                        <Route
-                            path='notification'
-                            element={<AMNotification/>}
-                        />
-                        <Route path='profile' element={<AMProfile/>}/>
-                    </Route>
-                </Route>
+						<Route path='schedule' element={<TeacherSchedule />} />
+						<Route
+							path='notification'
+							element={<TeacherNotification />}
+						/>
+						<Route path='profile' element={<TeacherProfile />} />
+					</Route>
+				</Route>
 
-                {/* Admin Route */}
-                <Route element={<ProtectedRoute allowedRoles={['ADMIN_IT']}/>}>
-                    <Route path='admin' element={<LayoutAdmin/>}>
-                        <Route index element={<AdminDashboard/>}/>
-                        <Route path='systems' element={<AdminSystems/>}/>
-                        <Route path='upload' element={<AdminUpload/>}/>
-                        <Route path='security' element={<AdminSecurity/>}/>
-                        <Route path='profile' element={<AdminProfile/>}/>
-                    </Route>
-                </Route>
-                <Route path='/unauthorized' element={<Unauthorized/>}/>
-            </Routes>
-        </BrowserRouter>
-    );
- 
+				<Route
+					element={
+						<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']} />
+					}
+				>
+					<Route path='staff' element={<LayoutAcademicManager />}>
+						<Route index element={<AMDashboard   />} />
+						<Route path='program' element={<AMProgram />} />
+						<Route path='courses' element={<AMCourse />} />
+						<Route path='teacher' element={<AMTeacher />} />
+						<Route path='student' element={<AMStudent />} />
+						<Route path='feedback' element={<AMFeedback />} />
+						<Route path='schedule' element={<AMSchedule />} />
+						<Route path='report' element={<AMReport />} />
+						<Route
+							path='notification'
+							element={<AMNotification />}
+						/>
+						<Route path='profile' element={<AMProfile />} />
+					</Route>
+				</Route>
+
+				{/* Admin Route */}
+				<Route element={<ProtectedRoute allowedRoles={['ADMIN_IT']} />}>
+					<Route path='admin' element={<LayoutAdmin />}>
+						<Route index element={<AdminDashboard />} />
+						<Route path='systems' element={<AdminSystems />} />
+						<Route path='upload' element={<AdminUpload />} />
+						<Route path='security' element={<AdminSecurity />} />
+						<Route path='profile' element={<AdminProfile />} />
+					</Route>
+				</Route>
+				<Route path='/unauthorized' element={<Unauthorized />} />
+			</Routes>
+		</BrowserRouter>
+	);
+
 };
 
 export default App;

@@ -59,13 +59,10 @@ body {
 .card-image-frame {
     width: 100%;
     aspect-ratio: 16 / 9;
-    /* Thay đổi 4 / 3 hoặc 1 / 1 nếu muốn */
     overflow: hidden;
     border-top-left-radius: 0.5rem;
-    /* Bo tròn góc trên, tuỳ thích */
     border-top-right-radius: 0.5rem;
     background: #f8fafc;
-    /* Màu nền dự phòng nếu ảnh lỗi */
     display: block;
 }
 
