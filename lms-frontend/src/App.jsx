@@ -58,10 +58,12 @@ import ProgramList from '@/features/program/pages/ProgramList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
 import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
 import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
+import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
 import PaymentForm from "@/features/payment/PaymentForm.jsx";
 import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
+import SessionList from './features/session/components/SessionList.jsx';
 
 const App = () => {
 
@@ -119,28 +121,25 @@ const App = () => {
 
                 {/* Teacher Route */}
                 <Route element={<ProtectedRoute allowedRoles={['TEACHER']}/>}>
-                    <Route path='teacher' element={<LayoutTeacher/>}>
+                    <Route path="teacher" element={<LayoutTeacher/>}>
                         <Route index element={<TeacherDashboard/>}/>
-                        <Route path='courses' element={<TeacherCourses/>}/>
-                        <Route
-                            path='courses/:courseId/student-list'
-                            element={<StudentList/>}
-                        />
-                        <Route path='courses/:courseId/attendance'>
-                            <Route index element={<AttendancePanel/>}/>
-                            <Route
-                                path='full'
-                                element={<AttendanceSummary/>}
-                            />
+                        <Route path="courses" element={<TeacherCourses/>}/>
+                        <Route path="courses/:courseId" element={<CourseDetailTeacher/>}>
+                            <Route index element={<SessionList/>}/>
+                            <Route path="student-list" element={<StudentList/>}/>
                         </Route>
-                        <Route path='schedule' element={<TeacherSchedule/>}/>
-                        <Route
-                            path='notification'
-                            element={<TeacherNotification/>}
-                        />
-                        <Route path='profile' element={<TeacherProfile/>}/>
+
+                        {/* Session Attendance đi kèm courseId */}
+                        <Route path="courses/:courseId/sessions/:sessionId/attendance" element={<AttendancePanel/>}/>
+                        <Route path="courses/:courseId/sessions/:sessionId/attendance/full"
+                               element={<AttendanceSummary/>}/>
+
+                        <Route path="schedule" element={<TeacherSchedule/>}/>
+                        <Route path="notification" element={<TeacherNotification/>}/>
+                        <Route path="profile" element={<TeacherProfile/>}/>
                     </Route>
                 </Route>
+
 
                 <Route
                     element={
@@ -178,7 +177,7 @@ const App = () => {
             </Routes>
         </BrowserRouter>
     );
- 
+
 };
 
 export default App;

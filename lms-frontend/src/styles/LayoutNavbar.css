@@ -1,0 +1,61 @@
+.layout-navbar-wrapper {
+    display: flex;
+}
+
+.admin-sidebar {
+    width: 240px;
+    transition: width 220ms ease, box-shadow 220ms ease;
+    overflow: hidden;
+    border-right: 1px solid rgba(0,0,0,0.06);
+    min-height: 100vh;
+    position: relative;
+}
+
+.admin-sidebar.collapsed {
+    width: 56px;
+    box-shadow: none;
+}
+
+.admin-sidebar.collapsed .p-panelmenu .p-menuitem-text,
+.admin-sidebar.collapsed .p-panelmenu .p-panelmenu-header .p-panelmenu-header-text,
+.admin-sidebar.collapsed .p-panelmenu .p-panelmenu-header .p-panelmenu-toggler {
+    display: none !important;
+}
+
+.admin-sidebar.collapsed .p-panelmenu .p-menuitem-link {
+    justify-content: center;
+}
+
+.admin-sidebar .p-panelmenu .p-menuitem-icon {
+    font-size: 1.2rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-sidebar .p-panelmenu .p-menuitem-link {
+    padding: 0.75rem 1rem;
+    gap: 0.75rem;
+}
+
+@media (max-width: 767px) {
+    .admin-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        z-index: 90;
+        transform: translateX(-100%);
+        transition: transform 220ms ease;
+    }
+    .admin-sidebar.openOnMobile {
+        transform: translateX(0);
+        width: 240px;
+    }
+    .admin-sidebar.collapsed {
+        transform: translateX(-100%);
+        width: 240px;
+    }
+}
