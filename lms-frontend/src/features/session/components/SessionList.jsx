@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { Accordion, AccordionTab } from "primereact/accordion";
-import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
-import { useNavigate, useParams } from "react-router-dom";
+import {useEffect, useRef, useState} from "react";
+import {Accordion, AccordionTab} from "primereact/accordion";
+import {Button} from "primereact/button";
+import {Toast} from "primereact/toast";
+import {useNavigate, useParams} from "react-router-dom";
 
 import EditSession from "./EditSession";
 import AddSession from "./AddSession";
@@ -11,7 +11,7 @@ import SessionService from "@/features/session/api/sessionService.js";
 
 const SessionList = () => {
     const navigate = useNavigate();
-    const { courseId } = useParams(); // lấy từ URL: /teacher/courses/:courseId/sessions
+    const {courseId} = useParams(); // lấy từ URL: /teacher/courses/:courseId/sessions
 
     // State
     const [showAdd, setShowAdd] = useState(false);
@@ -48,7 +48,9 @@ const SessionList = () => {
                 if (mounted) setLoading(false);
             }
         })();
-        return () => { mounted = false };
+        return () => {
+            mounted = false
+        };
     }, [courseId]);
 
 
@@ -76,7 +78,7 @@ const SessionList = () => {
     // Update buổi (demo, chưa call API update)
     const handleUpdate = (id, changedFields, newValues) => {
         setSessionList((list) =>
-            list.map((item) => (item.id === id ? { ...item, ...newValues } : item))
+            list.map((item) => (item.id === id ? {...item, ...newValues} : item))
         );
         toast.current.show({
             severity: "success",
@@ -106,16 +108,20 @@ const SessionList = () => {
                                     );
                                 }}
                             >
-                                <i className="pi pi-pencil" style={{ fontSize: "1rem" }}></i>
+                                <i className="pi pi-pencil" style={{fontSize: "1rem"}}></i>
                             </Button>
                             <Button
                                 label="Điểm danh"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    navigate(`/teacher/sessions/${session.id}/attendance`);
+                                    navigate(`/teacher/courses/${courseId}/sessions/${session.id}/attendance`, {
+                                        state: {courseId, date: session.date}
+                                    });
                                 }}
                             />
+
+
                         </div>
                         <div className="flex">
                             Sĩ số: {session.studentCount}/{session.studentCount}
@@ -167,8 +173,8 @@ const SessionList = () => {
                 </>
             )}
 
-            <Button className="mt-2" label="Quay lại" onClick={() => navigate(-1)} />
-            <Toast ref={toast} />
+            <Button className="mt-2" label="Quay lại" onClick={() => navigate(-1)}/>
+            <Toast ref={toast}/>
         </div>
     );
 };

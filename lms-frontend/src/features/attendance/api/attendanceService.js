@@ -1,10 +1,10 @@
-import { AppUrls } from "@/shared/constants/index.js";
+import {AppUrls} from "@/shared/constants/index.js";
 import axiosClient from "@/shared/api/axiosClient.js";
 
 // lấy sessions theo ngày
 async function getSessionsByDate(courseId, date) {
     const res = await axiosClient.get(AppUrls.getSessionsByDate, {
-        params: { courseId, date }
+        params: {courseId, date}
     });
     return res.data?.result ?? [];
 }
@@ -16,13 +16,16 @@ async function getAttendanceBySession(sessionId) {
 }
 
 // lưu điểm danh
-async function markAttendance(sessionId, attendances) {
+async function markAttendance(sessionId, students, courseId, date) {
     const res = await axiosClient.post(AppUrls.markAttendance, {
-        sessionId,
-        attendances,
+        sessionId: Number(sessionId),
+        courseId: Number(courseId),
+        date, // yyyy-MM-dd
+        students,
     });
     return res.data?.result;
 }
+
 
 // tổng hợp điểm danh
 async function getAttendanceSummary(courseId) {
