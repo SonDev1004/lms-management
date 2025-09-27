@@ -66,6 +66,8 @@ import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
 import SessionList from './features/session/components/SessionList.jsx';
+import StudentManagement from '@/features/management/pages/StudentManagement.jsx';
+import MStudentProfile from "@/features/management/pages/MStudentProfile.jsx";
 
 const App = () => {
 
@@ -157,6 +159,8 @@ const App = () => {
 				>
 					<Route path='staff' element={<LayoutAcademicManager />}>
 						<Route index element={<AMDashboard   />} />
+						<Route path='student-manager' element={<StudentManagement />} />
+						<Route path="student-manager/:id" element={<MStudentProfile />} />
 						<Route path='program' element={<AMProgram />} />
 						<Route path='courses' element={<AMCourse />} />
 						<Route path='teacher' element={<AMTeacher />} />

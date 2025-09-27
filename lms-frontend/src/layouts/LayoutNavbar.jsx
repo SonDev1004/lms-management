@@ -43,7 +43,7 @@ export default function LayoutNavbar({ role, children }) {
                 { label: 'Danh sách học sinh',
                     icon: 'pi pi-list',
                     roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/studentlist`) },
+                    command: () => navigate(`/${roleToRoute(role)}/student-manager`) },
 
                 { label: 'Danh sách giáo viên',
                     icon: 'pi pi-id-card',

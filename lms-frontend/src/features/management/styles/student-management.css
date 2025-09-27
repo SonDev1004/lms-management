@@ -1,0 +1,44 @@
+/* Page shell */
+.page-wrap { padding: 1rem; }
+.title { margin: 0; font-size: 2rem; font-weight: 800; }
+.subtitle { color: #6b7280; margin-top: .25rem; }
+.title-icon { font-size: 1.75rem; margin-right: .75rem; color: #0f172a; }
+.header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem;
+}
+.title-block { display: flex; align-items: center; gap: .75rem; }
+
+/* Cards */
+.card {
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06);
+    padding: 1rem; margin-bottom: 1rem;
+}
+.card-title {
+    display: flex; align-items: center; gap: .5rem;
+    font-weight: 700; font-size: 1.25rem; margin-bottom: .75rem;
+}
+.card-title .pi { font-size: 1.25rem; }
+
+/* Section title above table */
+.section-title { font-size: 1.5rem; font-weight: 700; margin: .25rem 0 1rem; }
+
+/* Chips look (match screenshot rounded light) */
+.p-badge.p-component { background: #e6f2ff; color: #0f4c81; border-radius: 999px; padding: .35rem .6rem; }
+
+/* Status tag rounded */
+.p-tag.rounded { border-radius: 999px; }
+
+/* DataTable header style closer to screenshot */
+.students-table .p-datatable-header { display: none; }
+.students-table .p-datatable-thead > tr > th {
+    background: #fff; font-weight: 600;
+}
+
+/* Search card spacing */
+.search-card .p-inputtext { height: 3rem; }
+.search-card .p-dropdown { height: 3rem; }
+
+/* Action buttons spacing */
+.students-table .p-button.p-button-text.p-button-rounded { width: 2.25rem; height: 2.25rem; }
