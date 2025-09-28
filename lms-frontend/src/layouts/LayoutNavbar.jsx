@@ -6,7 +6,7 @@ import '../styles/LayoutNavbar.css';
 
 export default function LayoutNavbar({ role, children }) {
     const navigate = useNavigate();
-    const [collapsed, setCollapsed] = useState(true); // mặc định gọn
+    const [collapsed, setCollapsed] = useState(true);
     const [hoverOpen, setHoverOpen] = useState(false);
     const mountedRef = useRef(false);
 
@@ -48,7 +48,7 @@ export default function LayoutNavbar({ role, children }) {
                 { label: 'Danh sách giáo viên',
                     icon: 'pi pi-id-card',
                     roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/teacherList`) },
+                    command: () => navigate(`/${roleToRoute(role)}/teacher-list`) },
 
                 { label: 'Theo dõi & Feedback',
                     icon: 'pi pi-check-square',
