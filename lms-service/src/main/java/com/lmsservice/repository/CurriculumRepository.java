@@ -24,6 +24,4 @@ public interface CurriculumRepository extends JpaRepository<Curriculum, Long> {
 
     @Query("select max(c.orderNumber) from Curriculum c where c.program.id = :programId")
     Integer findMaxOrderNumberByProgramId(Long programId);
-
-
 }

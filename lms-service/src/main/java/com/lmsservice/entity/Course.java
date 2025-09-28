@@ -4,8 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.lmsservice.util.CourseStatus;
 import jakarta.persistence.*;
+
+import com.lmsservice.util.CourseStatus;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -56,7 +57,7 @@ public class Course extends EntityAbstract {
     @OneToMany(mappedBy = "course")
     List<Feedback> feedbacks = new ArrayList<>();
 
-    //program
+    // program
     @ManyToOne()
     @JoinColumn(name = "program_id")
     private Program program;

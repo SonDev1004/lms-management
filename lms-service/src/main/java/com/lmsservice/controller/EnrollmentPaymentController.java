@@ -47,9 +47,7 @@ public class EnrollmentPaymentController {
     @PostMapping("/create-payment")
     @Operation(summary = "Tạo link thanh toán cho đăng ký học phần hoặc chương trình")
     public ApiResponse<CreatePaymentResponse> createPayment(
-            @RequestBody CreatePaymentRequest req,
-            HttpServletRequest servletRequest
-    ) {
+            @RequestBody CreatePaymentRequest req, HttpServletRequest servletRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Long userId = userDetails.getUser().getId();
@@ -60,12 +58,14 @@ public class EnrollmentPaymentController {
         }
 
         BigDecimal totalFee = (req.getProgramId() != null)
-                ? programRepo.findById(req.getProgramId())
-                .orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND))
-                .getFee()
-                : subjectRepo.findById(req.getSubjectId())
-                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND))
-                .getFee();
+                ? programRepo
+                        .findById(req.getProgramId())
+                        .orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND))
+                        .getFee()
+                : subjectRepo
+                        .findById(req.getSubjectId())
+                        .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND))
+                        .getFee();
 
         String txnRef = "PE-" + userId + "-" + System.currentTimeMillis();
 
@@ -89,12 +89,20 @@ public class EnrollmentPaymentController {
                 .expiresAt(pending.getCreatedAt().plusMinutes(vnpayProps.getTimeoutMinutes()))
                 .timeoutSeconds(vnpayProps.getTimeoutMinutes() * 60)
                 .userId(userId)
-                .programName(req.getProgramId() != null
-                        ? programRepo.findById(req.getProgramId()).map(Program::getTitle).orElse(null)
-                        : null)
-                .subjectName(req.getSubjectId() != null
-                        ? subjectRepo.findById(req.getSubjectId()).map(Subject::getTitle).orElse(null)
-                        : null)
+                .programName(
+                        req.getProgramId() != null
+                                ? programRepo
+                                        .findById(req.getProgramId())
+                                        .map(Program::getTitle)
+                                        .orElse(null)
+                                : null)
+                .subjectName(
+                        req.getSubjectId() != null
+                                ? subjectRepo
+                                        .findById(req.getSubjectId())
+                                        .map(Subject::getTitle)
+                                        .orElse(null)
+                                : null)
                 .orderInfo(orderInfo)
                 .locale("vn")
                 .build();
@@ -111,15 +119,13 @@ public class EnrollmentPaymentController {
     @GetMapping("/status/{txnRef}")
     @Operation(summary = "Lấy trạng thái giao dịch theo txnRef")
     public ApiResponse<?> getStatus(@PathVariable String txnRef) {
-        return pendingRepo.findByTxnRef(txnRef)
+        return pendingRepo
+                .findByTxnRef(txnRef)
                 .map(p -> ApiResponse.builder()
                         .message("Found")
                         .result(Map.of("txnRef", txnRef, "status", p.getStatus()))
                         .build())
-                .orElse(ApiResponse.builder()
-                        .message("Not found")
-                        .result(null)
-                        .build());
+                .orElse(ApiResponse.builder().message("Not found").result(null).build());
     }
 
     // ----------------------------
@@ -135,4 +141,3 @@ public class EnrollmentPaymentController {
                 .build();
     }
 }
-
