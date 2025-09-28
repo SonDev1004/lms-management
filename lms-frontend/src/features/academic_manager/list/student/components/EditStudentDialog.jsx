@@ -5,7 +5,10 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
-import { classes, studentStatusOptions, upsertStudent } from "@/features/management/mocks/students";
+import "../styles/EditStudentDialog.css";
+
+import '../styles/student-management.css';
+import { classes, studentStatusOptions, upsertStudent } from "@/features/academic_manager/list/student/mocks/students.js";
 
 const empty = {
     id: "", name: "", email: "", phone: "", avatar: "",
@@ -41,7 +44,6 @@ export default function EditStudentDialog({ open, onClose, student, onSaved }) {
         if (!f) return;
         const url = URL.createObjectURL(f);
         setPreview(url);
-        // Lưu base64/URL tạm (tuỳ backend). Ở mock: lưu trực tiếp objectURL.
         set("avatar", url);
     };
 
@@ -66,8 +68,8 @@ export default function EditStudentDialog({ open, onClose, student, onSaved }) {
                 enrolledOn: form.enrolledOn ? form.enrolledOn.toISOString().slice(0, 10) : null,
                 avatar: preview || form.avatar || "",
             };
-            const saved = upsertStudent(payload); // cập nhật mock store
-            onSaved?.(saved);                      // cập nhật UI cha
+            const saved = upsertStudent(payload);
+            onSaved?.(saved);
             onClose?.();
         } finally {
             setSubmitting(false);

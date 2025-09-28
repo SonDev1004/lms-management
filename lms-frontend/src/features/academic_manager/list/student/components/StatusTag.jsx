@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tag } from 'primereact/tag';
 
+import '../styles/student-management.css';
+
 export default function StatusTag({ value }) {
     const severity =
         value === 'active' ? 'success' :
