@@ -1,7 +1,8 @@
-import MStudentProfile from "@/features/management/pages/MStudentProfile.jsx";
+
+import StudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
 
 const AMStudentProfile = () => {
-    return (<MStudentProfile />);
+    return (<StudentProfile />);
 }
 
 export default AMStudentProfile;

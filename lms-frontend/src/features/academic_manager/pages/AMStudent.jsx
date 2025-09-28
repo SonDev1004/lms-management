@@ -1,5 +1,5 @@
 
-import StudentManagement from "@/features/management/pages/StudentManagement.jsx";
+import StudentManagement from "@/features/academic_manager/list/student/pages/StudentManagement.jsx";
 
 const AMCourse = () => {
     return (<StudentManagement />);
