@@ -56,7 +56,7 @@ const AttendancePanel = () => {
             )
         );
     };
-	// Đổi lý do vắng
+    // Đổi lý do vắng
     const handleReasonChange = (studentId, reason) => {
         setAttendanceData(prev =>
             prev.map(item =>
@@ -65,7 +65,7 @@ const AttendancePanel = () => {
         );
     };
 
-	// Lưu điểm danh
+    // Lưu điểm danh
     const handleSaveAttendance = async () => {
         try {
             const isoDate = selectedDate.toISOString().slice(0, 10); // yyyy-MM-dd
@@ -105,6 +105,17 @@ const AttendancePanel = () => {
                     <div className="field col">
                         <label>Buổi học</label>
                         <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput/>
+                    </div>
+                    <div className='flex gap-2'>
+                        <Button
+                            label='Bảng tổng hợp'
+                            className='p-button-outlined p-button-info'
+                            onClick={() => navigate('full')}
+                        />
+                        <Button
+                            label='QR Code'
+                            className='p-button-outlined p-button-success'
+                        />
                     </div>
                 </div>
 
