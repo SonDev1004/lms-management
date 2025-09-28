@@ -12,8 +12,6 @@ import { Dialog } from "primereact/dialog";
 import { InputNumber } from "primereact/inputnumber";
 import { Toast } from "primereact/toast";
 
-import ProgramDetailDialog from "../components/ProgramDetailDialog.jsx";
-
 export default function ProgramList() {
     const toast = useRef(null);
     const { stats, programs, selected, setSelected, loading, query, setQuery, filters, setFilters } =
@@ -21,8 +19,6 @@ export default function ProgramList() {
 
     const [localPrograms, setLocalPrograms] = useState([]);
     const [showAdd, setShowAdd] = useState(false);
-    const [detail, setDetail] = useState({ visible: false, program: null });
-
     const [newProgram, setNewProgram] = useState({
         name: "",
         category: "Adults",
@@ -34,7 +30,6 @@ export default function ProgramList() {
         status: "active",
     });
 
-    // search debounce
     const [searchText, setSearchText] = useState(query);
     useEffect(() => setSearchText(query), [query]);
     useEffect(() => {
@@ -94,14 +89,24 @@ export default function ProgramList() {
         });
     }, [localPrograms, query, filters]);
 
-    // Add
-    function handleAddOpen() { setShowAdd(true); }
+    function handleAddOpen() {
+        setNewProgram({
+            name: "",
+            category: "Adults",
+            level: "A2–B1",
+            durationWeeks: 12,
+            fee: 0,
+            totalCourses: 0,
+            activeCourses: 0,
+            status: "active",
+        });
+        setShowAdd(true);
+    }
+
     const canSave =
-        newProgram.name?.trim().length >= 3 &&
-        newProgram.durationWeeks >= 0 &&
-        newProgram.fee >= 0 &&
-        newProgram.totalCourses >= 0 &&
-        newProgram.activeCourses >= 0 &&
+        newProgram.name && newProgram.name.trim().length >= 3 &&
+        newProgram.durationWeeks >= 0 && newProgram.fee >= 0 &&
+        newProgram.totalCourses >= 0 && newProgram.activeCourses >= 0 &&
         newProgram.activeCourses <= newProgram.totalCourses;
 
     function handleAddSave() {
@@ -126,20 +131,6 @@ export default function ProgramList() {
         toast.current.show({ severity: "success", summary: "Added", detail: `Program ${payload.name} added` });
     }
 
-    // Detail / CRUD
-    function openDetail(p) { setDetail({ visible: true, program: p }); }
-    function handleUpdateProgram(updated) {
-        setLocalPrograms((prev) => prev.map((x) => (x.id === updated.id ? { ...x, ...updated } : x)));
-        toast.current.show({ severity: "success", summary: "Updated", detail: `Program "${updated.name}" updated` });
-    }
-    function handleDeleteProgram(row) {
-        const id = typeof row === "string" ? row : row.id;
-        setLocalPrograms((prev) => prev.filter((x) => x.id !== id));
-        if (detail.visible && detail.program?.id === id) setDetail({ visible: false, program: null });
-        toast.current.show({ severity: "success", summary: "Deleted", detail: "Program deleted" });
-    }
-
-    // Bulk delete
     function handleDeleteSelected() {
         if (!selected?.length) {
             toast.current.show({ severity: "info", summary: "No selection", detail: "Please select at least one program." });
@@ -159,7 +150,6 @@ export default function ProgramList() {
             <div style={{ flex: 1 }}>
                 <SummaryPills stats={stats} entity="programs" />
 
-                {/* Toolbar */}
                 <div className="p-card p-p-3 header-row sticky">
                     <div className="toolbar-left">
             <span className="p-input-icon-left">
@@ -172,15 +162,36 @@ export default function ProgramList() {
               />
             </span>
 
-                        <Dropdown value={filters.category} onChange={(e) => setFilters((f) => ({ ...f, category: e.value }))}
-                                  options={categoryOptions} optionLabel="label" optionValue="value" placeholder="All Categories"
-                                  style={{ width: 170 }} showClear />
-                        <Dropdown value={filters.level} onChange={(e) => setFilters((f) => ({ ...f, level: e.value }))}
-                                  options={levelOptions} optionLabel="label" optionValue="value" placeholder="All Levels"
-                                  style={{ width: 160 }} showClear />
-                        <Dropdown value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.value }))}
-                                  options={statusOptions} optionLabel="label" optionValue="value" placeholder="All Status"
-                                  style={{ width: 140 }} showClear />
+                        <Dropdown
+                            value={filters.category}
+                            onChange={(e) => setFilters((f) => ({ ...f, category: e.value }))}
+                            options={categoryOptions}
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="All Categories"
+                            style={{ width: 170 }}
+                            showClear
+                        />
+                        <Dropdown
+                            value={filters.level}
+                            onChange={(e) => setFilters((f) => ({ ...f, level: e.value }))}
+                            options={levelOptions}
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="All Levels"
+                            style={{ width: 160 }}
+                            showClear
+                        />
+                        <Dropdown
+                            value={filters.status}
+                            onChange={(e) => setFilters((f) => ({ ...f, status: e.value }))}
+                            options={statusOptions}
+                            optionLabel="label"
+                            optionValue="value"
+                            placeholder="All Status"
+                            style={{ width: 140 }}
+                            showClear
+                        />
                     </div>
 
                     <div className="toolbar-right">
@@ -210,17 +221,38 @@ export default function ProgramList() {
                             <div>
                                 <strong>{selected.length}</strong> programs selected
                             </div>
-                            <Button label="Select All" icon="pi pi-check-square" className="p-button-text" onClick={() => setSelected([...filteredPrograms])} />
+                            <Button
+                                label="Select All"
+                                icon="pi pi-check-square"
+                                className="p-button-text"
+                                onClick={() => setSelected([...filteredPrograms])}
+                            />
                             <Button label="Clear" icon="pi pi-times" className="p-button-text" onClick={() => setSelected([])} />
                         </div>
 
                         <div className="action-right">
-                            <Button label="Activate" icon="pi pi-check" className="p-button-outlined"
-                                    onClick={() => toast.current.show({ severity: "success", summary: "Activate", detail: "Activated selected (mock)" })} />
-                            <Button label="Deactivate" icon="pi pi-ban" className="p-button-outlined"
-                                    onClick={() => toast.current.show({ severity: "success", summary: "Deactivate", detail: "Deactivated selected (mock)" })} />
-                            <Button label="Export Selected" icon="pi pi-download" className="p-button-outlined"
-                                    onClick={() => toast.current.show({ severity: "info", summary: "Export", detail: "Export selected (mock)" })} />
+                            <Button
+                                label="Activate"
+                                icon="pi pi-check"
+                                className="p-button-outlined"
+                                onClick={() =>
+                                    toast.current.show({ severity: "success", summary: "Activate", detail: "Activated selected (mock)" })
+                                }
+                            />
+                            <Button
+                                label="Deactivate"
+                                icon="pi pi-ban"
+                                className="p-button-outlined"
+                                onClick={() =>
+                                    toast.current.show({ severity: "success", summary: "Deactivate", detail: "Deactivated selected (mock)" })
+                                }
+                            />
+                            <Button
+                                label="Export Selected"
+                                icon="pi pi-download"
+                                className="p-button-outlined"
+                                onClick={() => toast.current.show({ severity: "info", summary: "Export", detail: "Export selected (mock)" })}
+                            />
                             <Button label="Delete" icon="pi pi-trash" className="p-button-danger" onClick={handleDeleteSelected} />
                         </div>
                     </div>
@@ -231,12 +263,9 @@ export default function ProgramList() {
                     selection={selected}
                     onSelectionChange={(e) => setSelected(e.value || [])}
                     loading={loading}
-                    onView={openDetail}
-                    onEdit={openDetail}
-                    onDelete={(row) => handleDeleteProgram(row)}
                 />
 
-                {/* Add Program dialog */}
+                {/* Add Program dialog – polished */}
                 <Dialog
                     header="Add Program"
                     visible={showAdd}
@@ -245,13 +274,13 @@ export default function ProgramList() {
                     style={{ width: 560 }}
                     onHide={() => setShowAdd(false)}
                 >
+                    <p className="apd-desc">Create a new study program. You can edit details later.</p>
+
                     {/* Basics */}
                     <h4 className="apd-subhead">Basics</h4>
                     <div className="apd-grid">
                         <div className="apd-field">
-                            <label>
-                                Program name <span className="apd-req">*</span>
-                            </label>
+                            <label>Program name <span className="apd-req">*</span></label>
                             <InputText
                                 value={newProgram.name}
                                 onChange={(e) => setNewProgram((p) => ({ ...p, name: e.target.value }))}
@@ -301,8 +330,7 @@ export default function ProgramList() {
                             <InputNumber
                                 value={newProgram.durationWeeks}
                                 onValueChange={(e) => setNewProgram((p) => ({ ...p, durationWeeks: e.value ?? 0 }))}
-                                showButtons
-                                min={0}
+                                showButtons min={0}
                             />
                         </div>
                         <div className="apd-field">
@@ -310,9 +338,7 @@ export default function ProgramList() {
                             <InputNumber
                                 value={newProgram.fee}
                                 onValueChange={(e) => setNewProgram((p) => ({ ...p, fee: e.value ?? 0 }))}
-                                mode="currency"
-                                currency="VND"
-                                locale="vi-VN"
+                                mode="currency" currency="VND" locale="vi-VN"
                             />
                             <div className="apd-hint">Học phí toàn khóa, chưa gồm tài liệu.</div>
                         </div>
@@ -326,8 +352,7 @@ export default function ProgramList() {
                             <InputNumber
                                 value={newProgram.totalCourses}
                                 onValueChange={(e) => setNewProgram((p) => ({ ...p, totalCourses: e.value ?? 0 }))}
-                                showButtons
-                                min={0}
+                                showButtons min={0}
                             />
                         </div>
                         <div className="apd-field">
@@ -335,26 +360,22 @@ export default function ProgramList() {
                             <InputNumber
                                 value={newProgram.activeCourses}
                                 onValueChange={(e) => setNewProgram((p) => ({ ...p, activeCourses: e.value ?? 0 }))}
-                                showButtons
-                                min={0}
+                                showButtons min={0}
                             />
                         </div>
                     </div>
 
                     <div className="dialog-actions">
                         <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={() => setShowAdd(false)} />
-                        <Button label="Save" icon="pi pi-check" className="p-button-primary" onClick={handleAddSave} disabled={!canSave} />
+                        <Button
+                            label="Save"
+                            icon="pi pi-check"
+                            className="p-button-primary"
+                            onClick={handleAddSave}
+                            disabled={!canSave}
+                        />
                     </div>
                 </Dialog>
-
-                {/* View / Edit Program */}
-                <ProgramDetailDialog
-                    visible={detail.visible}
-                    onClose={() => setDetail({ visible: false, program: null })}
-                    program={detail.program}
-                    onUpdate={handleUpdateProgram}
-                    onDelete={(idOrRow) => handleDeleteProgram(idOrRow)}
-                />
             </div>
         </div>
     );
