@@ -7,10 +7,13 @@ import { Toast } from 'primereact/toast';
 //mock
 import { sessions } from "../../../mocks/mockSession";
 import { useNavigate } from "react-router-dom";
+import { mockAssignments } from "../../../mocks/mockAssignment";
 
 //Component
 import EditSession from "./EditSession";
 import AddSession from "./AddSession";
+import AssignmentTeacherForm from "../../assignment/components/AssignmentTeacherForm";
+import AssignmentTeacherList from "../../assignment/components/AssignmentTeacherList";
 
 const SessionList = () => {
     const navigate = useNavigate();
@@ -19,9 +22,9 @@ const SessionList = () => {
     const [showAdd, setShowAdd] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [sessionList, setSessionList] = useState([...sessions]);
-    // const [date, setDate] = useState(null);
-    // const [description, setDescription] = useState("");
     const [activeIndexes, setActiveIndexes] = useState([]);
+    const [assignments, setAssignments] = useState([...mockAssignments]);
+    const [addAssignment, setAddAssignment] = useState(null);
 
     //Toast
     const toast = useRef(null);
@@ -64,6 +67,18 @@ const SessionList = () => {
         });
         console.log("[Session Add] Added:", newSession);
     }
+    //Xử lí lưu Assignment --BEGIN--
+    const handleAssignmentSave = (data) => {
+        setAssignments(prev => [...prev, data]); // Thêm assignment mới vào state
+        toast.current?.show({
+            severity: "success",
+            summary: "Đã giao bài",
+            detail: data?.title ? `“${data.title}” đã được giao` : "Giao bài thành công",
+            life: 1500
+        });
+        setAddAssignment(null);
+    };
+    //Xử lí lưu Assignment --END--
 
     //Xử lí update:
     const handleUpdate = (id, changedFields, newValues) => {
@@ -78,23 +93,48 @@ const SessionList = () => {
         setEditingId(null);
         console.log("[Session Inline Edit] Fields changed:", changedFields);
     }
-
     useEffect(() => {
         console.log("Updated activeIndexes:", activeIndexes);
     }, [activeIndexes]);
 
+    //Đóng mở Edit và Assignmnet --BEGIN--
+    const openEdit = (e, session, idx) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setAddAssignment(null);         // tắt Assignment nếu đang mở
+        setEditingId(session);        // bật Edit
+        setActiveIndexes(prev => (prev.includes(idx) ? prev : [...prev, idx]));
+    };
+
+    const openAssignment = (e, session, idx) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const isPastSession = new Date(session.date) < new Date();
+        if (isPastSession) {
+            toast.current.show({
+                severity: "warn",
+                summary: "Không thể giao bài",
+                detail: "Buổi này đã qua, không thể giao bài tập.",
+                life: 1800,
+            });
+            return;
+        }
+        setEditingId(null); // tắt Edit nếu đang mở
+        setAddAssignment(session.id); // mở form giao bài cho đúng session
+        setActiveIndexes(prev => (prev.includes(idx) ? prev : [...prev, idx]));
+    };
+    //Đóng mở Edit và Assignmnet --END--
+
     const showSessionList = () => {
         return sessionList.filter(Boolean).map((session, index) =>
-            <AccordionTab key={index} disabled={session.disabled}
+            <AccordionTab key={session.id} disabled={session.disabled}
                 header={<div className="flex justify-content-between align-items-center w-full">
                     <div className="flex align-items-center gap-2">Buổi {session.order}: {shortDate(session.date)}
-                        <Button onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setEditingId(session.id);
-                            setActiveIndexes(prev => (prev.includes(index)) ? prev : [...prev, index]);
-                        }}>
+                        <Button onClick={(e) => openEdit(e, session.id, index)}>
                             <i className="pi pi-pencil" style={{ fontSize: '1rem' }}></i>
+                        </Button>
+                        <Button onClick={(e) => openAssignment(e, session, index)}>
+                            <i className="pi pi-paperclip" style={{ fontSize: '1rem' }}></i>
                         </Button>
                     </div>
                     <div className="flex">Sĩ số: {session.student_count}/{session.student_count} </div>
@@ -106,8 +146,20 @@ const SessionList = () => {
                     onCancel={() => setEditingId(null)}
                     onSave={handleUpdate}
                 />
+            ) : addAssignment === session.id ? (
+                <AssignmentTeacherForm
+                    session={session}
+                    onCancel={() => setAddAssignment(null)}
+                    onSave={handleAssignmentSave}
+                />
             ) : (
-                <div>{session.description}</div>
+                <div>
+                    <div className="mb-2">{session.description}</div>
+                    <div>
+                        <strong>Bài tập đã giao cho buổi này:</strong>
+                        <AssignmentTeacherList sessionId={session.id} assignments={assignments} />
+                    </div>
+                </div>
             )}
             </AccordionTab >
         );
@@ -129,8 +181,6 @@ const SessionList = () => {
                     onSave={handleAdd}
                 />
             )}
-
-
             <Accordion activeIndex={activeIndexes} multiple onTabChange={(e) => setActiveIndexes(e.index)}>
                 {showSessionList()}
             </Accordion>

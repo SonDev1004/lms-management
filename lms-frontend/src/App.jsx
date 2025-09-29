@@ -130,7 +130,7 @@ const App = () => {
 							<Route index element={<SessionList />} />
 							<Route
 								path='student-list'
-								element={<StudentList />}
+								element={<StudentList />} x
 							/>
 							<Route path='attendance'>
 								<Route index element={<AttendancePanel />} />
@@ -156,7 +156,7 @@ const App = () => {
 					}
 				>
 					<Route path='staff' element={<LayoutAcademicManager />}>
-						<Route index element={<AMDashboard   />} />
+						<Route index element={<AMDashboard />} />
 						<Route path='program' element={<AMProgram />} />
 						<Route path='courses' element={<AMCourse />} />
 						<Route path='teacher' element={<AMTeacher />} />
