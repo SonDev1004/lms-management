@@ -1,7 +1,5 @@
 package com.lmsservice.dto.request;
 
-import java.math.BigDecimal;
-
 import jakarta.validation.constraints.*;
 
 import lombok.AccessLevel;
@@ -18,5 +16,4 @@ public class CreatePaymentRequest {
 
     @NotNull(message = "Subject ID is required")
     Long subjectId;
-
 }

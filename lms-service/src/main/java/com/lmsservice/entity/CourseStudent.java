@@ -17,6 +17,9 @@ import lombok.experimental.FieldDefaults;
 public class CourseStudent extends EntityAbstract {
     Float averageScore;
 
+    @Column(nullable = false)
+    Integer status;
+
     @Column(columnDefinition = "varchar(max) default '[]'", nullable = false)
     String attendanceList;
 

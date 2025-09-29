@@ -4,13 +4,13 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.lmsservice.util.CourseStatus;
 import org.springframework.stereotype.Component;
 
 import com.lmsservice.dto.response.course.StudentCourse;
 import com.lmsservice.entity.Course;
 import com.lmsservice.entity.CourseTimeslot;
 import com.lmsservice.entity.Room;
+import com.lmsservice.util.CourseStatus;
 
 @Component
 public class StudentCourseMapper {
@@ -63,12 +63,14 @@ public class StudentCourseMapper {
         // ===== Trạng thái lớp =====
         CourseStatus statusEnum = course.getStatus();
         Integer status = (statusEnum != null ? statusEnum.getCode() : null);
-        String statusText = (statusEnum == null) ? "Khác" : switch (statusEnum) {
-            case DRAFT, SCHEDULED -> "Sắp khai giảng";
-            case ENROLLING, WAITLIST -> "Đang tuyển sinh";
-            case IN_PROGRESS -> "Đang học";
-            case COMPLETED -> "Đã học";
-        };
+        String statusText = (statusEnum == null)
+                ? "Khác"
+                : switch (statusEnum) {
+                    case DRAFT, SCHEDULED -> "Sắp khai giảng";
+                    case ENROLLING, WAITLIST -> "Đang tuyển sinh";
+                    case IN_PROGRESS -> "Đang học";
+                    case COMPLETED -> "Đã học";
+                };
 
         // ===== Build DTO =====
         return StudentCourse.builder()

@@ -1,11 +1,11 @@
 package com.lmsservice.dto.response.program;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -30,17 +30,17 @@ public class ProgramDetailResponse {
     @Data
     @Builder
     public static class TrackItem {
-         String trackCode;   // ví dụ: "T246-1830-2030"
-         String trackLabel;  // ví dụ: "Ca T2-4-6 (18:30–20:30)"
+        String trackCode; // ví dụ: "T246-1830-2030"
+        String trackLabel; // ví dụ: "Ca T2-4-6 (18:30–20:30)"
     }
 
     @Data
     @Builder
     public static class SubjectItem {
-         Long subjectId;
-         String subjectTitle;
-         Integer order; // curriculum_order
-         List<CourseItem> courses; // các lớp của môn trong từng track
+        Long subjectId;
+        String subjectTitle;
+        Integer order; // curriculum_order
+        List<CourseItem> courses; // các lớp của môn trong từng track
     }
 
     @Data
@@ -57,5 +57,4 @@ public class ProgramDetailResponse {
         String statusName;
         String trackCode;
     }
-
 }
