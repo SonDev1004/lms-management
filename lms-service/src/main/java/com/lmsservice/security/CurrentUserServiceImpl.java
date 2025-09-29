@@ -7,10 +7,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.entity.Student;
+import com.lmsservice.entity.Teacher;
 import com.lmsservice.entity.User;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.repository.StudentRepository;
+import com.lmsservice.repository.TeacherRepository;
 import com.lmsservice.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class CurrentUserServiceImpl implements CurrentUserService {
 
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
 
     private Authentication auth() {
         var a = SecurityContextHolder.getContext().getAuthentication();
@@ -60,6 +63,23 @@ public class CurrentUserServiceImpl implements CurrentUserService {
             return studentRepository.findByUserId(u.getId()).map(Student::getId);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<Long> getTeacherId() {
+        var principal = auth().getPrincipal();
+        if (principal instanceof CustomUserDetails cud) {
+            var u = cud.getUser();
+            if (u == null || u.getId() == null) return Optional.empty();
+
+            return teacherRepository.findByUser_Id(u.getId()).map(Teacher::getId);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Long requireTeacherId() {
+        return getTeacherId().orElseThrow(() -> new UnAuthorizeException(ErrorCode.UNAUTHENTICATED));
     }
 
     @Override

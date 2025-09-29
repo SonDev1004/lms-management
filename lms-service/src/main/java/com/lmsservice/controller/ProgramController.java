@@ -2,7 +2,6 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
-import com.lmsservice.dto.response.program.ProgramDetailResponse;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -19,6 +18,7 @@ import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
+import com.lmsservice.dto.response.program.ProgramDetailResponse;
 import com.lmsservice.service.ProgramService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,8 +83,7 @@ public class ProgramController {
 
     @GetMapping("/{id}/detail")
     public ResponseEntity<ApiResponse<ProgramDetailResponse>> getProgramDetail(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = "false") boolean onlyUpcoming) {
+            @PathVariable Long id, @RequestParam(defaultValue = "false") boolean onlyUpcoming) {
 
         var result = programService.getProgramDetail(id, onlyUpcoming);
 
