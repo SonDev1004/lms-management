@@ -1,21 +1,21 @@
 // AttendanceSummary.jsx
-import {Card} from 'primereact/card';
-import {DataTable} from 'primereact/datatable';
-import {Column} from 'primereact/column';
-import {Button} from 'primereact/button';
-import {Tag} from 'primereact/tag';
-import {useEffect, useMemo, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Button } from 'primereact/button';
+import { Tag } from 'primereact/tag';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import AttendanceService from '@/features/attendance/api/attendanceService.js';
 
 const statusIcon = (status) => {
     switch (status) {
         case 1:
-            return <i className="pi pi-check"/>;    // Có mặt
+            return <i className="pi pi-check" />;    // Có mặt
         case 2:
-            return <i className="pi pi-clock"/>;    // Đi trễ
+            return <i className="pi pi-clock" />;    // Đi trễ
         case 0:
-            return <i className="pi pi-times"/>;    // Vắng
+            return <i className="pi pi-times" />;    // Vắng
         default:
             return '-';
     }
@@ -23,11 +23,11 @@ const statusIcon = (status) => {
 const statusStyle = (status) => {
     switch (status) {
         case 1:
-            return {color: '#22c55e'};   // green
+            return { color: '#22c55e' };   // green
         case 2:
-            return {color: '#f59e0b'};   // amber
+            return { color: '#f59e0b' };   // amber
         case 0:
-            return {color: '#ef4444'};   // red
+            return { color: '#ef4444' };   // red
         default:
             return {};
     }
@@ -36,7 +36,7 @@ const statusStyle = (status) => {
 const AttendanceSummary = () => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {courseId} = useParams();
+    const { courseId } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -71,7 +71,7 @@ const AttendanceSummary = () => {
                 else if (s === 0) absent++;
                 else empty++;
             });
-            return {present, late, absent, empty};
+            return { present, late, absent, empty };
         });
     }, [sessions, students]);
 
@@ -84,19 +84,19 @@ const AttendanceSummary = () => {
                 title="Bảng điểm danh toàn khóa"
                 subTitle={
                     <div className="flex gap-2 align-items-center">
-                        <Tag value="Có mặt" icon="pi pi-check"/>
-                        <Tag value="Đi trễ" icon="pi pi-clock" severity="warning"/>
-                        <Tag value="Vắng" icon="pi pi-times" severity="danger"/>
+                        <Tag value="Có mặt" icon="pi pi-check" />
+                        <Tag value="Đi trễ" icon="pi pi-clock" severity="warning" />
+                        <Tag value="Vắng" icon="pi pi-times" severity="danger" />
                     </div>
                 }
             >
                 <DataTable value={students} dataKey="id" scrollable scrollHeight="60vh" showGridlines stripedRows>
-                    <Column field="code" header="Mã HV" frozen style={{width: 140}}/>
+                    <Column field="code" header="Mã HV" frozen style={{ width: 140 }} />
                     <Column
                         header="Họ tên"
                         frozen
                         body={(st) => `${st.firstname ?? ''} ${st.lastname ?? ''}`}
-                        style={{width: 220}}
+                        style={{ width: 220 }}
                     />
                     {sessions.map((ss, idx) => (
                         <Column
@@ -106,8 +106,8 @@ const AttendanceSummary = () => {
                                     ? new Date(ss.date).toLocaleDateString('vi-VN')
                                     : `Buổi ${ss.order}`
                             }
-                            headerStyle={{whiteSpace: 'nowrap', textAlign: 'center'}}
-                            bodyStyle={{textAlign: 'center', verticalAlign: 'middle'}}
+                            headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
+                            bodyStyle={{ textAlign: 'center', verticalAlign: 'middle' }}
                             body={(st) => {
                                 const orderIndex = (ss.order ?? (idx + 1)) - 1; // 0-based
                                 const rec = st.attendancelist?.[orderIndex];
@@ -126,13 +126,13 @@ const AttendanceSummary = () => {
                                     )
                                     : null;
                             }}
-                            style={{width: 120}}
+                            style={{ width: 120 }}
                         />
                     ))}
                 </DataTable>
 
                 <div className="flex justify-content-end gap-2 mt-3">
-                    <Button label="Quay lại" onClick={() => navigate(-1)}/>
+                    <Button label="Quay lại" onClick={() => navigate(-1)} />
                 </div>
             </Card>
         </div>
