@@ -55,11 +55,6 @@ export default function DashboardStaff() {
                         <h1>Dashboard</h1>
                         <p>Welcome back! Here's what's happening today.</p>
                     </div>
-                    <div className="header-actions">
-                        <button className="p-button p-button-rounded p-button-outlined add-course-btn">
-                            + Add New Course
-                        </button>
-                    </div>
                 </header>
 
                 <SummaryPills summary={summary} />

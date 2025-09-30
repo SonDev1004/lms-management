@@ -1,5 +1,9 @@
-const AMStudent = () => {
-    return (<><h1>Student management</h1></>);
+
+import StudentManagement from "@/features/academic_manager/list/student/pages/StudentManagement.jsx";
+
+const AMCourse = () => {
+    return (<StudentManagement />);
 }
 
-export default AMStudent;
+export default AMCourse;
+
