@@ -1,0 +1,41 @@
+/* ===== Teacher Header Bar ===== */
+.tp-header .p-card-body{ padding:18px 20px; }
+.tp-header-row{ display:flex; justify-content:space-between; gap:18px; align-items:flex-start; }
+
+.tp-namewrap{ display:flex; gap:14px; align-items:center; }
+.tp-avatar{ box-shadow:0 8px 22px rgba(2,38,53,.18); }
+
+.tp-name{ font-size:1.4rem; margin:0; line-height:1.15; }
+.tp-sub{ color:#64748b; font-size:.95rem; margin-top:2px; }
+
+.tp-statusline{ display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+
+.tp-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 10px; border-radius:999px; border:1px solid #e2e8f0;
+    background:#f8fafc; color:#0f172a; font-weight:600; cursor:pointer;
+    transition:.16s ease; position:relative;
+}
+.tp-chip:hover{ border-color:#bae6fd; background:#f0f9ff; }
+.tp-chip.is-copied{ border-color:#10b981; background:#ecfdf5; }
+.tp-chip .tp-copied{
+    position:absolute; right:8px; top:-10px; font-size:.7rem; color:#10b981;
+}
+.tp-chip .tp-ellipsis{
+    max-width:220px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;
+}
+
+.tp-right{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; min-width:320px; }
+.tp-right-top .p-button{ border-radius:10px; }
+
+.tp-meta{ display:grid; grid-template-columns:repeat(2, minmax(120px, 1fr)); gap:10px 16px; }
+.tp-kv{ display:flex; flex-direction:column; }
+.tp-kv span{ font-size:.8rem; color:#64748b; }
+.tp-kv strong{ font-size:1rem; color:#0f172a; }
+
+/* Responsive */
+@media (max-width: 860px){
+    .tp-header-row{ flex-direction:column; }
+    .tp-right{ align-items:flex-start; min-width:auto; }
+    .tp-meta{ grid-template-columns:repeat(2, minmax(100px, 1fr)); }
+}

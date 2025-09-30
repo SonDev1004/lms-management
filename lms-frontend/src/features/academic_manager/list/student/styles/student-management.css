@@ -1,0 +1,136 @@
+/* Page shell */
+.page-wrap { padding: 1rem; }
+.title { margin: 0; font-size: 2rem; font-weight: 800; }
+.subtitle { color: #6b7280; margin-top: .25rem; }
+.title-icon { font-size: 1.75rem; margin-right: .75rem; color: #0f172a; }
+.header-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem;
+}
+.title-block { display: flex; align-items: center; gap: .75rem; }
+/* ================== StudentDialog – scoped ================== */
+
+/* Shell */
+.student-dialog .p-dialog {
+    border-radius: 14px;
+    box-shadow: 0 24px 64px rgba(2, 8, 23, .12);
+}
+.student-dialog .p-dialog-content { padding: 10px 18px 6px; }
+
+/* Fields */
+.student-dialog .field {
+    display: flex; flex-direction: column;
+    gap: 6px; margin-bottom: 14px;
+}
+.student-dialog .field label {
+    font-weight: 600; font-size: .95rem; color: #0f172a;
+}
+.student-dialog .req { color: #ef4444; margin-left: 4px; }
+.student-dialog .p-error { font-size: 12px; margin-top: 4px; }
+
+/* Controls */
+.student-dialog .p-inputtext,
+.student-dialog .p-dropdown,
+.student-dialog .p-multiselect,
+.student-dialog .p-inputnumber .p-inputtext {
+    width: 100%; height: 44px;
+    border: 1px solid #e6e9ef; border-radius: 10px;
+    padding-inline: 12px; box-shadow: none;
+}
+.student-dialog .p-dropdown .p-dropdown-trigger,
+.student-dialog .p-multiselect .p-multiselect-trigger {
+    width: 42px; border-left: 1px solid #e6e9ef;
+    border-top-right-radius: 10px; border-bottom-right-radius: 10px;
+}
+
+/* Focus ring */
+.student-dialog .p-inputtext:focus,
+.student-dialog .p-dropdown.p-focus,
+.student-dialog .p-multiselect.p-focus,
+.student-dialog .p-inputnumber .p-inputtext:focus {
+    border-color: #06b6d4;
+    box-shadow: 0 0 0 3px rgba(6,182,212,.25);
+}
+
+/* Invalid */
+.student-dialog .p-invalid,
+.student-dialog .p-invalid:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239,68,68,.18) !important;
+}
+
+/* InputNumber buttons */
+.student-dialog .p-inputnumber .p-inputnumber-button.p-button {
+    background: #f8fafc !important;
+    border: 1px solid #e6e9ef !important;
+    border-left-width: 1px !important;
+    color: #334155 !important;
+    width: 42px; height: 22px;
+}
+.student-dialog .p-inputnumber .p-inputnumber-button.p-inputnumber-button-up { border-top-right-radius: 10px; }
+.student-dialog .p-inputnumber .p-inputnumber-button.p-inputnumber-button-down { border-bottom-right-radius: 10px; }
+.student-dialog .p-inputnumber .p-inputnumber-button.p-button:hover { background: #f1f5f9 !important; }
+
+/* Footer */
+.student-dialog .dialog-actions {
+    position: sticky; bottom: 0; background: #fff;
+    display: flex; justify-content: flex-end; gap: 12px;
+    padding: 10px 0 0; margin-top: 12px;
+    border-top: 1px solid #eef3f7;
+}
+.student-dialog .dialog-actions .p-button {
+    height: 44px; border-radius: 12px;
+}
+.student-dialog .dialog-actions .p-button-primary { min-width: 180px; }
+.student-dialog .dialog-actions .p-button-primary:disabled {
+    opacity: .65; cursor: not-allowed; filter: saturate(.85);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .student-dialog .p-inputtext,
+    .student-dialog .p-dropdown,
+    .student-dialog .p-multiselect,
+    .student-dialog .p-inputnumber .p-inputtext {
+        background: #0b1220; color: #e2e8f0; border-color: #334155;
+    }
+    .student-dialog .p-dropdown .p-dropdown-trigger,
+    .student-dialog .p-multiselect .p-multiselect-trigger,
+    .student-dialog .p-inputnumber .p-inputnumber-button {
+        border-left-color: #334155; background: #0f172a;
+    }
+}
+
+/* Cards */
+.card {
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15,23,42,.06);
+    padding: 1rem; margin-bottom: 1rem;
+}
+.card-title {
+    display: flex; align-items: center; gap: .5rem;
+    font-weight: 700; font-size: 1.25rem; margin-bottom: .75rem;
+}
+.card-title .pi { font-size: 1.25rem; }
+
+/* Section title above table */
+.section-title { font-size: 1.5rem; font-weight: 700; margin: .25rem 0 1rem; }
+
+/* Chips look (match screenshot rounded light) */
+.p-badge.p-component { background: #e6f2ff; color: #0f4c81; border-radius: 999px; padding: .35rem .6rem; }
+
+/* Status tag rounded */
+.p-tag.rounded { border-radius: 999px; }
+
+/* DataTable header style closer to screenshot */
+.students-table .p-datatable-header { display: none; }
+.students-table .p-datatable-thead > tr > th {
+    background: #fff; font-weight: 600;
+}
+
+/* Search card spacing */
+.search-card .p-inputtext { height: 3rem; }
+.search-card .p-dropdown { height: 3rem; }
+
+/* Action buttons spacing */
+.students-table .p-button.p-button-text.p-button-rounded { width: 2.25rem; height: 2.25rem; }

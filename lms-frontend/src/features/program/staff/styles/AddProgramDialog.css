@@ -1,0 +1,74 @@
+:root{
+    --apd-accent:#0f62fe;
+    --apd-border:#e6e9ef;
+    --apd-muted:#64748b;
+}
+
+/* Header sticky + mô tả */
+.add-program-dialog .p-dialog-header{
+    padding:16px 18px 10px;
+    border-bottom:1px solid #eef3f7;
+    position:sticky; top:0; z-index:2; background:#fff;
+}
+.add-program-dialog .p-dialog-title{ font-weight:800; letter-spacing:-.2px; }
+.add-program-dialog .p-dialog-content{ padding:14px 18px 12px; max-height:calc(100vh - 220px); overflow:auto; }
+.add-program-dialog .apd-desc{ margin:6px 0 10px; font-size:12.5px; color:var(--apd-muted); }
+
+/* Section title */
+.add-program-dialog .apd-subhead{
+    margin:14px 0 6px; font-size:12.5px; font-weight:800;
+    text-transform:uppercase; letter-spacing:.06em; color:#475569;
+}
+
+/* Grid 2 cols -> 1 on small; min width để không bị bóp */
+.add-program-dialog .apd-grid{
+    display:grid; grid-template-columns:repeat(2, minmax(260px, 1fr));
+    gap:14px 18px;
+}
+@media (max-width:640px){ .add-program-dialog .apd-grid{ grid-template-columns:1fr; } }
+
+/* Field + label */
+.add-program-dialog .apd-field{ display:flex; flex-direction:column; gap:6px; }
+.add-program-dialog .apd-field label{ font-size:13px; font-weight:700; color:#334155; }
+.add-program-dialog .apd-req{ color:#ef4444; }
+
+/* Unified controls */
+.add-program-dialog :is(.p-inputtext, .p-dropdown, .p-inputnumber .p-inputtext){
+    height:44px; border:1px solid #e9edf3; border-radius:12px; background:#fff;
+    box-shadow:none; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.add-program-dialog ::placeholder{ color:#9aa4b2; opacity:1; }
+
+/* Focus ring */
+.add-program-dialog :is(.p-inputtext:focus, .p-dropdown:not(.p-disabled).p-focus, .p-inputnumber .p-inputtext:focus){
+    outline:none; border-color:#96b4ff; box-shadow:0 0 0 3px rgba(15,98,254,.10);
+}
+
+/* InputNumber tweaks */
+.add-program-dialog .p-inputnumber .p-inputnumber-button{ width:36px; border-radius:10px; background: #005cff; border-color: #0055f6; }
+.add-program-dialog .p-inputnumber .p-inputnumber-button:enabled:hover{ filter:brightness(.98); }
+.add-program-dialog .p-inputnumber .p-inputtext{ padding-right:50px; } /* tránh đè chữ */
+
+/* Hint & error */
+.add-program-dialog .apd-hint{ font-size:12px; color:var(--apd-muted); margin-top:6px; padding-left:2px; }
+.add-program-dialog .p-error{ margin-top:4px; }
+
+/* Footer */
+.add-program-dialog .p-dialog-footer{
+    padding:10px 18px 16px; border-top:1px solid #eef3f7;
+    display:flex; justify-content:flex-end; gap:8px;
+}
+.add-program-dialog .p-dialog-footer .p-button{ height:44px; border-radius:12px; }
+.add-program-dialog .p-dialog-footer .p-button:not(.p-button-text){
+    background:var(--apd-accent); border-color:var(--apd-accent);
+    box-shadow:0 8px 18px rgba(15,98,254,.12);
+}
+.add-program-dialog .p-dialog-footer .p-button:disabled{
+    background: #004dff !important; border-color:#e8eefc !important; color:#7c8aa6 !important; box-shadow:none;
+}
+.add-program-dialog .p-dialog-footer .p-button.p-button-text{ color:var(--apd-muted); }
+
+/* Close hover */
+.add-program-dialog .p-dialog-header .p-dialog-header-icon:enabled:hover{
+    background:#f1f5f9; border-radius:8px;
+}

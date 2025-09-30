@@ -42,6 +42,8 @@ import AMReport from '@/features/academic_manager/pages/AMReport.jsx';
 import AMNotification from '@/features/academic_manager/pages/AMNotification.jsx';
 import ProgramDetail from './features/program/pages/ProgramDetail.jsx';
 
+
+import CourseHome from '@/features/course/pages/CourseHome.jsx';
 import CourseDetailStudent from '@/features/course/pages/CourseDetailStudent.jsx';
 import StudentNotification from '@/features/student/pages/StudentNotification.jsx';
 import StudentProfile from '@/features/student/pages/StudentProfile.jsx';
@@ -64,6 +66,12 @@ import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
 import SessionList from './features/session/components/SessionList.jsx';
+import StudentManagement from '@/features/academic_manager/list/student/pages/StudentManagement.jsx';
+import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
+import TeacherManagement from "@/features/academic_manager/list/teacher/pages/TeacherManagement.jsx";
+import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
+import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx";
+import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
 
 const App = () => {
 
@@ -141,7 +149,6 @@ const App = () => {
 					</Route>
 				</Route>
 
-
 				<Route
 					element={
 						<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']} />
@@ -149,8 +156,15 @@ const App = () => {
 				>
 					<Route path='staff' element={<LayoutAcademicManager />}>
 						<Route index element={<AMDashboard />} />
+						<Route path='student-manager' element={<StudentManagement />} />
+						<Route path="student-manager/:id" element={<MStudentProfile />} />
+						<Route path='teacher-list' element={<TeacherManagement />} />
+						<Route path='teacher-list/:id' element={<AMTeacherProfile />} />
 						<Route path='program' element={<AMProgram />} />
-						<Route path='courses' element={<AMCourse />} />
+						<Route path='detail/:id' element={<AMProgramDetail />} />
+						<Route path='courses' element={<AMCourse />}>
+							<Route path='detail/:id' element={<AMCourseDetail />} />
+						</Route>
 						<Route path='teacher' element={<AMTeacher />} />
 						<Route path='student' element={<AMStudent />} />
 						<Route path='feedback' element={<AMFeedback />} />
