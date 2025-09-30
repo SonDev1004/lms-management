@@ -5,11 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.lmsservice.dto.response.program.ProgramDetailResponse;
-import com.lmsservice.entity.Course;
-import com.lmsservice.repository.CourseRepository;
-import com.lmsservice.util.CourseStatus;
-import com.lmsservice.util.ScheduleFormatter;
 import jakarta.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,17 +22,22 @@ import com.lmsservice.dto.request.program.ProgramFilterRequest;
 import com.lmsservice.dto.request.program.ProgramRequest;
 import com.lmsservice.dto.response.CurriculumResponse;
 import com.lmsservice.dto.response.ProgramResponse;
+import com.lmsservice.dto.response.program.ProgramDetailResponse;
+import com.lmsservice.entity.Course;
 import com.lmsservice.entity.Curriculum;
 import com.lmsservice.entity.Program;
 import com.lmsservice.entity.Subject;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.repository.CourseRepository;
 import com.lmsservice.repository.CurriculumRepository;
 import com.lmsservice.repository.ProgramRepository;
 import com.lmsservice.repository.SubjectRepository;
 import com.lmsservice.security.policy.ProgramPolicy;
 import com.lmsservice.service.ProgramService;
 import com.lmsservice.spec.ProgramSpecifications;
+import com.lmsservice.util.CourseStatus;
+import com.lmsservice.util.ScheduleFormatter;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -191,16 +191,17 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public ProgramDetailResponse getProgramDetail(Long programId, boolean onlyUpcoming) {
 
-        Program program = programRepository.findById(programId).orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
+        Program program =
+                programRepository.findById(programId).orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
         if (program == null) {
             throw new AppException(ErrorCode.PROGRAM_NOT_FOUND);
         }
         if (program.getIsActive() == false) {
             throw new AppException(ErrorCode.PROGRAM_NOT_ACTIVE);
         }
-        //lấy curriculums theo  order
+        // lấy curriculums theo  order
         var curriculums = curriculumRepository.findByProgram_IdOrderByOrderNumberAsc(programId);
-        //Tất cả courses trong program
+        // Tất cả courses trong program
         var allCourses = courseRepository.findByProgram_Id(programId);
 
         if (onlyUpcoming) {
@@ -211,15 +212,16 @@ public class ProgramServiceImpl implements ProgramService {
         }
 
         allCourses = allCourses.stream()
-                .sorted(
-                        java.util.Comparator
-                                .comparingInt((Course c) -> c.getStatus() != null ? c.getStatus().getCode() : -1).reversed()
-                                .thenComparing(Course::getStartDate, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
-                                .thenComparing(Course::getId)
-                )
+                .sorted(java.util.Comparator.comparingInt((Course c) ->
+                                c.getStatus() != null ? c.getStatus().getCode() : -1)
+                        .reversed()
+                        .thenComparing(
+                                Course::getStartDate,
+                                java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
+                        .thenComparing(Course::getId))
                 .toList();
 
-        //lấy track
+        // lấy track
         var trackCodes = allCourses.stream()
                 .map(Course::getTrackCode)
                 .filter(java.util.Objects::nonNull)
@@ -234,25 +236,25 @@ public class ProgramServiceImpl implements ProgramService {
         var bySubject = allCourses.stream()
                 .collect(Collectors.groupingBy(c -> c.getSubject().getId()));
 
-
         var subjectItems = new ArrayList<ProgramDetailResponse.SubjectItem>();
         for (var cur : curriculums) {
             var sid = cur.getSubject().getId();
             var subjectCourses = bySubject.getOrDefault(sid, List.of());
 
-
             var courseItems = subjectCourses.stream()
                     .map(c -> {
                         CourseStatus statusEnum = c.getStatus();
                         Integer status = (statusEnum != null ? statusEnum.getCode() : null);
-                        String statusName = (statusEnum == null) ? "Khác" : switch (statusEnum) {
-                            case DRAFT -> "Nháp";
-                            case SCHEDULED -> "Sắp khai giảng";
-                            case ENROLLING -> "Đang tuyển sinh";
-                            case WAITLIST -> "Danh sách chờ";
-                            case IN_PROGRESS -> "Đang học";
-                            case COMPLETED -> "Đã kết thúc";
-                        };
+                        String statusName = (statusEnum == null)
+                                ? "Khác"
+                                : switch (statusEnum) {
+                                    case DRAFT -> "Nháp";
+                                    case SCHEDULED -> "Sắp khai giảng";
+                                    case ENROLLING -> "Đang tuyển sinh";
+                                    case WAITLIST -> "Danh sách chờ";
+                                    case IN_PROGRESS -> "Đang học";
+                                    case COMPLETED -> "Đã kết thúc";
+                                };
 
                         return ProgramDetailResponse.CourseItem.builder()
                                 .courseId(c.getId())
@@ -269,16 +271,13 @@ public class ProgramServiceImpl implements ProgramService {
                     })
                     .toList();
 
-            subjectItems.add(
-                    ProgramDetailResponse.SubjectItem.builder()
-                            .subjectId(sid)
-                            .subjectTitle(cur.getSubject().getTitle())
-                            .order(cur.getOrderNumber())
-                            .courses(courseItems)
-                            .build()
-            );
+            subjectItems.add(ProgramDetailResponse.SubjectItem.builder()
+                    .subjectId(sid)
+                    .subjectTitle(cur.getSubject().getTitle())
+                    .order(cur.getOrderNumber())
+                    .courses(courseItems)
+                    .build());
         }
-
 
         return ProgramDetailResponse.builder()
                 .id(program.getId())
