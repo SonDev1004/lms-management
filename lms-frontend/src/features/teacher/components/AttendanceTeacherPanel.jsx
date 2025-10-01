@@ -1,21 +1,21 @@
-import {useEffect, useState} from 'react';
-import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import {Card} from 'primereact/card';
-import {Button} from 'primereact/button';
-import {Calendar} from 'primereact/calendar';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { Button } from 'primereact/button';
+import { Calendar } from 'primereact/calendar';
 
-import AttendanceTable from './AttendanceTable';
+import AttendanceTable from './AttendanceTeacherTable';
 import AttendanceService from '@/features/attendance/api/attendanceService.js';
 
 const attendance_types = [
-    {label: 'Có mặt', value: 1},
-    {label: 'Đi trễ', value: 2},
-    {label: 'Vắng', value: 0},
+    { label: 'Có mặt', value: 1 },
+    { label: 'Đi trễ', value: 2 },
+    { label: 'Vắng', value: 0 },
 ];
 
-const AttendancePanel = () => {
+const AttendanceTeacherPanel = () => {
     const navigate = useNavigate();
-    const {courseId, sessionId} = useParams();
+    const { courseId, sessionId } = useParams();
     const location = useLocation();
 
     const dateFromSession =
@@ -52,7 +52,7 @@ const AttendancePanel = () => {
     const handleAttendanceChange = (studentId, value) => {
         setAttendanceData(prev =>
             prev.map(item =>
-                item.id === studentId ? {...item, attendance: value} : item
+                item.id === studentId ? { ...item, attendance: value } : item
             )
         );
     };
@@ -60,7 +60,7 @@ const AttendancePanel = () => {
     const handleReasonChange = (studentId, reason) => {
         setAttendanceData(prev =>
             prev.map(item =>
-                item.id === studentId ? {...item, note: reason} : item
+                item.id === studentId ? { ...item, note: reason } : item
             )
         );
     };
@@ -101,10 +101,10 @@ const AttendancePanel = () => {
     return (
         <div className="grid mt-2">
             <Card title="Bảng điểm danh">
-                <div className="formgrid grid">
+                <div className="formgrid grid mb-2">
                     <div className="field col">
                         <label>Buổi học</label>
-                        <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput/>
+                        <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput />
                     </div>
                     <div className='flex gap-2'>
                         <Button
@@ -132,12 +132,12 @@ const AttendancePanel = () => {
                 )}
 
                 <div className="flex justify-content-between mt-4">
-                    <Button label="Quay lại" onClick={() => navigate(-1)}/>
-                    <Button label="Lưu" onClick={handleSaveAttendance}/>
+                    <Button label="Quay lại" onClick={() => navigate(-1)} />
+                    <Button label="Lưu" onClick={handleSaveAttendance} />
                 </div>
             </Card>
         </div>
     );
 };
 
-export default AttendancePanel;
+export default AttendanceTeacherPanel;

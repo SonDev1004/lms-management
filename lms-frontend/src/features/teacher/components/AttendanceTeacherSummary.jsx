@@ -33,7 +33,7 @@ const statusStyle = (status) => {
     }
 };
 
-const AttendanceSummary = () => {
+const AttendanceTeacherSummary = () => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
     const { courseId } = useParams();
@@ -89,49 +89,53 @@ const AttendanceSummary = () => {
                         <Tag value="Vắng" icon="pi pi-times" severity="danger" />
                     </div>
                 }
+                className='w-full overflow-hidden'
             >
-                <DataTable value={students} dataKey="id" scrollable scrollHeight="60vh" showGridlines stripedRows>
-                    <Column field="code" header="Mã HV" frozen style={{ width: 140 }} />
-                    <Column
-                        header="Họ tên"
-                        frozen
-                        body={(st) => `${st.firstname ?? ''} ${st.lastname ?? ''}`}
-                        style={{ width: 220 }}
-                    />
-                    {sessions.map((ss, idx) => (
+                <div className="overflow-auto">
+                    <DataTable value={students} dataKey="id" scrollable scrollHeight="60vh" showGridlines stripedRows
+                        style={{ width: '100%' }} >
+                        <Column field="code" header="Mã HV" frozen />
                         <Column
-                            key={ss.id ?? idx}
-                            header={
-                                ss.date
-                                    ? new Date(ss.date).toLocaleDateString('vi-VN')
-                                    : `Buổi ${ss.order}`
-                            }
-                            headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
-                            bodyStyle={{ textAlign: 'center', verticalAlign: 'middle' }}
-                            body={(st) => {
-                                const orderIndex = (ss.order ?? (idx + 1)) - 1; // 0-based
-                                const rec = st.attendancelist?.[orderIndex];
-                                const val = rec?.status;
-                                return <span style={statusStyle(val)}>{statusIcon(val)}</span>;
-                            }}
-                            footer={() => {
-                                const t = perSessionTotals[idx];
-                                return t
-                                    ? (
-                                        <div className="flex gap-2 justify-content-center text-xs">
-                                            <span title="Có mặt">✔ {t.present}</span>
-                                            <span title="Đi trễ">⏰ {t.late}</span>
-                                            <span title="Vắng">✖ {t.absent}</span>
-                                        </div>
-                                    )
-                                    : null;
-                            }}
-                            style={{ width: 120 }}
-                        />
-                    ))}
-                </DataTable>
+                            header="Họ tên"
+                            frozen
+                            body={(st) => `${st.firstname ?? ''} ${st.lastname ?? ''}`}
 
-                <div className="flex justify-content-end gap-2 mt-3">
+                        />
+                        {sessions.map((ss, idx) => (
+                            <Column
+                                key={ss.id ?? idx}
+                                header={
+                                    ss.date
+                                        ? new Date(ss.date).toLocaleDateString('vi-VN')
+                                        : `Buổi ${ss.order}`
+                                }
+                                style={{ minWidth: '10px' }}
+                                headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
+                                bodyStyle={{ textAlign: 'center', verticalAlign: 'middle' }}
+                                body={(st) => {
+                                    const orderIndex = (ss.order ?? (idx + 1)) - 1; // 0-based
+                                    const rec = st.attendancelist?.[orderIndex];
+                                    const val = rec?.status;
+                                    return <span style={statusStyle(val)}>{statusIcon(val)}</span>;
+                                }}
+                                footer={() => {
+                                    const t = perSessionTotals[idx];
+                                    return t
+                                        ? (
+                                            <div className="flex gap-2 justify-content-center text-xs">
+                                                <span title="Có mặt">✔ {t.present}</span>
+                                                <span title="Đi trễ">⏰ {t.late}</span>
+                                                <span title="Vắng">✖ {t.absent}</span>
+                                            </div>
+                                        )
+                                        : null;
+                                }}
+
+                            />
+                        ))}
+                    </DataTable>
+                </div>
+                <div className="flex justify-content-start gap-2 mt-3">
                     <Button label="Quay lại" onClick={() => navigate(-1)} />
                 </div>
             </Card>
@@ -139,4 +143,4 @@ const AttendanceSummary = () => {
     );
 };
 
-export default AttendanceSummary;
+export default AttendanceTeacherSummary;

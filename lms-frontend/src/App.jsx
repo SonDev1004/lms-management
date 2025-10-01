@@ -23,6 +23,9 @@ import TeacherDashboard from '@/features/teacher/pages/TeacherDashboard.jsx';
 import TeacherCourses from '@/features/teacher/pages/TeacherCourses.jsx';
 import TeacherSchedule from '@/features/teacher/pages/TeacherSchedule.jsx';
 import TeacherNotification from '@/features/teacher/pages/TeacherNotification.jsx';
+import AttendanceTeacherPanel from './features/teacher/components/AttendanceTeacherPanel.jsx';
+import AttendanceTeacherSummary from './features/teacher/components/AttendanceTeacherSummary.jsx';
+import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
 
 import LayoutAdmin from 'layouts/admin/LayoutAdmin';
 import AdminDashboard from '@/features/admin/pages/AdminDashboard.jsx';
@@ -42,8 +45,6 @@ import AMReport from '@/features/academic_manager/pages/AMReport.jsx';
 import AMNotification from '@/features/academic_manager/pages/AMNotification.jsx';
 import ProgramDetail from './features/program/pages/ProgramDetail.jsx';
 
-
-import CourseHome from '@/features/course/pages/CourseHome.jsx';
 import CourseDetailStudent from '@/features/course/pages/CourseDetailStudent.jsx';
 import StudentNotification from '@/features/student/pages/StudentNotification.jsx';
 import StudentProfile from '@/features/student/pages/StudentProfile.jsx';
@@ -58,20 +59,12 @@ import About from '@/features/home/pages/About.jsx';
 import SubjectDetail from '@/features/subject/pages/SubjectDetail.jsx';
 import ProgramList from '@/features/program/pages/ProgramList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
-import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
-import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
-import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
+
 import PaymentForm from "@/features/payment/PaymentForm.jsx";
 import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
 import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
 import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
 import SessionList from './features/session/components/SessionList.jsx';
-import StudentManagement from '@/features/academic_manager/list/student/pages/StudentManagement.jsx';
-import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
-import TeacherManagement from "@/features/academic_manager/list/teacher/pages/TeacherManagement.jsx";
-import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
-import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx";
-import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
 
 const App = () => {
 
@@ -135,19 +128,18 @@ const App = () => {
 						<Route path="courses/:courseId" element={<CourseDetailTeacher />}>
 							<Route index element={<SessionList />} />
 							<Route path="student-list" element={<StudentList />} />
-							{/* Session Attendance đi kèm courseId */}
-							<Route path="sessions/:sessionId/attendance" element={<AttendancePanel />} />
+							<Route path="sessions/:sessionId/attendance" element={<AttendanceTeacherPanel />} />
 							<Route path="sessions/:sessionId/attendance/full"
-								element={<AttendanceSummary />} />
+								element={<AttendanceTeacherSummary />} />
 						</Route>
 
-
-
+						{/* Session Attendance đi kèm courseId */}
 						<Route path="schedule" element={<TeacherSchedule />} />
 						<Route path="notification" element={<TeacherNotification />} />
 						<Route path="profile" element={<TeacherProfile />} />
 					</Route>
 				</Route>
+
 
 				<Route
 					element={
@@ -156,15 +148,8 @@ const App = () => {
 				>
 					<Route path='staff' element={<LayoutAcademicManager />}>
 						<Route index element={<AMDashboard />} />
-						<Route path='student-manager' element={<StudentManagement />} />
-						<Route path="student-manager/:id" element={<MStudentProfile />} />
-						<Route path='teacher-list' element={<TeacherManagement />} />
-						<Route path='teacher-list/:id' element={<AMTeacherProfile />} />
 						<Route path='program' element={<AMProgram />} />
-						<Route path='detail/:id' element={<AMProgramDetail />} />
-						<Route path='courses' element={<AMCourse />}>
-							<Route path='detail/:id' element={<AMCourseDetail />} />
-						</Route>
+						<Route path='courses' element={<AMCourse />} />
 						<Route path='teacher' element={<AMTeacher />} />
 						<Route path='student' element={<AMStudent />} />
 						<Route path='feedback' element={<AMFeedback />} />
