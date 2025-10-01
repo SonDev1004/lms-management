@@ -25,13 +25,14 @@ const CourseDetailTeacher = () => {
     };
     return (<>
         <div className="grid m-2">
-            <div className="col-9 border-primary min-w-0"
+            <div className="col-9 border"
             >
                 <Outlet />
             </div>
             <div className="col-3"
-                style={{ position: "sticky", top: "1rem", alignSelf: "flex-start" }}>
-                <Panel header={course.title} className="shadow-6">
+            //style={{ position: "sticky", top: "1rem", alignSelf: "flex-start" }}
+            >
+                <Panel header={course.title} >
                     <Badge size="large"
                         value={`${course.current_session}/${course.total_session}`}
                     />

@@ -92,11 +92,13 @@ const AttendanceTeacherSummary = () => {
                 className='w-full overflow-hidden'
             >
                 <div className="overflow-auto">
-                    <DataTable value={students} dataKey="id" scrollable scrollHeight="60vh" showGridlines stripedRows
-                        style={{ width: '100%' }} >
-                        <Column field="code" header="Mã HV" frozen />
+                    <DataTable value={students} dataKey="id" scrollable scrollHeight="120vh" showGridlines stripedRows
+                        style={{ width: '1000px' }} >
+                        <Column field="code" header="Mã HV" frozen style={{ minWidth: '100px' }} headerStyle={{ whiteSpace: 'nowrap' }} />
                         <Column
                             header="Họ tên"
+                            style={{ minWidth: '200px' }}
+                            headerStyle={{ whiteSpace: 'nowrap', zIndex: 2 }}
                             frozen
                             body={(st) => `${st.firstname ?? ''} ${st.lastname ?? ''}`}
 
@@ -109,8 +111,8 @@ const AttendanceTeacherSummary = () => {
                                         ? new Date(ss.date).toLocaleDateString('vi-VN')
                                         : `Buổi ${ss.order}`
                                 }
-                                style={{ minWidth: '10px' }}
-                                headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
+                                style={{ minWidth: '100px' }}
+                                headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center', zIndex: 1 }}
                                 bodyStyle={{ textAlign: 'center', verticalAlign: 'middle' }}
                                 body={(st) => {
                                     const orderIndex = (ss.order ?? (idx + 1)) - 1; // 0-based
