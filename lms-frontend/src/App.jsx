@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from '@/features/auth/pages/Login.jsx';
 import Register from '@/features/auth/pages/Register.jsx';
-import Guest from './features/home/pages/Guest.jsx';
 
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -52,9 +51,6 @@ import AMProfile from '@/features/academic_manager/pages/AMProfile.jsx';
 import TeacherProfile from '@/features/teacher/pages/TeacherProfile.jsx';
 import AdminProfile from '@/features/admin/pages/AdminProfile.jsx';
 import Unauthorized from '@/features/auth/pages/Unauthorized.jsx';
-import FAQ from '@/features/home/pages/FAQ.jsx';
-import Blog from '@/features/home/pages/Blog.jsx';
-import About from '@/features/home/pages/About.jsx';
 import SubjectDetail from '@/features/subject/pages/SubjectDetail.jsx';
 import ProgramList from '@/features/program/pages/ProgramList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
@@ -72,6 +68,7 @@ import TeacherManagement from "@/features/academic_manager/list/teacher/pages/Te
 import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
 import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx";
 import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
+import Home from "@/features/home/pages/Home.jsx";
 
 const App = () => {
 
@@ -80,12 +77,9 @@ const App = () => {
             <Routes>
                 {/* Home Route */}
                 <Route path="/" element={<LayoutHome/>}>
-                    <Route index element={<Guest/>}/>
+                    <Route index element={<Home/>}/>
                     <Route path="login" element={<Login/>}/>
                     <Route path="register" element={<Register/>}/>
-                    <Route path="about" element={<About/>}/>
-                    <Route path="faq" element={<FAQ/>}/>
-                    <Route path="blog" element={<Blog/>}/>
                     <Route path="programs" element={<ProgramList/>}/>
                     <Route path="subjects" element={<SubjectList/>}/>
                     <Route path="payment" element={<PaymentForm/>}/>
