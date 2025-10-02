@@ -93,7 +93,7 @@ const AttendanceTeacherSummary = () => {
             >
                 <div className="overflow-auto">
                     <DataTable value={students} dataKey="id" scrollable scrollHeight="120vh" showGridlines stripedRows
-                        style={{ width: '1000px' }} >
+                        style={{ width: '950px' }} >
                         <Column field="code" header="Mã HV" frozen style={{ minWidth: '100px' }} headerStyle={{ whiteSpace: 'nowrap' }} />
                         <Column
                             header="Họ tên"
