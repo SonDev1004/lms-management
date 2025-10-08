@@ -6,6 +6,7 @@ import { Card } from 'primereact/card';
 import { Toast } from "primereact/toast";
 import { InputNumber } from "primereact/inputnumber";
 import { useParams } from "react-router-dom";
+import { MultiSelect } from 'primereact/multiselect';
 
 const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => {
     const { courseId } = useParams();
@@ -17,6 +18,13 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         defaultValues?.due_date ? new Date(defaultValues.due_date) : null
     );
     const [file, setFile] = useState(null);
+    const [selectedAssignmentType, setSelectedAssignmentType] = useState(null);
+    const assignmentType = [
+        { name: 'Tại nhà', code: 'HOME' },
+        { name: 'Tại lớp', code: 'CLASS' },
+        { name: 'Bài thi', code: 'EXAM' }
+    ];
+
 
     // Tự động set ngày hạn nộp bằng ngày session nếu vào form lần đầu
     useEffect(() => {
@@ -69,6 +77,7 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
             is_active: true,                                  //Luôn là true khi giao bài mới
             course_id: Number(courseId ?? defaultValues?.course_id),
             session_id: session.id,
+            assignment_type: selectedAssignmentType?.map(t => t.code)
         };
 
         onSave?.(payload);
@@ -107,17 +116,16 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                     </div>
                     <div className="col-6">
                         <span className="p-float-label w-full">
-                            <InputNumber
-                                id="asg-factor"
-                                value={factor}
-                                min={0}
-                                max={1}
-                                step={0.05}
-                                mode="decimal"
-                                onValueChange={(e) => setFactor(e.value)}
-                                className="w-full"
+                            <MultiSelect
+                                value={selectedAssignmentType}
+                                onChange={(e) => setSelectedAssignmentType(e.value)}
+                                options={assignmentType}
+                                optionLabel="name"
+                                placeholder="Chọn loại bài tập"
+                                maxSelectedLabels={3}
+                                className="w-full md:w-20rem"
                             />
-                            <label htmlFor="asg-factor">Hệ số (factor: 0→1)</label>
+                            <label htmlFor="asg-type">Loại bài tập</label>
                         </span>
                     </div>
                 </div>

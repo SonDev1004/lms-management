@@ -103,7 +103,7 @@ const AttendanceTeacherPanel = () => {
             <Card title="Bảng điểm danh">
                 <div className="formgrid grid mb-2">
                     <div className="field col">
-                        <label>Buổi học</label>
+                        <label className='mr-2'>Buổi học</label>
                         <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput />
                     </div>
                     <div className='flex gap-2'>

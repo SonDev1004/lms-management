@@ -23,8 +23,8 @@ import TeacherDashboard from '@/features/teacher/pages/TeacherDashboard.jsx';
 import TeacherCourses from '@/features/teacher/pages/TeacherCourses.jsx';
 import TeacherSchedule from '@/features/teacher/pages/TeacherSchedule.jsx';
 import TeacherNotification from '@/features/teacher/pages/TeacherNotification.jsx';
-import AttendanceTeacherPanel from './features/teacher/components/AttendanceTeacherPanel.jsx';
-import AttendanceTeacherSummary from './features/teacher/components/AttendanceTeacherSummary.jsx';
+import AttendanceTeacherPanel from './features/attendance/components/AttendanceTeacherPanel.jsx';
+import AttendanceTeacherSummary from './features/attendance/components/AttendanceTeacherSummary.jsx';
 import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
 
 import LayoutAdmin from 'layouts/admin/LayoutAdmin';
