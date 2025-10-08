@@ -51,16 +51,15 @@ import AMProfile from '@/features/academic_manager/pages/AMProfile.jsx';
 import TeacherProfile from '@/features/teacher/pages/TeacherProfile.jsx';
 import AdminProfile from '@/features/admin/pages/AdminProfile.jsx';
 import Unauthorized from '@/features/auth/pages/Unauthorized.jsx';
-import SubjectDetail from '@/features/subject/pages/SubjectDetail.jsx';
+import SubjectDetail from '@/features/subject/detail/pages/SubjectDetail.jsx';
 import ProgramList from '@/features/program/pages/ProgramList.jsx';
 import SubjectList from '@/features/subject/pages/SubjectList.jsx';
 import AttendancePanel from './features/teacher/components/AttendancePanel.jsx';
 import AttendanceSummary from './features/teacher/components/AttendanceSummary.jsx';
 import CourseDetailTeacher from './features/course/pages/CourseDetailTeacher.jsx';
-import PaymentForm from "@/features/payment/PaymentForm.jsx";
-import PaymentSuccess from "@/features/payment/PaymentSuccess.jsx";
-import PaymentFailed from "@/features/payment/PaymentFailed.jsx";
-import PaymentCancelled from "@/features/payment/PaymentCancelled.jsx";
+import PaymentSuccess from "@/features/payment/pages/PaymentSuccess.jsx";
+import PaymentFailed from "@/features/payment/pages/PaymentFailed.jsx";
+import PaymentCancelled from "@/features/payment/pages/PaymentCancelled.jsx";
 import SessionList from './features/session/components/SessionList.jsx';
 import StudentManagement from '@/features/academic_manager/list/student/pages/StudentManagement.jsx';
 import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
@@ -69,6 +68,9 @@ import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile
 import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx";
 import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
 import Home from "@/features/home/pages/Home.jsx";
+import ProgramDetailPage from "@/features/program/detail/pages/ProgramDetailPage.jsx";
+import {FeedbackPage} from "@/features/feedback/index.js";
+import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
 
 const App = () => {
 
@@ -80,9 +82,11 @@ const App = () => {
                     <Route index element={<Home/>}/>
                     <Route path="login" element={<Login/>}/>
                     <Route path="register" element={<Register/>}/>
-                    <Route path="programs" element={<ProgramList/>}/>
-                    <Route path="subjects" element={<SubjectList/>}/>
-                    <Route path="payment" element={<PaymentForm/>}/>
+                    <Route path="programs" element={<ProgramList />} />
+                    <Route path="programs/:id" element={<ProgramDetailPage />} />
+                    <Route path="subjects" element={<SubjectList />} />
+                    <Route path="subjects/:id" element={<SubjectDetail />} />
+                    <Route path="payment" element={<PaymentPage/>}/>
                     <Route path="payment-success" element={<PaymentSuccess/>}/>
                     <Route path="payment-failed" element={<PaymentFailed/>}/>
                     <Route path="payment-cancelled" element={<PaymentCancelled/>}/>
@@ -158,6 +162,7 @@ const App = () => {
 						<Route path='courses' element={<AMCourse />}>
 							<Route path='detail/:id' element={<AMCourseDetail />} />
 						</Route>
+                        <Route path="feedback" element={<FeedbackPage />} />
 						<Route path='teacher' element={<AMTeacher />} />
 						<Route path='student' element={<AMStudent />} />
 						<Route path='feedback' element={<AMFeedback />} />

@@ -72,26 +72,26 @@ const LayoutHome = () => {
             label: 'Subjects',
             icon: 'pi pi-graduation-cap',
             command: () => navigate('/subjects'),
-            items: [
-                [
-                    {
-                        label: 'Skills',
-                        items: [
-                            { label: 'Listening Skills', command: () => navigate('/subject/12') },
-                            { label: 'Speaking Skills', command: () => navigate('/subject/13') },
-                            { label: 'Reading Skills', command: () => navigate('/subject/14') }
-                        ]
-                    }
-                ],
-                [
-                    {
-                        label: 'Foundations',
-                        items: [
-                            { label: 'Grammar Foundation', command: () => navigate('/subject/11') }
-                        ]
-                    }
-                ]
-            ]
+            // items: [
+            //     [
+            //         {
+            //             label: 'Skills',
+            //             items: [
+            //                 { label: 'Listening Skills', command: () => navigate('/subject/12') },
+            //                 { label: 'Speaking Skills', command: () => navigate('/subject/13') },
+            //                 { label: 'Reading Skills', command: () => navigate('/subject/14') }
+            //             ]
+            //         }
+            //     ],
+            //     [
+            //         {
+            //             label: 'Foundations',
+            //             items: [
+            //                 { label: 'Grammar Foundation', command: () => navigate('/subject/11') }
+            //             ]
+            //         }
+            //     ]
+            // ]
         },
 
         { label: 'About us', icon: 'pi pi-info-circle', command: () => navigate('/about') },
