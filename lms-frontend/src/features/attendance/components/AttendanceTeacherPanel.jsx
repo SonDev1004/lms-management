@@ -101,21 +101,21 @@ const AttendanceTeacherPanel = () => {
     return (
         <div className="grid mt-2">
             <Card title="Bảng điểm danh">
-                <div className="formgrid grid mb-2">
-                    <div className="field col">
-                        <label className='mr-2'>Buổi học</label>
-                        <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput />
-                    </div>
-                    <div className='flex gap-2'>
-                        <Button
-                            label='Bảng tổng hợp'
-                            className='p-button-outlined p-button-info'
-                            onClick={() => navigate('full')}
-                        />
-                        <Button
-                            label='QR Code'
-                            className='p-button-outlined p-button-success'
-                        />
+                <div className="mb-2">
+                    <div className="field">
+                        <label>Buổi học</label>
+                        <div className='p-inputgroup'>
+                            <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput style={{ width: 'auto' }} />
+                            <Button
+                                label='Bảng tổng hợp'
+                                severity='info'
+                                onClick={() => navigate('full')}
+                            />
+                            <Button
+                                label='QR Code'
+                                severity='success'
+                            />
+                        </div>
                     </div>
                 </div>
 

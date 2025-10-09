@@ -169,18 +169,31 @@ const SessionList = () => {
                                 Buổi {orderOrIndex}: {shortDate(session.date)}
                                 <Button
                                     icon="pi pi-pencil"
-                                    className="p-button-text"
+                                    tooltip="Sửa buổi học"
+                                    tooltipOptions={{ position: 'top' }}
+                                    rounded
+                                    text
                                     onClick={(e) => openEdit(e, session, index)}
                                 />
                                 {/* Nút Giao bài tập: giữ UI từ bản kia, nhưng gọi openAssignment thay vì navigate */}
                                 <Button
                                     icon="pi pi-paperclip"
-                                    label="Giao bài tập"
+                                    tooltip="Giao bài tập"
+                                    tooltipOptions={{ position: 'top' }}
+                                    rounded
+                                    text
                                     // disabled={!isToday(session.date)} // chỉ bật nếu là hôm nay
                                     onClick={(e) => openAssignment(e, session, index)}
                                 />
+                            </div>
+                            <div className="flex gap-2">
+                                <p>Sĩ số: {studentCount}/{studentCount}</p>
                                 <Button
-                                    label="Điểm danh"
+                                    icon="pi pi-list-check"
+                                    tooltip="Điểm danh"
+                                    tooltipOptions={{ position: 'top' }}
+                                    rounded
+                                    text
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -189,9 +202,6 @@ const SessionList = () => {
                                         });
                                     }}
                                 />
-                            </div>
-                            <div className="flex">
-                                Sĩ số: {studentCount}/{studentCount}
                             </div>
                         </div>
                     }

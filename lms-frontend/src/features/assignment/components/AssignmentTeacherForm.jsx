@@ -92,43 +92,62 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
     return (<div>
 
         <Card
-            className="w-30rem max-w-full"
-            header={<h1 className="m-0 mb-3">Giao bài tập</h1>}
+            className="w-30rem w-full"
+            header={<div className="flex justify-content-between align-items-center">
+                <h1 className="m-0 mb-3">Giao bài tập</h1>
+                <Button
+                    label="Thêm bài tập"
+                    icon="pi pi-plus"
+                    severity="success"
+                    onClick={() => navigate(`/teacher/courses/${courseId}/assignment/add`)}
+                />
+            </div>
+            }
             footer={footer}
         >
             <Toast ref={toast} />
             <div className="flex flex-column gap-4">
-                <span className="p-float-label">
+                <span className="p-float-label w-full">
                     <InputText
                         id="asg-title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full"
+                        className='w-full'
                     />
                     <label htmlFor="asg-title">Tiêu đề</label>
                 </span>
-                <div className="grid">
-                    <div className="col-6">
+                <div className="flex gap-2">
+                    <div className="flex-1">
                         <span className="p-float-label w-full">
-                            <InputNumber id="asg-max" value={maxScore} min={0} onValueChange={(e) => setMaxScore(e.value)} className="w-full" />
-                            <label htmlFor="asg-max">Điểm tối đa (max_score)</label>
+                            <InputNumber
+                                id="asg-max"
+                                value={maxScore}
+                                min={0}
+                                onValueChange={(e) => setMaxScore(e.value)}
+                                className="w-full"
+                            />
+                            <label htmlFor="asg-max">Điểm tối đa</label>
                         </span>
                     </div>
-                    <div className="col-6">
+
+                    <div className="flex-1">
                         <span className="p-float-label w-full">
+                            {/* nếu đã đổi sang Dropdown thì thay MultiSelect bằng Dropdown */}
                             <MultiSelect
+                                id="asg-type"
                                 value={selectedAssignmentType}
                                 onChange={(e) => setSelectedAssignmentType(e.value)}
                                 options={assignmentType}
                                 optionLabel="name"
                                 placeholder="Chọn loại bài tập"
                                 maxSelectedLabels={3}
-                                className="w-full md:w-20rem"
+                                className="w-full"
                             />
                             <label htmlFor="asg-type">Loại bài tập</label>
                         </span>
                     </div>
                 </div>
+
                 <span className="p-float-label w-full">
                     <Calendar
                         id="asg-due"
@@ -138,8 +157,9 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                         showTime
                         hourFormat="24"
                         className="w-full"
+                        style={{ width: '100%' }}
                     />
-                    <label htmlFor="asg-due">Hạn nộp (due_date)</label>
+                    <label htmlFor="asg-due">Hạn nộp</label>
                 </span>
                 <div className="flex flex-column gap-2">
                     <label className="text-500">Tệp đính kèm (file_name)</label>
