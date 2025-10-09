@@ -25,9 +25,20 @@ export default {
 
   getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
+
+
     //payment
     payment: `${rootAPI}/v1/enrollments/create-payment`,
     resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
+
+  //Attendance
+  getTeacherCourses: `${rootAPI}/teacher/me/courses`,
+  getCourseSessions: (courseId) => `${rootAPI}/courses/${courseId}/sessions`,  // GET
+  getSessionsByDate: `${rootAPI}/attendance/sessions`,              // GET ?courseId&date
+  getAttendanceBySession: (sessionId) => `${rootAPI}/attendance/by-session?sessionId=${sessionId}`, // GET
+  markAttendance: `${rootAPI}/attendance/mark`,                     // POST
+  getAttendanceSummary: (courseId) => `${rootAPI}/attendance/summary?courseId=${courseId}` // GET
+}
 
     vnpayReturn: (txnRef) => `${rootAPI}/v1/payments/vnpay-return/${txnRef}`,
 }

@@ -14,6 +14,10 @@ public interface CurrentUserService {
 
     Optional<Long> getStudentId();
 
+    Optional<Long> getTeacherId();
+
+    Long requireTeacherId();
+
     String getUsername();
 
     // ✨ mới:

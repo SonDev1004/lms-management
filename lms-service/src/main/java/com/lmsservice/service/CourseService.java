@@ -1,16 +1,9 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.lmsservice.repository.CourseRepository;
+import com.lmsservice.dto.response.SessionInfoDTO;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CourseService {
-    CourseRepository courseRepository;
+public interface CourseService {
+    List<SessionInfoDTO> getSessions(Long courseId);
 }
