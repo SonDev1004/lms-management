@@ -1,86 +1,100 @@
-import { Avatar } from 'primereact/avatar';
-import { InputText } from 'primereact/inputtext';
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate, Link, Outlet } from 'react-router-dom';
 import { MegaMenu } from 'primereact/megamenu';
 import { Menu } from 'primereact/menu';
-import { useRef } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Avatar } from 'primereact/avatar';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+
 import axiosClient from '@/shared/api/axiosClient.js';
 import roleToRoute from '../../app/router/roleToRoute.js';
 
 import logo from 'assets/images/logo.png';
-import {AppConfig, AppUrls} from "@/shared/constants/index.js";
-import LayoutHomeFooter from "layouts/home/LayoutHomeFooter.jsx";
-import {Button} from "primereact/button";
+import { AppConfig, AppUrls } from '@/shared/constants/index.js';
+import LayoutHomeFooter from 'layouts/home/LayoutHomeFooter.jsx';
 
 const LayoutHome = () => {
     // States, hooks and refs
     const role = localStorage.getItem('role');
-
     const navigate = useNavigate();
     const menuRight = useRef(null);
 
     // Functions
     const handleLogout = () => {
-        axiosClient.post(AppUrls.logout)
-            .then(res => {
-                localStorage.removeItem('username');
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('role');
-                navigate('/');
-            });
+        axiosClient.post(AppUrls.logout).then(() => {
+            localStorage.removeItem('username');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('role');
+            navigate('/');
+        });
     };
 
     // Menu items
     const items = [
-        { label: 'Trang chủ', icon: 'pi pi-home', command: () => navigate('/') },
+        { label: 'Home', icon: 'pi pi-home', command: () => navigate('/') },
 
         {
-            label: 'Chương trình',
+            label: 'Programs',
             icon: 'pi pi-book',
             command: () => navigate('/programs'),
-            items: [
-                [
-                    { label: 'Frontend Cơ Bản', items: [
-                            { label: 'Lộ trình', command: () => navigate('/program/1') },
-                            { label: 'Học phí' }
-                        ] }
-                ],
-                [
-                    { label: 'IELTS 5.0+', items: [
-                            { label: 'Tổng quan', command: () => navigate('/program/2') },
-                            { label: 'Lịch khai giảng' }
-                        ] }
-                ],
-                [
-                    { label: 'Data Fundamentals', items: [
-                            { label: 'Giới thiệu', command: () => navigate('/program/3') }
-                        ] }
-                ]
-            ]
+            // items: [
+            //     [
+            //         {
+            //             label: 'Frontend Basics',
+            //             items: [
+            //                 { label: 'Roadmap', command: () => navigate('/program/1') },
+            //                 { label: 'Tuition' }
+            //             ]
+            //         }
+            //     ],
+            //     [
+            //         {
+            //             label: 'IELTS 5.0+',
+            //             items: [
+            //                 { label: 'Overview', command: () => navigate('/program/2') },
+            //                 { label: 'Intake Schedule' }
+            //             ]
+            //         }
+            //     ],
+            //     [
+            //         {
+            //             label: 'Data Fundamentals',
+            //             items: [
+            //                 { label: 'Introduction', command: () => navigate('/program/3') }
+            //             ]
+            //         }
+            //     ]
+            // ]
         },
 
         {
-            label: 'Môn học',
+            label: 'Subjects',
             icon: 'pi pi-graduation-cap',
             command: () => navigate('/subjects'),
-            items: [
-                [
-                    { label: 'Kỹ năng', items: [
-                            { label: 'Listening Skills', command: () => navigate('/subject/12') },
-                            { label: 'Speaking Skills', command: () => navigate('/subject/13') },
-                            { label: 'Reading Skills', command: () => navigate('/subject/14') }
-                        ] }
-                ],
-                [
-                    { label: 'Nền tảng', items: [
-                            { label: 'Grammar Foundation', command: () => navigate('/subject/11') }
-                        ] }
-                ]
-            ]
+            // items: [
+            //     [
+            //         {
+            //             label: 'Skills',
+            //             items: [
+            //                 { label: 'Listening Skills', command: () => navigate('/subject/12') },
+            //                 { label: 'Speaking Skills', command: () => navigate('/subject/13') },
+            //                 { label: 'Reading Skills', command: () => navigate('/subject/14') }
+            //             ]
+            //         }
+            //     ],
+            //     [
+            //         {
+            //             label: 'Foundations',
+            //             items: [
+            //                 { label: 'Grammar Foundation', command: () => navigate('/subject/11') }
+            //             ]
+            //         }
+            //     ]
+            // ]
         },
 
-        { label: 'Về chúng tôi', icon: 'pi pi-info-circle', command: () => navigate('/about') },
+        { label: 'About us', icon: 'pi pi-info-circle', command: () => navigate('/about') },
         { label: 'FAQ', icon: 'pi pi-question-circle', command: () => navigate('/faq') },
         { label: 'Blog', icon: 'pi pi-file-edit', command: () => navigate('/blog') },
 
@@ -92,23 +106,20 @@ const LayoutHome = () => {
     // Profile menu items
     const profileItems = [
         {
-            label: `${localStorage.getItem('username')}`,
+            label: `${localStorage.getItem('username') || 'Account'}`,
             items: [
                 {
-                    label: 'Tài khoản',
+                    label: 'Account',
                     icon: 'pi pi-user',
                     command: () => {
                         navigate('/user-profile');
                     }
                 }
             ]
-
         },
+        { separator: true },
         {
-            separator: true
-        },
-        {
-            label: 'Đăng xuất',
+            label: 'Log out',
             icon: 'pi pi-sign-out',
             roles: ['student', 'teacher', 'academic_manager', 'admin'],
             command: handleLogout
@@ -117,26 +128,26 @@ const LayoutHome = () => {
 
     // Menu start item
     const start = (
-        <Link to='/' >
+        <Link to="/">
             <img alt="logo" src={logo} height="40" className="mr-2" />
-        </Link >
-    )
+        </Link>
+    );
 
     // Menu end item
     const end = (
         <div className="flex align-items-center gap-2">
             <InputText placeholder="Search" type="text" className="w-10rem sm:w-14rem" />
-            { !localStorage.getItem('username') ? (
+            {!localStorage.getItem('username') ? (
                 <>
                     <Button
-                        label="Đăng nhập"
+                        label="Log in"
                         icon="pi pi-sign-in"
                         outlined
                         size="small"
                         onClick={() => navigate('/login')}
                     />
                     <Button
-                        label="Đăng ký"
+                        label="Register"
                         icon="pi pi-user-plus"
                         size="small"
                         onClick={() => navigate('/register')}
@@ -162,7 +173,6 @@ const LayoutHome = () => {
         </div>
     );
 
-
     return (
         <div className="min-h-screen flex flex-column">
             <div className="surface-0 shadow-2">
@@ -174,6 +184,6 @@ const LayoutHome = () => {
             </div>
         </div>
     );
-}
+};
 
 export default LayoutHome;
