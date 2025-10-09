@@ -1,14 +1,11 @@
 import React from "react";
 import { TabMenu } from "primereact/tabmenu";
-import CourseCardOverall from "./CourseCardOverall";
+import CourseCardOverall from "./CourseCardOverall.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { statusLabelMap } from "../lib/courseStatus";
+import { statusLabelMap } from "../lib/courseStatus.js";
 
 const courseStatus = [
     { label: "Tất cả", value: "all" },
-    //Tự động tạo ra một loạt option để hiển thị danh sách trạng thái.
-    //convert các phần tử trong object thành label và value: key
-    //kết quả sẽ là {label: "Đang học", value: "teaching"}
     ...Object.entries(statusLabelMap).map(([key, label]) => ({
         label, value: key
     }))

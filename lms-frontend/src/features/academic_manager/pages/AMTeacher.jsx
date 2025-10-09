@@ -1,6 +1,10 @@
+import TeacherManagement from "@/features/academic_manager/list/teacher/pages/TeacherManagement.jsx";
+
 const AMTeacher = () => {
-    return (<>
-        <h1>Teacher Management</h1></>);
+    return (<TeacherManagement />);
+
 }
 
 export default AMTeacher;
+
+

@@ -1,5 +1,9 @@
+import React from "react";
+import NotificationsPage from "@/features/notification/pages/Notifications.jsx";
+
 const AMNotification = () => {
-    return (<h1>AMNOti</h1>);
+    return <NotificationsPage />;
 }
 
 export default AMNotification;
+

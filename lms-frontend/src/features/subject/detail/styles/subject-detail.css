@@ -1,0 +1,112 @@
+:root{
+    /* màu theo screenshot */
+    --sd-bg:#FFF3E9;                 /* nền peach rất nhạt */
+    --sd-card:#fff;
+    --sd-ink:#0b1c3d;
+    --sd-muted:#6b7691;
+    --sd-brand:#00B4C6;              /* teal chủ đạo */
+    --sd-border:#E6ECF4;
+    --sd-ring:#DDF7FA;
+    --sd-green:#19c37d;
+    --sd-shadow:0 24px 60px rgba(0,180,198,.18);
+}
+
+/* Layout */
+.sd-wrap{max-width:1140px;margin:0 auto;padding:28px 22px 36px;background:var(--sd-bg);border-radius:18px;}
+.sd-loading{color:#49566e;padding:18px 2px}
+
+/* HERO */
+.sd-hero{display:grid;grid-template-columns:520px minmax(0,1fr);gap:28px;align-items:center;margin-bottom:12px}
+.sd-hero__img{width:100%;height:330px;object-fit:cover;border-radius:18px;border:1px solid var(--sd-border)}
+.sd-hero__main{display:grid;gap:10px}
+.sd-title{margin:0;color:#0b1c3d;font-weight:900;letter-spacing:-.01em;font-size:clamp(30px,3.8vw,46px)}
+.sd-badges{display:flex;gap:8px;align-items:center}
+.sd-badge{border:1px solid #CCE8EE;background:#F3FDFF;color:#0e3b45;border-radius:999px;padding:6px 10px;font-weight:700}
+.sd-rating{display:flex;align-items:center;gap:8px;color:#1f3a4d}
+.p-rating .p-rating-item .p-rating-icon{color:var(--sd-brand)} /* sao màu teal */
+
+/* CTA */
+.sd-tabs{display:flex;align-items:center;justify-content:space-between;margin:8px 0 16px}
+.sd-enroll-cta,.sd-hero .p-button-lg{
+    border-radius:16px; height:48px; padding:0 22px; font-weight:800;
+    background:var(--sd-brand); border:none; box-shadow:var(--sd-shadow)
+}
+.sd-enroll-cta:hover,.sd-hero .p-button-lg:hover{filter:brightness(.95)}
+
+/* TabMenu thành “pill + icon” */
+.sd-tabmenu.p-tabmenu .p-tabmenu-nav{border:none;gap:10px;background:transparent}
+.sd-tabmenu .p-tabmenuitem .p-menuitem-link{
+    border:1px solid transparent;border-bottom:2px solid transparent;border-radius:12px;
+    padding:10px 14px; color:#2c4769; font-weight:800; background:#F5FBFC
+}
+.sd-tabmenu .p-tabmenuitem .p-menuitem-link .p-menuitem-icon{color:var(--sd-brand);margin-right:6px}
+.sd-tabmenu .p-highlight .p-menuitem-link{
+    background:#fff;border-color:var(--sd-ring);box-shadow:0 8px 24px rgba(0,180,198,.12)
+}
+
+/* Grid & Card */
+.sd-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px}
+.sd-main{display:grid;gap:16px}
+.sd-card{background:var(--sd-card);border:1px solid var(--sd-border);border-radius:16px;padding:18px;box-shadow:var(--sd-shadow)}
+
+/* Text */
+.sd-h3{font-size:18px;margin:2px 0 10px;color:#0b1c3d;font-weight:900}
+.sd-h4{font-size:16px;margin:14px 0 10px;color:#112448;font-weight:900}
+.sd-summary{color:var(--sd-muted);line-height:1.65;margin:6px 0 12px}
+.text-600{color:#556488}
+
+/* Checklist (dấu chấm xanh tròn) */
+.sd-list{list-style:none;padding:0;margin:8px 0 0}
+.sd-list li{position:relative;padding-left:22px;margin:10px 0;color:#203457}
+.sd-list li:before{content:"";position:absolute;left:0;top:8px;width:10px;height:10px;border-radius:50%;background:transparent;border:2px solid var(--sd-green)}
+
+/* Syllabus accordion */
+.sd-acc{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:10px}
+.sd-acc__item{border:1px solid var(--sd-border);border-radius:12px;overflow:hidden}
+.sd-acc__head{width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;font-weight:800;color:#244263;background:#fff;border:none}
+.sd-acc__body{display:none;border-top:1px solid var(--sd-border);background:#FAFEFF;padding:10px 14px}
+.sd-acc__item.is-open .sd-acc__body{display:block}
+.sd-acc__bullets{list-style:none;margin:0;padding-left:2px}
+.sd-acc__bullets li{padding:6px 0;color:#2a395d}
+
+/* Sessions: filter + bảng */
+.sd-table-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.sd-filters{display:flex;gap:10px;align-items:center}
+.sd-table{border:1px solid var(--sd-border);border-radius:12px;overflow:hidden}
+.sd-tr{display:grid;grid-template-columns:2fr 1.25fr .9fr .9fr 1fr;gap:8px;align-items:center;padding:12px 14px;border-top:1px solid var(--sd-border)}
+.sd-tr--head{background:#F3FAFB;font-weight:900;color:#21405d}
+.sd-tr:first-child{border-top:none}
+.sd-time{font-size:12px;color:var(--sd-muted)}
+.p-tag.p-tag-success{background:#e7fbf6;color:#127a59}
+.p-tag.p-tag-warning{background:#fff7e6;color:#8a5a00}
+.p-tag.p-tag-danger{background:#ffeaea;color:#8c1b1b}
+
+/* Sidebar */
+.sd-aside{position:sticky;top:16px;height:fit-content;display:flex;flex-direction:column;gap:12px}
+.sd-aside__card{background:#fff;border:1px solid var(--sd-border);border-radius:16px;padding:16px 14px;box-shadow:var(--sd-shadow)}
+.sd-facts{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.sd-facts li{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:8px;color:#324161}
+.sd-facts li i{color:#6E84A9;font-size:14px}
+.sd-facts li b.sd-val{color:#0b1c3d;font-weight:900;min-width:120px;text-align:right}
+.sd-dates{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.sd-date{border:1px solid var(--sd-border);border-radius:14px;padding:10px 8px;background:#fff;text-align:center;transition:box-shadow .15s, transform .15s, border-color .15s}
+.sd-date:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(0,180,198,.12);border-color:var(--sd-ring)}
+.sd-date__day{font-weight:900;font-size:20px;color:#112448}
+.sd-date__meta{font-size:12px;color:#6b7691}
+.sd-date__meta span{display:block}
+.sd-help{display:grid;gap:6px;color:#455371}
+.sd-help i{color:#6E84A9}
+
+/* Inputs Prime look gần ảnh */
+.p-dropdown,.p-calendar{border-radius:12px}
+
+/* Responsive */
+@media (max-width:1100px){
+    .sd-hero{grid-template-columns:1fr}
+    .sd-hero__img{height:250px}
+}
+@media (max-width:980px){
+    .sd-grid{grid-template-columns:1fr}
+    .sd-aside{position:static}
+    .sd-enroll-cta{display:none}
+}

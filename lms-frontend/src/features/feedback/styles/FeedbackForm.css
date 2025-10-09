@@ -1,0 +1,17 @@
+@import "../styles/tokens.css";
+
+.fb-form{ display:flex; flex-direction:column; gap:12px; }
+.fb-row{ display:grid; grid-template-columns:160px 1fr 1fr; gap:12px; }
+.fb-field{ display:flex; flex-direction:column; gap:6px; }
+.fb-field label{ font-weight:600; font-size:12px; color:var(--fb-muted); }
+.fb-actions{ display:flex; justify-content:flex-end; }
+
+.fb-form .p-inputtext, .fb-form textarea{
+    height:46px; border-radius:14px; border:1px solid #e7ecfe; background:#fff;
+}
+.fb-form textarea{ min-height:120px; }
+.fb-form .p-inputtext::placeholder, .fb-form textarea::placeholder{ color:#b0b9d6; }
+.fb-actions .fb-btn{ height:46px; border-radius:14px; }
+.fb-btn{ background:var(--fb-brand); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; }
+.fb-btn:hover{ filter:brightness(.95); }
+.fb-btn--ghost{ background:#eff3ff; color:var(--fb-brand); }

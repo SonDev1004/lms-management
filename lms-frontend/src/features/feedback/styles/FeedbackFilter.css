@@ -1,0 +1,47 @@
+@import "../styles/tokens.css";
+
+/* Search */
+.fb-filter--search{ margin:8px 0 10px; }
+.fb-filter__search{ display:inline-flex; align-items:center; width:100%; }
+.fb-filter__search .p-inputtext{
+    width:100%; max-width:540px; height:46px; border-radius:14px;
+    border:1px solid #e7ecfe; background:#fff; padding-left:40px;
+}
+.fb-filter__search.p-input-icon-left > i,
+.fb-filter__search .p-input-icon-left > i{ left:14px; color:#9aa6c7; }
+.fb-filter__search .p-inputtext::placeholder{ color:#b0b9d6; }
+.fb-filter__search .p-inputtext:focus{ box-shadow:0 0 0 3px var(--fb-ring); border-color:#cfe0ff; }
+
+/* ONE-LINE filters */
+.fb-filter-row{
+    display:flex; align-items:center; gap:12px;
+    flex-wrap:nowrap; overflow-x:auto; margin:8px 0 12px;
+    -webkit-overflow-scrolling:touch; scrollbar-width:thin;
+}
+.fb-filter__label{ font-weight:700; color:#1f2937; flex:0 0 auto; min-width:66px; }
+
+/* Dropdowns */
+.fb-dd{ flex:0 0 auto; }
+.fb-dd--course{ width:200px; }
+.fb-dd--rating{ width:160px; }
+
+.fb-dd .p-dropdown{
+    width:100%; height:46px; border-radius:14px;
+    border:1px solid #e7ecfe; background:#fff; display:flex; align-items:center;
+}
+.fb-dd .p-dropdown .p-dropdown-label{
+    height:44px; line-height:44px; padding:0 12px; border-radius:12px; white-space:nowrap;
+}
+.fb-dd .p-dropdown .p-dropdown-trigger .p-dropdown-trigger-icon{ font-size:12px; color:#687aa3; }
+.fb-dd .p-dropdown.p-focus{ box-shadow:0 0 0 3px var(--fb-ring); border-color:#cfe0ff; }
+
+/* Buttons */
+.fb-apply{
+    flex:0 0 auto; height:46px; border-radius:14px; padding:0 18px;
+    background:linear-gradient(180deg,#3b82f6 0%, #335CFF 100%);
+    box-shadow:0 10px 22px rgba(51,92,255,.28);
+    color:#fff; border:none; font-weight:700;
+}
+.fb-clear{
+    flex:0 0 auto; background:none; border:none; color:#2b55ff; font-weight:700; cursor:pointer;
+}

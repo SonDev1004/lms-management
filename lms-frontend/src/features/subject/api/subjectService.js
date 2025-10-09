@@ -1,14 +1,13 @@
-// subjectService.js
 import axiosClient from "@/shared/api/axiosClient.js";
 import { AppUrls } from "@/shared/constants/index.js";
 
 export async function getListSubject({ page = 1, size = 10 } = {}) {
     const url = AppUrls.listSubject;
-    try{
+    try {
         const res = await axiosClient.get(url, { params: { page, size } });
         const data = res?.data ?? res;
         const result = data?.result ?? {};
-        return{
+        return {
             items: (result.items ?? []).map(mapSubject),
             paging: {
                 page: result.page ?? page,
@@ -17,9 +16,9 @@ export async function getListSubject({ page = 1, size = 10 } = {}) {
                 totalPages: result.totalPages ?? 0,
                 hasNext: !!result.hasNext,
                 hasPrevious: !!result.hasPrevious,
-        }
-        }
-    }catch (error) {
+            },
+        };
+    } catch (error) {
         console.error("Lỗi khi gọi getListSubject:", error);
         throw error;
     }
@@ -57,27 +56,37 @@ export function mapSubjectDetail(data) {
 
     return {
         id: data.id,
-        code: data.codeSubject,
-        title: data.subjectTitle,
-        description: data.subjectDescription,
+        code: data.codeSubject ?? data.code ?? "",
+        title: data.subjectTitle ?? data.title ?? "",
+        description: data.subjectDescription ?? data.description ?? "",
         sessionNumber: Number(data.sessionNumber) || 0,
         fee: Number(data.fee) || 0,
-        image: data.imgUrl || "/noimg.png",
-        maxStudent: Number(data.maxStudents) || 0,
-        minStudent: Number(data.minStudents) || 0,
+        image: data.imgUrl || data.image || "/noimg.png",
+        maxStudent: Number(data.maxStudents ?? data.maxStudent) || 0,
+        minStudent: Number(data.minStudents ?? data.minStudent) || 0,
         isActive: Boolean(data.isActive),
+
+        audience: data.audience ?? "Teens & Adults",
+        level: data.level ?? "Intermediate (B1–B2)",
+        summary: data.summary ?? "Boost your listening accuracy with exam-style drills.",
+        rating: Number(data.rating ?? 4.7),
+        reviewCount: Number(data.reviewCount ?? 0),
+
+        syllabus: Array.isArray(data.syllabus) ? data.syllabus : [],
+
         classes: Array.isArray(data.classes)
-            ? data.classes.map(cls => ({
+            ? data.classes.map((cls) => ({
                 courseId: cls.courseId,
                 courseTitle: cls.courseTitle,
                 courseCode: cls.courseCode,
                 plannedSessions: Number(cls.plannedSessions) || 0,
-                capacity: Number(cls.capacity) || 0,
+                capacity: cls.capacity ?? 0,
                 startDate: cls.startDate,
                 schedule: cls.schedule,
                 status: cls.status,
-                statusName: cls.statusName
+                statusName: cls.statusName,
+                place: cls.place || cls.room,
             }))
-            : []
+            : [],
     };
 }

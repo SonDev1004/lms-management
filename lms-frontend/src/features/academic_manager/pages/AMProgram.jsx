@@ -1,5 +1,6 @@
-const AMProgram = () => {
-    return (<><h1>Program & Curriculum Management</h1></>);
-}
+import React from "react";
+import ProgramList from "@/features/program/staff/pages/ProgramList.jsx";
 
-export default AMProgram;
+export default function AMProgram() {
+    return <ProgramList role="academic_manager" />;
+}

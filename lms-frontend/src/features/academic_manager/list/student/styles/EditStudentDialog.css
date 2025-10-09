@@ -1,0 +1,112 @@
+.sp-edit-dialog .p-dialog {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.sp-edit-dialog .p-dialog-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.sp-edit-dialog .p-dialog-title {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.sp-edit-dialog .p-dialog-content {
+    padding: 18px;
+}
+
+.sp-edit-dialog .p-fluid {
+    gap: 20px !important;
+}
+
+/* Avatar + nút upload */
+.sp-edit-dialog img[alt="avatar"] {
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+    transition: transform .15s ease;
+}
+.sp-edit-dialog img[alt="avatar"]:hover {
+    transform: translateY(-1px);
+}
+
+.sp-edit-dialog .p-button.p-button-text {
+    color: #2563eb;
+    padding: 0;
+    height: auto;
+}
+.sp-edit-dialog .p-button.p-button-text:hover {
+    background: transparent;
+    text-decoration: underline;
+}
+
+.sp-edit-dialog .field {
+    margin-bottom: 6px;
+}
+.sp-edit-dialog .field > label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.sp-edit-dialog .p-inputtext,
+.sp-edit-dialog .p-inputnumber-input,
+.sp-edit-dialog .p-dropdown,
+.sp-edit-dialog .p-calendar .p-inputtext {
+    height: 40px;
+    border-radius: 10px;
+}
+.sp-edit-dialog .p-inputtext:focus,
+.sp-edit-dialog .p-inputnumber-input:focus,
+.sp-edit-dialog .p-dropdown.p-focus,
+.sp-edit-dialog .p-calendar .p-inputtext:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    border-color: #2563eb;
+}
+
+.sp-edit-dialog .p-error {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.sp-edit-dialog .p-dialog-content + div {
+    border-top: 1px solid #eef2f7;
+    padding-top: 12px;
+}
+.sp-edit-dialog .p-button.p-button-text {
+    color: #334155;
+}
+.sp-edit-dialog .p-button.p-button-text:hover {
+    background: #f8fafc;
+}
+
+.sp-edit-dialog .p-calendar .p-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+}
+
+@media (max-width: 640px) {
+    .sp-edit-dialog .p-fluid {
+        grid-template-columns: 1fr !important;
+    }
+    .sp-edit-dialog .p-fluid > div:nth-child(1) {
+        justify-self: center;
+    }
+    .sp-edit-dialog .p-dialog {
+        width: 96vw !important;
+    }
+}
+
+.sp-edit-dialog .p-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.sp-edit-dialog .p-dropdown .p-dropdown-clear-icon,
+.sp-edit-dialog .p-dropdown .p-dropdown-trigger {
+    color: #64748b;
+}

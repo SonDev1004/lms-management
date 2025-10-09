@@ -1,0 +1,74 @@
+.edit-teacher-dialog .p-dialog-header { padding-bottom: 10px; }
+.edit-teacher-dialog .p-dialog-content { padding-top: 8px; }
+
+/* Grid form: 2 cols -> 1 col on small screens */
+.etd-form {
+    display: grid;
+    gap: 12px 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 700px) {
+    .etd-form { grid-template-columns: 1fr; }
+}
+
+/* Field block */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.field--full { grid-column: span 2; }
+@media (max-width: 700px) {
+    .field--full { grid-column: auto; }
+}
+
+.field label {
+    color: #111827;
+    font-weight: 600;
+}
+.req { color: #ef4444; margin-left: 4px; }
+.field-error { margin-top: 2px; line-height: 1.2; }
+.hint { font-size: 12px; color: var(--muted); }
+
+/* Controls: height, radius, borders */
+.edit-teacher-dialog .p-inputtext,
+.edit-teacher-dialog .p-dropdown,
+.edit-teacher-dialog .p-calendar .p-inputtext {
+    height: 44px;
+    border: 1px solid #e6e9ef;
+    border-radius: 10px;
+    box-shadow: none;
+}
+.edit-teacher-dialog .p-dropdown,
+.edit-teacher-dialog .p-calendar { width: 100%; }
+
+/* Calendar icon button */
+.edit-teacher-dialog .p-calendar-w-btn .p-button {
+    border-radius: 10px;
+    background: #06b6d4;
+    border-color: #06b6d4;
+}
+.edit-teacher-dialog .p-calendar-w-btn .p-button:enabled:hover {
+    filter: brightness(.96);
+}
+
+/* Invalid states */
+.edit-teacher-dialog .p-inputtext.p-invalid,
+.edit-teacher-dialog .p-dropdown.p-invalid {
+    border-color: #ef4444 !important;
+}
+
+/* Footer actions */
+.edit-teacher-dialog .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eef3f7;
+}
+.edit-teacher-dialog .dialog-actions .p-button {
+    height: 44px;
+    border-radius: 12px;
+}
+.edit-teacher-dialog .dialog-actions .p-button-primary { min-width: 160px; }

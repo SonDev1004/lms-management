@@ -1,36 +1,44 @@
-import React from 'react';
-import { Card } from 'primereact/card';
-import { Tag } from 'primereact/tag';
+import React from "react";
+import { Button } from "primereact/button";
+import { Tag } from "primereact/tag";
+import { Rating } from "primereact/rating";
 
-const formatPrice = (v = 0) =>
-    new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v);
-
-const SubjectHero = ({ subject }) => {
+const SubjectHero = ({ subject, onEnrollClick }) => {
     if (!subject) return null;
+    const {
+        title, level, audience, summary,
+        rating = 4.7, reviewCount = 186,
+        hero = "https://images.unsplash.com/photo-1523246191167-6f4546b14880?q=80&w=1600&auto=format&fit=crop"
+    } = subject;
 
     return (
-        <Card className="mb-4">
-            <div className="grid">
-                <div className="col-12 md:col-4">
-                    <img
-                        src={subject.image || '/noimg.png'}
-                        alt={subject.title}
-                        className="w-full h-15rem object-cover border-round"
-                    />
-                </div>
-                <div className="col-12 md:col-8">
-                    <h1 className="text-4xl font-bold text-900 mb-3">{subject.title}</h1>
-                    <div className="flex flex-wrap gap-3 mb-4">
-                        <Tag value={`${subject.sessionNumber} buổi học`} severity="info" />
-                        <Tag value={formatPrice(subject.fee)} severity="success" />
-                        {subject.age ? <Tag value={`Độ tuổi: ${subject.age}`} severity="warning" /> : null}
-                    </div>
-                    <p className="text-lg text-700 mb-0">
-                        Môn học được thiết kế chuyên biệt để phát triển kỹ năng một cách bài bản và hiệu quả.
-                    </p>
-                </div>
+        <header className="sd-hero grid md:grid-cols-5 gap-4 mb-3">
+            <div className="md:col-span-3">
+                <img src={hero} alt="cover" className="w-full h-64 object-cover rounded-xl" />
             </div>
-        </Card>
+            <div className="md:col-span-2 flex flex-col gap-2">
+                <h1 className="text-2xl font-bold">{title}</h1>
+
+                <div className="flex flex-wrap gap-2">
+                    {audience && <Tag value={audience} className="bg-blue-50 border-blue-100 text-blue-700" />}
+                    {level && <Tag value={level} className="bg-emerald-50 border-emerald-100 text-emerald-700" />}
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <Rating value={Number(rating)} readOnly cancel={false} />
+                    <span className="font-semibold">{Number(rating).toFixed(1)}</span>
+                    <span className="text-600">• {reviewCount} reviews</span>
+                </div>
+
+                {summary && <p className="text-600">{summary}</p>}
+
+                <Button
+                    label="Enroll now"
+                    className="p-button-primary p-button-lg"
+                    onClick={onEnrollClick}
+                />
+            </div>
+        </header>
     );
 };
 

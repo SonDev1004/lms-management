@@ -1,0 +1,39 @@
+@import "../styles/tokens.css";
+
+.fb-stats{
+    grid-column:1 / -1;
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:22px; margin:22px 0 14px;
+}
+.fb-stat{ height:128px; border-radius:22px; color:#fff;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:20px 22px; border:1px solid rgba(255,255,255,.25);
+    box-shadow:0 18px 40px rgba(15,23,42,.10), inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.fb-stat__title{ font-size:15px; opacity:.95; }
+.fb-stat__value{ font-size:34px; font-weight:800; line-height:1; }
+.fb-stat__note{ font-size:14px; opacity:.9; }
+.fb-stat--blue{  background:linear-gradient(135deg,#3b82f6,#2563eb); }
+.fb-stat--amber{ background:linear-gradient(135deg,#f59e0b,#d97706); }
+.fb-stat--red{   background:linear-gradient(135deg,#ef4444,#dc2626); }
+.fb-stat--green{ background:linear-gradient(135deg,#10b981,#059669); }
+/* icon + badge like reference */
+.fb-stat{ position:relative; }
+.fb-stat__content{ pointer-events:none; }
+.fb-stat__icon{
+    position:absolute; right:18px; bottom:18px;
+    opacity:.9;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,.15));
+}
+.fb-stat__badge{
+    position:absolute; right:18px; top:14px;
+    background:rgba(255,255,255,.25);
+    border:1px solid rgba(255,255,255,.65);
+    color:#fff; font-weight:700; font-size:12px;
+    padding:4px 10px; border-radius:999px;
+}
+
+
+@media (max-width:1024px){
+    .fb-stats{ grid-template-columns:repeat(2,1fr); gap:16px; }
+}

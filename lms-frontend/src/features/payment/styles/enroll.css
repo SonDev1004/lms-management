@@ -1,0 +1,81 @@
+:root{
+    --pay-bg:#FFF7EF;
+    --ink:#0f1e39;
+    --muted:#6e84a9;
+    --brand:#2C6BFF;
+    --ring:#E8EEFF;
+    --card:#fff;
+    --bd:#e9eef7;
+    --shadow:0 26px 70px rgba(36,76,255,.10);
+    --shadow-soft:0 10px 35px rgba(36,76,255,.08);
+    --radius:16px;
+}
+
+.page-payment{ background:var(--pay-bg); min-height:100vh; padding:24px 16px 72px; }
+.full-center{ min-height:60vh; display:flex; align-items:center; justify-content:center; }
+
+.enroll-head{ max-width:1200px; margin:0 auto 16px; text-align:center; }
+.enroll-title{ margin:0 0 6px; color:var(--ink); font-weight:900; letter-spacing:-.02em; font-size:clamp(34px,5vw,48px); line-height:1.1; }
+.enroll-sub{ margin:0 auto; color:#8ba0bb; font-size:15px; }
+
+.enroll-grid{ max-width:1200px; margin-inline:auto; display:grid; grid-template-columns:380px minmax(0,1fr); gap:28px; }
+
+.enroll-left{ position:relative; }
+.enroll-left .p-card{ position:sticky; top:84px; }
+
+.card-left{ border-radius:var(--radius); box-shadow:var(--shadow-soft); border:1px solid #f1f4fb; }
+.p-card .p-card-body{ padding:24px; }
+
+.left-title{ margin:0 0 10px; color:#16233f; font-weight:800; font-size:22px; letter-spacing:.2px; }
+.left-price{ display:flex; align-items:flex-end; gap:8px; }
+.left-price .amount{ font-size:40px; line-height:1; font-weight:800; color:var(--brand); }
+.left-price .currency{ text-transform:uppercase; letter-spacing:.12em; font-size:12px; color:#9aa7ba; translate:0 -4px; }
+
+.p-divider.p-divider-horizontal:before{ border-top:1px solid #edf2fb; }
+
+.left-spec{ list-style:none; padding:0; margin:8px 0 12px; font-size:14px; }
+.left-spec li{ display:flex; justify-content:space-between; gap:12px; padding:7px 0; color:#4e5c72; }
+.left-list{ list-style:none; padding:6px 0 0; margin:0; font-size:14px; display:grid; gap:12px; }
+.left-list li{ display:flex; align-items:center; gap:10px; color:#22324d; }
+.left-list i{ color:#8aa5ff; }
+
+.card-right{ border-radius:var(--radius); box-shadow:var(--shadow-soft); border:1px solid #f1f4fb; }
+.card-right .p-card-title{ font-size:22px; font-weight:800; color:#1b2b4a; margin-bottom:4px; }
+
+.form-grid{ display:flex; flex-direction:column; gap:14px; }
+.p-field{ display:flex; flex-direction:column; gap:8px; }
+.p-field > span{ color:#4f5a6a; font-size:14px; }
+.req{ color:#ef4444; }
+
+.ctrl{ width:100%; background:#fff; border:1px solid var(--bd) !important; border-radius:12px !important; height:44px; padding:10px 14px; }
+.p-inputtextarea.ctrl{ height:auto; padding:12px 14px; }
+
+.voucher-row{ display:flex; gap:10px; align-items:center; }
+.btn-apply{ background:linear-gradient(180deg,#9DB7FF 0%, #7EA2FF 60%, #6C96FF 100%); border:none; border-radius:12px; padding:10px 18px; font-weight:700; box-shadow:0 6px 16px rgba(104,139,255,.25); }
+.btn-apply.p-button:enabled:hover{ filter:brightness(.98); }
+.voucher-hint{ margin-top:6px; font-size:12px; color:#9aa7ba; }
+.voucher-applied{ margin-top:8px; display:flex; align-items:center; gap:8px; }
+
+.pay-methods{ display:flex; flex-wrap:wrap; gap:12px; }
+.pill{ display:flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid var(--bd); border-radius:12px; cursor:pointer; user-select:none; background:#fff; transition:.15s ease; }
+.pill:hover{ box-shadow:0 10px 26px rgba(36,76,255,.08); }
+.pill.active{ border-color:#cdddff; background:var(--ring); box-shadow:0 10px 26px rgba(36,76,255,.12); }
+
+.agree-row{ display:flex; gap:10px; align-items:flex-start; color:#51617a; font-size:14px; }
+.agree-row a{ color:#2C6BFF; }
+
+.total-card{ background:#fff; border:1px solid var(--bd); border-radius:14px; padding:14px 16px; box-shadow:0 6px 18px rgba(36,76,255,.06); }
+.total-row{ display:flex; justify-content:space-between; align-items:center; font-size:14px; color:#3d4b65; padding:2px 0; }
+.total-row .disc{ color:#ef4444; font-weight:700; }
+.total-row.big{ font-size:16px; font-weight:800; }
+.total-row .grand{ color:var(--brand); font-size:18px; font-weight:900; }
+
+.btn-submit{ width:100%; padding:14px 18px; border-radius:14px; border:none; background:linear-gradient(180deg,#A9C1FF 0%, #8FB1FF 50%, #7EA2FF 100%); color:#0f1e39; font-weight:800; letter-spacing:.01em; box-shadow:var(--shadow); }
+.btn-submit.p-button:enabled:hover{ filter:brightness(.985); }
+
+.p-card{ border-radius:var(--radius); }
+
+@media (max-width:1100px){
+    .enroll-grid{ grid-template-columns:1fr; gap:18px; }
+    .enroll-left .p-card{ position:static; top:auto; }
+}

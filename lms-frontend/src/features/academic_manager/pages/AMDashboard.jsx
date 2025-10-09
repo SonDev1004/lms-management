@@ -1,5 +1,5 @@
 import React from 'react';
-import DashboardStaff from '@/features/dashboardstaff/pages/DashboardStaff.jsx';
+import DashboardStaff from '@/features/dashboard/staff/pages/DashboardStaff.jsx';
 
 export default function AMDashboard(){
     return <DashboardStaff />;

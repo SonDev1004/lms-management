@@ -1,28 +1,44 @@
-// src/features/subject/components/SubjectOutline.jsx
-import React from 'react';
-import { Card } from 'primereact/card';
-import { Panel } from 'primereact/panel';
+import React, { useState } from "react";
+import { Button } from "primereact/button";
 
-const SubjectOutline = ({ outline = [] }) => {
-    if (!outline.length) return null;
+const SubjectOutline = ({ outline = [], subject }) => {
+    const bullets = subject?.syllabus?.length ? subject.syllabus : outline;
+    const [openAll, setOpenAll] = useState(true);
 
     return (
-        <Card className="mb-4">
-            <Panel header="Nội dung / Bố cục môn học" toggleable>
-                <div className="grid">
-                    {outline.map((item, index) => (
-                        <div key={index} className="col-12 md:col-6 lg:col-3">
-                            <div className="flex align-items-center gap-2 mb-2">
-                                <div className="w-2rem h-2rem bg-primary border-circle flex align-items-center justify-content-center">
-                                    <span className="text-white text-sm font-bold">{index + 1}</span>
-                                </div>
-                                <span className="font-semibold text-900">{item}</span>
-                            </div>
-                        </div>
+        <section className="sd-card border rounded-2xl p-4 mb-3 bg-white">
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Course Syllabus</h3>
+                <Button
+                    icon={`pi ${openAll ? "pi-angle-up" : "pi-angle-down"}`}
+                    label={openAll ? "Collapse all" : "Expand all"}
+                    className="p-button-text"
+                    onClick={() => setOpenAll(v => !v)}
+                />
+            </div>
+
+            {Array.isArray(subject?.syllabus) && subject.syllabus.length > 0 ? (
+                <ul className="mt-2">
+                    {subject.syllabus.map((wk, i) => (
+                        <li key={i} className="border-top-1 surface-border py-3">
+                            <details open={openAll}>
+                                <summary className="font-medium cursor-pointer">
+                                    <b>Week {wk.week}</b> - {wk.title}
+                                </summary>
+                                <ul className="pl-4 mt-2 list-disc">
+                                    {wk.points?.map((p, j) => <li key={j}>{p}</li>)}
+                                </ul>
+                            </details>
+                        </li>
                     ))}
-                </div>
-            </Panel>
-        </Card>
+                </ul>
+            ) : (
+                // Nếu chỉ có outline dạng bullet
+                <ul className="pl-4 mt-2 list-disc">
+                    {bullets.map((b, i) => <li key={i}>{b}</li>)}
+                </ul>
+            )}
+        </section>
     );
 };
 
