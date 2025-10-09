@@ -1,41 +1,41 @@
-import {DataTable} from 'primereact/datatable';
-import {Column} from 'primereact/column';
-import {RadioButton} from 'primereact/radiobutton';
-import {InputText} from 'primereact/inputtext';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { RadioButton } from 'primereact/radiobutton';
+import { InputText } from 'primereact/inputtext';
 
-const AttendanceTable = ({
-                             attendanceList,
-                             attendance_types,
-                             handleAttendanceChange,
-                             handleReasonChange,
-                             renderFooter
-                         }) => {
+const AttendanceTeacherTable = ({
+    attendanceList,
+    attendance_types,
+    handleAttendanceChange,
+    handleReasonChange,
+    renderFooter
+}) => {
     return (
         <DataTable
             value={attendanceList}
             dataKey="id"
             showGridlines
-            stripedRows
-            tableStyle={{minWidth: '25rem'}}
+            stripedRowsz
+            tableStyle={{ minWidth: '25rem' }}
             paginator
             rows={10}
         >
-            <Column header="STT" body={(_, options) => options.rowIndex + 1} style={{width: '4%'}}/>
-            <Column field="code" header="Mã học viên" headerStyle={{whiteSpace: 'nowrap', textAlign: 'center'}}
-                    style={{width: '14%'}}/>
+            <Column header="STT" body={(_, options) => options.rowIndex + 1} style={{ width: '4%' }} />
+            <Column field="code" header="Mã học viên" headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
+                style={{ width: '14%' }} />
             <Column
                 header="Tên học viên"
                 body={(row) => `${row.firstname ?? ''} ${row.lastname ?? ''}`}
                 footer="Tổng"
-                style={{width: '22%'}}
+                style={{ width: '22%' }}
             />
 
             {attendance_types.map((type) => (
                 <Column
                     key={type.value}
                     header={type.label}
-                    headerStyle={{whiteSpace: 'nowrap', textAlign: 'center'}}
-                    bodyStyle={{textAlign: 'center', verticalAlign: 'middle'}}
+                    headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
+                    bodyStyle={{ textAlign: 'center', verticalAlign: 'middle' }}
                     body={(row) => (
                         <RadioButton
                             inputId={`${type.value}-${row.id}`}
@@ -69,4 +69,4 @@ const AttendanceTable = ({
     );
 };
 
-export default AttendanceTable;
+export default AttendanceTeacherTable;
