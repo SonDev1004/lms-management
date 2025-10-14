@@ -1,12 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useSearchParams, useNavigate} from 'react-router-dom';
-import {Card} from 'primereact/card';
-import {Button} from 'primereact/button';
-import {Toast} from 'primereact/toast';
-import {ProgressSpinner} from 'primereact/progressspinner';
-import {Tag} from 'primereact/tag';
-import {Divider} from 'primereact/divider';
-import {Message} from 'primereact/message';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Tag } from 'primereact/tag';
+import { Divider } from 'primereact/divider';
+import { Message } from 'primereact/message';
 import axiosClient from '@/shared/api/axiosClient.js';
 import urls from '@/shared/constants/urls.js';
 
@@ -44,7 +44,7 @@ const PaymentCancelled = () => {
             setResult({
                 txnRef: txnRef,
                 status: 'CANCELLED',
-                message: 'Bạn đã hủy giao dịch'
+                message: 'You have cancelled the transaction'
             });
         } finally {
             setLoading(false);
@@ -70,7 +70,7 @@ const PaymentCancelled = () => {
             };
 
             navigate('/dang-ky-hoc', {
-                state: {selectedItem: courseInfo}
+                state: { selectedItem: courseInfo }
             });
         } else {
             navigate('/courses');
@@ -88,15 +88,15 @@ const PaymentCancelled = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <ProgressSpinner/>
-                <span className="ml-3">Đang tải kết quả thanh toán...</span>
+                <ProgressSpinner />
+                <span className="ml-3">Loading payment result...</span>
             </div>
         );
     }
 
     return (
         <div className="p-4">
-            <Toast ref={toast}/>
+            <Toast ref={toast} />
 
             <div className="max-w-2xl mx-auto">
                 <Card className="text-center bg-yellow-50 border-2 border-yellow-200">
@@ -105,40 +105,40 @@ const PaymentCancelled = () => {
                         <div className="text-center">
                             <div className="text-8xl mb-4">⚠️</div>
                             <h1 className="text-4xl font-bold text-yellow-600 mb-2">
-                                Thanh toán bị hủy
+                                Payment Cancelled
                             </h1>
                             <p className="text-lg text-gray-600">
-                                Bạn đã hủy giao dịch thanh toán.
+                                You have cancelled the payment transaction.
                             </p>
                         </div>
 
                         {/* Info Message */}
                         <Message
                             severity="warn"
-                            text="Giao dịch đã bị hủy. Khóa học chưa được đăng ký. Bạn có thể thử lại bất cứ lúc nào."
+                            text="Transaction has been cancelled. The course was not registered. You can try again at any time."
                             className="w-full"
                         />
 
-                        <Divider/>
+                        <Divider />
 
                         {/* Transaction Details */}
                         {result && (
                             <div className="text-left space-y-4">
                                 <h3 className="text-xl font-semibold text-center mb-4">
-                                    Thông tin giao dịch
+                                    Transaction Details
                                 </h3>
 
                                 <div className="grid grid-cols-1 gap-3">
                                     <div className="flex justify-between items-center p-3 bg-white rounded-lg">
-                                        <span className="font-medium text-gray-700">Mã giao dịch:</span>
+                                        <span className="font-medium text-gray-700">Transaction ID:</span>
                                         <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
                                             {result.txnRef}
                                         </span>
                                     </div>
 
                                     <div className="flex justify-between items-center p-3 bg-white rounded-lg">
-                                        <span className="font-medium text-gray-700">Trạng thái:</span>
-                                        <Tag value="ĐÃ HỦY" severity="warning"/>
+                                        <span className="font-medium text-gray-700">Status:</span>
+                                        <Tag value="CANCELLED" severity="warning" />
                                     </div>
 
                                     {(result.programName || result.subjectName) && (
@@ -152,7 +152,7 @@ const PaymentCancelled = () => {
 
                                     {result.totalFee && (
                                         <div className="flex justify-between items-center p-3 bg-white rounded-lg">
-                                            <span className="font-medium text-gray-700">Số tiền:</span>
+                                            <span className="font-medium text-gray-700">Amount:</span>
                                             <span className="font-bold text-gray-600">
                                                 {formatPrice(result.totalFee)}
                                             </span>
@@ -162,19 +162,19 @@ const PaymentCancelled = () => {
                             </div>
                         )}
 
-                        <Divider/>
+                        <Divider />
 
                         {/* Action Buttons */}
                         <div className="space-y-3">
                             <div className="flex justify-center gap-3 flex-wrap">
                                 <Button
-                                    label="Đăng ký lại"
+                                    label="Try Again"
                                     icon="pi pi-refresh"
                                     className="p-button-warning p-button-lg"
                                     onClick={handleRetryPayment}
                                 />
                                 <Button
-                                    label="Khám phá khóa học khác"
+                                    label="Explore Other Courses"
                                     icon="pi pi-search"
                                     className="p-button-outlined p-button-warning p-button-lg"
                                     onClick={handleExploreCourses}
@@ -183,7 +183,7 @@ const PaymentCancelled = () => {
 
                             <div className="text-center">
                                 <Button
-                                    label="Về trang chủ"
+                                    label="Back to Home"
                                     icon="pi pi-home"
                                     className="p-button-text"
                                     onClick={handleBackToHome}
@@ -193,15 +193,15 @@ const PaymentCancelled = () => {
 
                         {/* Encouragement Info */}
                         <div className="bg-blue-50 p-4 rounded-lg text-left">
-                            <h4 className="font-semibold text-blue-800 mb-2">🎓 Đừng bỏ lỡ cơ hội học tập!</h4>
+                            <h4 className="font-semibold text-blue-800 mb-2">🎓 Don't miss your learning opportunity!</h4>
                             <ul className="text-sm text-blue-700 space-y-1">
-                                <li>• Khóa học vẫn đang chờ bạn</li>
-                                <li>• Thanh toán an toàn và bảo mật 100%</li>
-                                <li>• Hỗ trợ học tập 24/7</li>
-                                <li>• Chứng chỉ sau khi hoàn thành</li>
+                                <li>• The course is still waiting for you</li>
+                                <li>• 100% safe and secure payment</li>
+                                <li>• 24/7 learning support</li>
+                                <li>• Certificate after completion</li>
                             </ul>
                             <p className="text-sm text-blue-700 mt-2 font-medium">
-                                Sẵn sàng bắt đầu hành trình học tập của bạn? 🚀
+                                Ready to start your learning journey? 🚀
                             </p>
                         </div>
                     </div>

@@ -1,12 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useSearchParams, useNavigate} from 'react-router-dom';
-import {Card} from 'primereact/card';
-import {Button} from 'primereact/button';
-import {Toast} from 'primereact/toast';
-import {ProgressSpinner} from 'primereact/progressspinner';
-import {Tag} from 'primereact/tag';
-import {Divider} from 'primereact/divider';
-import {Message} from 'primereact/message';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Tag } from 'primereact/tag';
+import { Divider } from 'primereact/divider';
+import { Message } from 'primereact/message';
 import axiosClient from '@/shared/api/axiosClient.js';
 import urls from '@/shared/constants/urls.js';
 
@@ -45,7 +45,7 @@ const PaymentFailed = () => {
             setResult({
                 txnRef: txnRef,
                 status: 'FAILED',
-                message: reason || 'Giao dịch không thành công'
+                message: reason || 'Transaction failed'
             });
         } finally {
             setLoading(false);
@@ -71,7 +71,7 @@ const PaymentFailed = () => {
             };
 
             navigate('/dang-ky-hoc', {
-                state: {selectedItem: courseInfo}
+                state: { selectedItem: courseInfo }
             });
         } else {
             navigate('/courses');
@@ -90,15 +90,15 @@ const PaymentFailed = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <ProgressSpinner/>
-                <span className="ml-3">Đang tải kết quả thanh toán...</span>
+                <ProgressSpinner />
+                <span className="ml-3">Loading payment result...</span>
             </div>
         );
     }
 
     return (
         <div className="p-4">
-            <Toast ref={toast}/>
+            <Toast ref={toast} />
 
             <div className="max-w-2xl mx-auto">
                 <Card className="text-center bg-red-50 border-2 border-red-200">
@@ -107,10 +107,10 @@ const PaymentFailed = () => {
                         <div className="text-center">
                             <div className="text-8xl mb-4">❌</div>
                             <h1 className="text-4xl font-bold text-red-600 mb-2">
-                                Thanh toán thất bại
+                                Payment Failed
                             </h1>
                             <p className="text-lg text-gray-600">
-                                Rất tiếc! Giao dịch của bạn không thể hoàn tất.
+                                Sorry! Your transaction could not be completed.
                             </p>
                         </div>
 
@@ -118,18 +118,18 @@ const PaymentFailed = () => {
                         {(result?.message || reason) && (
                             <Message
                                 severity="error"
-                                text={result?.message || reason || 'Giao dịch không thành công'}
+                                text={result?.message || reason || 'Transaction failed'}
                                 className="w-full"
                             />
                         )}
 
-                        <Divider/>
+                        <Divider />
 
                         {/* Transaction Details */}
                         {result && (
                             <div className="text-left space-y-4">
                                 <h3 className="text-xl font-semibold text-center mb-4">
-                                    Thông tin giao dịch
+                                    Transaction Details
                                 </h3>
 
                                 <div className="grid grid-cols-1 gap-3">
@@ -142,12 +142,12 @@ const PaymentFailed = () => {
 
                                     <div className="flex justify-between items-center p-3 bg-white rounded-lg">
                                         <span className="font-medium text-gray-700">Trạng thái:</span>
-                                        <Tag value="THẤT BẠI" severity="danger"/>
+                                        <Tag value="FAILED" severity="danger" />
                                     </div>
 
                                     {(result.programName || result.subjectName) && (
                                         <div className="flex justify-between items-center p-3 bg-white rounded-lg">
-                                            <span className="font-medium text-gray-700">Khóa học:</span>
+                                            <span className="font-medium text-gray-700">Course:</span>
                                             <span className="text-right font-medium text-blue-600">
                                                 {result.programName || result.subjectName}
                                             </span>
@@ -156,7 +156,7 @@ const PaymentFailed = () => {
 
                                     {result.totalFee && (
                                         <div className="flex justify-between items-center p-3 bg-white rounded-lg">
-                                            <span className="font-medium text-gray-700">Số tiền:</span>
+                                            <span className="font-medium text-gray-700">Amount:</span>
                                             <span className="font-bold text-gray-600">
                                                 {formatPrice(result.totalFee)}
                                             </span>
@@ -166,19 +166,19 @@ const PaymentFailed = () => {
                             </div>
                         )}
 
-                        <Divider/>
+                        <Divider />
 
                         {/* Action Buttons */}
                         <div className="space-y-3">
                             <div className="flex justify-center gap-3 flex-wrap">
                                 <Button
-                                    label="Thử thanh toán lại"
+                                    label="Try Payment Again"
                                     icon="pi pi-refresh"
                                     className="p-button-danger p-button-lg"
                                     onClick={handleRetryPayment}
                                 />
                                 <Button
-                                    label="Liên hệ hỗ trợ"
+                                    label="Contact Support"
                                     icon="pi pi-phone"
                                     className="p-button-outlined p-button-danger p-button-lg"
                                     onClick={handleContactSupport}
@@ -187,7 +187,7 @@ const PaymentFailed = () => {
 
                             <div className="text-center">
                                 <Button
-                                    label="Về trang chủ"
+                                    label="Back to Home"
                                     icon="pi pi-home"
                                     className="p-button-text"
                                     onClick={handleBackToHome}
@@ -197,15 +197,15 @@ const PaymentFailed = () => {
 
                         {/* Help Info */}
                         <div className="bg-yellow-50 p-4 rounded-lg text-left">
-                            <h4 className="font-semibold text-yellow-800 mb-2">💡 Một số nguyên nhân có thể:</h4>
+                            <h4 className="font-semibold text-yellow-800 mb-2">💡 Some possible reasons:</h4>
                             <ul className="text-sm text-yellow-700 space-y-1">
-                                <li>• Số dư tài khoản không đủ</li>
-                                <li>• Thông tin thẻ không chính xác</li>
-                                <li>• Kết nối mạng không ổn định</li>
-                                <li>• Ngân hàng từ chối giao dịch</li>
+                                <li>• Insufficient account balance</li>
+                                <li>• Incorrect card information</li>
+                                <li>• Unstable network connection</li>
+                                <li>• The bank refused the transaction</li>
                             </ul>
                             <p className="text-sm text-yellow-700 mt-2">
-                                Vui lòng kiểm tra lại hoặc liên hệ ngân hàng của bạn.
+                                Please check again or contact your bank.
                             </p>
                         </div>
                     </div>

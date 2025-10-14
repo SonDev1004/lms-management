@@ -32,7 +32,7 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
 
     const statusBody = (row) => (
         <span className={`status-badge ${row.present ? 'present' : 'absent'}`}>
-            {row.present ? '✔ Có mặt' : '✖ Vắng'}
+            {row.present ? '✔ Present' : '✖ Absent'}
         </span>
     );
 
@@ -42,15 +42,15 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
         <div className="table-header">
             <div className="controls">
                 <div className="filter-group">
-                    <label className="sr-only">Lọc</label>
+                    <label className="sr-only">Filter</label>
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         className="filter-select"
                     >
-                        <option value="all">Tất cả</option>
-                        <option value="present">Chỉ Có mặt</option>
-                        <option value="absent">Chỉ Vắng</option>
+                        <option value="all">All</option>
+                        <option value="present">Only Present</option>
+                        <option value="absent">Only Absent</option>
                     </select>
                 </div>
 
@@ -58,7 +58,7 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
                     <span className="p-input-icon-left">
                         <i className="pi pi-search" />
                         <InputText
-                            placeholder="Tìm theo ngày (vd: 01/06/2025) hoặc buổi"
+                            placeholder="Search by date (e.g. 01/06/2025) or session"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                         />
@@ -72,11 +72,11 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
         <div className="attendance-container">
             <div className="summary">
                 <div className="summary-item present">
-                    <div className="summary-label">Có mặt</div>
+                    <div className="summary-label">Present</div>
                     <div className="summary-value">{presentCount}</div>
                 </div>
                 <div className="summary-item absent">
-                    <div className="summary-label">Vắng</div>
+                    <div className="summary-label">Absent</div>
                     <div className="summary-value">{absentCount}</div>
                 </div>
                 <div className="summary-spacer" />
@@ -84,20 +84,20 @@ const AttendanceTable = ({ attendanceHistory, formatDate }) => {
 
             <Card className="attendance-card">
                 <div className="attendance-card-inner">
-                    <div className="table-title">Lịch sử điểm danh</div>
+                    <div className="table-title">Attendance History</div>
 
                     <DataTable
                         value={filtered}
                         responsiveLayout="scroll"
                         header={header}
                         className="attendance-table"
-                        emptyMessage="Không có dữ liệu"
+                        emptyMessage="No data available"
                         paginator
                         rows={8}
                     >
-                        <Column field="session" header="Buổi" style={{ width: '8%' }} />
-                        <Column header="Ngày" body={dateBody} style={{ width: '30%' }} />
-                        <Column header="Trạng thái" body={statusBody} style={{ width: '20%' }} />
+                        <Column field="session" header="Session" style={{ width: '8%' }} />
+                        <Column header="Date" body={dateBody} style={{ width: '30%' }} />
+                        <Column header="Status" body={statusBody} style={{ width: '20%' }} />
                     </DataTable>
                 </div>
             </Card>

@@ -2,7 +2,7 @@ import { classifyReminder, reminderIcons } from "@/features/course/lib/reminders
 
 export default function CourseReminders({ reminders = [] }) {
     if (!reminders.length) return (
-        <ul className="reminder-list"><li className="reminder-item reminder-normal">Không có nhắc nhở</li></ul>
+        <ul className="reminder-list"><li className="reminder-item reminder-normal">No reminders</li></ul>
     );
     return (
         <ul className="reminder-list" aria-live="polite">

@@ -12,8 +12,8 @@ const AddSession = ({ onCancel, onSave }) => {
     const [error, setError] = useState({});
     const validate = () => {
         let err = {};
-        if (!draft.description?.trim()) err.description = "Không được để trống";
-        if (!draft.date) err.date = "Vui lòng chọn ngày";
+        if (!draft.description?.trim()) err.description = "Description cannot be empty";
+        if (!draft.date) err.date = "Please select a date";
         setError(err);
         return Object.keys(err).length === 0;
     };
@@ -29,7 +29,7 @@ const AddSession = ({ onCancel, onSave }) => {
     return (<div className="mb-3 p-3 shadow-4">
         <div className="grid">
             <div className="col-4 md:col-4">
-                <label className="block mb-2">Lựa chọn ngày</label>
+                <label className="block mb-2">Select date</label>
                 <Calendar
                     value={draft.date}
                     onChange={e => setDraft(d => ({ ...d, date: e.value }))}
@@ -40,7 +40,7 @@ const AddSession = ({ onCancel, onSave }) => {
                 {error.date && <small className="p-error block">{error.date}</small>}
             </div>
             <div className="col-8">
-                <label className="block mb-2">Nội dung buổi học</label>
+                <label className="block mb-2">Session content</label>
                 <InputTextarea
                     value={draft.description}
                     onChange={e => setDraft(d => ({ ...d, description: e.target.value }))}
@@ -49,8 +49,8 @@ const AddSession = ({ onCancel, onSave }) => {
                 {error.description && <small className="p-error block">{error.description}</small>}
             </div>
             <div className="col-12 mt-3 flex justify-content-end gap-2">
-                <Button label="Huỷ" severity="secondary" outlined onClick={onCancel} />
-                <Button label="Lưu buổi học" icon="pi pi-check" onClick={handleSave} />
+                <Button label="Cancel" severity="secondary" outlined onClick={onCancel} />
+                <Button label="Save session" icon="pi pi-check" onClick={handleSave} />
             </div>
         </div>
     </div>);

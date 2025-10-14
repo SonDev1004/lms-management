@@ -34,13 +34,13 @@ const AssignmentPage = ({ course, student }) => {
 
     const getAssignmentStatus = (a) => {
         // priority: graded -> submitted -> then by due date
-        if (a.studentStatus === 'graded') return { kind: 'graded', label: `Đã chấm`, variant: 'success' };
-        if (a.studentStatus === 'submitted') return { kind: 'submitted', label: 'Đã nộp', variant: 'info' };
+        if (a.studentStatus === 'graded') return { kind: 'graded', label: `Graded`, variant: 'success' };
+        if (a.studentStatus === 'submitted') return { kind: 'submitted', label: 'Submitted', variant: 'info' };
         const diff = daysDiff(a.due);
-        if (diff == null) return { kind: 'pending', label: 'Chưa nộp', variant: 'neutral' };
-        if (diff < 0) return { kind: 'overdue', label: `Chưa nộp`, variant: 'danger' }; // label kept simple; overdue text shown in list
-        if (diff <= 3) return { kind: 'due_soon', label: `Còn ${diff} ngày`, variant: 'warning' };
-        return { kind: 'pending', label: 'Chưa nộp', variant: 'neutral' };
+        if (diff == null) return { kind: 'pending', label: 'Not submitted', variant: 'neutral' };
+        if (diff < 0) return { kind: 'overdue', label: `Not submitted`, variant: 'danger' };
+        if (diff <= 3) return { kind: 'due_soon', label: `Due in ${diff} days`, variant: 'warning' };
+        return { kind: 'pending', label: 'Not submitted', variant: 'neutral' };
     };
 
     const filteredAssignments = useMemo(() => {
@@ -61,7 +61,7 @@ const AssignmentPage = ({ course, student }) => {
         if (!file) return;
         const a = assignments.find((x) => x.id === assignmentId);
         if (!a) return;
-        toast.current && toast.current.show({ severity: 'info', summary: 'Đang tải lên', detail: file.name, life: 1200 });
+        toast.current && toast.current.show({ severity: 'info', summary: 'Uploading', detail: file.name, life: 1200 });
         setTimeout(() => {
             setAssignments((prev) => prev.map((it) => (it.id === assignmentId ? {
                 ...it,
@@ -69,8 +69,8 @@ const AssignmentPage = ({ course, student }) => {
             } : it)));
             toast.current && toast.current.show({
                 severity: 'success',
-                summary: 'Nộp bài thành công',
-                detail: a.title + ' đã nộp',
+                summary: 'Submission Successful',
+                detail: a.title + ' has been submitted',
                 life: 1600
             });
         }, 900);
@@ -83,19 +83,19 @@ const AssignmentPage = ({ course, student }) => {
     return (
         <div className="assignment-root">
             <Toast ref={toast} />
-            <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap assign-filter-row" style={{gap: 12}}>
-                <div className="small-muted">Bộ lọc:</div>
+            <div className="p-d-flex p-ai-center p-mb-2 p-flex-wrap assign-filter-row" style={{ gap: 12 }}>
+                <div className="small-muted">Filter:</div>
                 {['all', 'due_soon', 'overdue', 'not_submitted', 'submitted', 'graded'].map((k) => (
                     <Button
                         key={k}
-                        className={classNames('assign-filter-btn', {'p-button-text': assignmentFilter !== k})}
+                        className={classNames('assign-filter-btn', { 'p-button-text': assignmentFilter !== k })}
                         onClick={() => setAssignmentFilter(k)}
                         label={
-                            k === 'all' ? 'Tất cả' :
-                                k === 'due_soon' ? 'Sắp hết hạn' :
-                                    k === 'overdue' ? 'Quá hạn' :
-                                        k === 'not_submitted' ? 'Chưa nộp' :
-                                            k === 'submitted' ? 'Đã nộp' : 'Đã chấm'
+                            k === 'all' ? 'All' :
+                                k === 'due_soon' ? 'Due Soon' :
+                                    k === 'overdue' ? 'Overdue' :
+                                        k === 'not_submitted' ? 'Not Submitted' :
+                                            k === 'submitted' ? 'Submitted' : 'Graded'
                         }
                     />
                 ))}
@@ -108,18 +108,18 @@ const AssignmentPage = ({ course, student }) => {
                 onViewGrade={onViewGrade}
             />
 
-            <Dialog header={`Điểm: ${gradeDialog.assignment?.title || ''}`} visible={gradeDialog.visible} modal
-                    onHide={() => setGradeDialog({ visible: false, assignment: null })}>
+            <Dialog header={`Grade: ${gradeDialog.assignment?.title || ''}`} visible={gradeDialog.visible} modal
+                onHide={() => setGradeDialog({ visible: false, assignment: null })}>
                 {gradeDialog.assignment ? (
                     <div>
-                        <p>Bài: <strong>{gradeDialog.assignment.title}</strong></p>
-                        <p>Điểm: <strong>{gradeDialog.assignment.grade}</strong></p>
-                        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <Button label="Đóng" className="p-button-text"
-                                    onClick={() => setGradeDialog({ visible: false, assignment: null })}/>
+                        <p>Assignment: <strong>{gradeDialog.assignment.title}</strong></p>
+                        <p>Grade: <strong>{gradeDialog.assignment.grade}</strong></p>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <Button label="Close" className="p-button-text"
+                                onClick={() => setGradeDialog({ visible: false, assignment: null })} />
                         </div>
                     </div>
-                ) : <p>Không có dữ liệu</p>}
+                ) : <p>No data available</p>}
             </Dialog>
         </div>
     );

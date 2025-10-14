@@ -8,9 +8,9 @@ import AttendanceTable from './AttendanceTeacherTable';
 import AttendanceService from '@/features/attendance/api/attendanceService.js';
 
 const attendance_types = [
-    { label: 'Có mặt', value: 1 },
-    { label: 'Đi trễ', value: 2 },
-    { label: 'Vắng', value: 0 },
+    { label: 'Present', value: 1 },
+    { label: 'Late', value: 2 },
+    { label: 'Absent', value: 0 },
 ];
 
 const AttendanceTeacherPanel = () => {
@@ -100,14 +100,14 @@ const AttendanceTeacherPanel = () => {
 
     return (
         <div className="grid mt-2">
-            <Card title="Bảng điểm danh">
+            <Card title="Attendance Sheet">
                 <div className="mb-2">
                     <div className="field">
-                        <label>Buổi học</label>
+                        <label>Session</label>
                         <div className='p-inputgroup'>
                             <Calendar value={selectedDate} dateFormat="dd/mm/yy" readOnlyInput style={{ width: 'auto' }} />
                             <Button
-                                label='Bảng tổng hợp'
+                                label='Summary'
                                 severity='info'
                                 onClick={() => navigate('full')}
                             />
@@ -132,8 +132,8 @@ const AttendanceTeacherPanel = () => {
                 )}
 
                 <div className="flex justify-content-between mt-4">
-                    <Button label="Quay lại" onClick={() => navigate(-1)} />
-                    <Button label="Lưu" onClick={handleSaveAttendance} />
+                    <Button label="Back" onClick={() => navigate(-1)} />
+                    <Button label="Save" onClick={handleSaveAttendance} />
                 </div>
             </Card>
         </div>

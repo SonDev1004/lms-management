@@ -20,11 +20,11 @@ const AttendanceTeacherTable = ({
             paginator
             rows={10}
         >
-            <Column header="STT" body={(_, options) => options.rowIndex + 1} style={{ width: '4%' }} />
-            <Column field="code" header="Mã học viên" headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
+            <Column header="No." body={(_, options) => options.rowIndex + 1} style={{ width: '4%' }} />
+            <Column field="code" header="Student ID" headerStyle={{ whiteSpace: 'nowrap', textAlign: 'center' }}
                 style={{ width: '14%' }} />
             <Column
-                header="Tên học viên"
+                header="Student Name"
                 body={(row) => `${row.firstname ?? ''} ${row.lastname ?? ''}`}
                 footer="Tổng"
                 style={{ width: '22%' }}
@@ -50,14 +50,14 @@ const AttendanceTeacherTable = ({
             ))}
 
             <Column
-                header="Lý do vắng"
+                header="Reason Absent"
                 body={(row) => {
                     const att = Number(row.attendance);
                     const canEdit = [0, 2].includes(att); // 0: Vắng, 2: Đi trễ (đổi theo nhu cầu)
                     return (
                         <InputText
                             className="w-full"
-                            placeholder="Lý do vắng"
+                            placeholder="Reason Absent"
                             value={row.note ?? ''}
                             onChange={(e) => handleReasonChange(row.id, e.target.value)}
                             disabled={!canEdit}

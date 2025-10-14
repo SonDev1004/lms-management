@@ -23,10 +23,10 @@ export default function CourseCard({ course }) {
 
     const footer = (
         <div className="card-footer">
-            <Button label="Tài liệu" icon="pi pi-folder" className="footer-btn btn-tooltip btn-primary"
-                data-pr-tooltip="Tài liệu" aria-label={`Tài liệu ${c.title}`} onClick={goMaterials} />
-            <Button label="Chi tiết" icon="pi pi-info-circle" className="footer-btn btn-tooltip btn-secondary"
-                data-pr-tooltip="Chi tiết" aria-label={`Chi tiết ${c.title}`} onClick={goDetail} />
+            <Button label="Documents" icon="pi pi-folder" className="footer-btn btn-tooltip btn-primary"
+                data-pr-tooltip="Documents" aria-label={`Documents ${c.title}`} onClick={goMaterials} />
+            <Button label="Details" icon="pi pi-info-circle" className="footer-btn btn-tooltip btn-secondary"
+                data-pr-tooltip="Details" aria-label={`Details ${c.title}`} onClick={goDetail} />
         </div>
     );
 
@@ -49,7 +49,7 @@ export default function CourseCard({ course }) {
                                 </div>
                                 <i className="pi pi-user" aria-hidden="true" />
                                 <div className="meta-text">
-                                    <strong className="meta-label">GV:</strong>
+                                    <strong className="meta-label">Teacher:</strong>
                                     <span className="meta-value meta-teacher">{c.teacher}</span>
                                 </div>
                             </div>
@@ -79,17 +79,17 @@ export default function CourseCard({ course }) {
                     <div className="desc-wrapper">
                         <div className="desc" role="region" aria-label={`Mô tả khóa ${c.title}`}>{c.description}</div>
                         <div className="reminders">
-                            <strong>Nhắc nhở / Bài tập</strong>
+                            <strong>Reminder / Homework</strong>
                             <CourseReminders reminders={c.reminders} />
                         </div>
                     </div>
                 </div>
                 <div className="body-right">
                     <div className="info-row">
-                        <div><strong>Buổi:</strong> <span className="muted">{c.attended_sessions}/{c.session_number}</span></div>
+                        <div><strong>Session:</strong> <span className="muted">{c.attended_sessions}/{c.session_number}</span></div>
                     </div>
                     <div className={`status-pill ${c.clickable ? "active" : c.hasFinished ? "finished" : "upcoming"}`} style={{ marginTop: 12 }}>
-                        {c.clickable ? "Đang học" : c.hasFinished ? "Đã học" : "Sắp khai giảng"}
+                        {c.clickable ? "Ongoing" : c.hasFinished ? "Completed" : "Upcoming"}
                     </div>
                 </div>
             </div>

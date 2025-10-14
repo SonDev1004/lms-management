@@ -7,10 +7,10 @@ import { Chip } from 'primereact/chip';
 import { formatDateShort } from '../../utils/date';
 
 const TYPE_MAP = {
-    assignment: { label: 'Bài tập', color: '#2563eb' },
-    event: { label: 'Sự kiện', color: '#f97316' },
-    feedback: { label: 'Phản hồi', color: '#7c3aed' },
-    system: { label: 'Hệ thống', color: '#6b7280' },
+    assignment: { label: 'Assignment', color: '#2563eb' },
+    event: { label: 'Event', color: '#f97316' },
+    feedback: { label: 'Feedback', color: '#7c3aed' },
+    system: { label: 'System', color: '#6b7280' },
 };
 
 export default function NotificationDetailDialog({ visible, onHide, notification, onDelete }) {
@@ -30,7 +30,7 @@ export default function NotificationDetailDialog({ visible, onHide, notification
                         {notification.type && <Chip label={TYPE_MAP[notification.type]?.label || notification.type} style={{ backgroundColor: TYPE_MAP[notification.type]?.color || '#9ca3af', color: 'white' }} />}
                     </div>
                 ) : (
-                    'Chi tiết'
+                    'Details'
                 )
             }
             visible={visible}
@@ -42,12 +42,12 @@ export default function NotificationDetailDialog({ visible, onHide, notification
                     <div style={{ color: '#374151', lineHeight: 1.6 }}>{notification.message}</div>
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                        <Button label="Đóng" className="p-button-text" onClick={onHide} />
+                        <Button label="Close" className="p-button-text" onClick={onHide} />
                         <Button
-                            label="Xoá"
+                            label="Delete"
                             icon="pi pi-trash"
                             onClick={async () => {
-                                if (!window.confirm('Bạn có chắc muốn xoá?')) return;
+                                if (!window.confirm('Are you sure you want to delete?')) return;
                                 await onDelete(notification.id);
                                 onHide();
                             }}

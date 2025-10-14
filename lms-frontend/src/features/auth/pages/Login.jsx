@@ -35,7 +35,7 @@ const Login = () => {
             })
             .catch(err => {
                 console.log("🚀 ~ handleLogin ~ err: ", err.response.data);
-                toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Đăng nhập thất bại', life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to login', life: 3000 });
             })
     }
 
@@ -52,25 +52,25 @@ const Login = () => {
                 <Toast ref={toast} />
 
                 <div className='w-full md:w-8 lg:w-4 mx-auto'>
-                    <Panel header='Đăng nhập'>
+                    <Panel header='Login'>
                         <div className='flex flex-column gap-2 mb-3'>
-                            <label htmlFor='username'>Tên đăng nhập</label>
+                            <label htmlFor='username'>Username</label>
                             <InputText id='username' className='max-w-full' value={username} onChange={(e) => setUsername(e.target.value)} autoFocus />
                         </div>
                         <div className='flex flex-column gap-2 mb-3'>
-                            <label htmlFor='password'>Mật khẩu</label>
+                            <label htmlFor='password'>Password</label>
                             <InputText id='password' className='max-w-full' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
                         </div>
                         <div className='flex flex-column gap-2 mb-3'>
-                            <Button label='Đăng nhập' onClick={handleLogin} />
+                            <Button label='Login' onClick={handleLogin} />
                         </div>
                         <Divider />
                         <div className='flex justify-content-between'>
                             <div>
-                                Chưa có tài khoản? <Link to='/register'>Đăng ký</Link>
+                                <Link to='/register'>Register Now</Link>
                             </div>
                             <div>
-                                <Link to='/forgot-password'>Quên mật khẩu?</Link>
+                                <Link to='/forgot-password'>Forgot Password?</Link>
                             </div>
                         </div>
 
