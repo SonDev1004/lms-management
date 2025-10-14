@@ -459,7 +459,7 @@ export default function LeaveRequestForm({
     if (inline) {
         return (
             <div className={`leave-inline card p-p-3 ${mounted ? 'lr-enter' : ''}`}>
-                <h3 className="lr-title">Đơn xin nghỉ</h3>
+                <h3 className="lr-title">Leave Request</h3>
                 {requestsListTop}
                 <hr className="lr-divider" />
                 <div className="lr-main">
@@ -472,13 +472,13 @@ export default function LeaveRequestForm({
 
     const dialogFooter = (
         <div>
-            <Button label="Hủy" className="p-button-text" onClick={() => { resetForm(); onHide?.(); }} disabled={submitting} />
-            <Button label="Gửi" onClick={handleSubmit} loading={submitting} disabled={submitting} />
+            <Button label="Cancel" className="p-button-text" onClick={() => { resetForm(); onHide?.(); }} disabled={submitting} />
+            <Button label="Submit" onClick={handleSubmit} loading={submitting} disabled={submitting} />
         </div>
     );
 
     return (
-        <Dialog header="Đơn xin nghỉ" visible={!!visible} style={{ width: '720px' }} footer={dialogFooter} onHide={onHide} closable>
+        <Dialog header="Leave Request" visible={!!visible} style={{ width: '720px' }} footer={dialogFooter} onHide={onHide} closable>
             <div className="lr-dialog-wrap">
                 {requestsListTop}
                 <hr className="lr-divider" />

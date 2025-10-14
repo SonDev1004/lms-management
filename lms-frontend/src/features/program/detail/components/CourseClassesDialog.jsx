@@ -7,7 +7,7 @@ function StatusPill({ value }) {
     const s = String(value || "").toLowerCase();
     const map = {
         open: { text: "Đang tuyển sinh", cls: "bg-teal-100 text-teal-700" },
-        upcoming: { text: "Sắp khai giảng", cls: "bg-cyan-100 text-cyan-700" },
+        upcoming: { text: "Upcoming", cls: "bg-cyan-100 text-cyan-700" },
         pending: { text: "Chờ mở", cls: "bg-gray-100 text-gray-700" },
     };
     const m = map[s] || map.pending;
@@ -15,11 +15,11 @@ function StatusPill({ value }) {
 }
 
 export default function CourseClassesDialog({
-                                                visible,
-                                                onHide,
-                                                courseLabel,        // ví dụ: "IELTS-2025-A (IELTS-2025-A)"
-                                                rows = [],          // [{id,title,code,startDate,scheduleText,sessions,capacity,size,status}]
-                                            }) {
+    visible,
+    onHide,
+    courseLabel,        // ví dụ: "IELTS-2025-A (IELTS-2025-A)"
+    rows = [],          // [{id,title,code,startDate,scheduleText,sessions,capacity,size,status}]
+}) {
     return (
         <Dialog
             header={<div className="flex items-center gap-2">

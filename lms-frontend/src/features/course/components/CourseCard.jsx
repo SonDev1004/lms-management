@@ -63,7 +63,7 @@ export default function CourseCard({ course }) {
                     </div>
                     <div className="header-right">
                         <div className="start-date" style={{ color: c.accentText }}>
-                            Khai giảng: {formatDateISO(c.start_date)}
+                            Opening Date: {formatDateISO(c.start_date)}
                         </div>
                     </div>
                 </div>

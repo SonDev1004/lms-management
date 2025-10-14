@@ -110,7 +110,7 @@ export default function CourseDetailStudent() {
                             </div>
                         </TabPanel>
 
-                        <TabPanel header={<span className="tab-header">🗓️ <span className="tab-title">Lịch sử điểm danh</span></span>}>
+                        <TabPanel header={<span className="tab-header">🗓️ <span className="tab-title">Attendance History</span></span>}>
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
@@ -121,7 +121,7 @@ export default function CourseDetailStudent() {
                             </div>
                         </TabPanel>
 
-                        <TabPanel header={<span className="tab-header">🗒️ <span className="tab-title">Xin nghỉ</span></span>}>
+                        <TabPanel header={<span className="tab-header">🗒️ <span className="tab-title">Absent</span></span>}>
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
