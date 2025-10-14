@@ -74,8 +74,10 @@ public enum ErrorCode {
     SESSION_NOT_FOUND(1051, "Session not found", HttpStatus.NOT_FOUND),
     INTERNAL_ERROR(1052, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR),
     STUDENT_NOT_IN_COURSE(1053, "Student not in course", HttpStatus.NOT_FOUND),
-    INVALID_DATE(1054, "Invalid date", HttpStatus.BAD_REQUEST);
-
+    INVALID_DATE(1054, "Invalid date", HttpStatus.BAD_REQUEST),
+    // create user
+    DUPLICATE_USER(1055, "User with the same username or email already exists", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_FOUND(1056, "Role not found", HttpStatus.NOT_FOUND);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
