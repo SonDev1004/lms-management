@@ -30,7 +30,7 @@ public class AdminItController {
      * ------------------- USER -------------------
      **/
 
-    // ✅ Lấy danh sách user (lọc theo role hoặc keyword)
+    //Lấy danh sách user (lọc theo role hoặc keyword)
     @GetMapping("/users")
     public ApiResponse<List<User>> getUsers(
             @RequestParam(required = false) String role, @RequestParam(required = false) String keyword) {
@@ -40,7 +40,7 @@ public class AdminItController {
                 .build();
     }
 
-    // ✅ Tạo tài khoản mới
+    //Tạo tài khoản mới
     @PostMapping("/users")
     public ApiResponse<UserResponse> createUser(@Valid @RequestBody CreateUserRequest req) {
         return ApiResponse.<UserResponse>builder()
@@ -49,14 +49,14 @@ public class AdminItController {
                 .build();
     }
 
-    // ✅ Xoá user
+    //Xoá user
     @DeleteMapping("/users/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable Long id) {
         service.deleteUser(id);
         return ApiResponse.<Void>builder().message("Xoá tài khoản thành công").build();
     }
 
-    // ✅ Gán role cho user
+    //Gán role cho user
     @PutMapping("/users/{userId}/role/{roleId}")
     public ApiResponse<User> assignRole(@PathVariable Long userId, @PathVariable Long roleId) {
         return ApiResponse.<User>builder()
@@ -69,7 +69,7 @@ public class AdminItController {
      * ------------------- ROLE -------------------
      **/
 
-    // ✅ Lấy danh sách role
+    //Lấy danh sách role
     @GetMapping("/roles")
     public ApiResponse<List<Role>> getRoles() {
         return ApiResponse.<List<Role>>builder()
@@ -78,7 +78,7 @@ public class AdminItController {
                 .build();
     }
 
-    // ✅ Tạo role mới
+    //Tạo role mới
     @PostMapping("/roles")
     public ApiResponse<Role> createRole(@RequestBody Role r) {
         return ApiResponse.<Role>builder()
@@ -87,7 +87,7 @@ public class AdminItController {
                 .build();
     }
 
-    // ✅ Xoá role
+    //Xoá role
     @DeleteMapping("/roles/{id}")
     public ApiResponse<Void> deleteRole(@PathVariable Long id) {
         service.deleteRole(id);
@@ -98,7 +98,7 @@ public class AdminItController {
      * ------------------- PERMISSION -------------------
      **/
 
-    // ✅ Lấy danh sách quyền
+    //Lấy danh sách quyền
     @GetMapping("/permissions")
     public ApiResponse<List<Permission>> getPermissions() {
         return ApiResponse.<List<Permission>>builder()
@@ -107,7 +107,7 @@ public class AdminItController {
                 .build();
     }
 
-    // ✅ Tạo quyền mới
+    //Tạo quyền mới
     @PostMapping("/permissions")
     public ApiResponse<Permission> createPermission(@RequestBody Permission p) {
         return ApiResponse.<Permission>builder()
@@ -116,14 +116,14 @@ public class AdminItController {
                 .build();
     }
 
-    // ✅ Xoá quyền
+    //Xoá quyền
     @DeleteMapping("/permissions/{id}")
     public ApiResponse<Void> deletePermission(@PathVariable Long id) {
         service.deletePermission(id);
         return ApiResponse.<Void>builder().message("Xoá quyền thành công").build();
     }
 
-    // ✅ Gán quyền cho role
+    //Gán quyền cho role
     @PutMapping("/roles/{id}/permissions")
     public ApiResponse<Role> updatePermissions(@PathVariable Long id, @RequestBody List<Long> permIds) {
         return ApiResponse.<Role>builder()
