@@ -71,6 +71,8 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/v1/enrollments/**")
                         .hasAnyRole("GUEST", "STUDENT")
+                        .requestMatchers("/api/adminit/**")
+                        .hasRole("ADMIN_IT")
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()
                         .requestMatchers("/api/user/profile")
