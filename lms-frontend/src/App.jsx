@@ -69,6 +69,7 @@ import Home from "@/features/home/pages/Home.jsx";
 import ProgramDetailPage from "@/features/program/detail/pages/ProgramDetailPage.jsx";
 import { FeedbackPage } from "@/features/feedback/index.js";
 import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
+import UserProfile from "@/features/user/pages/UserProfile.jsx";
 
 const App = () => {
 
@@ -82,6 +83,7 @@ const App = () => {
 					<Route path="register" element={<Register />} />
 					<Route path="programs" element={<ProgramList />} />
 					<Route path="programs/:id" element={<ProgramDetailPage />} />
+					<Route path="userprofile" element={<UserProfile />} />
 					<Route path="subjects" element={<SubjectList />} />
 					<Route path="subjects/:id" element={<SubjectDetail />} />
 					<Route path="payment" element={<PaymentPage />} />
