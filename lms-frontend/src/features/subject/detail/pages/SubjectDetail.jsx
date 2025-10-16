@@ -42,8 +42,8 @@ export default function SubjectDetail() {
                 console.error(e);
                 toast.current?.show({
                     severity: 'error',
-                    summary: 'Lỗi tải dữ liệu',
-                    detail: 'Không thể tải chi tiết môn học.',
+                    summary: 'Data loading error',
+                    detail: 'Unable to load subject details.',
                 });
             } finally {
                 if (alive) setLoading(false);
@@ -67,8 +67,8 @@ export default function SubjectDetail() {
         if (!selectedClass) {
             toast.current?.show({
                 severity: 'warn',
-                summary: 'Không tìm thấy lớp',
-                detail: 'Vui lòng chọn lại.',
+                summary: 'Class not found',
+                detail: 'Please select again.',
             });
             return;
         }
@@ -157,22 +157,22 @@ export default function SubjectDetail() {
                         <main className="sd-main">
                             {active === 0 && (
                                 <section className="sd-card">
-                                    <h3 className="sd-h3">Mô tả khóa học</h3>
+                                    <h3 className="sd-h3">Course Description</h3>
                                     <p className="sd-summary">
                                         {subject.summary ||
-                                            'Khóa học Listening được thiết kế cho trình độ trung cấp, tập trung chiến lược làm bài, luyện tập chuyên sâu và phản hồi cá nhân hóa để đạt band mục tiêu.'}
+                                            'This Listening course is designed for intermediate learners, focusing on exam strategies, intensive practice, and personalized feedback to help you reach your target band.'}
                                     </p>
 
-                                    <h4 className="sd-h4">Bạn sẽ học được</h4>
+                                    <h4 className="sd-h4">What you’ll learn</h4>
                                     <ul className="sd-list">
                                         {(outline.length
                                             ? outline
                                             : [
-                                                'Nhận diện thông tin chính từ bài giảng & hội thoại học thuật',
-                                                'Thành thạo các dạng câu hỏi: MCQ, Matching, Gap-fill…',
-                                                'Ghi chép hiệu quả cho tài liệu audio phức tạp',
-                                                'Tăng khả năng tập trung trong các đoạn nghe dài',
-                                                'Làm quen đa dạng accent và tốc độ nói',
+                                                'Identify key information from lectures and academic conversations',
+                                                'Master question types: MCQ, Matching, Gap-fill, etc.',
+                                                'Take effective notes for complex audio materials',
+                                                'Improve concentration on long listening passages',
+                                                'Familiarize yourself with various accents and speaking speeds',
                                             ]).map((x, i) => <li key={i}>{x}</li>)}
                                     </ul>
                                 </section>
@@ -193,7 +193,7 @@ export default function SubjectDetail() {
 
                             {(active === 3 || active === 4 || active === 5) && (
                                 <section className="sd-card">
-                                    <div className="text-600">Nội dung “{tabs[active].label}” sẽ được cập nhật.</div>
+                                    <div className="text-600">Content for “{tabs[active].label}” will be updated soon.</div>
                                 </section>
                             )}
                         </main>
@@ -204,7 +204,7 @@ export default function SubjectDetail() {
             )}
 
             {!loading && !subject && (
-                <div className="sd-loading">Không tìm thấy môn học.</div>
+                <div className="sd-loading">Subject not found.</div>
             )}
         </div>
     );

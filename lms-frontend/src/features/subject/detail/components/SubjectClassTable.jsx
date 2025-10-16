@@ -6,8 +6,8 @@ import { Calendar } from 'primereact/calendar';
 
 const StatusPill = ({ value }) => {
     const k = String(value || '').toLowerCase();
-    if (k.includes('full'))   return <Tag value="Full" severity="danger" rounded />;
-    if (k.includes('fill'))   return <Tag value="Filling fast" severity="warning" rounded />;
+    if (k.includes('full')) return <Tag value="Full" severity="danger" rounded />;
+    if (k.includes('fill')) return <Tag value="Filling fast" severity="warning" rounded />;
     return <Tag value="Open" severity="success" rounded />;
 };
 
@@ -26,7 +26,7 @@ export default function SubjectClassTable({ classes = [], onRegister }) {
         return (classes || []).filter(c => {
             const byMode = mode === 'All' || String(c.mode || '').toLowerCase().includes(mode.toLowerCase());
             const byCampus = campus === 'All' || (c.place || c.room || '—') === campus;
-            const byDate = !date || (c.startDate && new Date(c.startDate) >= new Date(date.setHours(0,0,0,0)));
+            const byDate = !date || (c.startDate && new Date(c.startDate) >= new Date(date.setHours(0, 0, 0, 0)));
             return byMode && byCampus && byDate;
         });
     }, [classes, mode, campus, date]);
@@ -89,7 +89,7 @@ export default function SubjectClassTable({ classes = [], onRegister }) {
                 ))}
 
                 {filtered.length === 0 && (
-                    <div className="p-3 text-center text-600">Không có lớp phù hợp bộ lọc.</div>
+                    <div className="p-3 text-center text-600">No classes match the selected filters.</div>
                 )}
             </div>
         </section>

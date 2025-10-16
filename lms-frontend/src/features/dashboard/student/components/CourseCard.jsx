@@ -21,7 +21,7 @@ export default function CourseCard({ course, filledCount = 0 }) {
                     </div>
 
                     <div className="next-session">
-                        <div className="label">Buổi học tiếp theo:</div>
+                        <div className="label">Next session:</div>
                         <div className="line"><div><i className="pi pi-calendar" style={{ marginRight: 8 }}></i>{course.next.date}</div><div><i className="pi pi-clock" style={{ marginRight: 8 }}></i>{course.next.time}</div></div>
                         <div className="line" style={{ marginTop: 6 }}><div><i className="pi pi-map-marker" style={{ marginRight: 8 }}></i>{course.next.room}</div><div></div></div>
                     </div>

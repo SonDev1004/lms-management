@@ -8,10 +8,10 @@ export const statusMap = {
 };
 
 export const statusLabelMap = {
-    teaching: "Đang học",
-    finished: "Đã kết thúc",
-    upcoming: "Sắp mở",
-    canceled: "Đã huỷ"
+    teaching: "Teaching",
+    finished: "Finished",
+    upcoming: "Upcoming",
+    canceled: "Canceled"
 };
 
 export const statusSeverityMap = {

@@ -5,7 +5,7 @@ import { Card } from 'primereact/card';
 import '../styles/LevelDonut.css';
 
 export default function LevelDonut({ data, showStars = true, maxStars = 5 }) {
-    const happyTokens = ['happy', 'hài', 'hài lòng', 'vui', 'satisfied', 'tốt', 'good'];
+    const happyTokens = ['happy', 'satisfied', 'good'];
 
     function findHappyIndex(labels = []) {
         if (!labels) return -1;
@@ -52,12 +52,12 @@ export default function LevelDonut({ data, showStars = true, maxStars = 5 }) {
                 }
             }
         }
-        detectedLabel = 'Tổng hợp feedback';
+        detectedLabel = 'Feedback summary';
     } else {
         return (
             <Card className="ld-card">
-                <h3 className="ld-title">Tỉ lệ học viên hài lòng</h3>
-                <p className="ld-empty">Không có dữ liệu hợp lệ. Gửi về dạng <code>{'{ labels, values }'}</code> hoặc <code>{'{ feedbackList }'}</code>.</p>
+                <h3 className="ld-title">Student Satisfaction Rate</h3>
+                <p className="ld-empty">No valid data. Please provide <code>{'{ labels, values }'}</code> or <code>{'{ feedbackList }'}</code> format.</p>
             </Card>
         );
     }
@@ -66,7 +66,7 @@ export default function LevelDonut({ data, showStars = true, maxStars = 5 }) {
     const ratioText = total > 0 ? `${Number(ratio.toFixed(0))}%` : '0%';
 
     const chartData = {
-        labels: ['Hài lòng', 'Khác'],
+        labels: ['Satisfied', 'Others'],
         datasets: [
             {
                 data: [happyCount, Math.max(0, total - happyCount)],
@@ -88,7 +88,7 @@ export default function LevelDonut({ data, showStars = true, maxStars = 5 }) {
 
     return (
         <Card className="ld-card">
-            <h3 className="ld-title">Tỉ lệ học viên hài lòng</h3>
+            <h3 className="ld-title">Student Satisfaction Rate</h3>
 
             <div className="ld-chart-wrap">
                 <div className="ld-chart-area">
@@ -110,18 +110,18 @@ export default function LevelDonut({ data, showStars = true, maxStars = 5 }) {
             <div className="ld-legend">
                 <div className="ld-legend-item">
                     <span className="ld-swatch" style={{ backgroundColor: '#2E8B57' }} />
-                    <span>Hài lòng</span>
+                    <span>Satisfied</span>
                 </div>
                 <div className="ld-legend-item">
                     <span className="ld-swatch" style={{ backgroundColor: '#E9ECEF' }} />
-                    <span>Khác</span>
+                    <span>Others</span>
                 </div>
             </div>
 
             <div className="ld-note">
                 <small>
-                    Nguồn: tổng hợp feedback của tất cả khóa học.
-                    {fallbackUsed ? ' — chú ý: đang dùng nhãn đầu tiên làm fallback.' : ''}
+                    Source: summary of feedback from all courses.
+                    {fallbackUsed ? ' — Note: using the first label as fallback.' : ''}
                 </small>
             </div>
         </Card>

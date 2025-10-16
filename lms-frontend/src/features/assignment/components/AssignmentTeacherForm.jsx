@@ -20,9 +20,9 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
     const [file, setFile] = useState(null);
     const [selectedAssignmentType, setSelectedAssignmentType] = useState(null);
     const assignmentType = [
-        { name: 'Tại nhà', code: 'HOME' },
-        { name: 'Tại lớp', code: 'CLASS' },
-        { name: 'Bài thi', code: 'EXAM' }
+        { name: 'Home', code: 'HOME' },
+        { name: 'Class', code: 'CLASS' },
+        { name: 'Exam', code: 'EXAM' }
     ];
 
 
@@ -35,11 +35,11 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
 
     const handleSave = () => {
         if (!title.trim()) {
-            toast.current.show({ severity: "warn", summary: "Thiếu tiêu đề", detail: "Vui lòng nhập tiêu đề." });
+            toast.current.show({ severity: "warn", summary: "Missing title", detail: "Please enter a title." });
             return;
         }
         if (!dueDate) {
-            toast.current.show({ severity: "warn", summary: "Thiếu hạn nộp", detail: "Vui lòng chọn ngày giờ hạn nộp." });
+            toast.current.show({ severity: "warn", summary: "Missing due date", detail: "Please select a due date and time." });
             return;
         }
         //Check ngày giao bài đúng với buổi học, hạn nộp không được trước ngày giao bài --BEGIN--
@@ -55,8 +55,8 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         if (!isValidDay) {
             toast.current.show({
                 severity: "error",
-                summary: "Ngày giao bài không hợp lệ",
-                detail: `Ngày giao bài phải đúng ngày diễn ra buổi học (${assignDay.toLocaleDateString("vi-VN")})`,
+                summary: "Invalid assignment date",
+                detail: `The assignment date must match the class session date (${assignDay.toLocaleDateString("en-US")}).`,
                 life: 2500
             });
             return;
@@ -64,7 +64,7 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         //Check ngày giao bài đúng với buổi học, hạn nộp không được trước ngày giao bài --END--
 
         if (!courseId && !defaultValues?.course_id) {
-            toast.current.show({ severity: "warn", summary: "Thiếu Course", detail: "Không xác định course_id." });
+            toast.current.show({ severity: "warn", summary: "Missing  Course", detail: "Course ID not found." });
             return;
         }
         const payload = {
@@ -81,12 +81,12 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         };
 
         onSave?.(payload);
-        toast.current.show({ severity: "success", summary: "Đã giao bài", detail: "Tạo/giao bài thành công." });
+        toast.current.show({ severity: "success", summary: "Assignment created", detail: "The assignment was successfully created/assigned." });
     };
     const footer = (
         <div className="flex justify-content-end gap-2">
-            <Button label="Hủy" severity="secondary" onClick={() => onCancel?.()} />
-            <Button label="Giao bài" icon="pi pi-send" onClick={handleSave} />
+            <Button label="Cancel" severity="secondary" onClick={() => onCancel?.()} />
+            <Button label="Assign" icon="pi pi-send" onClick={handleSave} />
         </div>
     );
     return (<div>
@@ -94,9 +94,9 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         <Card
             className="w-30rem w-full"
             header={<div className="flex justify-content-between align-items-center">
-                <h1 className="m-0 mb-3">Giao bài tập</h1>
+                <h1 className="m-0 mb-3">Assignment</h1>
                 <Button
-                    label="Thêm bài tập"
+                    label="Add assignment"
                     icon="pi pi-plus"
                     severity="success"
                     onClick={() => navigate(`/teacher/courses/${courseId}/assignment/add`)}
@@ -114,7 +114,7 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                         onChange={(e) => setTitle(e.target.value)}
                         className='w-full'
                     />
-                    <label htmlFor="asg-title">Tiêu đề</label>
+                    <label htmlFor="asg-title">Title</label>
                 </span>
                 <div className="flex gap-2">
                     <div className="flex-1">
@@ -126,7 +126,7 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                                 onValueChange={(e) => setMaxScore(e.value)}
                                 className="w-full"
                             />
-                            <label htmlFor="asg-max">Điểm tối đa</label>
+                            <label htmlFor="asg-max">Max Score</label>
                         </span>
                     </div>
 
@@ -139,11 +139,11 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                                 onChange={(e) => setSelectedAssignmentType(e.value)}
                                 options={assignmentType}
                                 optionLabel="name"
-                                placeholder="Chọn loại bài tập"
+                                placeholder="Choose assignment type"
                                 maxSelectedLabels={3}
                                 className="w-full"
                             />
-                            <label htmlFor="asg-type">Loại bài tập</label>
+                            <label htmlFor="asg-type">Assignment Type</label>
                         </span>
                     </div>
                 </div>
@@ -159,13 +159,13 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                         className="w-full"
                         style={{ width: '100%' }}
                     />
-                    <label htmlFor="asg-due">Hạn nộp</label>
+                    <label htmlFor="asg-due">Due Date</label>
                 </span>
                 <div className="flex flex-column gap-2">
-                    <label className="text-500">Tệp đính kèm (file_name)</label>
+                    <label className="text-500">Attached File</label>
                     <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
                     <small className="text-500">
-                        {file?.name ? `Đã chọn: ${file.name}` : (defaultValues?.file_name ? `Hiện có: ${defaultValues.file_name}` : "Chưa chọn tệp")}
+                        {file?.name ? `Selected: ${file.name}` : (defaultValues?.file_name ? `Current: ${defaultValues.file_name}` : "No file chosen")}
                     </small>
                 </div>
 

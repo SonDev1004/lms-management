@@ -8,7 +8,7 @@ import { useRef } from 'react';
 import { Menu } from 'primereact/menu';
 import logo from 'assets/images/logo.png';
 import axiosClient from '@/shared/api/axiosClient.js';
-import {AppUrls} from "@/shared/constants/index.js";
+import { AppUrls } from "@/shared/constants/index.js";
 
 export default function TemplateDemo() {
     const navigate = useNavigate();
@@ -49,11 +49,11 @@ export default function TemplateDemo() {
             label: `${localStorage.getItem('username')}`,
             items: [
                 {
-                    label: 'Tài khoản',
+                    label: 'Account',
                     icon: 'pi pi-user'
                 },
                 {
-                    label: 'Học trực tuyến',
+                    label: 'Online Learning',
                     icon: 'pi pi-book'
                 }
             ]
@@ -62,7 +62,7 @@ export default function TemplateDemo() {
             separator: true
         },
         {
-            label: 'Đăng xuất',
+            label: 'Sign Out',
             icon: 'pi pi-sign-out',
             command: handleLogout
         }

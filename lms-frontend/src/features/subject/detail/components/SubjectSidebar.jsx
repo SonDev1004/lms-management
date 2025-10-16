@@ -104,7 +104,7 @@ export default function SubjectSidebar({ subject, onSelectUpcoming }) {
                             </button>
                         ))
                     ) : (
-                        <div className="text-600">Chưa có lịch.</div>
+                        <div className="text-600">No upcoming sessions.</div>
                     )}
                 </div>
             </div>

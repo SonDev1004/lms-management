@@ -57,7 +57,7 @@ const SessionList = () => {
                 const data = await SessionService.getSessionsByCourse(courseId);
                 if (mounted) setSessionList(data || []);
             } catch (err) {
-                if (mounted) setError(err?.message || "Không tải được danh sách buổi học");
+                if (mounted) setError(err?.message || "Could not load session list");
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -91,8 +91,8 @@ const SessionList = () => {
         setShowAdd(false);
         toast.current?.show({
             severity: "success",
-            summary: "Đã thêm buổi học",
-            detail: "Thêm thành công!",
+            summary: "Session added",
+            detail: "Added successfully!",
             life: 1200,
         });
     };
@@ -102,8 +102,8 @@ const SessionList = () => {
         setSessionList((list) => list.map((item) => (item.id === id ? { ...item, ...newValues } : item)));
         toast.current?.show({
             severity: "success",
-            summary: "Đã cập nhật",
-            detail: "Cập nhật thành công!",
+            summary: "Updated",
+            detail: "Update successful!",
             life: 1200,
         });
         setEditingId(null);
@@ -116,7 +116,7 @@ const SessionList = () => {
         toast.current?.show({
             severity: "success",
             summary: "Đã giao bài",
-            detail: data?.title ? `“${data.title}” đã được giao` : "Giao bài thành công",
+            detail: data?.title ? `“${data.title}” has been assigned` : "Assignment added successfully",
             life: 1500,
         });
         setAddAssignmentId(null);
@@ -141,8 +141,8 @@ const SessionList = () => {
         if (isPast) {
             toast.current?.show({
                 severity: "warn",
-                summary: "Không thể giao bài",
-                detail: "Buổi này đã qua, không thể giao bài tập.",
+                summary: "Cannot assign",
+                detail: "This session is over, cannot assign homework.",
                 life: 1800,
             });
             return;
@@ -166,10 +166,10 @@ const SessionList = () => {
                     header={
                         <div className="flex justify-content-between align-items-center w-full">
                             <div className="flex align-items-center gap-2">
-                                Buổi {orderOrIndex}: {shortDate(session.date)}
+                                Session {orderOrIndex}: {shortDate(session.date)}
                                 <Button
                                     icon="pi pi-pencil"
-                                    tooltip="Sửa buổi học"
+                                    tooltip="Edit session"
                                     tooltipOptions={{ position: 'top' }}
                                     rounded
                                     text
@@ -178,7 +178,7 @@ const SessionList = () => {
                                 {/* Nút Giao bài tập: giữ UI từ bản kia, nhưng gọi openAssignment thay vì navigate */}
                                 <Button
                                     icon="pi pi-paperclip"
-                                    tooltip="Giao bài tập"
+                                    tooltip="Assignment"
                                     tooltipOptions={{ position: 'top' }}
                                     rounded
                                     text
@@ -187,10 +187,10 @@ const SessionList = () => {
                                 />
                             </div>
                             <div className="flex gap-2">
-                                <p>Sĩ số: {studentCount}/{studentCount}</p>
+                                <p>No. Student: {studentCount}/{studentCount}</p>
                                 <Button
                                     icon="pi pi-list-check"
-                                    tooltip="Điểm danh"
+                                    tooltip="Attendance"
                                     tooltipOptions={{ position: 'top' }}
                                     rounded
                                     text
@@ -218,7 +218,7 @@ const SessionList = () => {
                         <>
                             <div>{session.description}</div>
                             <div className="mt-2">
-                                <b>Bài tập đã giao:</b>
+                                <b>Assigned homework:</b>
                                 <AssignmentTeacherList sessionId={session.id} assignments={assignments} />
                             </div>
                         </>
@@ -229,15 +229,15 @@ const SessionList = () => {
 
     return (
         <div>
-            <h1>Danh sách buổi học</h1>
+            <h1>Session List</h1>
 
-            {loading && <div>Đang tải...</div>}
+            {loading && <div>Loading...</div>}
             {error && <div className="text-red-500">{error}</div>}
 
             {!loading && !error && (
                 <>
                     {!showAdd && (
-                        <Button className="mb-2" label="Thêm buổi" onClick={() => setShowAdd(true)} />
+                        <Button className="mb-2" label="Add Session" onClick={() => setShowAdd(true)} />
                     )}
                     {showAdd && <AddSession onCancel={() => setShowAdd(false)} onSave={handleAdd} />}
 
@@ -251,7 +251,7 @@ const SessionList = () => {
                 </>
             )}
 
-            <Button className="mt-2" label="Quay lại" onClick={() => navigate(-1)} />
+            <Button className="mt-2" label="Back" onClick={() => navigate(-1)} />
             <Toast ref={toast} />
         </div>
     );

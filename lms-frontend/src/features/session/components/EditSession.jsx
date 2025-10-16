@@ -14,8 +14,8 @@ const EditSession = ({ session, onCancel, onSave }) => {
     //Hợp thức hóa:
     const validate = () => {
         let err = {};
-        if (!draft.description?.trim()) err.description = "Không được để trống";
-        if (!draft.date) err.date = "Vui lòng chọn ngày";
+        if (!draft.description?.trim()) err.description = "Description cannot be empty";
+        if (!draft.date) err.date = "Please select a date";
         setError(err);
         return Object.keys(err).length == 0;
     }
@@ -38,7 +38,7 @@ const EditSession = ({ session, onCancel, onSave }) => {
         if (!validate()) return;
         const changed = getDiff();
         if (Object.keys(changed).length === 0) {
-            alert("Không có thay đổi.");
+            alert("No changes.");
             onCancel();
             return;
         }
@@ -48,7 +48,7 @@ const EditSession = ({ session, onCancel, onSave }) => {
     return (
         <div className="grid p-2">
             <div className="col-12 md:col-4">
-                <label className="block mb-2">Ngày</label>
+                <label className="block mb-2">Date</label>
                 <Calendar
                     value={draft.date}
                     onChange={e => setDraft(d => ({ ...d, date: e.value }))}
@@ -58,7 +58,7 @@ const EditSession = ({ session, onCancel, onSave }) => {
                 {error.date && <small className="p-error block">{error.date}</small>}
             </div>
             <div className="col-12 md:col-8">
-                <label className="block mb-2">Nội dung</label>
+                <label className="block mb-2">Content</label>
                 <InputTextarea
                     value={draft.description}
                     onChange={e => setDraft(d => ({ ...d, description: e.target.value }))}
@@ -68,8 +68,8 @@ const EditSession = ({ session, onCancel, onSave }) => {
                 {error.description && <small className="p-error block">{error.description}</small>}
             </div>
             <div className="col-12 flex justify-content-end gap-2 mt-2">
-                <Button label="Huỷ" severity="secondary" outlined onClick={onCancel} />
-                <Button label="Cập nhật" onClick={handleSave} />
+                <Button label="Cancel" severity="secondary" outlined onClick={onCancel} />
+                <Button label="Update" onClick={handleSave} />
             </div>
         </div>
     );

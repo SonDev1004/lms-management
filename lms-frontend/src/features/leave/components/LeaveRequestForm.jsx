@@ -14,9 +14,9 @@ import { fetchLeaveRequestsForStudent, submitLeaveRequest } from '../api/leaveSe
 import '../style/LeaveRequestForm.css';
 
 const leaveTypes = [
-    { label: 'Ốm đau', value: 'sick' },
-    { label: 'Việc riêng', value: 'personal' },
-    { label: 'Sự cố', value: 'other' }
+    { label: 'Sick', value: 'sick' },
+    { label: 'Personal', value: 'personal' },
+    { label: 'Other', value: 'other' }
 ];
 
 const STATUS_OPTIONS = [
@@ -26,26 +26,26 @@ const STATUS_OPTIONS = [
 ];
 
 const DATE_MODE_OPTIONS = [
-    { label: 'Chọn theo khoảng (range)', value: 'range' },
-    { label: 'Chọn nhiều ngày (multiple)', value: 'multiple' }
+    { label: 'Select by range', value: 'range' },
+    { label: 'Select multiple days', value: 'multiple' }
 ];
 
 const SORT_OPTIONS = [
-    { label: 'Mới nhất trước', value: 'newest' },
-    { label: 'Cũ nhất trước', value: 'oldest' }
+    { label: 'Newest first', value: 'newest' },
+    { label: 'Oldest first', value: 'oldest' }
 ];
 
 const PAGE_SIZE = 5;
 
 export default function LeaveRequestForm({
-                                             visible,
-                                             onHide,
-                                             course,
-                                             student,
-                                             sessions = [],
-                                             onSubmitted,
-                                             inline = true
-                                         }) {
+    visible,
+    onHide,
+    course,
+    student,
+    sessions = [],
+    onSubmitted,
+    inline = true
+}) {
     const [sessionId, setSessionId] = useState(null);
     const [range, setRange] = useState(null);
     const [dateMode, setDateMode] = useState('range');
@@ -83,7 +83,7 @@ export default function LeaveRequestForm({
             })
             .catch((e) => {
                 console.error(e);
-                toast.current?.show({ severity: 'error', summary: 'Lỗi', detail: 'Không tải được danh sách.' });
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Failed to load the list.' });
             })
             .finally(() => setLoadingRequests(false));
     }, [student?.id]);
@@ -115,16 +115,16 @@ export default function LeaveRequestForm({
 
     const validate = () => {
         if (!types || types.length === 0) {
-            toast.current?.show({ severity: 'warn', summary: 'Thiếu thông tin', detail: 'Chọn ít nhất 1 loại xin nghỉ.' });
+            toast.current?.show({ severity: 'warn', summary: 'Missing information', detail: 'Please select at least one leave type.' });
             return false;
         }
         const hasDateOrSession = sessionId || (Array.isArray(range) && range.length > 0);
         if (!hasDateOrSession) {
-            toast.current?.show({ severity: 'warn', summary: 'Thiếu thông tin', detail: 'Chọn buổi hoặc ngày.' });
+            toast.current?.show({ severity: 'warn', summary: 'Missing information', detail: 'Please select a session or a date.' });
             return false;
         }
         if (!reason || reason.trim().length < 5) {
-            toast.current?.show({ severity: 'warn', summary: 'Thiếu thông tin', detail: 'Ghi lý do (ít nhất 5 ký tự).' });
+            toast.current?.show({ severity: 'warn', summary: 'Missing information', detail: 'Please provide a reason (at least 5 characters).' });
             return false;
         }
         return true;
@@ -196,12 +196,12 @@ export default function LeaveRequestForm({
                 setRequests((prev) =>
                     prev.map((r) => (r.id === editingId ? { ...r, type: res.type || types, reason: res.reason || reason, createdAt: r.createdAt, status: r.status } : r))
                 );
-                toast.current?.show({ severity: 'success', summary: 'Cập nhật', detail: 'Yêu cầu đã được cập nhật.' });
+                toast.current?.show({ severity: 'success', summary: 'Updated', detail: 'Request has been updated.' });
                 setHighlightId(editingId);
             } else {
                 setRequests((prev) => [{ ...res, status: 'pending', type: types }, ...prev]);
                 setHighlightId(res.id);
-                toast.current?.show({ severity: 'success', summary: 'Gửi thành công', detail: 'Yêu cầu xin nghỉ đã được gửi.' });
+                toast.current?.show({ severity: 'success', summary: 'Submitted', detail: 'Leave request has been submitted.' });
             }
             setTimeout(() => setHighlightId(null), 3000);
             onSubmitted?.(res);
@@ -209,7 +209,7 @@ export default function LeaveRequestForm({
             setPage(1);
         } catch (err) {
             console.error(err);
-            toast.current?.show({ severity: 'error', summary: 'Lỗi', detail: 'Không thể gửi yêu cầu.' });
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Unable to submit the request.' });
         } finally {
             setSubmitting(false);
         }
@@ -227,9 +227,9 @@ export default function LeaveRequestForm({
     };
 
     const handleRemoveRequest = (id) => {
-        if (!confirm('Bạn có chắc muốn xóa yêu cầu này?')) return;
+        if (!confirm('Are you sure you want to delete this request?')) return;
         setRequests((prev) => prev.filter((r) => r.id !== id));
-        toast.current?.show({ severity: 'info', summary: 'Đã xóa', detail: `Yêu cầu ${id} đã được xóa.` });
+        toast.current?.show({ severity: 'info', summary: 'Deleted', detail: `Request ${id} has been deleted.` });
     };
 
     let filtered = requests.filter((r) => {
@@ -284,13 +284,13 @@ export default function LeaveRequestForm({
             <Toast ref={toast} />
             <div className="p-fluid p-formgrid p-grid lr-form-grid">
                 <div className="p-field p-col-12 p-md-6">
-                    <label htmlFor="lr-type">Loại</label>
+                    <label htmlFor="lr-type">Type</label>
                     <MultiSelect
                         id="lr-type"
                         value={types}
                         options={leaveTypes}
                         onChange={(e) => setTypes(e.value || [])}
-                        placeholder="Chọn loại xin nghỉ"
+                        placeholder="Select leave type"
                         display="chip"
                         style={{ minWidth: 200 }}
                         showClear
@@ -298,53 +298,53 @@ export default function LeaveRequestForm({
                 </div>
 
                 <div className="p-field p-col-12 p-md-6">
-                    <label htmlFor="lr-session">Chọn buổi (nếu áp dụng)</label>
+                    <label htmlFor="lr-session">Select session (if applicable)</label>
                     <Dropdown
                         id="lr-session"
                         value={sessionId}
                         options={sessions.map((s) => ({ label: s.title + ' — ' + (new Date(s.date)).toLocaleDateString(), value: s.id }))}
                         onChange={(e) => setSessionId(e.value)}
-                        placeholder="Chọn buổi"
+                        placeholder="Select session"
                         showClear
                     />
                 </div>
 
                 <div className="p-field p-col-12 p-md-6">
-                    <label htmlFor="lr-datemode">Chế độ chọn ngày</label>
+                    <label htmlFor="lr-datemode">Date selection mode</label>
                     <Dropdown id="lr-datemode" value={dateMode} options={DATE_MODE_OPTIONS} onChange={(e) => { setDateMode(e.value); setRange(null); }} />
                 </div>
 
                 <div className="p-field p-col-12 p-md-6">
-                    <label htmlFor="lr-range">Hoặc chọn ngày</label>
+                    <label htmlFor="lr-range">Or select date</label>
                     <Calendar
                         id="lr-range"
                         value={range}
                         onChange={(e) => setRange(e.value)}
                         selectionMode={dateMode}
                         readOnlyInput
-                        placeholder={dateMode === 'range' ? 'Chọn ngày (vd. 12/08/2025 - 14/08/2025)' : 'Chọn nhiều ngày (bấm nhiều lần)'}
+                        placeholder={dateMode === 'range' ? 'Select date range (e.g. 12/08/2025 - 14/08/2025)' : 'Select multiple dates (click multiple times)'}
                         dateFormat="dd/mm/yy"
                     />
-                    <small className="lr-help">{dateMode === 'range' ? 'Chọn 2 ngày để tạo khoảng.' : 'Chọn từng ngày rời rạc.'}</small>
+                    <small className="lr-help">{dateMode === 'range' ? 'Select two dates to create a range.' : 'Select individual dates.'}</small>
                 </div>
 
                 <div className="p-field p-col-12 p-md-6">
-                    <label htmlFor="lr-reason">Lý do</label>
-                    <InputTextarea id="lr-reason" rows={4} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Ghi lý do chi tiết" />
+                    <label htmlFor="lr-reason">Reason</label>
+                    <InputTextarea id="lr-reason" rows={4} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Enter detailed reason" />
                 </div>
 
                 <div className="p-field p-col-12">
-                    <label>Giấy tờ (tuỳ chọn)</label>
+                    <label>Documents (optional)</label>
                     <FileUpload
                         name="attachments"
                         customUpload
-                        uploadHandler={() => {}}
+                        uploadHandler={() => { }}
                         multiple
                         maxFileSize={10000000}
                         onSelect={onUploadSelect}
                         onClear={() => setFiles([])}
-                        chooseLabel="Chọn"
-                        cancelLabel="Hủy"
+                        chooseLabel="Choose"
+                        cancelLabel="Cancel"
                         uploadLabel="Upload"
                         className="lr-fileupload"
                     />
@@ -376,8 +376,8 @@ export default function LeaveRequestForm({
                 </div>
 
                 <div className="p-field p-col-12 lr-actions">
-                    <Button label="Hủy" className="p-button-text" onClick={resetForm} disabled={submitting} />
-                    <Button label={editingId ? 'Lưu thay đổi' : 'Gửi'} onClick={handleSubmit} loading={submitting} disabled={submitting} />
+                    <Button label="Reset" className="p-button-text" onClick={resetForm} disabled={submitting} />
+                    <Button label={editingId ? 'Save changes' : 'Submit'} onClick={handleSubmit} loading={submitting} disabled={submitting} />
                 </div>
             </div>
         </>
@@ -387,25 +387,25 @@ export default function LeaveRequestForm({
         <div className="lr-requests-top">
             <div className="lr-requests-controls">
                 <div className="lr-requests-header">
-                    <strong>Danh sách yêu cầu</strong>
+                    <strong>Request List</strong>
                     <span className="lr-requests-sub"> ({requests.length})</span>
                 </div>
 
                 <div className="lr-filters">
                     <div className="lr-filter-status">
-                        <label className="sr-only">Lọc trạng thái</label>
+                        <label className="sr-only">Filter by status</label>
                         <MultiSelect
                             value={statusFilter}
                             options={STATUS_OPTIONS}
                             onChange={(e) => { setStatusFilter(e.value || []); setPage(1); }}
-                            placeholder="Tất cả"
+                            placeholder="All"
                             display="chip"
                             style={{ minWidth: 220 }}
                         />
                     </div>
 
                     <div className="lr-search">
-                        <InputText placeholder="Tìm theo lý do, loại, id..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} />
+                        <InputText placeholder="Search by reason, type, id..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} />
                     </div>
 
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -415,8 +415,8 @@ export default function LeaveRequestForm({
             </div>
 
             <div className="lr-requests-items">
-                {loadingRequests && <div className="lr-empty">Đang tải...</div>}
-                {!loadingRequests && paged.length === 0 && <div className="lr-empty">Không tìm thấy yêu cầu.</div>}
+                {loadingRequests && <div className="lr-empty">Loading...</div>}
+                {!loadingRequests && paged.length === 0 && <div className="lr-empty">No requests found.</div>}
 
                 {paged.map((r) => (
                     <div key={r.id} className={`lr-request-item ${highlightId === r.id ? 'lr-highlight' : ''}`}>
@@ -438,8 +438,8 @@ export default function LeaveRequestForm({
                             <div className="r-actions">
                                 {r.status === 'pending' && (
                                     <>
-                                        <Button icon="pi pi-pencil" className="p-button-text p-button-sm" onClick={() => handleEditRequest(r)} aria-label={`Sửa ${r.id}`} />
-                                        <Button icon="pi pi-trash" className="p-button-text p-button-sm" onClick={() => handleRemoveRequest(r.id)} aria-label={`Xoá ${r.id}`} />
+                                        <Button icon="pi pi-pencil" className="p-button-text p-button-sm" onClick={() => handleEditRequest(r)} aria-label={`Edit ${r.id}`} />
+                                        <Button icon="pi pi-trash" className="p-button-text p-button-sm" onClick={() => handleRemoveRequest(r.id)} aria-label={`Delete ${r.id}`} />
                                     </>
                                 )}
                             </div>
@@ -449,7 +449,7 @@ export default function LeaveRequestForm({
 
                 <div className="lr-pagination">
                     <Button icon="pi pi-angle-left" className="p-button-text" onClick={goPrev} disabled={page <= 1} />
-                    <span className="lr-page-info">Trang {page}/{totalPages}</span>
+                    <span className="lr-page-info">Page {page}/{totalPages}</span>
                     <Button icon="pi pi-angle-right" className="p-button-text" onClick={goNext} disabled={page >= totalPages} />
                 </div>
             </div>
@@ -459,7 +459,7 @@ export default function LeaveRequestForm({
     if (inline) {
         return (
             <div className={`leave-inline card p-p-3 ${mounted ? 'lr-enter' : ''}`}>
-                <h3 className="lr-title">Đơn xin nghỉ</h3>
+                <h3 className="lr-title">Leave Request</h3>
                 {requestsListTop}
                 <hr className="lr-divider" />
                 <div className="lr-main">
@@ -472,13 +472,13 @@ export default function LeaveRequestForm({
 
     const dialogFooter = (
         <div>
-            <Button label="Hủy" className="p-button-text" onClick={() => { resetForm(); onHide?.(); }} disabled={submitting} />
-            <Button label="Gửi" onClick={handleSubmit} loading={submitting} disabled={submitting} />
+            <Button label="Cancel" className="p-button-text" onClick={() => { resetForm(); onHide?.(); }} disabled={submitting} />
+            <Button label="Submit" onClick={handleSubmit} loading={submitting} disabled={submitting} />
         </div>
     );
 
     return (
-        <Dialog header="Đơn xin nghỉ" visible={!!visible} style={{ width: '720px' }} footer={dialogFooter} onHide={onHide} closable>
+        <Dialog header="Leave Request" visible={!!visible} style={{ width: '720px' }} footer={dialogFooter} onHide={onHide} closable>
             <div className="lr-dialog-wrap">
                 {requestsListTop}
                 <hr className="lr-divider" />

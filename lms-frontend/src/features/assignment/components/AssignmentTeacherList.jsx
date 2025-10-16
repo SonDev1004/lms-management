@@ -5,14 +5,14 @@ const AssignmentTeacherList = ({ sessionId, assignments = [] }) => {
 
     //Nếu không có bài tập nào được giao thì show dòng return
     if (sessionAssignment.length === 0) {
-        return <div>Buổi học chưa có bài tập nào được giao.</div>;
+        return <div>No assignments have been given for this session.</div>;
     }
     return (
         <ul>
             {sessionAssignment.map(asg => (
                 <li key={asg.id}>
                     <b>{asg.title}</b> &nbsp;
-                    (Hạn nộp: {new Date(asg.due_date).toLocaleDateString()} - Điểm tối đa: {asg.max_score})
+                    (Due date: {new Date(asg.due_date).toLocaleDateString()} - Max score: {asg.max_score})
                 </li>
             ))}
         </ul>);

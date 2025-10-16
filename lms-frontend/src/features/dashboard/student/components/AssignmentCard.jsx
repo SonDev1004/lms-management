@@ -12,7 +12,7 @@ export default function AssignmentCard({ assign }) {
                     <div style={{ fontWeight: 700 }}>{assign.title}</div>
                     <div style={{ color: 'var(--muted)', fontSize: 13, marginTop: 4 }}>{assign.meta}</div>
                     <div style={{ marginTop: 8, color: 'var(--muted)', fontSize: 13 }}>Due: {assign.due}</div>
-                    <div style={{ marginTop: 10 }}><Button label="Đang làm" className="p-button-sm p-button-outlined" /></div>
+                    <div style={{ marginTop: 10 }}><Button label="In Progress" className="p-button-sm p-button-outlined" /></div>
                 </div>
             </div>
         </div>

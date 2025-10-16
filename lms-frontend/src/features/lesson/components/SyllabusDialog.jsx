@@ -28,8 +28,8 @@ function DocPreview({ doc }) {
     }
     return (
         <div style={{ padding: 8 }}>
-            <p>Không hỗ trợ xem trực tiếp định dạng này.</p>
-            <a href={doc.url} target="_blank" rel="noopener noreferrer" download={doc.download}>Tải xuống</a>
+            <p>This file type cannot be previewed directly.</p>
+            <a href={doc.url} target="_blank" rel="noopener noreferrer" download={doc.download}>Download</a>
         </div>
     );
 }
@@ -38,7 +38,7 @@ export default function SyllabusDialog({ value, visible, onHide, onOpenDoc }) {
     const item = value;
     return (
         <Dialog
-            header={item?.title || "Chi tiết tuần"}
+            header={item?.title || "Week Details"}
             visible={visible}
             className="syllabus-modal"
             style={{ width: "80vw", maxWidth: 1100 }}
@@ -54,7 +54,7 @@ export default function SyllabusDialog({ value, visible, onHide, onOpenDoc }) {
                             <div className="syllabus-modal-sub">
                                 <div className="syllabus-shortdesc">{item.desc}</div>
                                 <div style={{ marginLeft: 6, color: "#94a3b8" }}>
-                                    📅 {formatDate(item.publishedAt)} {item.updatedAt ? `• Cập nhật ${formatDate(item.updatedAt)}` : ""}
+                                    📅 {formatDate(item.publishedAt)} {item.updatedAt ? `• Updated ${formatDate(item.updatedAt)}` : ""}
                                 </div>
                             </div>
                         </div>
@@ -84,15 +84,15 @@ export default function SyllabusDialog({ value, visible, onHide, onOpenDoc }) {
                     </div>
 
                     <aside className="syllabus-quickinfo">
-                        <div className="qi-row"><div className="qi-label">Chủ đề</div><div className="qi-value">{item.subject}</div></div>
-                        <div className="qi-row"><div className="qi-label">GV</div><div className="qi-value">{item.teacher}</div></div>
-                        <div className="qi-row"><div className="qi-label">Phát hành</div><div className="qi-value">{formatDate(item.publishedAt)}</div></div>
+                        <div className="qi-row"><div className="qi-label">Subject</div><div className="qi-value">{item.subject}</div></div>
+                        <div className="qi-row"><div className="qi-label">Teacher</div><div className="qi-value">{item.teacher}</div></div>
+                        <div className="qi-row"><div className="qi-label">Published</div><div className="qi-value">{formatDate(item.publishedAt)}</div></div>
                         {item.updatedAt && (
-                            <div className="qi-row"><div className="qi-label">Cập nhật</div><div className="qi-value">{formatDate(item.updatedAt)}</div></div>
+                            <div className="qi-row"><div className="qi-label">Updated</div><div className="qi-value">{formatDate(item.updatedAt)}</div></div>
                         )}
                     </aside>
                 </div>
-            ) : <p>Không có dữ liệu.</p>}
+            ) : <p>No data available.</p>}
         </Dialog>
     );
 }
