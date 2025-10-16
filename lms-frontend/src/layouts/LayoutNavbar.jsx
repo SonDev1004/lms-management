@@ -26,7 +26,7 @@ export default function LayoutNavbar({ role, children }) {
         },
 
         {
-            label: 'Classes & Programs',
+            label: 'Courses & Programs',
             icon: 'pi pi-book',
             roles: ['TEACHER', 'ACADEMIC_MANAGER'],
             items: [
@@ -37,7 +37,7 @@ export default function LayoutNavbar({ role, children }) {
                     command: () => navigate(`/${roleToRoute(role)}/courses`)
                 },
                 {
-                    label: 'Programs / Courses',
+                    label: 'Programs / Subjects',
                     icon: 'pi pi-clone',
                     roles: ['ACADEMIC_MANAGER'],
                     command: () => navigate(`/${roleToRoute(role)}/program`)

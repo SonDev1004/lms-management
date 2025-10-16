@@ -12,7 +12,7 @@
     --shadow:0 8px 24px rgba(2,38,53,.06);
 }
 
-body{ background:white}
+body{ background:var(--c-bg); font-feature-settings:"case" 1; }
 .req{ color:var(--c-danger); margin-left:.25rem; }
 
 /* ---------- Container ---------- */
@@ -209,7 +209,7 @@ body{ background:white}
 }
 
 /* ---------- Dark mode (auto) ---------- */
-@media (prefers-color-scheme: light){
+@media (prefers-color-scheme: dark){
     :root{
         --c-surface:#0f172a; --c-surface-2:#111826; --c-bg:#0b1220; --c-border:#1f2937;
         --c-text-900:#e5e7eb; --c-text-700:#cbd5e1; --c-text-600:#94a3b8; --c-text-500:#7a8aa1;
