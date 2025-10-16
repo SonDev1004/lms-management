@@ -112,7 +112,7 @@ const LayoutHome = () => {
                     label: 'Account',
                     icon: 'pi pi-user',
                     command: () => {
-                        navigate('/user-profile');
+                        navigate('/userprofile');
                     }
                 }
             ]
