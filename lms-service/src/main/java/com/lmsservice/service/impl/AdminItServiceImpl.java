@@ -81,45 +81,45 @@ public class AdminItServiceImpl implements AdminItService {
     public void sendAccountProvisionMail(User user, String tempPassword) {
         String html =
                 """
-					<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-						<h3 style="color:#2c3e50;">Xin chào %s,</h3>
-						<p>
-							Chúng tôi rất vui được thông báo rằng tài khoản của bạn trên hệ thống
-							<strong>LMS Center</strong> đã được khởi tạo thành công.
-						</p>
-
-						<p>Thông tin đăng nhập của bạn như sau:</p>
-						<ul style="list-style-type:none; padding:0;">
-							<li><strong>Tên đăng nhập:</strong> %s</li>
-							<li><strong>Mật khẩu tạm thời:</strong> %s</li>
-						</ul>
-
-						<p>
-							Vui lòng truy cập vào
-							<a href="http://localhost:5173/login"
-							style="color:#335CFF; text-decoration:none; font-weight:bold;">
-								LMS Center
-							</a>
-							để đăng nhập và đổi mật khẩu nhằm đảm bảo bảo mật thông tin cá nhân.
-						</p>
-
-						<p>
-							Nếu bạn gặp bất kỳ khó khăn nào trong quá trình đăng nhập,
-							vui lòng liên hệ với bộ phận hỗ trợ kỹ thuật của trung tâm để được trợ giúp kịp thời.
-						</p>
-
-						<br/>
-						<p>Trân trọng,<br/>
-						<strong>Phòng Quản trị Hệ thống – LMS Center</strong>
-						</p>
-
-						<hr style="border:none; border-top:1px solid #eee; margin-top:20px;"/>
-						<p style="font-size:12px; color:#888;">
-							Đây là email tự động, vui lòng không phản hồi trực tiếp.
-							Nếu cần hỗ trợ, vui lòng liên hệ qua kênh hỗ trợ chính thức của trung tâm.
-						</p>
-					</div>
-				"""
+                        	<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                        		<h3 style="color:#2c3e50;">Xin chào %s,</h3>
+                        		<p>
+                        			Chúng tôi rất vui được thông báo rằng tài khoản của bạn trên hệ thống
+                        			<strong>LMS Center</strong> đã được khởi tạo thành công.
+                        		</p>
+                        
+                        		<p>Thông tin đăng nhập của bạn như sau:</p>
+                        		<ul style="list-style-type:none; padding:0;">
+                        			<li><strong>Tên đăng nhập:</strong> %s</li>
+                        			<li><strong>Mật khẩu tạm thời:</strong> %s</li>
+                        		</ul>
+                        
+                        		<p>
+                        			Vui lòng truy cập vào
+                        			<a href="http://localhost:5173/login"
+                        			style="color:#335CFF; text-decoration:none; font-weight:bold;">
+                        				LMS Center
+                        			</a>
+                        			để đăng nhập và đổi mật khẩu nhằm đảm bảo bảo mật thông tin cá nhân.
+                        		</p>
+                        
+                        		<p>
+                        			Nếu bạn gặp bất kỳ khó khăn nào trong quá trình đăng nhập,
+                        			vui lòng liên hệ với bộ phận hỗ trợ kỹ thuật của trung tâm để được trợ giúp kịp thời.
+                        		</p>
+                        
+                        		<br/>
+                        		<p>Trân trọng,<br/>
+                        		<strong>Phòng Quản trị Hệ thống – LMS Center</strong>
+                        		</p>
+                        
+                        		<hr style="border:none; border-top:1px solid #eee; margin-top:20px;"/>
+                        		<p style="font-size:12px; color:#888;">
+                        			Đây là email tự động, vui lòng không phản hồi trực tiếp.
+                        			Nếu cần hỗ trợ, vui lòng liên hệ qua kênh hỗ trợ chính thức của trung tâm.
+                        		</p>
+                        	</div>
+                        """
                         .formatted(user.getFirstName() + " " + user.getLastName(), user.getUserName(), tempPassword);
 
         mailService.sendMail(user.getEmail(), "[LMS Center] Cấp tài khoản mới", html);
