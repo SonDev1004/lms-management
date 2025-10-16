@@ -127,6 +127,7 @@ const App = () => {
                     </Route>
                 </Route>
 
+
                 {/* Teacher Route */}
                 <Route element={<ProtectedRoute allowedRoles={['TEACHER']}/>}>
                     <Route path="teacher" element={<LayoutTeacher/>}>
