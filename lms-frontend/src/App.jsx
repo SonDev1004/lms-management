@@ -70,6 +70,8 @@ import ProgramDetailPage from "@/features/program/detail/pages/ProgramDetailPage
 import { FeedbackPage } from "@/features/feedback/index.js";
 import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
 import UserProfile from "@/features/user/pages/UserProfile.jsx";
+import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
+import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 
 const App = () => {
 
@@ -113,6 +115,7 @@ const App = () => {
 						/>
 						<Route path='schedule' element={<StudentSchedule />} />
 						<Route path='score' element={<StudentScore />} />
+						<Route path='assignment' element={<Exercise />} />
 						<Route
 							path='enrollment'
 							element={<StudentEnrollment />}
@@ -137,6 +140,7 @@ const App = () => {
 							<Route path="sessions/:sessionId/attendance/full"
 								element={<AttendanceTeacherSummary />} />
 						</Route>
+						<Route path='assignment' element={<ExerciseBuilder />} />
 
 						{/* Session Attendance đi kèm courseId */}
 						<Route path="schedule" element={<TeacherSchedule />} />

@@ -1,0 +1,145 @@
+/* ==== TOKENS ==== */
+:root{
+    --ink:#0f172a;
+    --muted:#6b7280;
+    --surface:#ffffff;
+    --bg:#f8fafc;
+    --border:#e5e7eb;
+    --ring:#dbeafe;
+    --primary:#3b82f6;
+    --success:#16a34a;
+    --danger:#ef4444;
+    --shadow:0 1px 2px rgba(15,23,42,.05);
+    --radius-card:16px;
+    --radius-input:10px;
+    --radius-chip:999px;
+}
+
+body{background:var(--bg);color:var(--ink)}
+
+/* ==== SHELL ==== */
+.exb-shell{display:flex;flex-direction:column;min-height:100vh}
+.exb-body{display:grid;grid-template-columns:280px 1fr 320px;gap:16px;padding:16px}
+
+/* ==== TOPBAR ==== */
+.exb-topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:5}
+.exb-title{font-size:20px;font-weight:700;margin:0}
+.exb-topbar-left{display:flex;align-items:center;gap:8px}
+.exb-topbar-right{display:flex;align-items:center}
+.exb-topbar-right .p-button{margin-left:8px}
+.p-button-text.exb-textbtn{color:#111827}
+.exb-publish .p-button{background:var(--primary);border-color:var(--primary)}
+.exb-topbar-right .p-button-text>.p-button-icon{color:#374151}
+
+/* ==== LEFT NAV ==== */
+.exb-leftnav{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;height:calc(100vh - 96px);position:sticky;top:80px}
+.exb-leftnav-title{font-weight:700}
+.exb-leftnav-sub{color:var(--muted);font-size:12px;margin-bottom:12px}
+.exb-step-list{list-style:none;margin:12px 0;padding:0}
+.exb-step{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.exb-step:hover{background:#f3f4f6}
+.exb-step.active{background:#eef2ff;border-color:#e5e7eb}
+.exb-step i{font-size:18px;color:#374151}
+.exb-step-meta{flex:1}
+.exb-step-label{font-weight:600}
+.exb-step-sub{font-size:12px;color:var(--muted)}
+.exb-step-chevron{color:#a1a1aa;margin-left:auto}
+.exb-progress{position:absolute;left:16px;right:16px;bottom:16px}
+.exb-progress-label{font-size:12px;color:var(--muted)}
+.exb-progress-bar{height:8px;background:#edf2f7;border-radius:999px;overflow:hidden;margin-top:6px}
+.exb-progress-bar span{display:block;height:100%;background:var(--primary)}
+
+/* ==== MAIN & CARD ==== */
+.exb-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius-card);box-shadow:var(--shadow)}
+.exb-h2{font-size:24px;margin:0 0 16px}
+
+/* Form inputs */
+.p-inputtext,.p-dropdown,.p-inputnumber-input,.p-calendar .p-inputtext,.p-chips .p-chips-multiple-container{border-radius:var(--radius-input);padding:12px}
+.p-inputtextarea{border-radius:var(--radius-input)}
+.p-dropdown{width:100%}
+
+/* ==== INSPECTOR ==== */
+.exb-inspector{position:sticky;top:80px;height:calc(100vh - 96px);display:flex;flex-direction:column;gap:12px}
+.exb-val-card,.exb-qa-card,.exb-props-card{border:1px solid var(--border);border-radius:12px}
+.exb-val-card .p-card-title,.exb-qa-card .p-card-title,.exb-props-card .p-card-title{font-weight:700}
+.exb-validate{display:flex;align-items:center}
+.exb-val-text{margin-left:8px}
+.exb-val-title{font-weight:600}
+.exb-val-pass{font-size:14px;color:var(--success)}
+.exb-qa-col .p-button{width:100%;border-radius:12px}
+.exb-qa-col .p-button.p-button-outlined{border-color:#d1d5db;color:#111827}
+.exb-prop-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.exb-prop-label{font-size:14px;color:var(--muted);min-width:140px}
+.exb-madeby{margin-top:auto;text-align:right;font-size:12px;color:#fff;background:#0f172a;padding:10px;border-radius:10px}
+
+/* ==== ITEMS ==== */
+.exb-items-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.exb-empty{border:1px dashed var(--border);text-align:center;border-radius:12px}
+.exb-empty-circle{width:72px;height:72px;border-radius:999px;background:#f1f5f9;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.exb-empty-title{font-weight:700}
+.exb-empty-sub{color:var(--muted)}
+.exb-item-stack{display:flex;flex-direction:column;gap:16px}
+.exb-item-card{border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);background:#fff}
+.exb-item-card.active{outline:3px solid var(--ring)}
+.exb-item-chiprow{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--border)}
+.exb-number{width:24px;height:24px;border-radius:999px;background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.exb-error{color:var(--danger);margin-left:8px;font-size:14px}
+.exb-item-body{padding:16px}
+
+/* ==== EDITORS ==== */
+.exb-field{margin-bottom:16px}
+.exb-label{font-weight:600;margin-bottom:6px;display:block}
+.exb-label span{color:var(--danger)}
+.exb-help{font-size:12px;color:var(--muted);margin-top:4px}
+.exb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.exb-col{display:flex;flex-direction:column}
+.exb-subtitle{font-weight:700;margin:16px 0 8px}
+.exb-option{display:grid;grid-template-columns:28px 28px 1fr;align-items:center;gap:12px;margin-bottom:10px}
+.exb-option-letter{font-weight:700;color:#64748b}
+.exb-option-input{width:100%}
+.exb-upload{border:1px dashed var(--border);border-radius:12px;padding:18px;text-align:center;color:#94a3b8}
+.ph-blank{height:110px;display:flex;align-items:center;justify-content:center}
+
+/* ==== SETTINGS GRID (to & thoáng hơn) ==== */
+.exb-settings-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(560px, 1fr)); /* to hơn */
+    gap:24px;
+}
+.exb-set-card{border:1px solid var(--border);border-radius:12px;min-height:260px}
+.exb-set-card .p-card-body{padding:24px}
+.exb-set-title{display:flex;align-items:center;font-size:18px;font-weight:700}
+.exb-summary{border:1px solid var(--border);border-radius:12px}
+.exb-summary .p-card-body{padding:22px}
+.exb-summary-title{font-weight:800;margin-bottom:8px;font-size:18px}
+.exb-summary-line{color:var(--muted);margin:4px 0}
+
+/* Prime overrides */
+.p-button{border-radius:10px}
+.p-button.p-button-text{background:transparent;border-color:transparent}
+.p-button.p-button-text:enabled:hover{background:#f3f4f6}
+.p-tag{border-radius:14px}
+
+/* ==== Review & Publish ==== */
+.exb-review{padding-bottom:24px}
+.exb-review .exb-h2{font-size:34px;font-weight:900;color:#0b1b2b;margin:8px 0 18px}
+.exb-review-card.p-card{border-radius:18px;border:1px solid #e7edf5;box-shadow:0 8px 26px rgba(9,30,66,.05);background:#fff;overflow:hidden}
+.exb-review-card .p-card-body{padding:28px 32px}
+.exb-review-title{font-size:24px;font-weight:800;color:#2c3a47;margin-bottom:18px}
+.exb-review-rows{display:grid;gap:14px;max-width:980px}
+.exb-review-row{display:grid;grid-template-columns:160px 1fr;align-items:center;gap:12px}
+.exb-review-row .exb-k{font-weight:800;color:#3f4d5a;font-size:18px}
+.exb-review-row .exb-v{font-size:18px;color:#2b3a4a}
+.exb-badge{display:inline-flex;align-items:center;padding:10px 18px;border-radius:999px;font-weight:800;font-size:16px;background:#fff7e2;color:#a97400;border:1px solid #ffe9b2}
+.exb-badge--yellow{background:#fff7e2;color:#a97400;border-color:#ffe9b2}
+.exb-badge--green{background:#e9fbef;color:#127a3a;border-color:#c8f3d7}
+
+/* ==== Responsive ==== */
+@media (max-width:1280px){
+    .exb-settings-grid{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:1024px){
+    .exb-body{grid-template-columns:1fr}
+    .exb-inspector,.exb-leftnav{position:static;height:auto}
+    .exb-grid{grid-template-columns:1fr}
+}
