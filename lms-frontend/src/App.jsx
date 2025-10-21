@@ -73,78 +73,79 @@ import UserProfile from "@/features/user/pages/UserProfile.jsx";
 
 const App = () => {
 
-	return (
-		<BrowserRouter>
-			<Routes>
-				{/* Home Route */}
-				<Route path="/" element={<LayoutHome />}>
-					<Route index element={<Home />} />
-					<Route path="login" element={<Login />} />
-					<Route path="register" element={<Register />} />
-					<Route path="programs" element={<ProgramList />} />
-					<Route path="programs/:id" element={<ProgramDetailPage />} />
-					<Route path="userprofile" element={<UserProfile />} />
-					<Route path="subjects" element={<SubjectList />} />
-					<Route path="subjects/:id" element={<SubjectDetail />} />
-					<Route path="payment" element={<PaymentPage />} />
-					<Route path="payment-success" element={<PaymentSuccess />} />
-					<Route path="payment-failed" element={<PaymentFailed />} />
-					<Route path="payment-cancelled" element={<PaymentCancelled />} />
-				</Route>
+    return (
+        <BrowserRouter>
+            <Routes>
+                {/* Home Route */}
+                <Route path="/" element={<LayoutHome/>}>
+                    <Route index element={<Guest/>}/>
+                    <Route path="login" element={<Login/>}/>
+                    <Route path="register" element={<Register/>}/>
+                    <Route path="about" element={<About/>}/>
+                    <Route path="faq" element={<FAQ/>}/>
+                    <Route path="blog" element={<Blog/>}/>
+                    <Route path="programs" element={<ProgramList/>}/>
+                    <Route path="subjects" element={<SubjectList/>}/>
+                    <Route path="payment" element={<PaymentForm/>}/>
+                    <Route path="payment-success" element={<PaymentSuccess/>}/>
+                    <Route path="payment-failed" element={<PaymentFailed/>}/>
+                    <Route path="payment-cancelled" element={<PaymentCancelled/>}/>
+                </Route>
 
 
-				{/* Program Route (ngoài student) */}
-				<Route path='program' element={<LayoutHome />}>
-					<Route path=':id' element={<ProgramDetail />} />
-				</Route>
-				{/* Subject Route (ngoài student) */}
-				<Route path='subject' element={<LayoutHome />}>
-					<Route path=':id' element={<SubjectDetail />} />
-				</Route>
+                {/* Program Route (ngoài student) */}
+                <Route path='program' element={<LayoutHome/>}>
+                    <Route path=':id' element={<ProgramDetail/>}/>
+                </Route>
+                {/* Subject Route (ngoài student) */}
+                <Route path='subject' element={<LayoutHome/>}>
+                    <Route path=':id' element={<SubjectDetail/>}/>
+                </Route>
 
-				{/* Student Route */}
-				<Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
-					<Route path='student' element={<LayoutStudent />}>
-						<Route index element={<StudentDashboard />} />
-						<Route path='courses' element={<StudentCourses />} />
-						<Route
-							path='courses/:slug'
-							element={<CourseDetailStudent />}
-						/>
-						<Route path='schedule' element={<StudentSchedule />} />
-						<Route path='score' element={<StudentScore />} />
-						<Route
-							path='enrollment'
-							element={<StudentEnrollment />}
-						/>
-						<Route
-							path='notification'
-							element={<StudentNotification />}
-						/>
-						<Route path='profile' element={<StudentProfile />} />
-					</Route>
-				</Route>
+                {/* Student Route */}
+                <Route element={<ProtectedRoute allowedRoles={['STUDENT']}/>}>
+                    <Route path='student' element={<LayoutStudent/>}>
+                        <Route index element={<StudentDashboard/>}/>
+                        <Route path='courses' element={<StudentCourses/>}/>
+                        <Route
+                            path='courses/:slug'
+                            element={<CourseDetailStudent/>}
+                        />
+                        <Route path='schedule' element={<StudentSchedule/>}/>
+                        <Route path='score' element={<StudentScore/>}/>
+                        <Route
+                            path='enrollment'
+                            element={<StudentEnrollment/>}
+                        />
+                        <Route
+                            path='notification'
+                            element={<StudentNotification/>}
+                        />
+                        <Route path='profile' element={<StudentProfile/>}/>
+                    </Route>
+                </Route>
 
-				{/* Teacher Route */}
-				<Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
-					<Route path="teacher" element={<LayoutTeacher />}>
-						<Route index element={<TeacherDashboard />} />
-						<Route path="courses" element={<TeacherCourses />} />
-						<Route path="courses/:courseId" element={<CourseDetailTeacher />}>
-							<Route index element={<SessionList />} />
-							<Route path="student-list" element={<StudentList />} />
-							<Route path="sessions/:sessionId/attendance" element={<AttendanceTeacherPanel />} />
-							<Route path="sessions/:sessionId/attendance/full"
-								element={<AttendanceTeacherSummary />} />
-						</Route>
 
-						{/* Session Attendance đi kèm courseId */}
-						<Route path="schedule" element={<TeacherSchedule />} />
-						<Route path="notification" element={<TeacherNotification />} />
-						<Route path="profile" element={<TeacherProfile />} />
-					</Route>
-				</Route>
+                {/* Teacher Route */}
+                <Route element={<ProtectedRoute allowedRoles={['TEACHER']}/>}>
+                    <Route path="teacher" element={<LayoutTeacher/>}>
+                        <Route index element={<TeacherDashboard/>}/>
+                        <Route path="courses" element={<TeacherCourses/>}/>
+                        <Route path="courses/:courseId" element={<CourseDetailTeacher/>}>
+                            <Route index element={<SessionList/>}/>
+                            <Route path="student-list" element={<StudentList/>}/>
+                        </Route>
 
+                        {/* Session Attendance đi kèm courseId */}
+                        <Route path="courses/:courseId/sessions/:sessionId/attendance" element={<AttendancePanel/>}/>
+                        <Route path="courses/:courseId/sessions/:sessionId/attendance/full"
+                               element={<AttendanceSummary/>}/>
+
+                        <Route path="schedule" element={<TeacherSchedule/>}/>
+                        <Route path="notification" element={<TeacherNotification/>}/>
+                        <Route path="profile" element={<TeacherProfile/>}/>
+                    </Route>
+                </Route>
 
 				<Route
 					element={
