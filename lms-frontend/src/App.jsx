@@ -69,7 +69,8 @@ import StudentManagement from "@/features/academic_manager/list/student/pages/St
 import TeacherManagement from "@/features/academic_manager/list/teacher/pages/TeacherManagement.jsx";
 import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
 import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
-
+import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
+import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -145,12 +146,15 @@ const App = () => {
                         <Route path="feedback" element={<FeedbackPage />} />
                         <Route path='teacher' element={<AMTeacher />} />
                         <Route path='teacher-list' element={<TeacherManagement />} />
+                        <Route path='teacher-list/:id' element={<AMTeacherProfile/>} />
                         <Route path='student' element={<AMStudent />} />
                         <Route path='student-manager' element={<StudentManagement />} />
+                        <Route path="student-manager/:id" element={<MStudentProfile />} />
                         <Route path='schedule' element={<AMSchedule />} />
                         <Route path='report' element={<AMReport />} />
                         <Route path='notification' element={<AMNotification />} />
                         <Route path='profile' element={<AMProfile />} />
+
                     </Route>
                 </Route>
 
