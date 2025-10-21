@@ -1,11 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useSearchParams, useNavigate} from 'react-router-dom';
-import {Card} from 'primereact/card';
-import {Button} from 'primereact/button';
-import {Toast} from 'primereact/toast';
-import {ProgressSpinner} from 'primereact/progressspinner';
-import {Tag} from 'primereact/tag';
-import {Divider} from 'primereact/divider';
+import React, { useEffect, useRef, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Card } from 'primereact/card';
+import { Button } from 'primereact/button';
+import { Toast } from 'primereact/toast';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Tag } from 'primereact/tag';
+import { Divider } from 'primereact/divider';
 import axiosClient from '@/shared/api/axiosClient.js';
 import urls from '@/shared/constants/urls.js';
 
@@ -83,7 +83,7 @@ const PaymentSuccess = () => {
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
-                <ProgressSpinner/>
+                <ProgressSpinner />
                 <span className="ml-3">Đang tải kết quả thanh toán...</span>
             </div>
         );
@@ -91,7 +91,7 @@ const PaymentSuccess = () => {
 
     return (
         <div className="p-4">
-            <Toast ref={toast}/>
+            <Toast ref={toast} />
 
             <div className="max-w-2xl mx-auto">
                 <Card className="text-center bg-green-50 border-2 border-green-200">
@@ -100,20 +100,20 @@ const PaymentSuccess = () => {
                         <div className="text-center">
                             <div className="text-8xl mb-4">🎉</div>
                             <h1 className="text-4xl font-bold text-green-600 mb-2">
-                                Thanh toán thành công!
+                                Payment Successful!
                             </h1>
                             <p className="text-lg text-gray-600">
-                                Chúc mừng! Bạn đã đăng ký khóa học thành công.
+                                Congratulations! You have successfully enrolled in the course.
                             </p>
                         </div>
 
-                        <Divider/>
+                        <Divider />
 
                         {/* Transaction Details */}
                         {result && (
                             <div className="text-left space-y-4">
                                 <h3 className="text-xl font-semibold text-center mb-4">
-                                    Thông tin giao dịch
+                                    Transaction Details
                                 </h3>
 
                                 <div className="grid grid-cols-1 gap-3">
@@ -126,7 +126,7 @@ const PaymentSuccess = () => {
 
                                     <div className="flex justify-between items-center p-3 bg-white rounded-lg">
                                         <span className="font-medium text-gray-700">Trạng thái:</span>
-                                        <Tag value="THÀNH CÔNG" severity="success"/>
+                                        <Tag value="SUCCESSFUL" severity="success" />
                                     </div>
 
                                     {(result.programName || result.subjectName) && (
@@ -168,19 +168,19 @@ const PaymentSuccess = () => {
                             </div>
                         )}
 
-                        <Divider/>
+                        <Divider />
 
                         {/* Action Buttons */}
                         <div className="space-y-3">
                             <div className="flex justify-center gap-3 flex-wrap">
                                 <Button
-                                    label="Xem khóa học đã đăng ký"
+                                    label="View My Courses"
                                     icon="pi pi-book"
                                     className="p-button-success p-button-lg"
                                     onClick={handleViewEnrollments}
                                 />
                                 <Button
-                                    label="Tiếp tục học"
+                                    label="Continue Learning"
                                     icon="pi pi-play"
                                     className="p-button-outlined p-button-success p-button-lg"
                                     onClick={handleContinueLearning}
@@ -189,7 +189,7 @@ const PaymentSuccess = () => {
 
                             <div className="text-center">
                                 <Button
-                                    label="Về trang chủ"
+                                    label="Back to Home"
                                     icon="pi pi-home"
                                     className="p-button-text"
                                     onClick={handleBackToHome}
@@ -201,9 +201,9 @@ const PaymentSuccess = () => {
                         <div className="bg-blue-50 p-4 rounded-lg text-left">
                             <h4 className="font-semibold text-blue-800 mb-2">📧 Bước tiếp theo:</h4>
                             <ul className="text-sm text-blue-700 space-y-1">
-                                <li>• Kiểm tra email để nhận thông tin chi tiết về khóa học</li>
-                                <li>• Truy cập vào mục "Khóa học của tôi" để bắt đầu học</li>
-                                <li>• Liên hệ hỗ trợ nếu bạn có bất kỳ câu hỏi nào</li>
+                                <li>• Check your email for detailed course information</li>
+                                <li>• Go to "My Courses" to start learning</li>
+                                <li>• Contact support if you have any questions</li>
                             </ul>
                         </div>
                     </div>

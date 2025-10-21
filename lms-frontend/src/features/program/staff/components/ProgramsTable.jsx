@@ -1,98 +1,52 @@
-import React, { useRef } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
-import { Menu } from "primereact/menu";
-
-function StatusCell(row) {
-    const isActive = row.status === "active";
-    return <span className={`status-pill ${isActive ? "active" : "inactive"}`}>{row.status}</span>;
-}
-
-function Money({ v }) {
-    return <span>{(v || 0).toLocaleString("vi-VN")}₫</span>;
-}
-Money.propTypes = { v: PropTypes.number };
-
-function RowActions({ row, onView, onEdit, onDelete }) {
-    const menuRef = useRef(null);
-    const items = [
-        { label: "View Detail", icon: "pi pi-eye", command: () => onView?.(row) },
-        { label: "Edit Program", icon: "pi pi-pencil", command: () => onEdit?.(row) },
-        { separator: true },
-        { label: "Delete", icon: "pi pi-trash", className: "p-menuitem-danger", command: () => onDelete?.(row) },
-    ];
-    return (
-        <>
-            <Menu model={items} popup ref={menuRef} />
-            <Button icon="pi pi-ellipsis-h" className="p-button-text p-button-rounded" onClick={(e) => menuRef.current?.toggle(e)} />
-        </>
-    );
-}
-RowActions.propTypes = {
-    row: PropTypes.object.isRequired,
-    onView: PropTypes.func,
-    onEdit: PropTypes.func,
-    onDelete: PropTypes.func,
-};
 
 export default function ProgramsTable({
-                                          programs,
-                                          loading = false,
+                                          programs = [],
                                           selection = [],
                                           onSelectionChange,
+                                          loading,
                                           onView,
                                           onEdit,
                                           onDelete,
                                       }) {
-    return (
-        <div className="card">
-            <DataTable
-                value={programs}
-                paginator
-                rows={10}
-                rowsPerPageOptions={[10, 20, 50]}
-                responsiveLayout="scroll"
-                loading={loading}
-                selectionMode="checkbox"
-                selection={selection}
-                onSelectionChange={onSelectionChange}
-                dataKey="id"
-                emptyMessage="No programs found."
-            >
-                <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
-                <Column field="id" header="Program ID" sortable style={{ minWidth: 120 }} />
-                <Column field="name" header="Program Name" sortable style={{ minWidth: 220 }} />
-                <Column field="category" header="Category" sortable style={{ minWidth: 140 }} />
-                <Column field="level" header="Level (CEFR)" sortable style={{ minWidth: 130 }} />
-                <Column field="durationWeeks" header="Duration (wks)" sortable style={{ minWidth: 120 }} />
-                <Column header="Tuition" body={(r) => <Money v={r.fee} />} sortable sortField="fee" style={{ minWidth: 140 }} />
-                <Column
-                    header="Courses"
-                    body={(r) => `${r.activeCourses ?? 0}/${r.totalCourses ?? 0}`}
-                    sortable
-                    sortField="totalCourses"
-                    style={{ minWidth: 110 }}
-                />
-                <Column header="Status" body={StatusCell} sortable sortField="status" style={{ minWidth: 110 }} />
-                <Column
-                    header=""
-                    body={(row) => <RowActions row={row} onView={onView} onEdit={onEdit} onDelete={onDelete} />}
-                    headerStyle={{ width: "3rem" }}
-                    bodyStyle={{ textAlign: "right" }}
-                />
-            </DataTable>
+    const statusTemplate = (row) => (
+        <Tag value={row.status} severity={row.status === "active" ? "success" : "warning"} />
+    );
+    const coursesTemplate = (row) => `${row.activeCourses}/${row.totalCourses}`;
+    const tuitionTemplate = (row) =>
+        (row.fee ?? 0).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
+    const actionsTemplate = (row) => (
+        <div className="flex items-center gap-2">
+            <Button icon="pi pi-eye" rounded text onClick={() => onView?.(row)} aria-label="View" />
+            <Button icon="pi pi-pencil" rounded text onClick={() => onEdit?.(row)} aria-label="Edit" />
+            <Button icon="pi pi-trash" rounded text severity="danger" onClick={() => onDelete?.(row)} aria-label="Delete" />
         </div>
     );
-}
 
-ProgramsTable.propTypes = {
-    programs: PropTypes.array.isRequired,
-    loading: PropTypes.bool,
-    selection: PropTypes.array,
-    onSelectionChange: PropTypes.func,
-    onView: PropTypes.func,
-    onEdit: PropTypes.func,
-    onDelete: PropTypes.func,
-};
+    return (
+        <DataTable
+            value={programs}
+            loading={loading}
+            selection={selection}
+            onSelectionChange={onSelectionChange}
+            dataKey="id"
+            paginator rows={10} responsiveLayout="scroll"
+        >
+            <Column selectionMode="multiple" headerStyle={{ width: "3rem" }} />
+            <Column field="id" header="Program ID" sortable />
+            <Column field="name" header="Program Name" sortable />
+            {/* Category column REMOVED */}
+            <Column field="level" header="Level (CEFR)" sortable />
+            <Column field="durationWeeks" header="Duration (wks)" sortable />
+            <Column header="Tuition" body={tuitionTemplate} sortable />
+            <Column header="Courses" body={coursesTemplate} sortable />
+            <Column header="Status" body={statusTemplate} sortable />
+            <Column header="" body={actionsTemplate} style={{ width: 140 }} />
+        </DataTable>
+    );
+}

@@ -82,7 +82,7 @@ export default function ProgramSubjects({ program }) {
                     statusName:
                         course?.statusName ||
                         course?.status ||
-                        "Sắp khai giảng",
+                        "Upcoming",
                 },
             },
         };
@@ -135,23 +135,23 @@ export default function ProgramSubjects({ program }) {
                                 <div className="meta">
                                     {c.startDate && (
                                         <span>
-                      <i className="pi pi-calendar" /> {shortDate(c.startDate)}
-                    </span>
+                                            <i className="pi pi-calendar" /> {shortDate(c.startDate)}
+                                        </span>
                                     )}
                                     {c.scheduleText && (
                                         <span>
-                      <i className="pi pi-clock" /> {c.scheduleText}
-                    </span>
+                                            <i className="pi pi-clock" /> {c.scheduleText}
+                                        </span>
                                     )}
                                     {typeof c.capacity === "number" && (
                                         <span>
-                      <i className="pi pi-users" /> {c.capacity} chỗ
-                    </span>
+                                            <i className="pi pi-users" /> {c.capacity} chỗ
+                                        </span>
                                     )}
                                     {c.sessions && (
                                         <span>
-                      <i className="pi pi-list" /> {sessionsText(c.sessions)} buổi
-                    </span>
+                                            <i className="pi pi-list" /> {sessionsText(c.sessions)} buổi
+                                        </span>
                                     )}
                                 </div>
                             </div>

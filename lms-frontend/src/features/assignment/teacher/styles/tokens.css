@@ -1,0 +1,24 @@
+:root{
+    /* màu & radius theo mock */
+    --mgx-bg:#f6fbff;
+    --mgx-surface:#ffffff;
+    --mgx-ink:#0b1b2b;
+    --mgx-muted:#90a3b1;
+
+    --mgx-border:#d6e7ff;      /* xanh biêng nhạt cho viền card */
+    --mgx-border-strong:#bcd6ff;
+    --mgx-ring:#cfe1ff;
+
+    --mgx-primary:#00b2cc;     /* teal/cyan cho actions */
+    --mgx-primary-700:#0394a9;
+    --mgx-danger:#ff5a5f;
+
+    --mgx-chip-bg:#e8f7ff;     /* nền pill */
+    --mgx-chip-ink:#0a6f82;
+
+    --mgx-radius-12:12px;
+    --mgx-radius-16:16px;
+    --mgx-radius-pill:999px;
+
+    --mgx-shadow:0 2px 10px rgba(12, 43, 74, .06);
+}

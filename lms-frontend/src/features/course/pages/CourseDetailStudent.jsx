@@ -21,7 +21,7 @@ export default function CourseDetailStudent() {
         room: 'P101',
         schedule: 'T2-T4 18:00-20:00',
         description:
-            'Lớp IELTS Intermediate dành cho học viên muốn đạt 6.0-6.5. Tập trung Reading & Writing, kèm Speaking practice.',
+            'IELTS Intermediate class for learners aiming for 6.0–6.5. Focus on Reading & Writing with Speaking practice.',
         pdfUrl: '/files/sample-syllabus.pdf',
         lessonsCompleted: 7,
         totalLessons: 10
@@ -37,7 +37,7 @@ export default function CourseDetailStudent() {
         attendancePct: 92,
         enrolled: true,
         paymentStatus: 'paid',
-        notes: 'Chú ý phần Writing: cấu trúc đoạn và lượng từ.'
+        notes: 'Pay attention to Writing: paragraph structure and word count.'
     });
 
     const [activeIndex, setActiveIndex] = useState(0);
@@ -76,7 +76,7 @@ export default function CourseDetailStudent() {
                         <div className="cd-course-meta">
                             <h2 className="cd-course-title">🎓 {course.title}</h2>
                             <div className="p-d-flex p-flex-wrap cd-pills">
-                                <Tag icon="pi pi-user" className="cd-pill pill-teacher" value={`GV: ${course.teacher}`} />
+                                <Tag icon="pi pi-user" className="cd-pill pill-teacher" value={`Teacher: ${course.teacher}`} />
                                 <Tag icon="pi pi-map-marker" className="cd-pill pill-room" value={`Phòng: ${course.room}`} />
                                 <Tag icon="pi pi-calendar" className="cd-pill pill-schedule" value={course.schedule} />
                                 <Tag className="cd-pill tag-subject" value={course.subject} />
@@ -88,7 +88,7 @@ export default function CourseDetailStudent() {
                 {/* Tabs wrapper: full-width inside the cd-container so it lines up with header */}
                 <div className="cd-tabs-wrapper">
                     <TabView activeIndex={activeIndex} onTabChange={handleTabChange} className="cd-tabview">
-                        <TabPanel header={<span className="tab-header">📘 <span className="tab-title">Giáo trình</span></span>}>
+                        <TabPanel header={<span className="tab-header">📘 <span className="tab-title">Syllabus</span></span>}>
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
@@ -99,7 +99,7 @@ export default function CourseDetailStudent() {
                             </div>
                         </TabPanel>
 
-                        <TabPanel header={<span className="tab-header">📝 <span className="tab-title">Bài tập</span></span>}>
+                        <TabPanel header={<span className="tab-header">📝 <span className="tab-title">Assignment</span></span>}>
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
@@ -110,7 +110,7 @@ export default function CourseDetailStudent() {
                             </div>
                         </TabPanel>
 
-                        <TabPanel header={<span className="tab-header">🗓️ <span className="tab-title">Lịch sử điểm danh</span></span>}>
+                        <TabPanel header={<span className="tab-header">🗓️ <span className="tab-title">Attendance History</span></span>}>
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
@@ -121,7 +121,7 @@ export default function CourseDetailStudent() {
                             </div>
                         </TabPanel>
 
-                        <TabPanel header={<span className="tab-header">🗒️ <span className="tab-title">Xin nghỉ</span></span>}>
+                        <TabPanel header={<span className="tab-header">🗒️ <span className="tab-title">Absent</span></span>}>
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">

@@ -2,12 +2,12 @@ import React from "react";
 import "../style/SyllabusList.css";
 
 export default function SyllabusList({
-                                         course,
-                                         syllabusData = [],
-                                         onOpenDetail,
-                                         onOpenDoc,
-                                         openFirstDoc = true,
-                                     }) {
+    course,
+    syllabusData = [],
+    onOpenDetail,
+    onOpenDoc,
+    openFirstDoc = true,
+}) {
     const completed = Math.max(0, (course?.lessonsCompleted ?? 0) - 1);
 
     const handleOpen = (item) => {
@@ -26,7 +26,7 @@ export default function SyllabusList({
     };
 
     return (
-        <div className="syllabus-list p-grid p-align-start" role="list" aria-label="Danh sách tuần học">
+        <div className="syllabus-list p-grid p-align-start" role="list" aria-label="Syllabus week list">
             {syllabusData.map((item, idx) => {
                 const key = item?.id ?? item?.code ?? idx;
                 const isCurrent = idx === Math.max(0, Math.min(syllabusData.length - 1, completed));
@@ -44,7 +44,7 @@ export default function SyllabusList({
                                 className="syllabus-card-main p-d-flex p-jc-between p-ai-center"
                                 role="button"
                                 onClick={() => handleOpen(item)}
-                                aria-label={`Mở chi tiết tuần ${item?.title ?? ""}`}
+                                aria-label={`Open details for week ${item?.title ?? ""}`}
                             >
                                 <div className="p-d-flex p-ai-center p-flex-1" style={{ gap: 12 }}>
                                     <div className="syllabus-title">{item?.title}</div>
@@ -59,11 +59,11 @@ export default function SyllabusList({
                                 <div className="syllabus-desc small-muted">
                                     {item?.desc && item.desc.length > 0
                                         ? item.desc
-                                        : "Nhấn vào tiêu đề để mở cửa sổ chứa mô tả, mục tiêu và tài liệu."}
+                                        : "Click the title to view a window with description, objectives, and materials."}
                                 </div>
 
                                 {Array.isArray(item?.documents) && item.documents.length > 0 && (
-                                    <div className="syllabus-docs p-mt-3 p-d-flex p-flex-wrap" aria-label={`Tài liệu tuần ${item.title}`}>
+                                    <div className="syllabus-docs p-mt-3 p-d-flex p-flex-wrap" aria-label={`Documents for week ${item.title}`}>
                                         {item.documents.map((doc, i) => (
                                             <button
                                                 key={doc?.id ?? i}
@@ -74,10 +74,10 @@ export default function SyllabusList({
                                                     onOpenDoc?.(item, doc);
                                                 }}
                                             >
-                        <span className="doc-icon" aria-hidden>
-                          📄
-                        </span>
-                                                <span className="doc-text">{doc?.name ?? `Tài liệu ${i + 1}`}</span>
+                                                <span className="doc-icon" aria-hidden>
+                                                    📄
+                                                </span>
+                                                <span className="doc-text">{doc?.name ?? `Document ${i + 1}`}</span>
                                             </button>
                                         ))}
                                     </div>

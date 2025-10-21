@@ -18,17 +18,17 @@ export default function NotificationsPage() {
     const [lastStateBeforeMarkAll, setLastStateBeforeMarkAll] = useState(null);
 
     const TABS = [
-        { label: 'Tất cả', value: null },
-        { label: 'Bài tập', value: 'assignment' },
-        { label: 'Sự kiện', value: 'event' },
-        { label: 'Phản hồi', value: 'feedback' },
-        { label: 'Hệ thống', value: 'system' },
+        { label: 'All', value: null },
+        { label: 'Assignment', value: 'assignment' },
+        { label: 'Event', value: 'event' },
+        { label: 'Feedback', value: 'feedback' },
+        { label: 'System', value: 'system' },
     ];
 
     const statusOptions = [
-        { label: 'Tất cả', value: null },
-        { label: 'Chưa đọc', value: 'unread' },
-        { label: 'Đã đọc', value: 'read' },
+        { label: 'All', value: null },
+        { label: 'Unread', value: 'unread' },
+        { label: 'Read', value: 'read' },
     ];
 
     const filtered = notifications.filter((n) => {
@@ -49,16 +49,16 @@ export default function NotificationsPage() {
 
     const handleMarkRead = async (id) => {
         await markRead(id);
-        toast.current?.show({ severity: 'success', summary: 'Đã đọc', detail: 'Đã đánh dấu 1 thông báo là đã đọc.', life: 1500 });
+        toast.current?.show({ severity: 'success', summary: 'Read', detail: 'Marked one notification as read.', life: 1500 });
     };
 
     const handleDelete = async (id) => {
         const item = notifications.find((x) => x.id === id);
         if (!item) return;
-        if (!window.confirm('Bạn có chắc muốn xoá thông báo này?')) return;
+        if (!window.confirm('Are you sure you want to delete this notification?')) return;
         setLastDeleted(item);
         await remove(id);
-        toast.current?.show({ severity: 'warn', summary: 'Đã xoá', detail: 'Bạn có thể hoàn tác trong vài giây.', life: 4000 });
+        toast.current?.show({ severity: 'warn', summary: 'Deleted', detail: 'You can undo this action for a few seconds.', life: 4000 });
         setTimeout(() => setLastDeleted((cur) => (cur && cur.id === item.id ? null : cur)), 8000);
     };
 
@@ -67,7 +67,7 @@ export default function NotificationsPage() {
         setNotifications(prev =>
             [...prev, lastDeleted].sort((a, b) => new Date(b.date) - new Date(a.date))
         );
-        toast.current?.show({ severity: 'info', summary: 'Hoàn tác', detail: 'Đã khôi phục thông báo.', life: 2000 });
+        toast.current?.show({ severity: 'info', summary: 'Undo', detail: 'Notification has been restored.', life: 2000 });
         setLastDeleted(null);
     };
 
@@ -76,7 +76,7 @@ export default function NotificationsPage() {
         if (unreadCount === 0) return;
         setLastStateBeforeMarkAll(notifications.map((n) => ({ id: n.id, read: n.read })));
         await markAllRead();
-        toast.current?.show({ severity: 'success', summary: 'Hoàn tất', detail: 'Đã đánh dấu tất cả.', life: 3000 });
+        toast.current?.show({ severity: 'success', summary: 'Completed', detail: 'All notifications have been marked as read.', life: 3000 });
     };
 
     const undoMarkAll = () => {
@@ -87,14 +87,14 @@ export default function NotificationsPage() {
                 return old ? { ...n, read: old.read } : n;
             })
         );
-        toast.current?.show({ severity: 'info', summary: 'Hoàn tác', detail: 'Trạng thái đã được phục hồi.', life: 2000 });
+        toast.current?.show({ severity: 'info', summary: 'Undo', detail: 'State has been restored.', life: 2000 });
         setLastStateBeforeMarkAll(null);
     };
 
     const handleDeleteRead = () => {
-        if (!window.confirm('Bạn có chắc muốn xoá tất cả thông báo đã đọc?')) return;
+        if (!window.confirm('Are you sure you want to delete all read notifications?')) return;
         setNotifications((prev) => prev.filter((n) => !n.read));
-        toast.current?.show({ severity: 'warn', summary: 'Đã xoá', detail: 'Các thông báo đã đọc đã bị xoá.', life: 2500 });
+        toast.current?.show({ severity: 'warn', summary: 'Deleted', detail: 'Read notifications have been deleted.', life: 2500 });
     };
 
     return (
@@ -104,14 +104,14 @@ export default function NotificationsPage() {
             <div className="notifications-container">
                 <div className="notifications-header">
                     <div>
-                        <h2 className="notifications-title">Thông báo</h2>
+                        <h2 className="notifications-title">Notification</h2>
                         <div className="notifications-sub" aria-live="polite">
-                            {unreadCount} thông báo chưa đọc
+                            {unreadCount} Unread Notification
                         </div>
                     </div>
 
                     <div className="controls">
-                        <div className="tabs" role="tablist" aria-label="Loại thông báo">
+                        <div className="tabs" role="tablist" aria-label="Notification Types">
                             {TABS.map((t) => (
                                 <button
                                     key={t.label}
@@ -127,13 +127,13 @@ export default function NotificationsPage() {
 
                         <div className="p-input-icon-left">
                             <i className="pi pi-search" />
-                            <InputText value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tìm theo tiêu đề, nội dung, người gửi, khoá học..." aria-label="Tìm thông báo" />
+                            <InputText value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by title, content, sender, course..." aria-label="Search notifications" />
                         </div>
 
-                        <Dropdown value={statusFilter} options={statusOptions} onChange={(e) => setStatusFilter(e.value)} optionLabel="label" placeholder="Trạng thái" aria-label="Lọc trạng thái" />
+                        <Dropdown value={statusFilter} options={statusOptions} onChange={(e) => setStatusFilter(e.value)} optionLabel="label" placeholder="Status" aria-label="Filter by status" />
 
-                        <Button icon="pi pi-check" label="Đánh dấu tất cả" onClick={handleMarkAll} disabled={unreadCount === 0} aria-label="Đánh dấu tất cả đã đọc" />
-                        <Button icon="pi pi-refresh" label="Làm mới" onClick={load} aria-label="Làm mới danh sách" />
+                        <Button icon="pi pi-check" label="Mark all as read" onClick={handleMarkAll} disabled={unreadCount === 0} aria-label="Mark all as read" />
+                        <Button icon="pi pi-refresh" label="Refresh" onClick={load} aria-label="Refresh list" />
                     </div>
                 </div>
 
@@ -144,26 +144,26 @@ export default function NotificationsPage() {
 
                     <div>
                         <div className="status-card" aria-live="polite">
-                            <div className="small-muted">Chưa đọc</div>
+                            <div className="small-muted">Unread</div>
                             <div className="notifications-count">{unreadCount}</div>
 
                             <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-                                <Button label="Xoá đã đọc" className="p-button-danger" onClick={handleDeleteRead} disabled={!notifications.some((n) => n.read)} aria-label="Xoá các thông báo đã đọc" />
-                                <Button label="Lọc: Chưa đọc" className="p-button-outlined" onClick={() => setStatusFilter('unread')} />
+                                <Button label="Delete Read" className="p-button-danger" onClick={handleDeleteRead} disabled={!notifications.some((n) => n.read)} aria-label="Delete read notifications" />
+                                <Button label="Filter: Unread" className="p-button-outlined" onClick={() => setStatusFilter('unread')} />
                             </div>
 
                             <div style={{ marginTop: 12 }}>
                                 {lastDeleted && (
                                     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                                        <div className="small-muted">Bạn vừa xoá 1 thông báo.</div>
-                                        <Button label="Hoàn tác" onClick={undoDelete} />
+                                        <div className="small-muted">You just deleted a notification.</div>
+                                        <Button label="Undo" onClick={undoDelete} />
                                     </div>
                                 )}
 
                                 {lastStateBeforeMarkAll && (
                                     <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
-                                        <div className="small-muted">Bạn vừa đánh dấu tất cả.</div>
-                                        <Button label="Hoàn tác" onClick={undoMarkAll} />
+                                        <div className="small-muted">You just marked all as read.</div>
+                                        <Button label="Undo" onClick={undoMarkAll} />
                                     </div>
                                 )}
                             </div>

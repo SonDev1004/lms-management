@@ -38,9 +38,9 @@ export default function SubjectCard({ subject }) {
                 <p className="subject-card__desc">{desc}</p>
 
                 <div className="subject-card__foot">
-                    <Tag value={active ? "Đang mở" : "Tạm dừng"} severity={active ? "success" : "warning"} />
+                    <Tag value={active ? "Open" : "Paused"} severity={active ? "success" : "warning"} />
                     <Button
-                        label="Xem chi tiết"
+                        label="View Details"
                         icon="pi pi-arrow-right"
                         iconPos="right"
                         className="subject-card__cta"

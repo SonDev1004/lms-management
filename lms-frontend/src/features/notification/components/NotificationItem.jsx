@@ -5,10 +5,10 @@ import { Chip } from 'primereact/chip';
 import { formatDateShort } from '../utils/date';
 
 const TYPE_MAP = {
-    assignment: { label: 'Bài tập', color: '#2563eb' },
-    event: { label: 'Sự kiện', color: '#f97316' },
-    feedback: { label: 'Phản hồi', color: '#7c3aed' },
-    system: { label: 'Hệ thống', color: '#6b7280' },
+    assignment: { label: 'Assignment', color: '#2563eb' },
+    event: { label: 'Event', color: '#f97316' },
+    feedback: { label: 'Feedback', color: '#7c3aed' },
+    system: { label: 'System', color: '#6b7280' },
 };
 
 export default function NotificationItem({ n, onOpen, onDelete }) {
@@ -53,10 +53,10 @@ export default function NotificationItem({ n, onOpen, onDelete }) {
                                 className="p-button-text p-button-sm p-button-danger"
                                 onClick={async (e) => {
                                     e.stopPropagation();
-                                    if (!window.confirm('Bạn có chắc muốn xoá?')) return;
+                                    if (!window.confirm('Are you sure want to delete?')) return;
                                     await onDelete(n.id);
                                 }}
-                                aria-label={`Xoá ${n.title}`}
+                                aria-label={`Delete ${n.title}`}
                             />
                         </div>
                     </div>

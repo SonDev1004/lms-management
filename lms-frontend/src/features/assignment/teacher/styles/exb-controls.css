@@ -1,0 +1,83 @@
+/* ====== SWITCH / TOGGLE (giống hình: off = navy, on = teal, nút tròn trắng) ====== */
+.exb-switch.p-inputswitch {
+    width: 64px; height: 34px;           /* tỉ lệ khớp mock */
+}
+.exb-switch .p-inputswitch-slider {
+    background:#0f1930;                   /* off: navy rất đậm */
+    border-radius: 999px;
+    transition: background .2s ease, box-shadow .2s ease;
+    box-shadow: 0 2px 0 rgba(0,0,0,.08) inset;
+}
+.exb-switch .p-inputswitch-slider:before{
+    width: 26px; height: 26px;            /* nút tròn trắng */
+    border-radius: 50%;
+    background:#fff;
+    left: 4px; bottom: 4px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.18);
+    transition: transform .2s ease;
+}
+.exb-switch.p-inputswitch-checked .p-inputswitch-slider{
+    background: var(--mgx-primary);       /* on: teal */
+    box-shadow: 0 0 0 2px rgba(0,178,204,.10) inset;
+}
+.exb-switch.p-inputswitch-checked .p-inputswitch-slider:before{
+    transform: translateX(30px);
+}
+
+/* kích cỡ nhỏ cho bảng Settings tấp nập */
+.exb-switch--sm.p-inputswitch{ width:56px; height:30px }
+.exb-switch--sm .p-inputswitch-slider:before{ width:22px; height:22px; transform:none }
+.exb-switch--sm.p-inputswitch-checked .p-inputswitch-slider:before{ transform:translateX(26px) }
+
+/* ====== RADIO / CHECKBOX (đúng tone và “glow” khi chọn) ====== */
+.p-radiobutton .p-radiobutton-box{ border:2px solid #b9d5ff; width:22px; height:22px }
+.p-radiobutton .p-radiobutton-box.p-highlight{ border-color:var(--mgx-primary) }
+.p-radiobutton .p-radiobutton-box.p-highlight .p-radiobutton-icon{ background:var(--mgx-primary) }
+.p-radiobutton .p-radiobutton-box.p-highlight::after{
+    content:''; position:absolute; inset:-4px; border-radius:50%;
+    box-shadow:0 0 0 4px rgba(0,178,204,.18);
+}
+
+.p-checkbox .p-checkbox-box{ border:2px solid #cfe0f2; border-radius:10px }
+.p-checkbox .p-checkbox-box.p-highlight{ background:var(--mgx-primary); border-color:var(--mgx-primary) }
+
+/* ====== PILL BUTTONS ====== */
+.exb-btn-primary.p-button{
+    border-radius: 16px;
+    background: var(--mgx-primary);
+    border-color: var(--mgx-primary);
+    padding: 10px 18px;
+    font-weight: 800;
+}
+.exb-btn-primary.p-button .p-button-icon{ margin-right:8px }
+.exb-btn-primary.p-button:enabled:hover{ background:var(--mgx-primary-700); border-color:var(--mgx-primary-700) }
+
+.exb-btn-outline.p-button{
+    border-radius: 16px;
+    background: transparent;
+    color: var(--mgx-primary);
+    border: 2px solid var(--mgx-primary);
+    padding: 10px 18px;
+    font-weight: 800;
+}
+.exb-btn-outline.p-button .p-button-icon{ margin-right:8px }
+.exb-btn-outline.p-button:enabled:hover{ background: rgba(0,178,204,.06) }
+
+/* Add Option / Add Blank (outlined teal pill) */
+.exb-add-option.p-button, .exb-add-blank-left.p-button{
+    border-radius:999px; border-width:2px; font-weight:800; padding:10px 16px
+}
+
+/* “Unlimited” như link */
+.exb-inline-link{
+    color: var(--mgx-primary); font-weight:800; cursor:pointer;
+    text-decoration:none;
+}
+.exb-inline-link:hover{ text-decoration: underline }
+
+/* Calendar icon button trong Visibility */
+.exb-cal-btn.p-button{
+    border-radius:12px; width:48px; height:48px;
+    background: var(--mgx-primary); border-color: var(--mgx-primary);
+}
+.exb-cal-btn.p-button:enabled:hover{ background: var(--mgx-primary-700); border-color: var(--mgx-primary-700) }

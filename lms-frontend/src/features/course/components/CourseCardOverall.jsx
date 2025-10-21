@@ -17,7 +17,7 @@ export default function CourseCardOverall({ course, role, onAction }) {
     const goDetail = () => {
         navigate(`/teacher/courses/${course.id}`, { state: { payload } });
     };
-    const footer = (<Button label="Chi tiết" onClick={goDetail} />);
+    const footer = (<Button label="Details" onClick={goDetail} />);
     const statusText = statusMap[course.status] || "unknown";
 
     //Đổi format Date
@@ -64,7 +64,7 @@ export default function CourseCardOverall({ course, role, onAction }) {
             </div>
             <div className="mb-2 text-gray-700">{course.description}</div>
             <div className="mb-2">
-                <Badge value={`Buổi: ${course.sessionsDone}/${course.plannedSession}`} className="mr-2" />
+                <Badge value={`Session: ${course.sessionsDone}/${course.plannedSession}`} className="mr-2" />
                 <Badge
                     value={statusLabelMap[statusText]}
                     severity={statusSeverityMap[statusText]}

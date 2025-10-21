@@ -41,7 +41,7 @@ export default function PaymentPage() {
 
     useEffect(() => {
         if (!selectedItem) {
-            toast.current?.show({ severity: 'warn', summary: 'Không có dữ liệu', detail: 'Vui lòng chọn khóa học để đăng ký.' });
+            toast.current?.show({ severity: 'warn', summary: 'No data', detail: 'Please select a course to enroll.' });
             navigate('/');
             return;
         }
@@ -62,8 +62,8 @@ export default function PaymentPage() {
                 notes: '',
             });
         } catch (e) {
-            const msg = e.response?.data?.message || e.message || 'Không thể tải thông tin người dùng.';
-            toast.current?.show({ severity: 'error', summary: 'Lỗi', detail: msg });
+            const msg = e.response?.data?.message || e.message || 'Failed to load user information.';
+            toast.current?.show({ severity: 'error', summary: 'Error', detail: msg });
             if (e.response?.status === 401) setTimeout(() => navigate('/login'), 1200);
         } finally {
             setProfileLoading(false);
@@ -101,20 +101,20 @@ export default function PaymentPage() {
                     value: data.value ?? data.percent ?? data.amountOff ?? 0,
                 };
                 setVoucherApplied(applied);
-                toast.current?.show({ severity: 'success', summary: 'Áp dụng mã', detail: `Đã áp dụng ${applied.code}` });
+                toast.current?.show({ severity: 'success', summary: 'Voucher applied', detail: `Applied ${applied.code}` });
             } else {
                 const found = FALLBACK_VOUCHERS[voucher.trim().toUpperCase()];
                 if (!found) {
                     setVoucherApplied(null);
-                    toast.current?.show({ severity: 'warn', summary: 'Mã không hợp lệ', detail: 'Vui lòng kiểm tra lại.' });
+                    toast.current?.show({ severity: 'warn', summary: 'Invalid voucher', detail: 'Please check again.' });
                 } else {
                     setVoucherApplied({ code: voucher.trim().toUpperCase(), ...found });
-                    toast.current?.show({ severity: 'success', summary: 'Áp dụng mã', detail: found.label || 'Áp dụng thành công' });
+                    toast.current?.show({ severity: 'success', summary: 'Voucher applied', detail: found.label || 'Applied successfully' });
                 }
             }
         } catch (e) {
-            const msg = e.response?.data?.message || e.message || 'Không thể áp dụng mã giảm giá.';
-            toast.current?.show({ severity: 'error', summary: 'Lỗi voucher', detail: msg });
+            const msg = e.response?.data?.message || e.message || 'Could not apply voucher.';
+            toast.current?.show({ severity: 'error', summary: 'Voucher error', detail: msg });
             setVoucherApplied(null);
         } finally {
             setVoucherLoading(false);
@@ -124,11 +124,11 @@ export default function PaymentPage() {
     const submit = async (e) => {
         e.preventDefault();
         if (!form.fullName || !form.email || !form.phone) {
-            toast.current?.show({ severity: 'warn', summary: 'Thiếu thông tin', detail: 'Vui lòng điền đủ Họ tên, Email, SĐT.' });
+            toast.current?.show({ severity: 'warn', summary: 'Missing information', detail: 'Please fill in Full Name, Email, and Phone.' });
             return;
         }
         if (!agree) {
-            toast.current?.show({ severity: 'warn', summary: 'Chưa đồng ý điều khoản', detail: 'Bạn cần đồng ý điều khoản sử dụng.' });
+            toast.current?.show({ severity: 'warn', summary: 'Agreement required', detail: 'You need to accept the terms of use.' });
             return;
         }
 
@@ -147,11 +147,11 @@ export default function PaymentPage() {
             const res = await axiosClient.post(urls.payment, payload);
             const data = res.data?.result || res.data?.data || res.data;
             if (data?.paymentUrl) { window.location.href = data.paymentUrl; return; }
-            toast.current?.show({ severity: 'success', summary: 'Đăng ký thành công', detail: data?.message || 'Bạn đã đăng ký thành công.' });
+            toast.current?.show({ severity: 'success', summary: 'Enrollment Successful', detail: data?.message || 'You have successfully enrolled.' });
             setTimeout(() => navigate('/my-enrollments'), 1000);
         } catch (e) {
-            const msg = e.response?.data?.message || e.message || 'Có lỗi xảy ra khi đăng ký.';
-            toast.current?.show({ severity: 'error', summary: 'Đăng ký thất bại', detail: msg });
+            const msg = e.response?.data?.message || e.message || 'An error occurred during registration.';
+            toast.current?.show({ severity: 'error', summary: 'Enrollment Failed', detail: msg });
             if (e.response?.status === 401) setTimeout(() => navigate('/login'), 1200);
         } finally {
             setLoading(false);
@@ -164,7 +164,7 @@ export default function PaymentPage() {
         return (
             <div className="full-center">
                 <ProgressSpinner />
-                <span className="ml-3">Đang tải thông tin người dùng...</span>
+                <span className="ml-3">Loading user information...</span>
             </div>
         );
     }
@@ -174,8 +174,8 @@ export default function PaymentPage() {
             <Toast ref={toast} />
 
             <header className="enroll-head">
-                <h1 className="enroll-title">Đăng ký khóa học</h1>
-                <p className="enroll-sub">Hoàn thành thông tin bên dưới để đăng ký khóa học. Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ.</p>
+                <h1 className="enroll-title">Course Enrollment</h1>
+                <p className="enroll-sub">Please complete the information below to enroll. We will contact you within 24 hours.</p>
             </header>
 
             <section className="enroll-grid">
@@ -187,23 +187,23 @@ export default function PaymentPage() {
                     <Card title="Thông tin đăng ký" className="card-right">
                         <form onSubmit={submit} className="form-grid">
                             <label className="p-field">
-                                <span>Họ và tên <b className="req">*</b></span>
-                                <InputText className="ctrl" value={form.fullName} onChange={(e)=>handleChange('fullName', e.target.value)} placeholder="Nhập họ và tên đầy đủ"/>
+                                <span>Full Name <b className="req">*</b></span>
+                                <InputText className="ctrl" value={form.fullName} onChange={(e) => handleChange('fullName', e.target.value)} placeholder="Nhập họ và tên đầy đủ" />
                             </label>
 
                             <label className="p-field">
                                 <span>Email <b className="req">*</b></span>
-                                <InputText type="email" className="ctrl" value={form.email} onChange={(e)=>handleChange('email', e.target.value)} placeholder="example@email.com"/>
+                                <InputText type="email" className="ctrl" value={form.email} onChange={(e) => handleChange('email', e.target.value)} placeholder="example@email.com" />
                             </label>
 
                             <label className="p-field">
-                                <span>Số điện thoại <b className="req">*</b></span>
-                                <InputText className="ctrl" value={form.phone} onChange={(e)=>handleChange('phone', e.target.value)} placeholder="0123456789"/>
+                                <span>Phone <b className="req">*</b></span>
+                                <InputText className="ctrl" value={form.phone} onChange={(e) => handleChange('phone', e.target.value)} placeholder="0123456789" />
                             </label>
 
                             <label className="p-field">
-                                <span>Ghi chú</span>
-                                <InputTextarea className="ctrl" rows={4} value={form.notes} onChange={(e)=>handleChange('notes', e.target.value)} placeholder="Ghi chú thêm về yêu cầu học tập..."/>
+                                <span>Notes</span>
+                                <InputTextarea className="ctrl" rows={4} value={form.notes} onChange={(e) => handleChange('notes', e.target.value)} placeholder="Additional notes or special learning requirements...." />
                             </label>
 
                             <VoucherInput
@@ -221,13 +221,13 @@ export default function PaymentPage() {
                             <div className="agree-row">
                                 <Checkbox inputId="agree" checked={agree} onChange={(e) => setAgree(e.checked)} />
                                 <label htmlFor="agree">
-                                    Tôi đồng ý với <a href="/terms">Điều khoản sử dụng</a> và <a href="/privacy">Chính sách bảo mật</a>.
+                                    I agree to the <a href="/terms">Terms of Use</a> and <a href="/privacy">Privacy Policy</a>.
                                 </label>
                             </div>
 
                             <TotalsBox basePrice={basePrice} discountAmount={discountAmount} totalPay={totalPay} />
 
-                            <Button type="submit" label={loading ? 'Đang xử lý...' : 'Đăng ký ngay'} icon={loading ? '' : 'pi pi-check'} className="btn-submit" disabled={loading}/>
+                            <Button type="submit" label={loading ? 'Processing...' : 'Enroll Now'} icon={loading ? '' : 'pi pi-check'} className="btn-submit" disabled={loading} />
                             {loading && <div className="spin-center"><ProgressSpinner style={{ width: 30, height: 30 }} strokeWidth="4" /></div>}
                         </form>
                     </Card>

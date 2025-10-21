@@ -14,7 +14,7 @@ const SubjectCard = ({ subject }) => {
 
     const {
         id,
-        title = "Chủ đề chưa đặt tên",
+        title = "Untitled Subject",
         image,
         fee,
         isActive = true,
@@ -32,7 +32,7 @@ const SubjectCard = ({ subject }) => {
             className="m-2 shadow-2 border-round-lg surface-card hover:shadow-4 transition-duration-200 cursor-pointer"
             style={{ minHeight: "320px" }}
             onClick={goDetail}
-            aria-label={`Môn học: ${title}`}
+            aria-label={`Subject: ${title}`}
             role="button"
         >
             {/* Ảnh: giữ tỉ lệ 16:9, bo góc */}
@@ -53,7 +53,7 @@ const SubjectCard = ({ subject }) => {
             {/* Hàng tag: trạng thái bên trái, học phí bên phải */}
             <div className="flex justify-content-between align-items-center mb-3">
                 <Tag
-                    value={isActive ? "Đang mở" : "Tạm dừng"}
+                    value={isActive ? "Open" : "Paused"}
                     severity={isActive ? "success" : "warning"}
                     rounded
                 />
@@ -65,7 +65,7 @@ const SubjectCard = ({ subject }) => {
             </div>
 
             <Button
-                label="Xem chi tiết"
+                label="View Details"
                 icon="pi pi-arrow-right"
                 className="w-full"
                 onClick={(e) => {

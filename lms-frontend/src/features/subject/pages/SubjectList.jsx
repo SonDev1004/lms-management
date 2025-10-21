@@ -8,11 +8,11 @@ import SubjectCard from "@/features/subject/components/SubjectCard.jsx";
 import "../styles/subject-list.css";
 
 const SORTS = [
-    { label: "Mặc định", value: "default" },
-    { label: "Tên (A → Z)", value: "title-asc" },
-    { label: "Tên (Z → A)", value: "title-desc" },
-    { label: "Học phí tăng dần", value: "price-asc" },
-    { label: "Học phí giảm dần", value: "price-desc" },
+    { label: "Default", value: "default" },
+    { label: "Name (A → Z)", value: "title-asc" },
+    { label: "Name (Z → A)", value: "title-desc" },
+    { label: "Tuition: Low to High", value: "price-asc" },
+    { label: "Tuition: High to Low", value: "price-desc" },
 ];
 
 export default function SubjectList() {
@@ -115,9 +115,9 @@ export default function SubjectList() {
         <div className="mx-auto px-3 py-6 subject-wrapper">
             <div className="subject-header">
                 <div>
-                    <h1 className="subject-title">Môn học của trung tâm</h1>
+                    <h1 className="subject-title">Our Subjects</h1>
                     <p className="subject-sub">
-                        Khám phá các môn học đang mở tuyển — giao diện tinh gọn, dễ duyệt.
+                        Explore currently available subjects — simple and easy to browse.
                     </p>
                 </div>
 
@@ -125,18 +125,18 @@ export default function SubjectList() {
                 <div className="subject-toolbar">
                     {/* Search (full width on mobile) */}
                     <span className="p-input-icon-left subject-search">
-            <i className="pi pi-search" />
-            <InputText
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Tìm theo tên, mô tả, đối tượng…"
-            />
-          </span>
+                        <i className="pi pi-search" />
+                        <InputText
+                            value={q}
+                            onChange={(e) => setQ(e.target.value)}
+                            placeholder="Search by name, description, or audience…"
+                        />
+                    </span>
 
                     {/* Controls on the right */}
                     <div className="subject-controls">
                         <div className="subject-control">
-                            <label className="subject-label">Sắp xếp</label>
+                            <label className="subject-label">Sort by</label>
                             <Dropdown
                                 options={SORTS}
                                 value={sort}
@@ -149,7 +149,7 @@ export default function SubjectList() {
                         </div>
 
                         <div className="subject-control">
-                            <label className="subject-label">Hiển thị</label>
+                            <label className="subject-label">Show</label>
                             <Dropdown
                                 value={paging.size}
                                 options={[6, 9, 12, 18].map((n) => ({
@@ -164,14 +164,14 @@ export default function SubjectList() {
                         </div>
 
                         <div className="subject-meta">
-                            <span className="subject-count">{processed.length} môn</span>
+                            <span className="subject-count">{processed.length} Subject</span>
                             {(q || sort !== "default" || paging.size !== 9) && (
                                 <button
                                     type="button"
                                     className="subject-clear"
                                     onClick={clearFilters}
                                 >
-                                    Xóa lọc
+                                    Clear filters
                                 </button>
                             )}
                         </div>
@@ -214,8 +214,8 @@ export default function SubjectList() {
             ) : (
                 <div className="empty-state">
                     <img alt="No data" src="/no-data-illustration.svg" />
-                    <h3>Không tìm thấy môn phù hợp</h3>
-                    <p>Hãy thử từ khóa khác hoặc bỏ sắp xếp.</p>
+                    <h3>No matching subjects found</h3>
+                    <p>Try a different keyword or remove sorting options.</p>
                 </div>
             )}
         </div>

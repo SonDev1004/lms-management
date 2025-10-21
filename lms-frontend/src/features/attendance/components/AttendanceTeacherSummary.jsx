@@ -81,12 +81,12 @@ const AttendanceTeacherSummary = () => {
     return (
         <div className="mt-2">
             <Card
-                title="Bảng điểm danh toàn khóa"
+                title="Attendance Summary"
                 subTitle={
                     <div className="flex gap-2 align-items-center">
-                        <Tag value="Có mặt" icon="pi pi-check" />
-                        <Tag value="Đi trễ" icon="pi pi-clock" severity="warning" />
-                        <Tag value="Vắng" icon="pi pi-times" severity="danger" />
+                        <Tag value="Present" icon="pi pi-check" />
+                        <Tag value="Late" icon="pi pi-clock" severity="warning" />
+                        <Tag value="Absent" icon="pi pi-times" severity="danger" />
                     </div>
                 }
                 className='w-full overflow-hidden'
@@ -94,9 +94,9 @@ const AttendanceTeacherSummary = () => {
                 <div className="overflow-auto">
                     <DataTable value={students} dataKey="id" scrollable scrollHeight="120vh" showGridlines stripedRows
                         style={{ width: '950px' }} >
-                        <Column field="code" header="Mã HV" frozen style={{ minWidth: '100px' }} headerStyle={{ whiteSpace: 'nowrap' }} />
+                        <Column field="code" header="Student ID" frozen style={{ minWidth: '100px' }} headerStyle={{ whiteSpace: 'nowrap' }} />
                         <Column
-                            header="Họ tên"
+                            header="Student Name"
                             style={{ minWidth: '200px' }}
                             headerStyle={{ whiteSpace: 'nowrap', zIndex: 2 }}
                             frozen
@@ -125,9 +125,9 @@ const AttendanceTeacherSummary = () => {
                                     return t
                                         ? (
                                             <div className="flex gap-2 justify-content-center text-xs">
-                                                <span title="Có mặt">✔ {t.present}</span>
-                                                <span title="Đi trễ">⏰ {t.late}</span>
-                                                <span title="Vắng">✖ {t.absent}</span>
+                                                <span title="Present">✔ {t.present}</span>
+                                                <span title="Late">⏰ {t.late}</span>
+                                                <span title="Absent">✖ {t.absent}</span>
                                             </div>
                                         )
                                         : null;
@@ -138,7 +138,7 @@ const AttendanceTeacherSummary = () => {
                     </DataTable>
                 </div>
                 <div className="flex justify-content-start gap-2 mt-3">
-                    <Button label="Quay lại" onClick={() => navigate(-1)} />
+                    <Button label="Back" onClick={() => navigate(-1)} />
                 </div>
             </Card>
         </div>
