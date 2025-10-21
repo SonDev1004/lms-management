@@ -25,11 +25,14 @@ const CourseDetailTeacher = () => {
     };
     return (<>
         <div className="grid m-2">
-            <div className="col-9 border-primary">
+            <div className="col-9 border"
+            >
                 <Outlet />
             </div>
-            <div className="col-3">
-                <Panel header={course.title} className="shadow-6">
+            <div className="col-3"
+            //style={{ position: "sticky", top: "1rem", alignSelf: "flex-start" }}
+            >
+                <Panel header={course.title} >
                     <Badge size="large"
                         value={`${course.current_session}/${course.total_session}`}
                     />
@@ -46,8 +49,8 @@ const CourseDetailTeacher = () => {
                             course.status === 1
                                 ? "Đang dạy"
                                 : course.status === 2
-                                    ? "Sắp mở"
-                                    : "Đã hủy"
+                                    ? "Upcoming"
+                                    : "Canceled"
                         }
                         className="mt-2 ml-2"
                     />
@@ -71,9 +74,9 @@ const CourseDetailTeacher = () => {
                         <li><i className="pi pi-calendar pr-2" style={{ fontSize: '1.5rem' }}></i> {shortDate(course.start_date)} - {shortDate(course.end_date)}</li>
                     </ul>
                     <Divider />
-                    <Button label="Danh sách học viên" onClick={() => navigate('student-list')} className="p-button-lg w-full mt-2" />
-                    <Button label="Bảng điểm danh" onClick={() => navigate('attendance')} className="p-button-lg w-full mt-2" />
-                    <Button label="Danh sách bài giảng" onClick={() => navigate('lesson')} className="p-button-lg w-full mt-2" />
+                    <Button label="Student List" onClick={() => navigate('student-list')} className="p-button-lg w-full mt-2" />
+                    <Button label="Attendance" onClick={() => navigate('attendance')} className="p-button-lg w-full mt-2" />
+                    <Button label="Session List" onClick={() => navigate('lesson')} className="p-button-lg w-full mt-2" />
                 </Panel>
             </div>
         </div >

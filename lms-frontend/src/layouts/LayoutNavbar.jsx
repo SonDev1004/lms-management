@@ -11,111 +11,144 @@ export default function LayoutNavbar({ role, children }) {
     const mountedRef = useRef(false);
 
     const items = [
-        { label: 'Tổng quan',
+        {
+            label: 'Overview',
             icon: 'pi pi-home',
-            roles: ['STUDENT','TEACHER','ACADEMIC_MANAGER','ADMIN_IT'],
-            command: () => navigate(`/${roleToRoute(role)}`) },
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+            command: () => navigate(`/${roleToRoute(role)}`)
+        },
 
         {
-            label: 'Lớp học',
-            icon:'pi pi-book',
-            roles: ['STUDENT'],
-            command: () => navigate(`/${roleToRoute(role)}/courses`) },
-
-        { label: 'Lớp học & Khóa',
+            label: 'Courses',
             icon: 'pi pi-book',
-            roles: ['TEACHER','ACADEMIC_MANAGER'],
+            roles: ['STUDENT'],
+            command: () => navigate(`/${roleToRoute(role)}/courses`)
+        },
+
+        {
+            label: 'Courses & Programs',
+            icon: 'pi pi-book',
+            roles: ['TEACHER', 'ACADEMIC_MANAGER'],
             items: [
-                { label: 'Danh sách lớp ',
+                {
+                    label: 'Class list',
                     icon: 'pi pi-list',
-                    roles: ['TEACHER','ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/courses`) },
+                    roles: ['TEACHER', 'ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/courses`)
+                },
+                {
+                    label: 'Programs / Subjects',
+                    icon: 'pi pi-clone',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/program`)
+                }
+            ]
+        },
 
-                { label: 'Chương trình / Khóa học',
-                    icon: 'pi pi-clone', roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/program`) }
-            ]},
-
-        { label: 'Quản lí học vụ',
+        {
+            label: 'Academic Management',
             icon: 'pi pi-users',
             roles: ['ACADEMIC_MANAGER'],
             items: [
-                { label: 'Danh sách học sinh',
+                {
+                    label: 'Student list',
                     icon: 'pi pi-list',
                     roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/student-manager`) },
-
-                { label: 'Danh sách giáo viên',
+                    command: () => navigate(`/${roleToRoute(role)}/student-manager`)
+                },
+                {
+                    label: 'Teacher list',
                     icon: 'pi pi-id-card',
                     roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/teacher-list`) },
-
-                { label: 'Theo dõi & Feedback',
+                    command: () => navigate(`/${roleToRoute(role)}/teacher-list`)
+                },
+                {
+                    label: 'Monitoring & Feedback',
                     icon: 'pi pi-check-square',
                     roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/feedback`) },
-
-                { label: 'Quản lý thời khóa biểu (tổng)',
+                    command: () => navigate(`/${roleToRoute(role)}/feedback`)
+                },
+                {
+                    label: 'Master Timetable',
                     icon: 'pi pi-table',
                     roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/schedule-overview`) }
-            ]},
+                    command: () => navigate(`/${roleToRoute(role)}/schedule-overview`)
+                }
+            ]
+        },
 
-        { label: 'Thời khóa biểu',
+        {
+            label: 'Schedule',
             icon: 'pi pi-calendar',
-            roles: ['STUDENT','TEACHER','ACADEMIC_MANAGER'],
-            command: () => navigate(`/${roleToRoute(role)}/schedule`) },
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/schedule`)
+        },
 
-        { label: 'Thông báo',
+        {
+            label: 'Notifications',
             icon: 'pi pi-bell',
-            roles: ['STUDENT','TEACHER','ACADEMIC_MANAGER'],
-            command: () => navigate(`/${roleToRoute(role)}/notification`) },
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/notification`)
+        },
 
-        { label: 'Thông tin cá nhân',
+        {
+            label: 'Profile',
             icon: 'pi pi-user',
-            roles: ['STUDENT','TEACHER','ACADEMIC_MANAGER','ADMIN_IT'],
-            command: () => navigate(`/${roleToRoute(role)}/profile`) },
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+            command: () => navigate(`/${roleToRoute(role)}/profile`)
+        },
 
-        { label: 'Quản trị hệ thống',
+        {
+            label: 'System Administration',
             icon: 'pi pi-cog',
             roles: ['ADMIN_IT'],
             items: [
-                { label: 'Quản lý hệ thống',
+                {
+                    label: 'System Management',
                     icon: 'pi pi-server',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/systems') },
-
-                { label: 'Quản lý dữ liệu (Upload)',
+                    command: () => navigate('/admin/systems')
+                },
+                {
+                    label: 'Data Management (Upload)',
                     icon: 'pi pi-upload',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/upload') },
-
-                { label: 'Quản lý bảo mật',
+                    command: () => navigate('/admin/upload')
+                },
+                {
+                    label: 'Security Management',
                     icon: 'pi pi-shield',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/security') },
-
-                { label: 'Báo cáo & Xuất dữ liệu',
+                    command: () => navigate('/admin/security')
+                },
+                {
+                    label: 'Reports & Export',
                     icon: 'pi pi-file',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/reports') },
-                { label: 'Hồ sơ quản trị',
+                    command: () => navigate('/admin/reports')
+                },
+                {
+                    label: 'Admin Profile',
                     icon: 'pi pi-user-edit',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/profile') }
-            ]}
+                    command: () => navigate('/admin/profile')
+                }
+            ]
+        }
     ];
 
     const filterByRole = (list, role) => {
-        return list.map(item => {
-            const newItem = { ...item };
-            if (item.items) newItem.items = filterByRole(item.items, role);
-            return newItem;
-        }).filter(item => {
-            const hasRole = Array.isArray(item.roles) ? item.roles.includes(role) : false;
-            const hasVisibleChildren = Array.isArray(item.items) && item.items.length > 0;
-            return hasRole || hasVisibleChildren;
-        });
+        return list
+            .map((item) => {
+                const newItem = { ...item };
+                if (item.items) newItem.items = filterByRole(item.items, role);
+                return newItem;
+            })
+            .filter((item) => {
+                const hasRole = Array.isArray(item.roles) ? item.roles.includes(role) : false;
+                const hasVisibleChildren = Array.isArray(item.items) && item.items.length > 0;
+                return hasRole || hasVisibleChildren;
+            });
     };
 
     const visibleItems = filterByRole(items, role);
@@ -123,17 +156,25 @@ export default function LayoutNavbar({ role, children }) {
     useEffect(() => {
         if (mountedRef.current) return;
         mountedRef.current = true;
-        const isSmall = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+        const isSmall =
+            typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(max-width: 767px)').matches;
         setCollapsed(isSmall ? true : true);
     }, []);
 
     const isOpen = !collapsed || hoverOpen;
 
     const handleMouseEnter = () => {
-        const isSmall = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 767px)').matches;
+        const isSmall =
+            typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(max-width: 767px)').matches;
         if (collapsed && !isSmall) setHoverOpen(true);
     };
-    const handleMouseLeave = () => { if (hoverOpen) setHoverOpen(false); };
+    const handleMouseLeave = () => {
+        if (hoverOpen) setHoverOpen(false);
+    };
 
     return (
         <div className="layout-navbar-wrapper">
@@ -150,4 +191,3 @@ export default function LayoutNavbar({ role, children }) {
         </div>
     );
 }
-

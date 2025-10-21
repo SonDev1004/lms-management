@@ -1,4 +1,4 @@
-import {  useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Button } from 'primereact/button';
@@ -18,7 +18,7 @@ import axiosClient from '@/shared/api/axiosClient.js';
 
 import terms from 'assets/data/terms.json';
 import bg from 'assets/images/bg-login.png';
-import {AppUrls} from "@/shared/constants/index.js";
+import { AppUrls } from "@/shared/constants/index.js";
 
 const Register = () => {
     // States, hooks and refs
@@ -76,19 +76,19 @@ const Register = () => {
     const toStep2 = () => {
         let newErrors = {};
         if (!user.userName.trim()) {
-            newErrors.userName = 'Tên đăng nhập không được để trống';
+            newErrors.userName = 'Username is required';
         }
         if (!user.email.trim()) {
-            newErrors.email = 'Email không được để trống';
+            newErrors.email = 'Email is required';
         }
         if (user.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
-            newErrors.email = 'Email không hợp lệ';
+            newErrors.email = 'Invalid email address';
         }
         if (!user.password.trim()) {
-            newErrors.password = 'Mật khẩu không được để trống';
+            newErrors.password = 'Password is required';
         }
         if (user.password !== user.repassword) {
-            newErrors.repassword = 'Mật khẩu xác nhận không khớp';
+            newErrors.repassword = 'Password do not match';
         }
 
         setErrors(newErrors);
@@ -101,7 +101,7 @@ const Register = () => {
         }
 
         if (Object.keys(newErrors).length > 0) {
-            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Vui lòng kiểm tra lại thông tin', life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Please check your information', life: 3000 });
             return;
         }
 
@@ -115,7 +115,7 @@ const Register = () => {
         const [day, month, year] = dobClean.split('-');
         const dateOfBirth = new Date(`${year}-${month}-${day}`);
         if (isNaN(dateOfBirth.getTime())) {
-            newErrors.dateOfBirth = 'Ngày sinh không hợp lệ';
+            newErrors.dateOfBirth = 'Invalid date of birth';
         }
 
         // Check phone
@@ -123,7 +123,7 @@ const Register = () => {
             user.phone = user.phone.replace(/-/g, '');
             const phoneRegex = /^0\d{9}$/;
             if (!phoneRegex.test(user.phone)) {
-                newErrors.phone = 'Số điện thoại không hợp lệ';
+                newErrors.phone = 'Invalid phone number';
             }
         }
 
@@ -136,7 +136,7 @@ const Register = () => {
         }
 
         if (Object.keys(newErrors).length > 0) {
-            toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Vui lòng kiểm tra lại thông tin', life: 3000 });
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Please check your information', life: 3000 });
             return;
         }
         registerStepperRef.current.nextCallback();
@@ -148,7 +148,7 @@ const Register = () => {
             // nhận cả 01/01/2000 hoặc 01-01-2000
             const [d, m, y] = ddmmyyyy.replace(/\D/g, ' ').trim().split(' ').map(Number);
             if (!d || !m || !y) return '';
-            const pad = (n) => String(n).padStart(2,'0');
+            const pad = (n) => String(n).padStart(2, '0');
             return `${y}-${pad(m)}-${pad(d)}`;       // <-- YYYY-MM-DD
         };
         const payload = {
@@ -156,23 +156,23 @@ const Register = () => {
             password: user.password,
             firstName: user.firstName?.trim() || '',
             lastName: user.lastName?.trim() || '',
-            dateOfBirth: user.dateOfBirth ? toYMD(user.dateOfBirth) : '' ,
+            dateOfBirth: user.dateOfBirth ? toYMD(user.dateOfBirth) : '',
             address: user.address?.trim() || '',
             gender: typeof user.gender === 'boolean' ? user.gender : null,
             email: user.email?.trim(),
-            phone:user.phone,
+            phone: user.phone,
             avatar: user.avatar || ''
         };
 
         axiosClient.post(AppUrls.register, payload)
             .then(res => {
-                toast.current.show({ severity: 'success', summary: 'Thành công', detail: 'Đăng ký thành công. Vui lòng đăng nhập để tiếp tục', life: 3000 });
+                toast.current.show({ severity: 'success', summary: 'Success', detail: 'Registration successful. Please log in to continue.', life: 3000 });
                 setTimeout(() => {
                     navigate('/login');
                 }, 3000);
             })
             .catch(error => {
-                toast.current.show({ severity: 'error', summary: 'Lỗi', detail: 'Đăng ký thất bại. Vui lòng liên hệ số hotline 19001234 để được hỗ trợ', life: 3000 });
+                toast.current.show({ severity: 'error', summary: 'Error', detail: 'Registration failed. Please contact the hotline 19001234 for support.', life: 3000 });
             });
     }
 
@@ -182,13 +182,13 @@ const Register = () => {
                 <Toast ref={toast} />
 
                 <div className='w-full md:w-10 lg:w-5 mx-auto'>
-                    <Panel header='Đăng ký'>
+                    <Panel header='Register'>
                         <Stepper ref={registerStepperRef} style={{ flexBasis: '50rem' }}>
                             {/* Step 1: Account Information */}
-                            <StepperPanel header='Tài khoản'>
+                            <StepperPanel header='Username'>
                                 <div className='grid'>
                                     <div className='field col-6'>
-                                        <label htmlFor='userName' className='required'>Tên đăng nhập</label>
+                                        <label htmlFor='userName' className='required'>Username</label>
                                         <InputText
                                             id='userName'
                                             name='userName'
@@ -222,14 +222,14 @@ const Register = () => {
                                                 setErrors({});
                                                 setUser({ ...user, password: e.target.value });
                                             }}
-                                            promptLabel='Nhập mật khẩu'
-                                            weakLabel='Mật khẩu yếu'
-                                            mediumLabel='Mật khẩu trung bình'
-                                            strongLabel='Mật khẩu mạnh' />
+                                            promptLabel='Input password'
+                                            weakLabel='Weak password'
+                                            mediumLabel='Medium password'
+                                            strongLabel='Strong password' />
                                         {errors.password && <small className='p-error'>{errors.password}</small>}
                                     </div>
                                     <div className='field col-6'>
-                                        <label htmlFor='repassword' className='required'>Xác nhận mật khẩu</label>
+                                        <label htmlFor='repassword' className='required'>Confirm Password</label>
                                         <InputText
                                             type='password'
                                             id='repassword'
@@ -242,16 +242,16 @@ const Register = () => {
                                     </div>
                                 </div>
                                 <div className='flex pt-4 justify-content-end'>
-                                    <Button label='Tiếp theo' icon='pi pi-arrow-right' iconPos='right' onClick={toStep2} />
+                                    <Button label='Next' icon='pi pi-arrow-right' iconPos='right' onClick={toStep2} />
                                 </div>
                                 <Divider />
-                                Đã có tài khoản? <Link to='/login'>Đăng nhập</Link>
+                                Already have account? <Link to='/login'>Login</Link>
                             </StepperPanel>
                             {/* Step 2: Contact Information */}
-                            <StepperPanel header='Liên hệ'>
+                            <StepperPanel header='Contact'>
                                 <div className='grid'>
                                     <div className='field col-6'>
-                                        <label htmlFor='firstName'>Họ và tên đệm</label>
+                                        <label htmlFor='firstName'>First & Middle Name</label>
                                         <InputText
                                             id='firstName'
                                             name='firstName'
@@ -262,7 +262,7 @@ const Register = () => {
                                         {errors.firstName && <small className='p-error'>{errors.firstName}</small>}
                                     </div>
                                     <div className='field col-6'>
-                                        <label htmlFor='lastName'>Tên</label>
+                                        <label htmlFor='lastName'>Last Name</label>
                                         <InputText
                                             type='text'
                                             id='lastName'
@@ -275,7 +275,7 @@ const Register = () => {
                                         {errors.lastName && <small className='p-error'>{errors.lastName}</small>}
                                     </div>
                                     <div className='field col-6'>
-                                        <label htmlFor='dateOfBirth'>Ngày sinh</label>
+                                        <label htmlFor='dateOfBirth'>Date of Birth</label>
                                         <InputMask
                                             id='dateOfBirth'
                                             name='dateOfBirth'
@@ -289,7 +289,7 @@ const Register = () => {
                                         {errors.dateOfBirth && <small className='p-error'>{errors.dateOfBirth}</small>}
                                     </div>
                                     <div className='field col-6'>
-                                        <label htmlFor='phone'>Số điện thoại</label>
+                                        <label htmlFor='phone'>Phone Number</label>
                                         <InputMask
                                             id='phone'
                                             name='phone'
@@ -304,7 +304,7 @@ const Register = () => {
                                         {errors.phone && <small className='p-error'>{errors.phone}</small>}
                                     </div>
                                     <div className='field col-6'>
-                                        <label htmlFor='address'>Địa chỉ</label>
+                                        <label htmlFor='address'>Address</label>
                                         <InputText
                                             type='text'
                                             id='address'
@@ -315,9 +315,9 @@ const Register = () => {
                                         {errors.address && <small className='p-error'>{errors.address}</small>}
                                     </div>
                                     <div className='field col-6'>
-                                        <label onClick={() => genderRef.current.focus()}>Giới tính</label>
+                                        <label onClick={() => genderRef.current.focus()}>Gender</label>
                                         <Dropdown
-                                            options={[{ label: 'Nam', value: true }, { label: 'Nữ', value: false }]}
+                                            options={[{ label: 'Male', value: true }, { label: 'Female', value: false }]}
                                             optionLabel='label'
                                             style={{ width: '96%' }}
                                             ref={genderRef}
@@ -327,18 +327,18 @@ const Register = () => {
                                     </div>
                                 </div>
                                 <div className='flex pt-4 justify-content-between'>
-                                    <Button label='Quay lại' severity='secondary' icon='pi pi-arrow-left' onClick={() => registerStepperRef.current.prevCallback()} />
-                                    <Button label='Tiếp theo' icon='pi pi-arrow-right' iconPos='right' onClick={toStep3} />
+                                    <Button label='Back' severity='secondary' icon='pi pi-arrow-left' onClick={() => registerStepperRef.current.prevCallback()} />
+                                    <Button label='Next' icon='pi pi-arrow-right' iconPos='right' onClick={toStep3} />
                                 </div>
                             </StepperPanel>
                             {/* Step 3: Terms and Conditions */}
-                            <StepperPanel header='Điều khoản'>
+                            <StepperPanel header='Terms & Conditions'>
                                 <div className='flex flex-column h-12rem'>
                                     <ScrollPanel className='overflow-hidden'>
                                         <div style={{ lineHeight: "1.6", fontSize: "14px", color: "#374151" }}>
                                             <h2>{terms.title}</h2>
                                             <p>
-                                                <em>Hiệu lực từ {terms.effectiveDate}</em>
+                                                <em>Effective from {terms.effectiveDate}</em>
                                             </p>
 
                                             {terms.sections.map((section, index) => (
@@ -361,13 +361,13 @@ const Register = () => {
                                             onChange={e => setAcceptTerms(e.checked)}
                                             checked={acceptTerms} />
                                         <label htmlFor='terms' className='ml-2'>
-                                            Tôi đã đọc và đồng ý với các điều khoản trên
+                                            I have read and agree to the above terms
                                         </label>
                                     </div>
                                 </div>
                                 <div className='flex pt-4 justify-content-between'>
-                                    <Button label='Quay lại' severity='secondary' icon='pi pi-arrow-left' onClick={() => registerStepperRef.current.prevCallback()} />
-                                    <Button label='Đăng ký' icon='pi pi-check' iconPos='right' onClick={handleRegister} disabled={!acceptTerms} />
+                                    <Button label='Back' severity='secondary' icon='pi pi-arrow-left' onClick={() => registerStepperRef.current.prevCallback()} />
+                                    <Button label='Register' icon='pi pi-check' iconPos='right' onClick={handleRegister} disabled={!acceptTerms} />
                                 </div>
                             </StepperPanel>
                         </Stepper>

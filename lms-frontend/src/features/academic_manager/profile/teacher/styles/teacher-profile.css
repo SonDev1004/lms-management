@@ -208,15 +208,15 @@ body{ background:var(--c-bg); font-feature-settings:"case" 1; }
     .tp-statusline{ gap:.4rem; }
 }
 
-/* ---------- Dark mode (auto) ---------- */
-@media (prefers-color-scheme: dark){
-    :root{
-        --c-surface:#0f172a; --c-surface-2:#111826; --c-bg:#0b1220; --c-border:#1f2937;
-        --c-text-900:#e5e7eb; --c-text-700:#cbd5e1; --c-text-600:#94a3b8; --c-text-500:#7a8aa1;
-    }
-    .p-card,.card{ background:var(--c-surface); }
-    .p-datatable .p-datatable-thead>tr>th{ background:var(--c-surface-2); }
-}
+/*!* ---------- Dark mode (auto) ---------- *!*/
+/*@media (prefers-color-scheme: dark){*/
+/*    :root{*/
+/*        --c-surface:#0f172a; --c-surface-2:#111826; --c-bg:#0b1220; --c-border:#1f2937;*/
+/*        --c-text-900:#e5e7eb; --c-text-700:#cbd5e1; --c-text-600:#94a3b8; --c-text-500:#7a8aa1;*/
+/*    }*/
+/*    .p-card,.card{ background:var(--c-surface); }*/
+/*    .p-datatable .p-datatable-thead>tr>th{ background:var(--c-surface-2); }*/
+/*}*/
 
 /* ---------- Print ---------- */
 @media print{

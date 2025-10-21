@@ -20,7 +20,7 @@ export default function DashboardPage() {
         <div className="sd-container">
             <div className="sd-grid">
                 <div>
-                    <h3 className="sd-header">XEM NHANH QUÁ TRÌNH HỌC CỦA BẠN</h3>
+                    <h3 className="sd-header">QUICK VIEW OF YOUR LEARNING PROGRESS</h3>
 
                     <div style={{ display: 'grid', gap: '1rem' }}>
                         <div className="sd-card sd-small-card sd-compact">
@@ -29,8 +29,8 @@ export default function DashboardPage() {
                                     <i className="pi pi-book" style={{ fontSize: '1.15rem', color: 'var(--accent)' }}></i>
                                 </div>
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 800, fontSize: 14 }}>Bạn đang theo học 1 khóa học</div>
-                                    <div className="muted-2">Phát triển kỹ năng của bạn qua khóa học IELTS</div>
+                                    <div style={{ fontWeight: 800, fontSize: 14 }}>You are enrolled in 1 course</div>
+                                    <div className="muted-2">Develop your skills through the IELTS course</div>
                                 </div>
                                 <div style={{ color: 'var(--accent)', fontWeight: 700 }}>In-progress courses &nbsp; <i className="pi pi-angle-right"></i></div>
                             </div>
@@ -47,38 +47,38 @@ export default function DashboardPage() {
                                 </div>
 
                                 <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 800, fontSize: 14 }}>Bạn đã học xong 1 khóa học</div>
-                                    <div className="muted-2">Xem lại khóa học IELTS của bạn tại DOL</div>
+                                    <div style={{ fontWeight: 800, fontSize: 14 }}>You have completed 1 course</div>
+                                    <div className="muted-2">Review your IELTS course at DOL</div>
                                 </div>
 
                                 <div style={{ color: 'var(--accent)', fontWeight: 700 }}>Completed courses &nbsp; <i className="pi pi-angle-right"></i></div>
                             </div>
 
                             <div style={{ marginTop: 12 }}>
-                                <div className="summary-pill"><i className="pi pi-calendar"></i> Đi học <strong style={{ color: 'var(--success)', marginLeft: 6 }}>16</strong> buổi</div>
+                                <div className="summary-pill"><i className="pi pi-calendar"></i> Attended <strong style={{ color: 'var(--success)', marginLeft: 6 }}>16</strong> sessions</div>
                                 <div style={{ width: 8 }} />
-                                <div className="summary-pill"><i className="pi pi-book"></i> Luyện tập <strong style={{ color: 'var(--success)', marginLeft: 6 }}>208</strong> bài</div>
+                                <div className="summary-pill"><i className="pi pi-book"></i> Practiced <strong style={{ color: 'var(--success)', marginLeft: 6 }}>208</strong> exercises</div>
                                 <div style={{ width: 8 }} />
-                                <div className="summary-pill"><i className="pi pi-file"></i> Hoàn thành <strong style={{ color: 'var(--success)', marginLeft: 6 }}>9</strong> assignment</div>
+                                <div className="summary-pill"><i className="pi pi-file"></i> Completed <strong style={{ color: 'var(--success)', marginLeft: 6 }}>9</strong> assignments</div>
                             </div>
                         </div>
 
                         <div>
-                            <div className="section-title">KHÓA ĐANG HỌC (1)</div>
+                            <div className="section-title">CURRENT COURSE (1)</div>
                             <CourseCard course={course} filledCount={filledCount} />
                         </div>
 
                         <div style={{ marginTop: 12 }}>
-                            <div className="section-title">BÀI ASSIGNMENT CẦN HOÀN THÀNH (1)</div>
+                            <div className="section-title">ASSIGNMENTS TO COMPLETE (1)</div>
                             {assignments.map(a => <AssignmentCard key={a.id} assign={a} />)}
                         </div>
 
                         <div style={{ marginTop: 12 }}>
-                            <div className="section-title">KHÓA HỌC GỢI Ý CHO BẠN</div>
+                            <div className="section-title">COURSES SUGGESTED FOR YOU</div>
                             <div className="sd-card sd-small-card suggest-card">
                                 <div className="suggest-ico" style={{ background: 'linear-gradient(180deg,#ff4d4f,#ff9a9a)' }}>{suggestions[0].tag}</div>
                                 <div>
-                                    <div style={{ color: 'var(--accent)', fontWeight: 700 }}>Tiếp theo khóa IELTS 7.0</div>
+                                    <div style={{ color: 'var(--accent)', fontWeight: 700 }}>Next after IELTS 7.0 course</div>
                                     <div style={{ fontWeight: 800, fontSize: 18 }}>{suggestions[0].title}</div>
                                     <div style={{ color: 'var(--muted)', marginTop: 8 }}><i className="pi pi-book" style={{ marginRight: 6 }}></i> {suggestions[0].meta}</div>
                                 </div>

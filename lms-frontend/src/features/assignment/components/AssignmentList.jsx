@@ -28,14 +28,14 @@ const AssignmentList = ({ filteredAssignments, getAssignmentStatus, onUploadHand
                         const now = new Date();
                         const due = new Date(row.due);
                         const msPerDay = 24 * 60 * 60 * 1000;
-                        return Math.ceil((due.setHours(0,0,0,0) - now.setHours(0,0,0,0)) / msPerDay);
+                        return Math.ceil((due.setHours(0, 0, 0, 0) - now.setHours(0, 0, 0, 0)) / msPerDay);
                     })();
                     const showOverdueText = diff != null && diff < 0 && !(row.studentStatus === 'submitted' || row.studentStatus === 'graded');
 
                     return (
                         <li key={row.id}
-                            className={classNames('assignment-row', {overdue: showOverdueText})}
-                            tabIndex={0} aria-label={`Bài tập ${row.title}`}>
+                            className={classNames('assignment-row', { overdue: showOverdueText })}
+                            tabIndex={0} aria-label={`Assignment ${row.title}`}>
                             {/* Column 1: Title */}
                             <div className="ar-col ar-col--title">
                                 <div className="assign-title">
@@ -56,7 +56,7 @@ const AssignmentList = ({ filteredAssignments, getAssignmentStatus, onUploadHand
                             <div className="ar-col ar-col--status">
                                 <div className="status-block">
                                     <Tag
-                                        value={s.kind === 'graded' ? 'Đã chấm' : s.label}
+                                        value={s.kind === 'graded' ? 'Graded' : s.label}
                                         severity={
                                             s.variant === 'danger' ? 'danger' :
                                                 s.variant === 'success' ? 'success' :
@@ -65,7 +65,7 @@ const AssignmentList = ({ filteredAssignments, getAssignmentStatus, onUploadHand
                                         }
                                         className="p-mr-2 p-py-2 status-tag"
                                     />
-                                    {showOverdueText && <div className="overdue-text">Quá hạn {Math.abs(diff)} ngày</div>}
+                                    {showOverdueText && <div className="overdue-text"> Overdue by {Math.abs(diff)} days</div>}
                                 </div>
                             </div>
 
@@ -114,7 +114,7 @@ const AssignmentList = ({ filteredAssignments, getAssignmentStatus, onUploadHand
                         </li>
                     );
                 })}
-                {filteredAssignments.length === 0 && <li className="assign-empty small-muted">Không có bài tập phù hợp bộ lọc.</li>}
+                {filteredAssignments.length === 0 && <li className="assign-empty small-muted">No assignments match the filter.</li>}
             </ul>
         </div>
     );

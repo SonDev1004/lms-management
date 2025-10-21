@@ -34,7 +34,7 @@ export default function ProgramList() {
 
     return (
         <div className="max-w-6xl mx-auto px-3 py-6">
-            <h1 className="text-3xl font-bold mb-4">Chương trình của trung tâm</h1>
+            <h1 className="text-3xl font-bold mb-4">Our Programs</h1>
 
             {loading && <p>Đang tải…</p>}
 
