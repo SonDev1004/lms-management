@@ -1,0 +1,41 @@
+/* lưới 2 cột cho Min/Max Words */
+.exb-essay .exb-essay-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px;
+}
+
+/* rubric nhóm radio canh đúng spacing */
+.exb-essay .exb-essay-rubric{ margin:6px 0 6px; }
+.exb-essay .exb-radio-row{
+    display:flex; align-items:center; gap:10px; margin:8px 0;
+}
+.exb-essay .exb-radio-row label{ color:#0b1b2b; font-weight:600 }
+
+/* input bo tròn lớn giống mock */
+.exb-essay .p-inputtext,
+.exb-essay .p-inputtextarea,
+.exb-essay .p-inputnumber-input{
+    border-radius:12px;
+    padding:12px 12px;
+}
+
+/* toggle vuông mềm như các màn khác */
+.exb-essay .exb-toggle-square.p-togglebutton{
+    width:46px; height:46px; border-radius:12px;
+    border:2px solid #e5eef9; background:#fff;
+}
+.exb-essay .exb-toggle-square.p-togglebutton.p-highlight{
+    background:var(--mgx-primary); border-color:var(--mgx-primary);
+}
+
+/* dropzone mảnh */
+.exb-essay .exb-dropzone--thin{
+    min-height:112px; border-width:2px; border-radius:12px;
+}
+
+/* tiêu đề phụ */
+.exb-essay .exb-subtitle{
+    font-size:16px; font-weight:800; color:var(--mgx-ink);
+    margin:18px 0 10px;
+}

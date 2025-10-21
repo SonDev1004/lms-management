@@ -67,6 +67,8 @@ import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
 import UserProfile from "@/features/user/pages/UserProfile.jsx";
 import StudentManagement from "@/features/academic_manager/list/student/pages/StudentManagement.jsx";
 import TeacherManagement from "@/features/academic_manager/list/teacher/pages/TeacherManagement.jsx";
+import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
+import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 
 const App = () => {
     return (
@@ -105,6 +107,7 @@ const App = () => {
                         <Route path='courses/:slug' element={<CourseDetailStudent />} />
                         <Route path='schedule' element={<StudentSchedule />} />
                         <Route path='score' element={<StudentScore />} />
+                        <Route path='assignment' element={<Exercise />} />
                         <Route path='enrollment' element={<StudentEnrollment />} />
                         <Route path='notification' element={<StudentNotification />} />
                         <Route path='profile' element={<StudentProfile />} />
@@ -122,6 +125,8 @@ const App = () => {
                             <Route path="sessions/:sessionId/attendance" element={<AttendanceTeacherPanel />} />
                             <Route path="sessions/:sessionId/attendance/full" element={<AttendanceTeacherSummary />} />
                         </Route>
+                        <Route path='assignment' element={<ExerciseBuilder />} />
+
                         <Route path="schedule" element={<TeacherSchedule />} />
                         <Route path="notification" element={<TeacherNotification />} />
                         <Route path="profile" element={<TeacherProfile />} />
