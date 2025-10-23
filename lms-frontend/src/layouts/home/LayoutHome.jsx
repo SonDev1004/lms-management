@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {  useRef } from 'react';
 import { useNavigate, Link, Outlet } from 'react-router-dom';
 import { MegaMenu } from 'primereact/megamenu';
 import { Menu } from 'primereact/menu';
