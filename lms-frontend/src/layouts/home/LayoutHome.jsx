@@ -38,65 +38,15 @@ const LayoutHome = () => {
             label: 'Programs',
             icon: 'pi pi-book',
             command: () => navigate('/programs'),
-            // items: [
-            //     [
-            //         {
-            //             label: 'Frontend Basics',
-            //             items: [
-            //                 { label: 'Roadmap', command: () => navigate('/program/1') },
-            //                 { label: 'Tuition' }
-            //             ]
-            //         }
-            //     ],
-            //     [
-            //         {
-            //             label: 'IELTS 5.0+',
-            //             items: [
-            //                 { label: 'Overview', command: () => navigate('/program/2') },
-            //                 { label: 'Intake Schedule' }
-            //             ]
-            //         }
-            //     ],
-            //     [
-            //         {
-            //             label: 'Data Fundamentals',
-            //             items: [
-            //                 { label: 'Introduction', command: () => navigate('/program/3') }
-            //             ]
-            //         }
-            //     ]
-            // ]
         },
 
         {
             label: 'Subjects',
             icon: 'pi pi-graduation-cap',
             command: () => navigate('/subjects'),
-            // items: [
-            //     [
-            //         {
-            //             label: 'Skills',
-            //             items: [
-            //                 { label: 'Listening Skills', command: () => navigate('/subject/12') },
-            //                 { label: 'Speaking Skills', command: () => navigate('/subject/13') },
-            //                 { label: 'Reading Skills', command: () => navigate('/subject/14') }
-            //             ]
-            //         }
-            //     ],
-            //     [
-            //         {
-            //             label: 'Foundations',
-            //             items: [
-            //                 { label: 'Grammar Foundation', command: () => navigate('/subject/11') }
-            //             ]
-            //         }
-            //     ]
-            // ]
         },
 
         { label: 'About us', icon: 'pi pi-info-circle', command: () => navigate('/about') },
-        { label: 'FAQ', icon: 'pi pi-question-circle', command: () => navigate('/faq') },
-        { label: 'Blog', icon: 'pi pi-file-edit', command: () => navigate('/blog') },
 
         ...(role && roleToRoute(role)
             ? [{ label: 'Dashboard', icon: 'pi pi-th-large', command: () => navigate(`/${roleToRoute(role)}`) }]

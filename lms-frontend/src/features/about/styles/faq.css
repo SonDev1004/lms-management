@@ -1,0 +1,86 @@
+.faq { padding: 56px 0; }
+.faq__title{
+    text-align: center;
+    font-size: clamp(28px,3.2vw,40px);
+    font-weight: 800;
+    margin: 0 0 22px;
+}
+
+.faq__wrap{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    gap: 14px;
+}
+
+/* Card */
+.faq-item{
+    background: #fff;
+    border: 1px solid #e9eef6;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(2,6,23,.03);
+    transition: box-shadow .2s ease, transform .2s ease, border-color .2s;
+}
+.faq-item:hover{
+    box-shadow: 0 10px 22px rgba(2,6,23,.06);
+    transform: translateY(-1px);
+}
+
+/* Header */
+.faq-item__header{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+}
+.faq-item__q{
+    font-size: 20px;           /* gần mock */
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Chevron bên phải */
+.faq-item__chev{
+    position: relative;
+    width: 22px; height: 22px; flex: 0 0 22px;
+}
+.faq-item__chev::before,
+.faq-item__chev::after{
+    content:"";
+    position:absolute; inset:0;
+    background: currentColor;
+    width: 10px; height: 2px; border-radius: 2px;
+    top: 10px; left: 6px; transform-origin: center;
+    color: #0f172a;
+}
+.faq-item__chev::before{ transform: rotate(45deg); }
+.faq-item__chev::after { transform: rotate(-45deg); }
+
+/* Panel (ẩn/hiện mượt) */
+.faq-item__panel{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .25s ease;
+    will-change: max-height;
+}
+.faq-item.is-open .faq-item__panel{ max-height: 220px; } /* đủ cho 1–2 dòng */
+.faq-item__a{
+    margin: 0; padding: 0 22px 18px 22px;
+    color: #5b6a7b; line-height: 1.7;
+}
+
+/* Trạng thái mở: viền đậm hơn nhẹ, xoay chevron */
+.faq-item.is-open{ border-color: #dfe7f4; }
+.faq-item.is-open .faq-item__chev::before{ transform: rotate(-45deg); }
+.faq-item.is-open .faq-item__chev::after { transform: rotate(45deg); }
+
+/* Reset link màu trong header nếu có */
+.faq a, .faq a:link, .faq a:visited{ color: inherit; text-decoration: none; }
