@@ -1,0 +1,83 @@
+.section--teachers { padding: 56px 0; }
+.section--teachers .head { text-align: center; margin-bottom: 26px; }
+.section--teachers .head h2 {
+    font-size: clamp(28px, 3.2vw, 40px);
+    font-weight: 800;
+    margin: 0;
+}
+
+/* Grid 3 cột gọn */
+.teachers-grid {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(3, minmax(320px, 1fr));
+}
+@media (max-width: 1100px) { .teachers-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 680px)  { .teachers-grid { grid-template-columns: 1fr; } }
+
+/* Card: viền mảnh; shadow khi hover */
+.teacher-card {
+    background: #fff;
+    border: 1px solid #e6ecf6;
+    border-radius: 18px;
+    padding: 32px 26px 26px;
+    text-align: center;
+    box-shadow: none;
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+.teacher-card:hover {
+    box-shadow: 0 10px 24px rgba(2, 6, 23, .06);
+    transform: translateY(-1px);
+}
+
+/* Avatar: rounded-square + gradient xanh nhạt */
+.teacher-avatar {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 12px;
+    border-radius: 24px;                      /* rounded-square */
+    background: linear-gradient(180deg, #eef3ff 0%, #e4ebff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.teacher-avatar .pi { font-size: 26px; color: #2b6bed; }
+
+/* Tên + mô tả */
+.teacher-name { font-size: 22px; font-weight: 800; margin: 6px 0 10px; }
+.teacher-bio   { color: #5b6a7b; line-height: 1.6; margin: 0 auto; max-width: 520px; }
+
+/* Badge: pill teal, chữ trắng, đậm */
+.badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.badge-pill {
+    background: #06b6d4;
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Nếu dùng PrimeReact <Tag>, ép style để trùng thiết kế */
+.section--teachers .p-tag {
+    background: #06b6d4 !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    padding: 8px 14px !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+.section--teachers .p-tag .p-tag-value { padding: 0 !important; }

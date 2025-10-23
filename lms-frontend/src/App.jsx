@@ -71,6 +71,7 @@ import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
 import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
 import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
+import AboutPage from "@/features/about/pages/AboutPage.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -85,6 +86,7 @@ const App = () => {
                     <Route path="userprofile" element={<UserProfile />} />
                     <Route path="subjects" element={<SubjectList />} />
                     <Route path="subjects/:id" element={<SubjectDetail />} />
+                    <Route path="about" element={<AboutPage />} />
                     <Route path="payment" element={<PaymentPage />} />
                     <Route path="payment-success" element={<PaymentSuccess />} />
                     <Route path="payment-failed" element={<PaymentFailed />} />

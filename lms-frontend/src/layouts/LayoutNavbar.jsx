@@ -63,17 +63,11 @@ export default function LayoutNavbar({ role, children }) {
                     command: () => navigate(`/${roleToRoute(role)}/teacher-list`)
                 },
                 {
-                    label: 'Monitoring & Feedback',
+                    label: 'Feedback',
                     icon: 'pi pi-check-square',
                     roles: ['ACADEMIC_MANAGER'],
                     command: () => navigate(`/${roleToRoute(role)}/feedback`)
                 },
-                {
-                    label: 'Master Timetable',
-                    icon: 'pi pi-table',
-                    roles: ['ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/schedule-overview`)
-                }
             ]
         },
 
@@ -89,13 +83,6 @@ export default function LayoutNavbar({ role, children }) {
             icon: 'pi pi-bell',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
-        },
-
-        {
-            label: 'Profile',
-            icon: 'pi pi-user',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
-            command: () => navigate(`/${roleToRoute(role)}/profile`)
         },
 
         {
@@ -115,26 +102,15 @@ export default function LayoutNavbar({ role, children }) {
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/upload')
                 },
-                {
-                    label: 'Security Management',
-                    icon: 'pi pi-shield',
-                    roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/security')
-                },
-                {
-                    label: 'Reports & Export',
-                    icon: 'pi pi-file',
-                    roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/reports')
-                },
-                {
-                    label: 'Admin Profile',
-                    icon: 'pi pi-user-edit',
-                    roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/profile')
-                }
             ]
-        }
+        },
+        {
+            label: 'Profile',
+            icon: 'pi pi-user',
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+            command: () => navigate(`/${roleToRoute(role)}/profile`)
+        },
+
     ];
 
     const filterByRole = (list, role) => {
