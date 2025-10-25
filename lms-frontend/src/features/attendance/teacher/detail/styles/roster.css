@@ -1,0 +1,243 @@
+.attd-toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    background:#fff; border:1px solid var(--border); border-radius:16px;
+    padding:12px; margin-bottom:12px;
+}
+.attd-toolbar__left .p-button{ border-radius:12px; font-weight:800; }
+.attd-toolbar__right{ display:flex; align-items:center; gap:12px; color:#6b7280; }
+.attd-count{ margin-left:8px; font-weight:800; }
+.attd-count--p{ color:#16a34a }   /* Present  */
+.attd-count--l{ color:#f59e0b }   /* Late     */
+.attd-count--a{ color:#ef4444 }   /* Absent   */
+.attd-count--e{ color:#2563eb }   /* Excused  */
+
+/* ===== Table wrapper ===== */
+.attd-table{
+    border:1px solid #e8edf5;
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(2,6,23,.06);
+}
+
+/* ===== Header ===== */
+.attd-thead{
+    display:grid;
+    grid-template-columns: 64px 1.6fr 1fr 132px 1.5fr 1.6fr 132px;
+    align-items:center;
+    background:#f7f9fc;
+    color:#41546b;
+    font-weight:800;
+    padding:14px 16px;
+    border-bottom:1px solid #e8edf5;
+}
+
+/* ===== Data rows ===== */
+.attd-row{
+    display:grid;
+    grid-template-columns: 64px 1.6fr 1fr 132px 1.5fr 1.6fr 132px;
+    align-items:center;
+    padding:12px 16px;                 /* nhịp dọc gọn hơn */
+    border-bottom:1px solid #eef2f7;
+}
+.attd-row:last-child{ border-bottom:none; }
+.attd-row:nth-child(odd){ background:#fbfdff; } /* zebra nhẹ */
+.attd-row:hover{ background:#f3f7ff; }          /* hover dịu */
+.attd-row.is-active{ background:#eef4ff; outline:1px solid #dbeafe; }
+
+/* ===== Student cell ===== */
+.col-student{ display:flex; align-items:center; gap:12px; }
+.avatar{
+    width:38px; height:38px; border-radius:999px;
+    background:#e6edf7; display:flex; align-items:center; justify-content:center;
+    font-weight:800; color:#334155;
+}
+.name{ font-weight:800; }
+.code{ color:#8a97a8; font-size:12px; }
+
+/* ===== Controls (unified height 40px) ===== */
+.p-inputtext,
+.p-dropdown,
+.p-inputnumber .p-inputtext{
+    height:40px;
+    line-height:38px;                   /* baseline-align cho text */
+}
+
+/* Status dropdown: vừa nội dung, không cắt chip */
+.status-dd.p-dropdown{
+    width:auto;
+    min-width:210px;                    /* đủ cho 'Excused' + icon */
+    max-width:260px;                    /* bảng vẫn gọn */
+    border-radius:10px;
+    border:1.5px solid #e3e8ef;
+}
+
+/* Reason dropdown luôn full cột */
+.reason-dd.p-dropdown{
+    width:100%;
+    border-radius:10px;
+    border:1.5px solid #e3e8ef;
+}
+
+.p-inputnumber .p-inputtext{
+    width:84px;
+    text-align:center;
+    border:1.5px solid #e3e8ef;
+}
+.p-inputnumber.p-inputnumber-buttons-horizontal .p-button{ display:none; } /* ẩn +/- cho gọn */
+.col-note .p-inputtext{ width:100%; border:1.5px solid #e3e8ef; }
+
+/* Focus ring thống nhất */
+.p-inputtext:focus,
+.p-dropdown.p-focus,
+.p-inputnumber .p-inputtext:focus{
+    box-shadow:0 0 0 3px #dbeafe;
+    border-color:#93c5fd;
+}
+
+/* Dropdown trigger/caret nhỏ */
+.p-dropdown .p-dropdown-trigger{ width:34px; }
+.p-dropdown .p-dropdown-trigger .pi{ font-size:.9rem; color:#64748b; }
+
+/* Dropdown panel */
+.p-dropdown-panel{
+    border:1px solid #e5ebf3;
+    box-shadow:0 10px 26px rgba(2,6,23,.08);
+    border-radius:12px;
+}
+.p-dropdown-items .p-dropdown-item{
+    padding:10px 12px; border-radius:8px;
+}
+.p-dropdown-items .p-dropdown-item.p-highlight{
+    background:#edf2ff; color:#1e3a8a;
+}
+
+/* ===== Status chips ===== */
+.status-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 10px; border-radius:999px; font-weight:800;
+    white-space:nowrap;                  /* không bị xuống dòng/cắt chữ */
+}
+.status-P{ background:#ecfdf5; color:#166534; }  /* Present  */
+.status-L{ background:#fff7ed; color:#92400e; }  /* Late     */
+.status-A{ background:#fee2e2; color:#991b1b; }  /* Absent   */
+.status-E{ background:#eff6ff; color:#1d4ed8; }  /* Excused  */
+
+/* Disabled tone cho Late input */
+.p-inputtext:disabled{ background:#f7f8fb; color:#9aa7b5; }
+
+/* Check-in align phải */
+.col-checkin{ text-align:right; padding-right:6px; }
+
+/* ===== Footer actions spacing ===== */
+.attd-table + .attd-actions{ margin-top:16px; }
+
+/* ===== Responsive ===== */
+@media (max-width: 1200px){
+    .attd-thead, .attd-row{
+        grid-template-columns: 48px 1.4fr 1fr 112px 1.2fr 1.4fr 96px;
+    }
+    .status-dd.p-dropdown{ min-width:190px; max-width:240px; }
+}
+
+@media (max-width: 820px){
+    /* stack bớt cột trên mobile (giữ Student + Status nổi bật) */
+    .attd-thead, .attd-row{
+        grid-template-columns: 40px 1.6fr 1fr;
+    }
+    .col-late, .col-reason, .col-note, .col-checkin{ display:none; }
+}
+/* ============ FIX: Status dropdown kiểu "ghost" ============ */
+/* bỏ nền/viền của p-dropdown, chỉ giữ chip + caret */
+.status-dd.p-dropdown{
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    width: auto;               /* theo nội dung chip */
+    min-width: 0;              /* không ép rộng */
+    max-width: none;
+    padding: 0;                /* bỏ đệm mặc định để không thấy nền bo tròn */
+}
+
+/* label của dropdown: dán sát, không có nền riêng */
+.status-dd .p-dropdown-label{
+    padding: 0 !important;
+    background: transparent !important;
+    line-height: 1;            /* căn giữa chip đẹp hơn */
+}
+
+/* caret nhỏ gọn, tách nhẹ khỏi chip */
+.status-dd .p-dropdown-trigger{
+    width: 24px;               /* nhỏ lại */
+    margin-left: 6px;
+    border-left: 0;
+}
+.status-dd .p-dropdown-trigger .pi{ font-size: .9rem; color:#64748b; }
+
+/* focus của Status: không viền xanh quanh dropdown,
+   mà viền nhẹ quanh chính chip để đẹp hơn */
+.status-dd.p-focus{ box-shadow: none !important; }
+.status-dd.p-focus .status-chip{
+    outline: 2px solid #dbeafe;
+    outline-offset: 2px;
+    border-radius: 999px;
+}
+
+/* giữ chip 1 dòng, không cắt */
+.status-chip{ white-space: nowrap; }
+
+/* ============ Polish thêm để đồng bộ các cột ============ */
+/* Reason dropdown: chiều cao & căn giữa placeholder */
+.reason-dd.p-dropdown .p-dropdown-label{
+    padding: 0 12px;
+    line-height: 38px;         /* khớp height:40px */
+}
+
+/* Note input full chiều ngang cột, căn chữ đẹp */
+.col-note .p-inputtext{
+    width: 100%;
+    padding: 0 12px;
+    line-height: 38px;
+}
+
+/* Hàng bảng thoáng hơn một chút và đều nhau */
+.attd-row{ padding: 12px 16px; }
+/* ====== Fix spacing giữa các cột (tránh dính vào Note) ====== */
+.attd-thead,
+.attd-row{
+    column-gap: 16px;            /* tạo khoảng giữa Reason và Note */
+}
+
+/* ====== Reason dropdown: phẳng, bo đẹp, căn giữa placeholder ====== */
+.reason-dd.p-dropdown{
+    background:#fff !important;
+    border:1.5px solid #e3e8ef !important;
+    border-radius:12px !important;
+    padding:0 !important;
+    box-shadow:none !important;
+    width:100%;
+}
+
+.reason-dd .p-dropdown-label{
+    padding:0 12px !important;
+    height:40px;                 /* khớp chiều cao control */
+    line-height:38px;
+    display:flex; align-items:center;
+    color:#6b7280;               /* placeholder tone */
+}
+
+.reason-dd .p-dropdown-trigger{
+    width:32px; height:40px;     /* caret cân giữa */
+    display:flex; align-items:center; justify-content:center;
+    border-left:1px solid #eef2f7;
+}
+.reason-dd .p-dropdown-trigger .pi{ font-size:.9rem; color:#64748b; }
+
+/* Focus ring */
+.reason-dd.p-focus{
+    border-color:#93c5fd !important;
+    box-shadow:0 0 0 3px #dbeafe !important;
+}
+
+/* (Nếu dùng showClear) đặt vị trí icon clear hợp lý */
+.reason-dd .p-dropdown-clear-icon{ right:36px; }

@@ -71,6 +71,10 @@ import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
 import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
 import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
+import AttendancePage from "@/features/attendance/teacher/pages/AttendancePage.jsx";
+import AttendanceDetailPage from "@/features/attendance/teacher/detail/pages/AttendanceDetailPage.jsx";
+import TeacherAttendance from "@/features/teacher/pages/TeacherAttendance.jsx";
+import StudentAttendance from "@/features/student/pages/StudentAttendance.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -111,6 +115,7 @@ const App = () => {
                         <Route path='assignment' element={<Exercise />} />
                         <Route path='enrollment' element={<StudentEnrollment />} />
                         <Route path='notification' element={<StudentNotification />} />
+                        <Route path='attendance' element={<StudentAttendance />} />
                         <Route path='profile' element={<StudentProfile />} />
                     </Route>
                 </Route>
@@ -127,7 +132,8 @@ const App = () => {
                             <Route path="sessions/:sessionId/attendance/full" element={<AttendanceTeacherSummary />} />
                         </Route>
                         <Route path='assignment' element={<ExerciseBuilder />} />
-
+                        <Route path="attendance" element={<TeacherAttendance/>} />
+                        <Route path="attendance/detail/:classId" element={<AttendanceDetailPage />} />
                         <Route path="schedule" element={<TeacherSchedule />} />
                         <Route path="notification" element={<TeacherNotification />} />
                         <Route path="profile" element={<TeacherProfile />} />
@@ -153,6 +159,7 @@ const App = () => {
                         <Route path='schedule' element={<AMSchedule />} />
                         <Route path='report' element={<AMReport />} />
                         <Route path='notification' element={<AMNotification />} />
+                        <Route path='attendance' element={<AttendancePage />} />
                         <Route path='profile' element={<AMProfile />} />
 
                     </Route>

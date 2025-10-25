@@ -90,6 +90,12 @@ export default function LayoutNavbar({ role, children }) {
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
+        {
+            label: 'Attendance',
+            icon: 'pi pi-check-square',
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/attendance`)
+        },
 
         {
             label: 'Profile',
