@@ -122,10 +122,10 @@ export default function LayoutNavbar({ role, children }) {
                     command: () => navigate('/admin/upload')
                 },
                 {
-                    label: 'Security Management',
-                    icon: 'pi pi-shield',
+                    label: 'Recent Activity',
+                    icon: 'pi pi-history',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/security')
+                    command: () => navigate('/admin/audit')
                 },
                 {
                     label: 'Reports & Export',

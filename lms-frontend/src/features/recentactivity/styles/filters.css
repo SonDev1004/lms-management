@@ -1,0 +1,144 @@
+:root{
+    --control-h:44px;
+    --radius:12px;
+    --border:#e6e9ee;
+    --ink:#0f172a;
+    --muted:#6b7280;
+    --surface:#fff;
+}
+
+/* ===== Card ===== */
+.audit-filters.p-card--flat{
+    margin-top:16px;
+    background:var(--surface);
+    border:1px solid #edf0f4;
+    border-radius:16px;
+    box-shadow:none;
+    padding:22px;
+}
+.audit-filters.p-card--flat .p-card-body{ padding:0; }
+
+/* ===== Head ===== */
+.audit-filters .filters-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+}
+.audit-filters .filters-head h3{
+    margin:0; font-size:22px; font-weight:800; color:var(--ink);
+}
+.audit-filters .filters-head i{ color:#6b7280; font-size:18px; }
+.audit-filters .filters-desc{ color:var(--muted); }
+
+/* ===== Grid ===== */
+.audit-filters .filters-grid{
+    display:grid; gap:16px; grid-template-columns:1.2fr 1fr 1fr 1fr;
+}
+.audit-filters .field{ display:flex; flex-direction:column; gap:6px; }
+.audit-filters .field label{
+    font-weight:800; font-size:16px; color:#0f172a; /* đậm như ảnh */
+    letter-spacing:.2px;
+}
+
+/* ===== Search (icon bubble) ===== */
+.audit-filters--plain .search-wrap{ position:relative; }
+.audit-filters--plain .search-badge{
+    position:absolute; inset-inline-start:12px; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; border-radius:999px;
+    background:#eef1f4; border:1px solid #e6e9ee;
+    display:flex; align-items:center; justify-content:center;
+}
+.audit-filters--plain .search-badge .pi{ font-size:13px; color:#6b7280; }
+.audit-filters--plain .search-wrap .p-inputtext{
+    padding-inline-start:54px !important;  /* chừa chỗ icon */
+}
+
+/* ===== Controls (phẳng đúng ảnh) ===== */
+.audit-filters--plain :is(.p-inputtext,.p-dropdown){
+    height:var(--control-h) !important;
+    width:100% !important;
+    border:1px solid var(--border) !important;
+    border-radius:16px !important; /* bo lớn như ảnh */
+    background:#fff !important;
+    color:#1f2937 !important;
+    box-shadow:none !important;
+}
+.audit-filters--plain :is(.p-inputtext,.p-dropdown):hover{
+    border-color:#d7dce2 !important;
+}
+.audit-filters--plain :is(.p-inputtext:focus,.p-dropdown.p-focus){
+    border-color:#c7d7f8 !important;
+    box-shadow:0 0 0 3px #eff5ff !important;
+    outline:none !important;
+}
+.audit-filters--plain .p-inputtext::placeholder{ color:#9aa3ad; }
+
+/* ===== Dropdown label & caret ===== */
+.audit-filters--plain .p-dropdown .p-dropdown-label{
+    display:flex; align-items:center;
+    padding:0 16px !important;
+    line-height:1.2; color:#6b7280 !important; /* placeholder-like màu xám */
+    font-weight:600;
+}
+.audit-filters--plain .p-dropdown .p-placeholder{ color:#9aa3ad !important; }
+.audit-filters--plain .p-dropdown .p-dropdown-trigger{
+    width:42px !important; height:100% !important;
+    display:flex; align-items:center; justify-content:center;
+    border-inline-start:1px solid #eef1f4;
+    color:#8a93a4 !important;
+}
+.audit-filters--plain .p-dropdown .p-dropdown-trigger .p-dropdown-trigger-icon{
+    font-size:12px; opacity:.9;
+}
+
+/* Tắt clear icon */
+.audit-filters--plain .p-dropdown .p-dropdown-clear-icon{
+    display:none !important; width:0 !important; margin:0 !important;
+}
+
+/* Panel dropdown */
+.audit-dd-panel{
+    border-radius:12px !important;
+    border:1px solid #e6e9ee !important;
+    box-shadow:0 10px 30px rgba(15,23,42,.08) !important;
+    overflow:hidden;
+}
+
+/* ===== Responsive ===== */
+@media (max-width:1100px){ .audit-filters .filters-grid{ grid-template-columns:1fr 1fr; } }
+@media (max-width:640px){ .audit-filters .filters-grid{ grid-template-columns:1fr; } }
+/* --- GHOST WRAPPER FIX (xoá khung ngoài bao dropdown) --- */
+.audit-filters--plain .field > div{
+    padding:0 !important;
+    margin:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+}
+
+/* PrimeReact thường bọc control trong .p-inputwrapper */
+.audit-filters--plain .p-inputwrapper{
+    padding:0 !important;
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+}
+
+/* Giữ đúng 1 lớp border cho chính control */
+.audit-filters--plain :is(.p-inputtext,.p-dropdown){
+    border:1px solid #e6e9ee !important;
+    border-radius:16px !important;
+}
+
+/* Divider cạnh caret nhẹ hơn */
+.audit-filters--plain .p-dropdown .p-dropdown-trigger{
+    border-inline-start:1px solid #ecf0f4 !important;
+}
+
+/* Placeholder & text nhạt đúng mẫu */
+.audit-filters--plain .p-dropdown .p-placeholder,
+.audit-filters--plain .p-inputtext::placeholder{ color:#a3adb8 !important; }
+.audit-filters--plain .p-dropdown .p-dropdown-label{ color:#6b7280 !important; font-weight:600; }
+
+/* Khoảng cách dọc nhã */
+.audit-filters .field{ gap:8px; }
