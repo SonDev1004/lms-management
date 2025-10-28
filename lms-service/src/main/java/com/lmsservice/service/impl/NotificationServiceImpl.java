@@ -85,4 +85,55 @@ public class NotificationServiceImpl implements NotificationService {
         n.setSeen(true);
         notificationRepo.save(n);
     }
+
+    @Override
+    public NotificationResponse getById(Long id) {
+        User user = getCurrentUser();
+        Notification n = notificationRepo.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+        // chỉ cho phép xem thông báo của chính user
+        if (!n.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        return NotificationResponse.builder()
+                .id(n.getId())
+                .title(extractTitle(n.getContent()))
+                .content(n.getContent())
+                .severity(n.getSeverity())
+                .isSeen(n.isSeen())
+                .url(n.getUrl())
+                .type(n.getNotificationType() != null ? n.getNotificationType().getTitle() : "General")
+                .postedDate(n.getPostedDate())
+                .build();
+    }
+
+    @Override
+    public void markAllAsSeen() {
+        User user = getCurrentUser();
+        List<Notification> list = notificationRepo.findUnseenByUserId(user.getId());
+        list.forEach(n -> n.setSeen(true));
+        notificationRepo.saveAll(list);
+    }
+
+    @Override
+    public long countUnseen() {
+        User user = getCurrentUser();
+        return notificationRepo.findUnseenByUserId(user.getId()).size();
+    }
+
+    @Override
+    public void deleteNotification(Long id) {
+        User user = getCurrentUser();
+        Notification n = notificationRepo.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+        if (!n.getUser().getId().equals(user.getId())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED_ACCESS);
+        }
+
+        notificationRepo.delete(n);
+    }
+
 }

@@ -7,6 +7,16 @@ import java.util.List;
 
 public interface NotificationService {
     List<NotificationResponse> getMyNotifications();
+
     List<NotificationResponse> getUnseenNotifications();
+
     void markAsSeen(Long notificationId);
+
+    NotificationResponse getById(Long id);
+
+    void markAllAsSeen();
+
+    long countUnseen();
+
+    void deleteNotification(Long id);
 }

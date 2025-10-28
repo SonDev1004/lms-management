@@ -1,22 +1,22 @@
 package com.lmsservice.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.lmsservice.controller.NotificationSocketController;
+import com.lmsservice.dto.request.SendNotificationRequest;
+import com.lmsservice.dto.response.NotificationResponse;
+import com.lmsservice.entity.*;
+import com.lmsservice.repository.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.lmsservice.dto.request.CreateUserRequest;
 import com.lmsservice.dto.response.UserResponse;
-import com.lmsservice.entity.Permission;
-import com.lmsservice.entity.Role;
-import com.lmsservice.entity.User;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
-import com.lmsservice.repository.PermissionRepository;
-import com.lmsservice.repository.RoleRepository;
-import com.lmsservice.repository.UserRepository;
 import com.lmsservice.service.AdminItService;
 import com.lmsservice.service.MailService;
 
@@ -34,6 +34,10 @@ public class AdminItServiceImpl implements AdminItService {
     PermissionRepository permRepo;
     PasswordEncoder encoder;
     MailService mailService;
+    NotificationRepository notificationRepo;
+    NotificationTypeRepository notificationTypeRepo;
+    NotificationSocketController socketController;
+
 
     /**
      * ------------------- USER -------------------
@@ -200,4 +204,81 @@ public class AdminItServiceImpl implements AdminItService {
         role.setPermissions(perms);
         return roleRepo.save(role);
     }
+
+    /**
+     * ------------------- NOTIFICATION -------------------
+     **/
+    @Override
+    public void sendNotification(SendNotificationRequest req) {
+        NotificationType type = notificationTypeRepo.findById(req.getNotificationTypeId())
+                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_TYPE_NOT_FOUND));
+
+        Set<User> receivers = new HashSet<>();
+
+        //Toàn hệ thống
+        if (Boolean.TRUE.equals(req.getBroadcast())) {
+            receivers.addAll(userRepo.findAll());
+        }
+
+        //Theo role
+        if (req.getTargetRoles() != null && !req.getTargetRoles().isEmpty()) {
+            List<Role> roles = roleRepo.findAllByNameIn(req.getTargetRoles());
+            receivers.addAll(userRepo.findByRoleIn(roles));
+        }
+
+        //Theo user cụ thể
+        if (req.getTargetUserIds() != null && !req.getTargetUserIds().isEmpty()) {
+            receivers.addAll(userRepo.findAllById(req.getTargetUserIds()));
+        }
+
+        //Theo lớp học (course)
+        if (req.getTargetCourseIds() != null && !req.getTargetCourseIds().isEmpty()) {
+            receivers.addAll(userRepo.findStudentsByCourseIds(req.getTargetCourseIds()));
+        }
+
+        //Theo chương trình (program)
+        if (req.getTargetProgramIds() != null && !req.getTargetProgramIds().isEmpty()) {
+            receivers.addAll(userRepo.findStudentsByProgramIds(req.getTargetProgramIds()));
+        }
+
+        if (receivers.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RECEIVER_FOUND);
+        }
+
+        List<Notification> notis = receivers.stream()
+                .map(u -> Notification.builder()
+                        .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
+                        .severity((short) req.getSeverity())
+                        .url(req.getUrl())
+                        .postedDate(LocalDateTime.now())
+                        .notificationType(type)
+                        .user(u)
+                        .isSeen(false)
+                        .build())
+                .toList();
+
+        notificationRepo.saveAll(notis);
+        notis.forEach(noti -> {
+            try {
+                socketController.sendToUser(
+                        noti.getUser().getId(),
+                        NotificationResponse.builder()
+                                .id(noti.getId())
+                                .title(req.getTitle())
+                                .content(req.getContent())
+                                .severity(req.getSeverity())
+                                .isSeen(false)
+                                .url(req.getUrl())
+                                .type(type.getTitle())
+                                .postedDate(noti.getPostedDate())
+                                .build()
+                );
+            } catch (Exception e) {
+                System.err.println("⚠️ WebSocket gửi thất bại tới user: " + noti.getUser().getId());
+            }
+        });
+
+
+    }
+
 }

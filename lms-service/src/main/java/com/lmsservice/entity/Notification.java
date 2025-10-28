@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Notification extends EntityAbstract {
     @Column(columnDefinition = "nvarchar(max)", nullable = false)

@@ -2,6 +2,7 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
+import com.lmsservice.dto.request.SendNotificationRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import lombok.experimental.FieldDefaults;
 public class AdminItController {
 
     AdminItService service;
+
     /**
      * ------------------- USER -------------------
      **/
@@ -130,4 +132,17 @@ public class AdminItController {
                 .result(service.assignPermissions(id, permIds))
                 .build();
     }
+
+    /**
+     * ------------------- NOTIFICATION -------------------
+     **/
+    //gưi thông báo cho người dùng
+    @PostMapping("/notifications/send")
+    public ApiResponse<Void> sendNotification(@RequestBody SendNotificationRequest req) {
+        service.sendNotification(req);
+        return ApiResponse.<Void>builder()
+                .message("Gửi thông báo thành công")
+                .build();
+    }
+
 }

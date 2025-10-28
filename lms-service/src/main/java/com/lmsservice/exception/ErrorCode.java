@@ -79,7 +79,10 @@ public enum ErrorCode {
     DUPLICATE_USER(1055, "User with the same username or email already exists", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND(1056, "Role not found", HttpStatus.NOT_FOUND),
     // Notification
-    NOTIFICATION_NOT_FOUND(1057, "Notification not found", HttpStatus.NOT_FOUND);
+    NOTIFICATION_NOT_FOUND(1057, "Notification not found", HttpStatus.NOT_FOUND),
+    NOTIFICATION_TYPE_NOT_FOUND(1058, "Notification type not found", HttpStatus.NOT_FOUND),
+    NO_RECEIVER_FOUND(1059, "No receiver found for the notification", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED_ACCESS(1060, "Unauthorized access to the resource", HttpStatus.FORBIDDEN);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;
