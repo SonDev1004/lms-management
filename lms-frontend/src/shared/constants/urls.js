@@ -1,4 +1,4 @@
-import {AppConfig} from "@/shared/constants/index.js";
+import { AppConfig } from "@/shared/constants/index.js";
 
 const rootAPI = AppConfig.rootAPI;
 
@@ -16,27 +16,32 @@ export default {
   //Lesson
   lessonBySubject: (id) => `${rootAPI}/lesson/by-subject/${id}`,
 
-  //program
+  //Program
   listProgram: `${rootAPI}/program/all-program`,
   getDetailProgram: (id) => `${rootAPI}/program/${id}/detail`,
 
-  //subject
+  //Subject
   listSubject: `${rootAPI}/subject/all-subject`,
-
   getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
 
-
-
-    //payment
-    payment: `${rootAPI}/v1/enrollments/create-payment`,
-    resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
+  //Payment
+  payment: `${rootAPI}/v1/enrollments/create-payment`,
+  resultPayment: (txnRef) => `${rootAPI}/v1/enrollments/result/${txnRef}`,
 
   //Attendance
   getTeacherCourses: `${rootAPI}/teacher/me/courses`,
-  getCourseSessions: (courseId) => `${rootAPI}/courses/${courseId}/sessions`,  // GET
-  getSessionsByDate: `${rootAPI}/attendance/sessions`,              // GET ?courseId&date
-  getAttendanceBySession: (sessionId) => `${rootAPI}/attendance/by-session?sessionId=${sessionId}`, // GET
-  markAttendance: `${rootAPI}/attendance/mark`,                     // POST
-  getAttendanceSummary: (courseId) => `${rootAPI}/attendance/summary?courseId=${courseId}` // GET
-}
+  getCourseSessions: (courseId) => `${rootAPI}/courses/${courseId}/sessions`,
+  getSessionsByDate: `${rootAPI}/attendance/sessions`, // GET ?courseId&date
+  getAttendanceBySession: (sessionId) => `${rootAPI}/attendance/by-session?sessionId=${sessionId}`,
+  markAttendance: `${rootAPI}/attendance/mark`, // POST
+  getAttendanceSummary: (courseId) => `${rootAPI}/attendance/summary?courseId=${courseId}`,
 
+  // User notifications
+  getMyNotifications: `${rootAPI}/api/notifications`,
+  getUnseenNotifications: `${rootAPI}/api/notifications/unseen`,
+  markAsSeen: (id) => `${rootAPI}/api/notifications/${id}/seen`,
+
+  // AdminIT notifications
+  sendNotification: `${rootAPI}/api/adminit/notifications/send`,
+  getScheduledNotifications: `${rootAPI}/api/adminit/notifications/scheduled`,
+};

@@ -11,7 +11,7 @@ const TYPE_MAP = {
     system: { label: 'System', color: '#6b7280' },
 };
 
-export default function NotificationItem({ n, onOpen, onDelete }) {
+export default function NotificatioItem({ n, onOpen, onDelete }) {
     const t = TYPE_MAP[n.type] || { label: n.type, color: '#9ca3af' };
     const snippet = (msg, len = 120) => (msg && msg.length > len ? msg.slice(0, len) + '...' : msg);
 
