@@ -53,6 +53,6 @@ public interface AdminItService {
      * ------------------- NOTIFICATION -------------------
      **/
     void sendNotification(SendNotificationRequest req);
-    List<NotificationResponse> getScheduledNotifications();
 
+    List<NotificationResponse> getScheduledNotifications();
 }

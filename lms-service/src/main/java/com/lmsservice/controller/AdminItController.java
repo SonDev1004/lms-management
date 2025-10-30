@@ -2,7 +2,6 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
-import com.lmsservice.dto.response.NotificationResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.lmsservice.dto.request.CreateUserRequest;
 import com.lmsservice.dto.request.SendNotificationRequest;
 import com.lmsservice.dto.response.ApiResponse;
+import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.dto.response.UserResponse;
 import com.lmsservice.entity.Permission;
 import com.lmsservice.entity.Role;
@@ -152,5 +152,4 @@ public class AdminItController {
                 .result(result)
                 .build();
     }
-
 }

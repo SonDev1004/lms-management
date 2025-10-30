@@ -1,16 +1,18 @@
 package com.lmsservice.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
 import com.lmsservice.controller.NotificationSocketController;
 import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.entity.Notification;
 import com.lmsservice.repository.NotificationRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -42,14 +44,17 @@ public class NotificationScheduler {
                                 .url(n.getUrl())
                                 .type(n.getNotificationType().getTitle())
                                 .postedDate(now)
-                                .build()
-                );
+                                .build());
 
                 // Cập nhật postedDate
                 n.setPostedDate(now);
                 notificationRepo.save(n);
 
-                log.info("✅ Gửi thông báo hẹn giờ id={} cho userId={} lúc {}", n.getId(), n.getUser().getId(), now);
+                log.info(
+                        "✅ Gửi thông báo hẹn giờ id={} cho userId={} lúc {}",
+                        n.getId(),
+                        n.getUser().getId(),
+                        now);
             } catch (Exception e) {
                 log.error("⚠️ Lỗi gửi thông báo hẹn giờ id={}: {}", n.getId(), e.getMessage());
             }
