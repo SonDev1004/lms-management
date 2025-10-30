@@ -1,8 +1,9 @@
 package com.lmsservice.dto.request;
 
-import lombok.Data;
-
+import java.time.LocalDateTime;
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class SendNotificationRequest {
@@ -11,6 +12,7 @@ public class SendNotificationRequest {
     private int severity;
     private String url;
     private Long notificationTypeId;
+    private LocalDateTime scheduledDate;
 
     private List<String> targetRoles;
     private List<Long> targetUserIds;

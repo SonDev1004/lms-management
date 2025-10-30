@@ -1,15 +1,17 @@
 package com.lmsservice.controller;
 
-import com.lmsservice.dto.response.ApiResponse;
-import com.lmsservice.dto.response.NotificationResponse;
-import com.lmsservice.service.NotificationService;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
+import static lombok.AccessLevel.PRIVATE;
 
 import java.util.List;
 
-import static lombok.AccessLevel.PRIVATE;
+import org.springframework.web.bind.annotation.*;
+
+import com.lmsservice.dto.response.ApiResponse;
+import com.lmsservice.dto.response.NotificationResponse;
+import com.lmsservice.service.NotificationService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -19,7 +21,7 @@ public class NotificationController {
 
     NotificationService notificationService;
 
-    //Lấy tất cả thông báo của user hiện tại
+    // Lấy tất cả thông báo của user hiện tại
     @GetMapping
     public ApiResponse<List<NotificationResponse>> getMyNotifications() {
         return ApiResponse.<List<NotificationResponse>>builder()
@@ -28,7 +30,7 @@ public class NotificationController {
                 .build();
     }
 
-    //Lấy thông báo chưa đọc
+    // Lấy thông báo chưa đọc
     @GetMapping("/unseen")
     public ApiResponse<List<NotificationResponse>> getUnseenNotifications() {
         return ApiResponse.<List<NotificationResponse>>builder()
@@ -37,7 +39,7 @@ public class NotificationController {
                 .build();
     }
 
-    //Đánh dấu đã xem
+    // Đánh dấu đã xem
     @PutMapping("/{id}/seen")
     public ApiResponse<Void> markAsSeen(@PathVariable Long id) {
         notificationService.markAsSeen(id);
@@ -46,7 +48,7 @@ public class NotificationController {
                 .build();
     }
 
-    //Xem chi tiết 1 thông báo cụ thể
+    // Xem chi tiết 1 thông báo cụ thể
     @GetMapping("/{id}")
     public ApiResponse<NotificationResponse> getNotificationById(@PathVariable Long id) {
         return ApiResponse.<NotificationResponse>builder()
@@ -55,7 +57,7 @@ public class NotificationController {
                 .build();
     }
 
-    //Đánh dấu tất cả thông báo là đã đọc
+    // Đánh dấu tất cả thông báo là đã đọc
     @PutMapping("/seen-all")
     public ApiResponse<Void> markAllAsSeen() {
         notificationService.markAllAsSeen();
@@ -64,7 +66,7 @@ public class NotificationController {
                 .build();
     }
 
-    //Đếm số lượng thông báo chưa đọc
+    // Đếm số lượng thông báo chưa đọc
     @GetMapping("/count-unseen")
     public ApiResponse<Long> countUnseenNotifications() {
         long count = notificationService.countUnseen();
@@ -74,7 +76,7 @@ public class NotificationController {
                 .build();
     }
 
-    //Xóa thông báo (chỉ của user hiện tại)
+    // Xóa thông báo (chỉ của user hiện tại)
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);

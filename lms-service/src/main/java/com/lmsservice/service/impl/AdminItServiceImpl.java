@@ -5,18 +5,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.lmsservice.controller.NotificationSocketController;
-import com.lmsservice.dto.request.SendNotificationRequest;
-import com.lmsservice.dto.response.NotificationResponse;
-import com.lmsservice.entity.*;
-import com.lmsservice.repository.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.controller.NotificationSocketController;
 import com.lmsservice.dto.request.CreateUserRequest;
+import com.lmsservice.dto.request.SendNotificationRequest;
+import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.dto.response.UserResponse;
+import com.lmsservice.entity.*;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.repository.*;
 import com.lmsservice.service.AdminItService;
 import com.lmsservice.service.MailService;
 
@@ -37,7 +37,6 @@ public class AdminItServiceImpl implements AdminItService {
     NotificationRepository notificationRepo;
     NotificationTypeRepository notificationTypeRepo;
     NotificationSocketController socketController;
-
 
     /**
      * ------------------- USER -------------------
@@ -231,12 +230,12 @@ public class AdminItServiceImpl implements AdminItService {
             receivers.addAll(userRepo.findAllById(req.getTargetUserIds()));
         }
 
-        //Theo lớp học (course)
+        //Theo lớp học
         if (req.getTargetCourseIds() != null && !req.getTargetCourseIds().isEmpty()) {
             receivers.addAll(userRepo.findStudentsByCourseIds(req.getTargetCourseIds()));
         }
 
-        //Theo chương trình (program)
+        //Theo chương trình
         if (req.getTargetProgramIds() != null && !req.getTargetProgramIds().isEmpty()) {
             receivers.addAll(userRepo.findStudentsByProgramIds(req.getTargetProgramIds()));
         }
@@ -245,40 +244,83 @@ public class AdminItServiceImpl implements AdminItService {
             throw new AppException(ErrorCode.NO_RECEIVER_FOUND);
         }
 
+        //Nếu có scheduledDate trong tương lai → chỉ lưu, chưa gửi
+        if (req.getScheduledDate() != null && req.getScheduledDate().isAfter(LocalDateTime.now())) {
+            List<Notification> drafts = receivers.stream()
+                    .map(u -> Notification.builder()
+                            .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
+                            .severity((short) req.getSeverity())
+                            .url(req.getUrl())
+                            .notificationType(type)
+                            .user(u)
+                            .isSeen(false)
+                            .scheduledDate(req.getScheduledDate())
+                            .postedDate(null)
+                            .build())
+                    .toList();
+
+            notificationRepo.saveAll(drafts);
+            System.out.printf("🕓 Đã lên lịch gửi [%s] cho %d người lúc %s%n",
+                    req.getTitle(), receivers.size(), req.getScheduledDate());
+            return; // Dừng ở đây, không gửi realtime ngay
+        }
+
+        //Gửi ngay (nếu không có scheduledDate)
         List<Notification> notis = receivers.stream()
                 .map(u -> Notification.builder()
                         .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
                         .severity((short) req.getSeverity())
                         .url(req.getUrl())
-                        .postedDate(LocalDateTime.now())
                         .notificationType(type)
                         .user(u)
                         .isSeen(false)
+                        .postedDate(LocalDateTime.now())
                         .build())
                 .toList();
 
         notificationRepo.saveAll(notis);
-        notis.forEach(noti -> {
-            try {
-                socketController.sendToUser(
-                        noti.getUser().getId(),
-                        NotificationResponse.builder()
-                                .id(noti.getId())
-                                .title(req.getTitle())
-                                .content(req.getContent())
-                                .severity(req.getSeverity())
-                                .isSeen(false)
-                                .url(req.getUrl())
-                                .type(type.getTitle())
-                                .postedDate(noti.getPostedDate())
-                                .build()
-                );
-            } catch (Exception e) {
-                System.err.println("⚠️ WebSocket gửi thất bại tới user: " + noti.getUser().getId());
-            }
-        });
 
+        notis.forEach(noti -> socketController.sendToUser(
+                noti.getUser().getId(),
+                NotificationResponse.builder()
+                        .id(noti.getId())
+                        .title(req.getTitle())
+                        .content(req.getContent())
+                        .severity(req.getSeverity())
+                        .isSeen(false)
+                        .url(req.getUrl())
+                        .type(type.getTitle())
+                        .postedDate(noti.getPostedDate())
+                        .build()
+        ));
+    }
 
+    @Override
+    public List<NotificationResponse> getScheduledNotifications() {
+        List<Notification> list = notificationRepo.findScheduledNotifications();
+
+        return list.stream()
+                .map(n -> NotificationResponse.builder()
+                        .id(n.getId())
+                        .title(extractTitle(n.getContent()))
+                        .content(n.getContent())
+                        .severity(n.getSeverity())
+                        .isSeen(n.isSeen())
+                        .url(n.getUrl())
+                        .type(n.getNotificationType().getTitle())
+                        .postedDate(n.getScheduledDate())
+                        .build())
+                .toList();
+    }
+
+    private String extractTitle(String html) {
+        if (html == null) return "(Thông báo)";
+        if (html.contains("<b>") && html.contains("</b>")) {
+            int start = html.indexOf("<b>") + 3;
+            int end = html.indexOf("</b>");
+            return html.substring(start, end);
+        }
+        return "(Thông báo)";
     }
 
 }

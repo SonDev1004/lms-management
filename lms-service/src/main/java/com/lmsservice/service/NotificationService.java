@@ -1,9 +1,8 @@
 package com.lmsservice.service;
 
-import com.lmsservice.dto.response.NotificationResponse;
-
 import java.util.List;
 
+import com.lmsservice.dto.response.NotificationResponse;
 
 public interface NotificationService {
     List<NotificationResponse> getMyNotifications();
