@@ -1,0 +1,130 @@
+/* ===== Program Detail Dialog — same look as Course ===== */
+
+.program-detail-dialog .p-dialog-header {
+    padding-bottom: 10px;
+}
+.program-detail-dialog .p-dialog-content {
+    padding-top: 6px;
+}
+
+/* Header: title + actions */
+.pd-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+.pd-header .pd-title .title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.2px;
+}
+.pd-header .pd-title .sub {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 13px;
+}
+.pd-header .pd-title .sub .sep {
+    opacity: 0.5;
+}
+.pd-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Content wrapper */
+.pd-content {
+    display: grid;
+    gap: 16px;
+}
+
+/* Top stats like badges */
+.pd-stats {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+}
+.pd-stats .stat {
+    background: #fff;
+    border: 1px solid var(--table-border);
+    border-radius: 10px;
+    padding: 12px;
+}
+.pd-stats .sm-muted {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+.pd-stats .big {
+    font-weight: 700;
+    font-size: 16px;
+    color: #0f172a;
+}
+
+/* Form: 2 cols -> 1 col on mobile */
+.pd-form {
+    display: grid;
+    gap: 12px 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.pd-form.is-view .p-inputtext,
+.pd-form.is-view .p-dropdown,
+.pd-form.is-view .p-inputnumber .p-inputtext {
+    background: #fafafa;
+}
+@media (max-width: 640px) {
+    .pd-stats { grid-template-columns: 1fr 1fr; }
+    .pd-form { grid-template-columns: 1fr; }
+}
+
+/* Field */
+.pd-form .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pd-form .field.col-span-2 {
+    grid-column: span 2;
+}
+@media (max-width: 640px) {
+    .pd-form .field.col-span-2 { grid-column: auto; }
+}
+.pd-form .field label {
+    color: #111827;
+    font-weight: 600;
+}
+.req { margin-left: 4px; color: #ef4444; }
+.field-error { margin-top: 2px; }
+
+/* Controls (44px, same curvature) */
+.program-detail-dialog .p-inputtext,
+.program-detail-dialog .p-dropdown,
+.program-detail-dialog .p-inputnumber .p-inputtext {
+    height: 44px;
+    border: 1px solid #e6e9ef;
+    border-radius: 10px;
+    box-shadow: none;
+}
+.program-detail-dialog .p-dropdown,
+.program-detail-dialog .p-inputnumber { width: 100%; }
+.program-detail-dialog .p-inputnumber .p-inputnumber-button { width: 40px; }
+
+/* Footer actions (re-use global .dialog-actions if có) */
+.program-detail-dialog .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eef3f7;
+}
+.program-detail-dialog .dialog-actions .p-button-primary {
+    min-width: 160px;
+    height: 44px;
+    border-radius: 12px;
+}

@@ -1,0 +1,580 @@
+:root {
+    --bg: #f6f8fb;
+    --card: #ffffff;
+    --muted: #6b7280;
+    --accent: #0f62fe;
+    --accent-2: #1e88ff;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --action-blue: #eef6ff;
+    --table-border: #eef3f7;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid .field { display: flex; flex-direction: column; gap: 6px; }
+.form-grid .field label { font-size: 13px; color: #6b7280; }
+@media (max-width: 720px){ .form-grid { grid-template-columns: 1fr; } }
+
+/* Base / App */
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    color: #0f172a;
+    background: var(--bg);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+.app-shell {
+    padding: 24px;
+}
+
+/* Helpers */
+.text-strong {
+    font-weight: 700;
+}
+.text-muted {
+    color: var(--muted);
+}
+.meta {
+    font-size: 12.5px;
+}
+.cell-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.cell-col {
+    display: flex;
+    flex-direction: column;
+}
+.gap-6 {
+    gap: 6px;
+}
+.avatar {
+    font-weight: 700;
+    color: var(--accent);
+    background: #eef2ff;
+}
+
+/* ===================== Summary ===================== */
+.stat-grid {
+    margin-bottom: 12px;
+}
+
+/* Value + label */
+.value-big {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f172a;
+}
+.small-muted {
+    color: var(--muted);
+}
+
+/* ================= Sticky toolbar ================== */
+.header-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #eef3f7;
+    border-radius: 12px;
+    box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+}
+.header-row.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.toolbar-right {
+    display: flex;
+    gap: 8px;
+}
+
+/* Prime-like inputs/buttons */
+.p-input-icon-left .p-inputtext {
+    height: 44px;
+    padding: 12px 14px;
+    border: 1px solid #e6e9ef;
+    border-radius: 10px;
+}
+.p-inputtext:focus {
+    outline: none;
+    box-shadow: none;
+}
+.p-dropdown {
+    min-width: 140px;
+}
+.p-button {
+    border-radius: 10px;
+}
+.p-button.p-button-success {
+    color: #fff;
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 6px 18px rgba(15, 98, 254, 0.08);
+}
+.p-button.p-button-outlined {
+    border-radius: 10px;
+}
+.p-button.p-button-danger {
+    color: #fff;
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+/* ================ Filter chips ================= */
+.chips-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: #334155;
+    background: #f3f6fb;
+    border: 1px solid #e5ebf4;
+    border-radius: 999px;
+}
+
+/* ================ Bulk action ================= */
+.action-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+    padding: 12px 16px;
+    background: var(--action-blue);
+    border: 1px solid rgba(15, 98, 254, 0.06);
+    border-radius: 10px;
+}
+.p-button-text {
+    color: var(--accent);
+}
+.action-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.action-right {
+    display: flex;
+    gap: 8px;
+}
+
+/* =================== Table ==================== */
+.card .p-datatable {
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.p-datatable-thead > tr > th {
+    padding: 18px;
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    background: transparent;
+    border-bottom: 1px solid var(--table-border);
+}
+.p-datatable-tbody > tr > td {
+    padding: 18px;
+    border-bottom: 1px solid #f3f6f9;
+}
+.p-datatable .p-datatable-tbody > tr.p-selectable-row.p-highlight {
+    background: linear-gradient(90deg, #eef6ff, #fff);
+}
+.p-datatable-tbody > tr:hover {
+    background: #fafcff;
+}
+
+/* ===== ProgressBar with thresholds ===== */
+.p-progressbar {
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #eef3ff;
+}
+.p-progressbar .p-progressbar-value {
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.p-progressbar .p-progressbar-label {
+    display: none;
+}
+.p-progressbar.score-bad .p-progressbar-value {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+.p-progressbar.score-avg .p-progressbar-value {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.p-progressbar.score-good .p-progressbar-value {
+    background: linear-gradient(90deg, #22c55e, #34d399);
+}
+
+/* ================= Status pill ================= */
+.status-pill {
+    display: inline-block;
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 12.5px;
+    line-height: 1;
+    text-transform: lowercase;
+    border-radius: 999px;
+}
+.status-pill.active {
+    color: #fff;
+    background: #0f172a;
+}
+.status-pill.inactive {
+    color: #fff;
+    background: #f97316;
+}
+.status-sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #9aa4b2;
+}
+.status-sub .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #cbd5e1;
+    border-radius: 50%;
+}
+.status-sub .dot.on {
+    background: #10b981;
+}
+
+/* ================= Checkbox ================= */
+.p-checkbox .p-checkbox-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+/* ============== Card / shadows ============== */
+.p-card {
+    box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+}
+.p-field label {
+    color: #374151;
+    font-weight: 600;
+}
+.p-datatable-thead > tr > th .p-sortable-column-icon {
+    margin-left: 6px;
+}
+.p-menu {
+    box-shadow: 0 8px 30px rgba(9, 30, 66, 0.08);
+    border-radius: 8px;
+}
+
+/* =============== Dialog actions =============== */
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid #eef3f7;
+}
+.p-dialog .p-dialog-header {
+    padding-bottom: 10px;
+}
+.p-dialog .p-dialog-content {
+    padding-top: 6px;
+}
+
+/* ===== Form UX & validation ===== */
+.field {
+    margin-bottom: 12px;
+}
+.req {
+    margin-left: 4px;
+    color: #ef4444;
+}
+.hint {
+    font-size: 12px;
+    color: var(--muted);
+}
+.field-error {
+    display: block;
+    margin-top: 6px;
+    line-height: 1.2;
+}
+.inline-input .p-inputnumber,
+.inline-input .p-inputtext {
+    width: 100%;
+}
+.p-inputtext.p-invalid,
+.p-dropdown.p-invalid,
+.p-inputnumber.p-invalid {
+    border-color: #ef4444 !important;
+}
+
+/* ========== SummaryPills (only) ========== */
+/* Responsive grid: 1–4 columns */
+.stats-grid {
+    display: grid;
+    gap: 12px;
+    margin: 12px 0 16px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 560px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card with top accent bar */
+.stat-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 104px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid var(--table-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 12px 12px 0 0;
+}
+.stat-card:nth-child(2)::before {
+    background: var(--success);
+}
+.stat-card:nth-child(3)::before {
+    background: var(--danger);
+}
+.stat-card:nth-child(4)::before {
+    background: #2563eb; /* avg */
+}
+.stat-card .small-muted {
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    color: var(--muted);
+}
+.stat-card .value-big {
+    line-height: 1;
+    letter-spacing: -0.3px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Hover elevation */
+.stat-card:hover {
+    transform: translateY(-1px);
+    border-color: #e7ecf4;
+    box-shadow: 0 6px 24px rgba(16, 24, 40, 0.06);
+}
+
+/* ===== Add Student Dialog (2 columns, responsive) ===== */
+.add-student-dialog .p-dialog-header {
+    padding-bottom: 10px;
+}
+.add-student-dialog .p-dialog-content {
+    padding-top: 6px;
+}
+
+/* Grid 2 cols → 1 col on mobile */
+.add-student-dialog .form-grid-2 {
+    display: grid;
+    gap: 12px 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 640px) {
+    .add-student-dialog .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.add-student-dialog .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.add-student-dialog .field label {
+    color: #111827;
+    font-weight: 600;
+}
+
+/* Controls */
+.add-student-dialog .p-inputtext,
+.add-student-dialog .p-dropdown,
+.add-student-dialog .p-inputnumber .p-inputtext {
+    height: 44px;
+    border: 1px solid #e6e9ef;
+    border-radius: 10px;
+    box-shadow: none;
+}
+.add-student-dialog .p-dropdown {
+    width: 100%;
+}
+
+/* Number buttons */
+.add-student-dialog .p-inputnumber .p-inputnumber-button {
+    width: 40px;
+}
+.add-student-dialog .p-inputnumber .p-inputnumber-button .pi {
+    font-size: 0.95rem;
+}
+
+/* Hints & errors */
+.add-student-dialog .hint {
+    font-size: 12px;
+    color: var(--muted);
+}
+.add-student-dialog .p-error.field-error {
+    margin-top: 2px;
+}
+
+/* Footer */
+.add-student-dialog .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #eef3f7;
+}
+.add-student-dialog .dialog-actions .p-button-primary {
+    min-width: 180px;
+    height: 44px;
+    border-radius: 12px;
+}
+
+/* =============== Responsive tweaks =============== */
+@media (max-width: 768px) {
+    .header-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .p-input-icon-left .p-inputtext {
+        width: 100%;
+    }
+    .form-grid {
+        row-gap: 8px;
+    }
+}
+/* ===== Add Program dialog – polish ===== */
+.add-program-dialog .p-dialog-header {
+    padding: 16px 18px 10px;
+    border-bottom: 1px solid #eef3f7;
+}
+.add-program-dialog .p-dialog-title {
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+.add-program-dialog .p-dialog-content {
+    padding: 14px 18px 12px;
+}
+
+/* section subhead */
+.add-program-dialog .dlg-subhead {
+    margin: 12px 0 8px;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #64748b;
+}
+
+/* grid 2 cols -> 1 on mobile */
+.add-program-dialog .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+}
+@media (max-width: 640px) {
+    .add-program-dialog .form-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* field + labels */
+.add-program-dialog .field { display: flex; flex-direction: column; gap: 6px; }
+.add-program-dialog .field label {
+    font-size: 13px; font-weight: 700; color: #334155;
+}
+.add-program-dialog .req { color: #ef4444; }
+
+/* unified control look */
+.add-program-dialog .ctl,
+.add-program-dialog .p-dropdown,
+.add-program-dialog .p-inputnumber .p-inputtext {
+    height: 44px;
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+/* focus ring */
+.add-program-dialog .p-inputtext:focus,
+.add-program-dialog .p-dropdown:not(.p-disabled).p-focus,
+.add-program-dialog .p-inputnumber .p-inputtext:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(15, 98, 254, .12);
+}
+
+/* InputNumber step buttons */
+.add-program-dialog .p-inputnumber .p-inputnumber-button {
+    width: 36px;
+    border-radius: 10px;
+}
+.add-program-dialog .p-inputnumber .p-inputnumber-button .pi { font-size: .95rem; }
+
+/* currency alignment */
+.add-program-dialog .currency .p-inputtext { text-align: right; }
+
+/* small hint + error */
+.add-program-dialog .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.add-program-dialog .field-error { margin-top: 4px; }
+
+/* footer */
+.add-program-dialog .p-dialog-footer {
+    padding: 10px 18px 16px;
+    border-top: 1px solid #eef3f7;
+}
+.add-program-dialog .p-dialog-footer .p-button {
+    height: 44px;
+    border-radius: 12px;
+}
+.add-program-dialog .p-dialog-footer .p-button.p-button-text { color: var(--muted); }
+.add-program-dialog .p-dialog-footer .p-button .pi { margin-right: 6px; }
+
+/* make Save pop a little */
+.add-program-dialog .p-dialog-footer .p-button:not(.p-button-text) {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 8px 20px rgba(15, 98, 254, .14);
+}
+.add-program-dialog .p-dialog-footer .p-button:not(.p-button-text):hover {
+    filter: brightness(1.02);
+}

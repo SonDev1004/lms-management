@@ -1,12 +1,12 @@
-import React, {useState, useMemo, useRef, useEffect} from 'react';
-import {Card} from 'primereact/card';
-import {Avatar} from 'primereact/avatar';
-import {Button} from 'primereact/button';
-import {InputText} from 'primereact/inputtext';
-import {Calendar} from 'primereact/calendar';
-import {Dropdown} from 'primereact/dropdown';
-import {Divider} from 'primereact/divider';
-import {Toast} from 'primereact/toast';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Card } from 'primereact/card';
+import { Avatar } from 'primereact/avatar';
+import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
+import { Dropdown } from 'primereact/dropdown';
+import { Divider } from 'primereact/divider';
+import { Toast } from 'primereact/toast';
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -15,11 +15,11 @@ import 'primeflex/primeflex.css';
 import './UserProfile.css';
 
 import axiosClient from '@/shared/api/axiosClient.js';
-import {AppUrls} from "@/shared/constants/index.js";
+import { AppUrls } from "@/shared/constants/index.js";
 
 const genderOptions = [
-    {label: 'Nam', value: true},
-    {label: 'Nữ', value: false}
+    { label: 'Nam', value: true },
+    { label: 'Nữ', value: false }
 ];
 
 export default function UserProfile() {
@@ -51,22 +51,22 @@ export default function UserProfile() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <p style={{padding: 12}}>Đang tải dữ liệu hồ sơ...</p>;
+    if (loading) return <p style={{ padding: 12 }}>Đang tải dữ liệu hồ sơ...</p>;
 
     const labelForKey = (key) => {
         switch (key) {
             case 'firstName':
-                return 'Tên';
+                return 'First name';
             case 'lastName':
-                return 'Họ';
+                return 'Last name';
             case 'dateOfBirth':
-                return 'Ngày sinh';
+                return 'DoB';
             case 'gender':
-                return 'Giới tính';
+                return 'Gender';
             case 'address':
-                return 'Địa chỉ';
+                return 'Address';
             case 'phone':
-                return 'Điện thoại';
+                return 'Phone';
             default:
                 return key;
         }
@@ -80,20 +80,20 @@ export default function UserProfile() {
 
     const getValidationError = (key, value) => {
         if (key === 'phone') {
-            if (!value || String(value).trim().length === 0) return 'Số điện thoại không được để trống.';
-            if (!isPhoneValid(value)) return 'Số điện thoại phải có 8–15 chữ số, có thể bắt đầu bằng +.';
+            if (!value || String(value).trim().length === 0) return 'Phone number cannot be empty.';
+            if (!isPhoneValid(value)) return 'Phone number must have 8–15 digits, may start with +.';
             return null;
         }
         if (key === 'dateOfBirth') {
-            if (!value) return 'Vui lòng chọn ngày.';
+            if (!value) return 'Please select a date.';
             return null;
         }
         if (key === 'gender') {
-            if (value !== true && value !== false) return 'Vui lòng chọn giới tính.';
+            if (value !== true && value !== false) return 'Please select gender.';
             return null;
         }
         if (value === null || value === undefined || String(value).trim().length === 0) {
-            return `${labelForKey(key)} không được để trống.`;
+            return `${labelForKey(key)} cannot be empty.`;
         }
         return null;
     };
@@ -102,9 +102,9 @@ export default function UserProfile() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 if (key === 'phone' && !isPhoneValid(value)) {
-                    reject(new Error('Định dạng số điện thoại không hợp lệ (máy chủ).'));
+                    reject(new Error('Invalid phone number format (server validation).'));
                 } else {
-                    resolve({ok: true, key, value});
+                    resolve({ ok: true, key, value });
                 }
             }, 700);
         });
@@ -120,13 +120,13 @@ export default function UserProfile() {
         if (saving) return;
         setEditingField(null);
         setTempValue(null);
-        toast.current?.show({severity: 'info', summary: 'Đã huỷ', detail: 'Đã hủy chỉnh sửa', life: 1500});
+        toast.current?.show({ severity: 'info', summary: 'Cancelled', detail: 'Edit cancelled', life: 1500 });
     };
 
     const saveEdit = async (key) => {
         const error = getValidationError(key, tempValue);
         if (error) {
-            toast.current?.show({severity: 'warn', summary: 'Không hợp lệ', detail: error, life: 3500});
+            toast.current?.show({ severity: 'warn', summary: 'Invalid', detail: error, life: 3500 });
             return;
         }
 
@@ -135,23 +135,23 @@ export default function UserProfile() {
             const res = await mockSaveApi(key, tempValue);
 
             if (res && res.ok) {
-                setForm((s) => ({...s, [key]: tempValue}));
+                setForm((s) => ({ ...s, [key]: tempValue }));
                 setEditingField(null);
                 setTempValue(null);
                 toast.current?.show({
                     severity: 'success',
-                    summary: 'Đã lưu',
-                    detail: `${labelForKey(key)} đã được cập nhật.`,
+                    summary: 'Saved',
+                    detail: `${labelForKey(key)} has been updated.`,
                     life: 3000
                 });
             } else {
-                toast.current?.show({severity: 'error', summary: 'Lỗi', detail: 'Lưu thất bại', life: 4000});
+                toast.current?.show({ severity: 'error', summary: 'Error', detail: 'Save failed', life: 4000 });
             }
         } catch (err) {
             toast.current?.show({
                 severity: 'error',
                 summary: 'Lỗi',
-                detail: err?.message || 'Lưu thất bại',
+                detail: err?.message || 'Saved failed',
                 life: 4000
             });
         } finally {
@@ -165,11 +165,11 @@ export default function UserProfile() {
         if (editingField === key) {
             const disabled = !!getValidationError(key, tempValue) || saving;
             return (
-                <div className="action-buttons" style={{display: 'flex', gap: 8}}>
+                <div className="action-buttons" style={{ display: 'flex', gap: 8 }}>
                     <Button
                         icon="pi pi-check"
                         className="p-button-rounded"
-                        aria-label="Lưu"
+                        aria-label="Save"
                         onClick={() => saveEdit(key)}
                         disabled={disabled}
                         loading={saving}
@@ -178,7 +178,7 @@ export default function UserProfile() {
                     <Button
                         icon="pi pi-times"
                         className="p-button-rounded p-button-secondary"
-                        aria-label="Hủy"
+                        aria-label="Clear"
                         onClick={cancelEdit}
                         disabled={saving}
                     />
@@ -191,7 +191,7 @@ export default function UserProfile() {
             <Button
                 icon="pi pi-pencil"
                 className="p-button-rounded p-button-text edit-right"
-                aria-label={`Chỉnh sửa ${labelForKey(key)}`}
+                aria-label={`Edit ${labelForKey(key)}`}
                 onClick={() => startEdit(key)}
                 disabled={editDisabled}
             />
@@ -202,7 +202,7 @@ export default function UserProfile() {
         if (!iso) return '-';
         try {
             const d = new Date(iso);
-            return d.toLocaleDateString(undefined, {day: '2-digit', month: 'short', year: 'numeric'});
+            return d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
         } catch {
             return iso;
         }
@@ -210,7 +210,7 @@ export default function UserProfile() {
 
     return (
         <div className="user-profile-root p-m-4">
-            <Toast ref={toast}/>
+            <Toast ref={toast} />
             <Card className="user-profile-card">
                 <div className="user-profile-header p-d-flex p-flex-column p-ai-center">
                     <Avatar
@@ -218,13 +218,13 @@ export default function UserProfile() {
                         shape="circle"
                         size="xlarge"
                         className="user-avatar"
-                        style={{width: 96, height: 96, objectFit: 'cover'}}
+                        style={{ width: 96, height: 96, objectFit: 'cover' }}
                     />
                     <div className="user-name-block p-text-center p-mt-3">
-                        <div className="user-fullname" style={{fontWeight: 700, fontSize: '1.1rem'}}>
+                        <div className="user-fullname" style={{ fontWeight: 700, fontSize: '1.1rem' }}>
                             {fullName || form?.username}
                         </div>
-                        <div className="user-username" style={{color: '#6b7280'}}>@{form?.username}</div>
+                        <div className="user-username" style={{ color: '#6b7280' }}>@{form?.username}</div>
                         <div className="user-role-wrap p-mt-2">
                             <div className="role-badge p-d-inline-flex p-ai-center">
                                 <span className="role-icon" aria-hidden>🎓</span>
@@ -234,15 +234,15 @@ export default function UserProfile() {
                     </div>
                 </div>
 
-                <Divider className="p-mt-4 p-mb-4"/>
+                <Divider className="p-mt-4 p-mb-4" />
 
                 <div className="p-grid p-nogutter p-align-start p-justify-between">
                     {/* Personal */}
                     <div className="p-col-12 p-md-6 p-p-3">
-                        <div className="p-text-sm p-text-bold p-mb-2">Thông tin cá nhân</div>
+                        <div className="p-text-sm p-text-bold p-mb-2">Personal Information</div>
                         <div className="section-card">
                             <FieldRow
-                                label="Tên"
+                                label="Last Name"
                                 icon="pi pi-user"
                                 displayValue={form?.firstName}
                                 editingField={editingField}
@@ -254,7 +254,7 @@ export default function UserProfile() {
                             />
 
                             <FieldRow
-                                label="Họ"
+                                label="First Name"
                                 icon="pi pi-id-card"
                                 displayValue={form?.lastName}
                                 editingField={editingField}
@@ -268,7 +268,7 @@ export default function UserProfile() {
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-calendar p-mr-2"/>Ngày sinh</label>
+                                        <label className="form-label"><i className="pi pi-calendar p-mr-2" />Date of Birth</label>
                                         {editingField !== 'dateOfBirth' ? (
                                             <div className="field-display">
                                                 <span>{formatDisplayDate(form?.dateOfBirth)}</span>
@@ -297,7 +297,7 @@ export default function UserProfile() {
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-male p-mr-2"/>Giới tính</label>
+                                        <label className="form-label"><i className="pi pi-male p-mr-2" />Gender</label>
                                         {editingField !== 'gender' ? (
                                             <div className="field-display">
                                                 <span>{form?.gender ? 'Nam' : 'Nữ'}</span>
@@ -305,8 +305,8 @@ export default function UserProfile() {
                                         ) : (
                                             <div>
                                                 <Dropdown value={tempValue} options={genderOptions}
-                                                          onChange={(e) => setTempValue(e.value)}
-                                                          placeholder="Chọn giới tính"/>
+                                                    onChange={(e) => setTempValue(e.value)}
+                                                    placeholder="Chọn giới tính" />
                                                 {getValidationError('gender', tempValue) &&
                                                     <small
                                                         className="field-error">{getValidationError('gender', tempValue)}</small>
@@ -322,7 +322,7 @@ export default function UserProfile() {
                                 <div className="field-left">
                                     <div className="field-body">
                                         <label className="form-label"><i
-                                            className="pi pi-map-marker p-mr-2"/>Địa chỉ</label>
+                                            className="pi pi-map-marker p-mr-2" />Address</label>
                                         {editingField !== 'address' ? (
                                             <div className="field-display">
                                                 <span title={form?.address || ''}>{form?.address || '-'}</span>
@@ -330,7 +330,7 @@ export default function UserProfile() {
                                         ) : (
                                             <div>
                                                 <InputText value={tempValue || ''}
-                                                           onChange={(e) => setTempValue(e.target.value)}/>
+                                                    onChange={(e) => setTempValue(e.target.value)} />
                                                 {getValidationError('address', tempValue) &&
                                                     <small
                                                         className="field-error">{getValidationError('address', tempValue)}</small>
@@ -346,25 +346,25 @@ export default function UserProfile() {
 
                     {/* Contact */}
                     <div className="p-col-12 p-md-6 p-p-3">
-                        <div className="p-text-sm p-text-bold p-mb-2">Liên hệ</div>
+                        <div className="p-text-sm p-text-bold p-mb-2">Contact</div>
                         <div className="section-card">
                             <div className="field-row p-mb-3">
-                                <div className="field-left" style={{flex: 1}}>
-                                    <div className="field-body" style={{width: '100%'}}>
+                                <div className="field-left" style={{ flex: 1 }}>
+                                    <div className="field-body" style={{ width: '100%' }}>
                                         <label className="form-label"><i
-                                            className="pi pi-envelope p-mr-2"/>Email</label>
+                                            className="pi pi-envelope p-mr-2" />Email</label>
                                         <div className="field-display">
                                             <span title={form?.email || ''}>{form?.email || '-'}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="field-actions"/>
+                                <div className="field-actions" />
                             </div>
 
                             <div className="field-row p-mb-3">
                                 <div className="field-left">
                                     <div className="field-body">
-                                        <label className="form-label"><i className="pi pi-phone p-mr-2"/>Điện thoại</label>
+                                        <label className="form-label"><i className="pi pi-phone p-mr-2" />Phone</label>
                                         {editingField !== 'phone' ? (
                                             <div className="field-display">
                                                 <span title={form?.phone || ''}>{form?.phone || '-'}</span>
@@ -372,8 +372,8 @@ export default function UserProfile() {
                                         ) : (
                                             <div>
                                                 <InputText value={tempValue || ''}
-                                                           onChange={(e) => setTempValue(e.target.value)}/>
-                                                <div className="field-hint">Ví dụ: +84912345678 hoặc 0912345678</div>
+                                                    onChange={(e) => setTempValue(e.target.value)} />
+                                                <div className="field-hint">Example: +84912345678 or 0912345678</div>
                                                 {getValidationError('phone', tempValue) &&
                                                     <small
                                                         className="field-error">{getValidationError('phone', tempValue)}</small>
@@ -393,21 +393,21 @@ export default function UserProfile() {
 }
 
 function FieldRow({
-                      label,
-                      icon,
-                      displayValue,
-                      editingField,
-                      fieldKey,
-                      tempValue,
-                      setTempValue,
-                      renderActions,
-                      getValidationError
-                  }) {
+    label,
+    icon,
+    displayValue,
+    editingField,
+    fieldKey,
+    tempValue,
+    setTempValue,
+    renderActions,
+    getValidationError
+}) {
     return (
         <div className="field-row p-mb-3">
             <div className="field-left">
                 <div className="field-body">
-                    <label className="form-label"><i className={icon + ' p-mr-2'}/>{label}</label>
+                    <label className="form-label"><i className={icon + ' p-mr-2'} />{label}</label>
                     {editingField !== fieldKey ? (
                         <div className="field-display">
                             <span title={displayValue || ''}>{displayValue || '-'}</span>
@@ -415,7 +415,7 @@ function FieldRow({
                     ) : (
                         <div>
                             <InputText value={tempValue || ''} onChange={(e) => setTempValue(e.target.value)}
-                                       autoFocus/>
+                                autoFocus />
                             {getValidationError(fieldKey, tempValue) &&
                                 <small className="field-error">{getValidationError(fieldKey, tempValue)}</small>
                             }

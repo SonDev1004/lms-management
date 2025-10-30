@@ -1,66 +1,62 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
+import { Card } from 'primereact/card';
+import { Tag } from 'primereact/tag';
+import { Button } from 'primereact/button';
+import { useNavigate } from 'react-router-dom';
 
-// format tiền VND
-const formatPrice = (price) =>
-    new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-    }).format(price);
-function getProgramStatus(program) {
-    const isOpen = program?.is_active === 1 || program?.isActive === true;
-    return isOpen
-        ? { label: "Đang mở", severity: "success" }
-        : { label: "Tạm dừng", severity: "danger" };
-}
-const ProgramCard = ({ program }) => {
-    const navigate = useNavigate();
+export default function ProgramCard({ p }) {
+    const nav = useNavigate();
 
-    const cover =
-        program.imageUrl && program.imageUrl.trim() !== ""
-            ? program.imageUrl
-            : "/noimg.png";
-    const status = getProgramStatus(program);
+    const feeValue = p?.fee ?? p?.price ?? null;
+
+    const header = (
+        <img
+            src={p?.imageUrl || '/noimg.png'}
+            alt={p?.title || 'Program image'}
+            className="program-card__img"
+            loading="lazy"
+            onError={(e) => { e.currentTarget.src = '/noimg.png'; }}
+        />
+    );
+
     return (
-        <Card className="m-2 shadow-2 border-round-lg" style={{ minHeight: "300px" }}>
-            <div className="text-center">
-                <div style={{ position: "relative" }}>
-                    <img
-                        src={cover}
-                        alt={program?.title}
-                        className="w-full h-8rem object-cover border-round mb-3"
-                        loading="lazy"
-                    />
-                    <Tag
-                        value={status.label}
-                        severity={status.severity}
-                        rounded
-                        className="text-xs"
-                        style={{ position: "absolute", top: 8, left: 8 }}
-                    />
-                </div>
-                <h4 className="text-900 font-bold mb-2">{program.title}</h4>
-
-                {program.description && (
-                    <p className="text-600 mb-3 line-height-3">{program.description}</p>
-                )}
-
-                <div className="flex justify-content-end align-items-center mb-3">
-                    <Tag value={`Học phí ${formatPrice(program.fee)}`} severity="success" />
-                </div>
-
-                <Button
-                    label="Xem chi tiết"
-                    icon="pi pi-arrow-right"
-                    className="w-full"
-                    onClick={() => navigate(`/program/${program.id}`)}
+        <Card className="program-card" header={header}>
+            {/* Title + status */}
+            <div className="program-card__head">
+                <h3 className="program-card__title">{p?.title || 'Untitled program'}</h3>
+                <Tag
+                    value={p?.isActive ? 'Active' : 'Inactive'}
+                    severity={p?.isActive ? 'success' : 'danger'}
+                    className="program-card__status"
                 />
             </div>
+
+            {/* Description */}
+            <p className="program-card__desc">
+                {p?.description?.trim() || 'No description available.'}
+            </p>
+
+            {/* Fee */}
+            <div className="program-card__tuition">
+                <div className="label">Tuition</div>
+                <div className="price">{formatVND(feeValue)}</div>
+            </div>
+
+            {/* CTA */}
+            <Button
+                label="View Details"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                text
+                className="program-card__cta"
+                onClick={() => nav(`/programs/${p?.id}`)}
+            />
         </Card>
     );
-};
+}
 
-export default ProgramCard;
+function formatVND(value) {
+    if (value === null || value === undefined || value === '') return 'Contact us';
+    const n = Number(value);
+    if (!Number.isFinite(n)) return 'Contact us';
+    return n.toLocaleString('vi-VN') + ' VND';
+}

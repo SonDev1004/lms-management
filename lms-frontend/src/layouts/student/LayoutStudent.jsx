@@ -1,19 +1,16 @@
 import LayoutNavbar from '../LayoutNavbar';
 import LayoutHeader from '../LayoutHeader';
 import { Outlet } from 'react-router-dom';
+import LayoutHomeFooter from "layouts/home/LayoutHomeFooter.jsx";
 
 const LayoutStudent = () => {
     return (
         <>
             <LayoutHeader />
-            <div className='grid'>
-                <div className='col-3'>
-                    <LayoutNavbar role='STUDENT' />
-                </div>
-                <div className='col-9'>
-                    <Outlet />
-                </div>
-            </div>
+            <LayoutNavbar role="STUDENT">
+                <Outlet />
+            </LayoutNavbar>
+            <LayoutHomeFooter />
         </>
     );
 }

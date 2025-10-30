@@ -1,7 +1,7 @@
 export default function CourseFilterBar({ filter, counts, onChange }) {
-    const options = ["Tất cả", "Đang học", "Sắp mở", "Đã học"];
+    const options = ["All", "Ongoing", "Upcoming", "Completed"];
     return (
-        <div className="filter-bar" role="toolbar" aria-label="Bộ lọc trạng thái lớp">
+        <div className="filter-bar" role="toolbar" aria-label="Course status filter">
             {options.map((opt) => (
                 <button
                     key={opt}
