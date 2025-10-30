@@ -3,6 +3,8 @@ package com.lmsservice.service;
 import java.util.List;
 
 import com.lmsservice.dto.request.CreateUserRequest;
+import com.lmsservice.dto.request.SendNotificationRequest;
+import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.dto.response.UserResponse;
 import com.lmsservice.entity.Permission;
 import com.lmsservice.entity.Role;
@@ -46,4 +48,11 @@ public interface AdminItService {
      * ------------------- ASSIGN -------------------
      **/
     Role assignPermissions(Long roleId, List<Long> permIds);
+
+    /**
+     * ------------------- NOTIFICATION -------------------
+     **/
+    void sendNotification(SendNotificationRequest req);
+
+    List<NotificationResponse> getScheduledNotifications();
 }

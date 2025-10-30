@@ -1,5 +1,6 @@
 package com.lmsservice.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -7,16 +8,15 @@ import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.lmsservice.controller.NotificationSocketController;
 import com.lmsservice.dto.request.CreateUserRequest;
+import com.lmsservice.dto.request.SendNotificationRequest;
+import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.dto.response.UserResponse;
-import com.lmsservice.entity.Permission;
-import com.lmsservice.entity.Role;
-import com.lmsservice.entity.User;
+import com.lmsservice.entity.*;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
-import com.lmsservice.repository.PermissionRepository;
-import com.lmsservice.repository.RoleRepository;
-import com.lmsservice.repository.UserRepository;
+import com.lmsservice.repository.*;
 import com.lmsservice.service.AdminItService;
 import com.lmsservice.service.MailService;
 
@@ -34,6 +34,9 @@ public class AdminItServiceImpl implements AdminItService {
     PermissionRepository permRepo;
     PasswordEncoder encoder;
     MailService mailService;
+    NotificationRepository notificationRepo;
+    NotificationTypeRepository notificationTypeRepo;
+    NotificationSocketController socketController;
 
     /**
      * ------------------- USER -------------------
@@ -81,45 +84,45 @@ public class AdminItServiceImpl implements AdminItService {
     public void sendAccountProvisionMail(User user, String tempPassword) {
         String html =
                 """
-					<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-						<h3 style="color:#2c3e50;">Xin chào %s,</h3>
-						<p>
-							Chúng tôi rất vui được thông báo rằng tài khoản của bạn trên hệ thống
-							<strong>LMS Center</strong> đã được khởi tạo thành công.
-						</p>
+							<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+								<h3 style="color:#2c3e50;">Xin chào %s,</h3>
+								<p>
+									Chúng tôi rất vui được thông báo rằng tài khoản của bạn trên hệ thống
+									<strong>LMS Center</strong> đã được khởi tạo thành công.
+								</p>
 
-						<p>Thông tin đăng nhập của bạn như sau:</p>
-						<ul style="list-style-type:none; padding:0;">
-							<li><strong>Tên đăng nhập:</strong> %s</li>
-							<li><strong>Mật khẩu tạm thời:</strong> %s</li>
-						</ul>
+								<p>Thông tin đăng nhập của bạn như sau:</p>
+								<ul style="list-style-type:none; padding:0;">
+									<li><strong>Tên đăng nhập:</strong> %s</li>
+									<li><strong>Mật khẩu tạm thời:</strong> %s</li>
+								</ul>
 
-						<p>
-							Vui lòng truy cập vào
-							<a href="http://localhost:5173/login"
-							style="color:#335CFF; text-decoration:none; font-weight:bold;">
-								LMS Center
-							</a>
-							để đăng nhập và đổi mật khẩu nhằm đảm bảo bảo mật thông tin cá nhân.
-						</p>
+								<p>
+									Vui lòng truy cập vào
+									<a href="http://localhost:5173/login"
+									style="color:#335CFF; text-decoration:none; font-weight:bold;">
+										LMS Center
+									</a>
+									để đăng nhập và đổi mật khẩu nhằm đảm bảo bảo mật thông tin cá nhân.
+								</p>
 
-						<p>
-							Nếu bạn gặp bất kỳ khó khăn nào trong quá trình đăng nhập,
-							vui lòng liên hệ với bộ phận hỗ trợ kỹ thuật của trung tâm để được trợ giúp kịp thời.
-						</p>
+								<p>
+									Nếu bạn gặp bất kỳ khó khăn nào trong quá trình đăng nhập,
+									vui lòng liên hệ với bộ phận hỗ trợ kỹ thuật của trung tâm để được trợ giúp kịp thời.
+								</p>
 
-						<br/>
-						<p>Trân trọng,<br/>
-						<strong>Phòng Quản trị Hệ thống – LMS Center</strong>
-						</p>
+								<br/>
+								<p>Trân trọng,<br/>
+								<strong>Phòng Quản trị Hệ thống – LMS Center</strong>
+								</p>
 
-						<hr style="border:none; border-top:1px solid #eee; margin-top:20px;"/>
-						<p style="font-size:12px; color:#888;">
-							Đây là email tự động, vui lòng không phản hồi trực tiếp.
-							Nếu cần hỗ trợ, vui lòng liên hệ qua kênh hỗ trợ chính thức của trung tâm.
-						</p>
-					</div>
-				"""
+								<hr style="border:none; border-top:1px solid #eee; margin-top:20px;"/>
+								<p style="font-size:12px; color:#888;">
+									Đây là email tự động, vui lòng không phản hồi trực tiếp.
+									Nếu cần hỗ trợ, vui lòng liên hệ qua kênh hỗ trợ chính thức của trung tâm.
+								</p>
+							</div>
+						"""
                         .formatted(user.getFirstName() + " " + user.getLastName(), user.getUserName(), tempPassword);
 
         mailService.sendMail(user.getEmail(), "[LMS Center] Cấp tài khoản mới", html);
@@ -199,5 +202,125 @@ public class AdminItServiceImpl implements AdminItService {
 
         role.setPermissions(perms);
         return roleRepo.save(role);
+    }
+
+    /**
+     * ------------------- NOTIFICATION -------------------
+     **/
+    @Override
+    public void sendNotification(SendNotificationRequest req) {
+        NotificationType type = notificationTypeRepo
+                .findById(req.getNotificationTypeId())
+                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_TYPE_NOT_FOUND));
+
+        Set<User> receivers = new HashSet<>();
+
+        // Toàn hệ thống
+        if (Boolean.TRUE.equals(req.getBroadcast())) {
+            receivers.addAll(userRepo.findAll());
+        }
+
+        // Theo role
+        if (req.getTargetRoles() != null && !req.getTargetRoles().isEmpty()) {
+            List<Role> roles = roleRepo.findAllByNameIn(req.getTargetRoles());
+            receivers.addAll(userRepo.findByRoleIn(roles));
+        }
+
+        // Theo user cụ thể
+        if (req.getTargetUserIds() != null && !req.getTargetUserIds().isEmpty()) {
+            receivers.addAll(userRepo.findAllById(req.getTargetUserIds()));
+        }
+
+        // Theo lớp học
+        if (req.getTargetCourseIds() != null && !req.getTargetCourseIds().isEmpty()) {
+            receivers.addAll(userRepo.findStudentsByCourseIds(req.getTargetCourseIds()));
+        }
+
+        // Theo chương trình
+        if (req.getTargetProgramIds() != null && !req.getTargetProgramIds().isEmpty()) {
+            receivers.addAll(userRepo.findStudentsByProgramIds(req.getTargetProgramIds()));
+        }
+
+        if (receivers.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RECEIVER_FOUND);
+        }
+
+        // Nếu có scheduledDate trong tương lai → chỉ lưu, chưa gửi
+        if (req.getScheduledDate() != null && req.getScheduledDate().isAfter(LocalDateTime.now())) {
+            List<Notification> drafts = receivers.stream()
+                    .map(u -> Notification.builder()
+                            .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
+                            .severity((short) req.getSeverity())
+                            .url(req.getUrl())
+                            .notificationType(type)
+                            .user(u)
+                            .isSeen(false)
+                            .scheduledDate(req.getScheduledDate())
+                            .postedDate(null)
+                            .build())
+                    .toList();
+
+            notificationRepo.saveAll(drafts);
+            System.out.printf(
+                    "🕓 Đã lên lịch gửi [%s] cho %d người lúc %s%n",
+                    req.getTitle(), receivers.size(), req.getScheduledDate());
+            return; // Dừng ở đây, không gửi realtime ngay
+        }
+
+        // Gửi ngay (nếu không có scheduledDate)
+        List<Notification> notis = receivers.stream()
+                .map(u -> Notification.builder()
+                        .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
+                        .severity((short) req.getSeverity())
+                        .url(req.getUrl())
+                        .notificationType(type)
+                        .user(u)
+                        .isSeen(false)
+                        .postedDate(LocalDateTime.now())
+                        .build())
+                .toList();
+
+        notificationRepo.saveAll(notis);
+
+        notis.forEach(noti -> socketController.sendToUser(
+                noti.getUser().getId(),
+                NotificationResponse.builder()
+                        .id(noti.getId())
+                        .title(req.getTitle())
+                        .content(req.getContent())
+                        .severity(req.getSeverity())
+                        .isSeen(false)
+                        .url(req.getUrl())
+                        .type(type.getTitle())
+                        .postedDate(noti.getPostedDate())
+                        .build()));
+    }
+
+    @Override
+    public List<NotificationResponse> getScheduledNotifications() {
+        List<Notification> list = notificationRepo.findScheduledNotifications();
+
+        return list.stream()
+                .map(n -> NotificationResponse.builder()
+                        .id(n.getId())
+                        .title(extractTitle(n.getContent()))
+                        .content(n.getContent())
+                        .severity(n.getSeverity())
+                        .isSeen(n.isSeen())
+                        .url(n.getUrl())
+                        .type(n.getNotificationType().getTitle())
+                        .postedDate(n.getScheduledDate())
+                        .build())
+                .toList();
+    }
+
+    private String extractTitle(String html) {
+        if (html == null) return "(Thông báo)";
+        if (html.contains("<b>") && html.contains("</b>")) {
+            int start = html.indexOf("<b>") + 3;
+            int end = html.indexOf("</b>");
+            return html.substring(start, end);
+        }
+        return "(Thông báo)";
     }
 }

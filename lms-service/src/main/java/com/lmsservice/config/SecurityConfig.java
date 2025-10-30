@@ -51,7 +51,8 @@ public class SecurityConfig {
         "/api/v1/payments/**",
         "/api/subject/**",
         "/api/v1/enrollments/result/**",
-        "/api/v1/enrollments/status/**"
+        "/api/v1/enrollments/status/**",
+        "/ws-notifications/**"
     };
 
     /**
