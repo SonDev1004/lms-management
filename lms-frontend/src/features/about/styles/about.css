@@ -34,7 +34,7 @@
 .hero-actions .p-button{ margin:8px; }
 
 /* Grid helpers */
-.grid{ display:grid; gap:24px; }
+/*.grid{ display:grid; gap:24px; }*/
 .grid--2{ grid-template-columns: 1.1fr 0.9fr; }
 .grid--3{ grid-template-columns: repeat(3, 1fr); }
 .grid--cards .p-card{ border:1px solid var(--pg-border); }
