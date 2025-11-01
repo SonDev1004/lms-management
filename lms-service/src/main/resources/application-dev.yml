@@ -1,4 +1,12 @@
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ltn29102001@gmail.com
+    password: dmvxhgmpaxhmtmrv
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
   config:
     activate:
       on-profile: dev
@@ -22,6 +30,7 @@ spring:
         format_sql: true
         physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
 springdoc:
   api-docs:
     enabled: true
@@ -57,3 +66,5 @@ vnpay:
 
 client:
   domain: ${DOMAIN:http://localhost:5173}
+
+
