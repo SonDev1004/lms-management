@@ -27,17 +27,22 @@ export function useNotifications({ userId }) {
 
     const markRead = async (id) => {
         await markAsSeen(id);
-        setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isSeen: true } : n)));
+        setNotifications((prev) =>
+            prev.map((n) => (n.id === id ? { ...n, isSeen: true } : n))
+        );
     };
 
     const markAllRead = async () => {
-        const unseen = await getUnseenNotifications();
-        await Promise.all(unseen.map((n) => markAsSeen(n.id)));
-        setNotifications((prev) => prev.map((n) => ({ ...n, isSeen: true })));
+        try {
+            const unseen = await getUnseenNotifications();
+            await Promise.all((unseen || []).map((n) => markAsSeen(n.id)));
+        } finally {
+            setNotifications((prev) => prev.map((n) => ({ ...n, isSeen: true })));
+        }
     };
 
     const remove = async (id) => {
-        // BE chưa có delete; xóa local để UI gọn
+        // Nếu chưa có API delete, tạm thời xóa local để UI gọn
         setNotifications((prev) => prev.filter((n) => n.id !== id));
     };
 

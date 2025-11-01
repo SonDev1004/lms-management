@@ -37,11 +37,12 @@ export default {
   getAttendanceSummary: (courseId) => `${rootAPI}/attendance/summary?courseId=${courseId}`,
 
   // User notifications
-  getMyNotifications: `${rootAPI}/api/notifications`,
-  getUnseenNotifications: `${rootAPI}/api/notifications/unseen`,
-  markAsSeen: (id) => `${rootAPI}/api/notifications/${id}/seen`,
+  getMyNotifications: `${rootAPI}/notifications`,
+  getUnseenNotifications: `${rootAPI}/notifications/unseen`,
+  markAsSeen: (id) => `${rootAPI}/notifications/${id}/seen`,
+  getNotificationTypes: `${rootAPI}/notifications/types`,
 
   // AdminIT notifications
-  sendNotification: `${rootAPI}/api/adminit/notifications/send`,
-  getScheduledNotifications: `${rootAPI}/api/adminit/notifications/scheduled`,
+  sendNotification: `${rootAPI}/adminit/notifications/send`,
+  getScheduledNotifications: `${rootAPI}/adminit/notifications/scheduled`,
 };
