@@ -8,7 +8,7 @@ import { exportCsv } from "../utils/csv";
 import "../styles/audit.css";
 import '../mocks/auditEvents.mock.js';
 import '../mocks/auditLogs.js';
-export default function AuditLogs() {
+export default function RecentActivity() {
     const { data, filters, lists, meta } = useAuditLogs();
 
     const handleExport = () => {

@@ -75,7 +75,7 @@ import AttendancePage from "@/features/attendance/teacher/pages/AttendancePage.j
 import AttendanceDetailPage from "@/features/attendance/teacher/detail/pages/AttendanceDetailPage.jsx";
 import TeacherAttendance from "@/features/teacher/pages/TeacherAttendance.jsx";
 import StudentAttendance from "@/features/student/pages/StudentAttendance.jsx";
-import AuditLogs from "@/features/recentactivity/pages/AuditLogs.jsx";
+import RecentActivity from "@/features/recentactivity/pages/RecentActivity.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -174,7 +174,7 @@ const App = () => {
                         <Route path='upload' element={<AdminUpload />} />
                         <Route path='security' element={<AdminSecurity />} />
                         <Route path='profile' element={<AdminProfile />} />
-                        <Route path='audit' element={<AuditLogs />}/>
+                        <Route path='recentactivity' element={<RecentActivity />}/>
                     </Route>
                 </Route>
 

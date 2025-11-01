@@ -125,7 +125,7 @@ export default function LayoutNavbar({ role, children }) {
                     label: 'Recent Activity',
                     icon: 'pi pi-history',
                     roles: ['ADMIN_IT'],
-                    command: () => navigate('/admin/audit')
+                    command: () => navigate('/admin/recentactivity')
                 },
                 {
                     label: 'Reports & Export',
