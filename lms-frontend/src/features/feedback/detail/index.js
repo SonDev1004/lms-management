@@ -1,0 +1,1 @@
+export { default as FeedbackDetail } from "../components/FeedbackDetail";

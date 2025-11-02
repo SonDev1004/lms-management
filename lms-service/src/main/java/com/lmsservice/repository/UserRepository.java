@@ -28,25 +28,26 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(
             """
-				SELECT s.user FROM Student s
-				JOIN CourseStudent cs ON cs.student = s
-				WHERE cs.course.id IN :courseIds
-			""")
+						SELECT s.user FROM Student s
+						JOIN CourseStudent cs ON cs.student = s
+						WHERE cs.course.id IN :courseIds
+					""")
     List<User> findStudentsByCourseIds(@Param("courseIds") List<Long> courseIds);
 
     @Query(
             """
-				SELECT s.user FROM Student s
-				JOIN Enrollment e ON e.student = s
-				WHERE e.program.id IN :programIds
-			""")
+						SELECT s.user FROM Student s
+						JOIN Enrollment e ON e.student = s
+						WHERE e.program.id IN :programIds
+					""")
     List<User> findStudentsByProgramIds(@Param("programIds") List<Long> programIds);
 
     @Query(
             """
 				SELECT u FROM User u
-				WHERE LOWER(u.userName) LIKE LOWER(CONCAT('%', :kw, '%'))
-				OR LOWER(u.email) LIKE LOWER(CONCAT('%', :kw, '%'))
+				WHERE (:q IS NULL OR LOWER(u.userName) LIKE LOWER(CONCAT('%',:q,'%'))
+					OR LOWER(u.email) LIKE LOWER(CONCAT('%',:q,'%'))
+					OR LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE LOWER(CONCAT('%',:q,'%')))
 			""")
-    List<User> searchUsers(@Param("kw") String keyword);
+    List<User> searchUsers(@Param("q") String q);
 }

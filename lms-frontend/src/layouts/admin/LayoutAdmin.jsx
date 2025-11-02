@@ -7,16 +7,10 @@ const LayoutAdmin = () => {
     return (
         <>
             <LayoutHeader />
-            <div className='grid'>
-                <div className='col-3'>
-                    <LayoutNavbar role='ADMIN_IT' />
-                </div>
-                <div className='col-9'>
-                    <Outlet />
-                </div>
-            </div>
+            <LayoutNavbar role="ADMIN_IT">
+                <Outlet />
+            </LayoutNavbar>
             <LayoutHomeFooter />
-
         </>
     );
 }
