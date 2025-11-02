@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.lmsservice.dto.request.CreateUserRequest;
 import com.lmsservice.dto.request.SendNotificationRequest;
-import com.lmsservice.dto.response.ApiResponse;
-import com.lmsservice.dto.response.NotificationResponse;
-import com.lmsservice.dto.response.UserResponse;
+import com.lmsservice.dto.response.*;
 import com.lmsservice.entity.Permission;
 import com.lmsservice.entity.Role;
 import com.lmsservice.entity.User;
+import com.lmsservice.repository.RoleRepository;
 import com.lmsservice.service.AdminItService;
+import com.lmsservice.service.NotificationTypeService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminItController {
 
-    AdminItService service;
+    private final AdminItService service;
+    private final NotificationTypeService notificationTypeService;
+    private final RoleRepository roleRepo;
 
     /**
      * ------------------- USER -------------------
@@ -143,6 +145,7 @@ public class AdminItController {
         service.sendNotification(req);
         return ApiResponse.<Void>builder().message("Gửi thông báo thành công").build();
     }
+
     // ✅ Lấy danh sách thông báo hẹn giờ (chưa gửi)
     @GetMapping("/notifications/scheduled")
     public ApiResponse<List<NotificationResponse>> getScheduledNotifications() {
@@ -150,6 +153,27 @@ public class AdminItController {
         return ApiResponse.<List<NotificationResponse>>builder()
                 .message("Lấy danh sách thông báo hẹn giờ thành công")
                 .result(result)
+                .build();
+    }
+
+    @GetMapping("/notifications/types")
+    public ApiResponse<List<OptionDto>> getNotificationTypes() {
+        var types = notificationTypeService.getTypeOptions();
+        return ApiResponse.<List<OptionDto>>builder()
+                .message("Danh sách loại thông báo")
+                .result(types)
+                .build();
+    }
+
+    // options cho Roles (value là code chuỗi: STUDENT/TEACHER/STAFF/...)
+    @GetMapping("/roles/options")
+    public ApiResponse<List<OptionStringDto>> getRoleOptions() {
+        var opts = roleRepo.findAll().stream()
+                .map(r -> new OptionStringDto(r.getName(), r.getName()))
+                .toList();
+        return ApiResponse.<List<OptionStringDto>>builder()
+                .message("Danh sách vai trò")
+                .result(opts)
                 .build();
     }
 }
