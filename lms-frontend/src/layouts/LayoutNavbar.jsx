@@ -1,225 +1,169 @@
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PanelMenu } from 'primereact/panelmenu';
-import roleToRoute from '../app/router/roleToRoute.js'
-const LayoutNavbar = ({ role }) => {
+import roleToRoute from '../app/router/roleToRoute.js';
+import '../styles/LayoutNavbar.css';
+
+export default function LayoutNavbar({ role, children }) {
     const navigate = useNavigate();
+    const [collapsed, setCollapsed] = useState(true);
+    const [hoverOpen, setHoverOpen] = useState(false);
+    const mountedRef = useRef(false);
+
     const items = [
         {
-            label: 'Tổng quan',
+            label: 'Overview',
             icon: 'pi pi-home',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
-            command: () => navigate(`/${roleToRoute(role)}`),
+            command: () => navigate(`/${roleToRoute(role)}`)
         },
+
         {
-            label: 'Lớp học',
+            label: 'Courses',
             icon: 'pi pi-book',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            roles: ['STUDENT'],
             command: () => navigate(`/${roleToRoute(role)}/courses`)
         },
+
         {
-            label: 'Thời khóa biểu',
+            label: 'Courses & Programs',
+            icon: 'pi pi-book',
+            roles: ['TEACHER', 'ACADEMIC_MANAGER'],
+            items: [
+                {
+                    label: 'Class list',
+                    icon: 'pi pi-list',
+                    roles: ['TEACHER', 'ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/courses`)
+                },
+                {
+                    label: 'Programs / Subjects',
+                    icon: 'pi pi-clone',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/program`)
+                }
+            ]
+        },
+
+        {
+            label: 'Academic Management',
+            icon: 'pi pi-users',
+            roles: ['ACADEMIC_MANAGER'],
+            items: [
+                {
+                    label: 'Student list',
+                    icon: 'pi pi-list',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/student-manager`)
+                },
+                {
+                    label: 'Teacher list',
+                    icon: 'pi pi-id-card',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/teacher-list`)
+                },
+                {
+                    label: 'Feedback',
+                    icon: 'pi pi-check-square',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/feedback`)
+                },
+            ]
+        },
+
+        {
+            label: 'Schedule',
             icon: 'pi pi-calendar',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
             command: () => navigate(`/${roleToRoute(role)}/schedule`)
         },
 
         {
-            label: 'Thông báo',
-            icon: 'pi pi-plus',
+            label: 'Notifications',
+            icon: 'pi pi-bell',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
 
         {
-            label: 'Thông tin cá nhân',
+            label: 'System Administration',
+            icon: 'pi pi-cog',
+            roles: ['ADMIN_IT'],
+            items: [
+                {
+                    label: 'System Management',
+                    icon: 'pi pi-server',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/systems')
+                },
+                {
+                    label: 'Data Management (Upload)',
+                    icon: 'pi pi-upload',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/upload')
+                },
+            ]
+        },
+        {
+            label: 'Profile',
             icon: 'pi pi-user',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/profile`)
         },
-        //Eduacademic_manager Navbar Begin
-        // {
-        //     label: 'Quản lí chương trình đào tạo',
-        //     icon: 'pi pi-book',
-        //     // roles: ['academic_manager'],
-        //     items: [
-        //         {
-        //             label: 'Môn học',
-        //             icon: 'pi pi-bookmark',
-        //             command: () => navigate('/admin/subjects'),
-        //         },
-        //         {
-        //             label: 'Khóa học',
-        //             icon: 'pi pi-clone',
-        //             command: () => navigate('/admin/courses'),
-        //         }
-        //     ]
-        // },
-        // {
-        //     label: 'Quản lí học viên',
-        //     icon: 'pi pi-users',
-        //     //roles: ['admin'],
-        //     items: [
-        //         {
-        //             label: 'Danh sách học viên',
-        //             icon: 'pi pi-list',
-        //             command: () => navigate('/admin/students'),
-        //         },
-        //         {
-        //             label: 'Điểm danh',
-        //             icon: 'pi pi-calendar',
-        //             command: () => navigate('/admin/attendance'),
-        //         },
-        //         {
-        //             label: 'Bảng điểm',
-        //             icon: 'pi pi-file',
-        //             command: () => navigate('/admin/grades'),
-        //         },
-        //     ],
-        // },
-        // {
-        //     label: 'Quản lí giáo viên',
-        //     icon: 'pi pi-user-edit',
-        //     items: [
-        //         {
-        //             label: 'Danh sách giáo viên',
-        //             icon: 'pi pi-id-card',
-        //             command: () => navigate('/admin/teachers'),
-        //         },
-        //         {
-        //             label: 'Phân công giảng dạy',
-        //             icon: 'pi pi-share-alt',
-        //             command: () => navigate('/admin/teaching-assignments'),
-        //         },
-        //         {
-        //             label: 'Quản lí yêu cầu',
-        //             icon: 'pi pi-inbox',
-        //             command: () => navigate('/admin/teacher-requests'),
-        //         },
-        //     ]
-        // },
-        // {
-        //     label: 'Quản lí lớp học',
-        //     icon: 'pi pi-briefcase',
-        //     items: [
-        //         {
-        //             label: 'Danh sách lớp học',
-        //             icon: 'pi pi-list',
-        //             command: () => navigate('/admin/classes'),
-        //         },
-        //         {
-        //             label: 'Xếp thời khóa biểu',
-        //             icon: 'pi pi-table',
-        //             command: () => navigate('/admin/schedule'),
-        //         },
-        //         {
-        //             label: 'Điểm danh',
-        //             icon: 'pi pi-calendar',
-        //             command: () => navigate('/admin/class-attendance'),
-        //         },
-        //         {
-        //             label: 'Nhập điểm',
-        //             icon: 'pi pi-pencil',
-        //             command: () => navigate('/admin/class-grades'),
-        //         },
-        //     ]
-        // },
-        // {
-        //     label: 'Theo dõi và đánh giá',
-        //     icon: 'pi pi-envelope',
-        //     items: [
-        //         {
-        //             label: 'Feedback',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/eduacademic_manager/feedback'),
-        //         }
-        //     ]
-        // },
-        // {
-        //     label: 'Lịch & Thông báo',
-        //     icon: 'pi pi-envelope',
-        //     items: [
-        //         {
-        //             label: 'Lịch khai giảng',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/admin/schedule-startdates'),
-        //         },
-        //         {
-        //             label: 'Lịch dạy tổng thể',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/admin/schedule-overview'),
-        //         },
-        //     ]
-        // },
-        // {
-        //     label: 'Xin nghỉ',
-        //     icon: 'pi pi-envelope',
-        //     items: [
-        //         {
-        //             label: 'Duyệt phép',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/admin/leave-requests'),
-        //         }
-        //     ]
-        // },
-        // {
-        //     label: 'Báo cáo & Xuất dữ liệu',
-        //     icon: 'pi pi-envelope',
-        //     items: [
-        //         {
-        //             label: 'Giảng viên',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/admin/leave-requests')
-        //         },
-        //         {
-        //             label: 'Khóa học',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/admin/leave-requests')
-        //         },
-        //         {
-        //             label: 'Học viên',
-        //             icon: 'pi pi-check-square',
-        //             command: () => navigate('/admin/leave-requests'),
-        //         }
-        //     ]
-        // }
-        //*Eduacademic_manager Navbar End*
 
-        //*Admin Navbar Begin*
-        {
-            label: 'Quản lý hệ thống',
-            icon: 'pi pi-bell',
-            roles: ['ADMIN_IT'],
-            command: () => navigate('/admin/systems'),
-        },
-        {
-            label: 'Quản lý dữ liệu',
-            icon: 'pi pi-bell',
-            roles: ['ADMIN_IT'],
-            command: () => navigate('/admin/upload'),
-        },
-        {
-            label: 'Quản lý bảo mật',
-            icon: 'pi pi-bell',
-            roles: ['ADMIN_IT'],
-            command: () => navigate('/admin/security'),
-        },
-        {
-            label: 'Thông tin cá nhân',
-            icon: 'pi pi-user',
-            roles: ['ADMIN_IT'],
-            command: () => navigate('/admin/profile'),
-        }
-        //*Admin Navbar End
     ];
 
-    return (
-        <PanelMenu
-            model={items.filter(item => item.roles.includes(role))}
-            multiple
-            className="admin-sidebar"
-        />
+    const filterByRole = (list, role) => {
+        return list
+            .map((item) => {
+                const newItem = { ...item };
+                if (item.items) newItem.items = filterByRole(item.items, role);
+                return newItem;
+            })
+            .filter((item) => {
+                const hasRole = Array.isArray(item.roles) ? item.roles.includes(role) : false;
+                const hasVisibleChildren = Array.isArray(item.items) && item.items.length > 0;
+                return hasRole || hasVisibleChildren;
+            });
+    };
 
+    const visibleItems = filterByRole(items, role);
+
+    useEffect(() => {
+        if (mountedRef.current) return;
+        mountedRef.current = true;
+        const isSmall =
+            typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(max-width: 767px)').matches;
+        setCollapsed(isSmall ? true : true);
+    }, []);
+
+    const isOpen = !collapsed || hoverOpen;
+
+    const handleMouseEnter = () => {
+        const isSmall =
+            typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(max-width: 767px)').matches;
+        if (collapsed && !isSmall) setHoverOpen(true);
+    };
+    const handleMouseLeave = () => {
+        if (hoverOpen) setHoverOpen(false);
+    };
+
+    return (
+        <div className="layout-navbar-wrapper">
+            <aside
+                className={`admin-sidebar ${isOpen ? '' : 'collapsed'}`}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
+                <PanelMenu model={visibleItems} multiple className="layout-panelmenu p-panelmenu" />
+            </aside>
+            <main className="layout-main" style={{ flex: 1 }}>
+                {children}
+            </main>
+        </div>
     );
 }
-
-export default LayoutNavbar;

@@ -1,0 +1,71 @@
+.leave-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.leave-request-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.leave-request {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid #eee;
+}
+
+.leave-request.pending { border-left: 4px solid #0f62fe; }
+.leave-request.approved { border-left: 4px solid #0bb57a; opacity: 0.95; }
+.leave-request.rejected { border-left: 4px solid #ff6b6b; opacity: 0.95; }
+
+.leave-request-title {
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.leave-status {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.05);
+}
+
+.leave-request-meta {
+    font-size: 13px;
+    color: #444;
+    margin-top: 6px;
+}
+.leave-reason {
+    color: #666;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.leave-request-actions {
+    display:flex;
+    gap: 8px;
+    align-items:center;
+}
+.btn-approve, .btn-reject {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-approve { background: #0f62fe; color: #fff; }
+.btn-reject { background: #ff6b6b; color: #fff; }
+
+.leave-empty { padding: 12px; text-align:center; color:#666; }

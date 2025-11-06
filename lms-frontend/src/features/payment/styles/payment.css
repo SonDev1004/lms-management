@@ -1,0 +1,7 @@
+:root{
+    --pay-bg:#FFF7EF;
+}
+.page-payment{
+    background: var(--pay-bg);
+}
+.p-card{ border-radius:16px; }

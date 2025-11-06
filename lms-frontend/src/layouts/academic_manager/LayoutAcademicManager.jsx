@@ -4,18 +4,15 @@ import { Outlet } from "react-router-dom";
 import LayoutHomeFooter from "../home/LayoutHomeFooter";
 
 const LayoutAcademicManager = () => {
-    return (<>
-        <LayoutHeader />
-        <div className='grid'>
-            <div className='col-3'>
-                <LayoutNavbar role='ACADEMIC_MANAGER' />
-            </div>
-            <div className='col-9'>
+    return (
+        <>
+            <LayoutHeader />
+            <LayoutNavbar role="ACADEMIC_MANAGER">
                 <Outlet />
-            </div>
-        </div>
-        <LayoutHomeFooter />
-    </>);
-}
+            </LayoutNavbar>
+            <LayoutHomeFooter />
+        </>
+    );
+};
 
 export default LayoutAcademicManager;
