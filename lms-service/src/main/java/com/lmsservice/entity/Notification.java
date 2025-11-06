@@ -15,8 +15,10 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Notification extends EntityAbstract {
+
     @Column(columnDefinition = "nvarchar(max)", nullable = false)
     String content;
 
@@ -31,12 +33,14 @@ public class Notification extends EntityAbstract {
 
     LocalDateTime postedDate;
 
-    // Notification
+    @Column(name = "scheduled_date")
+    LocalDateTime scheduledDate;
+
     @ManyToOne
     @JoinColumn(name = "notification_type_id", nullable = false)
     NotificationType notificationType;
 
-    // User
+    // Người nhận
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     User user;

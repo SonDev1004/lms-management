@@ -1,0 +1,70 @@
+.about-hero{
+    /* gradient sáng xanh -> tím như mock */
+    background: linear-gradient(135deg,#2b7ef7 0%, #2563eb 40%, #5446ff 70%, #6f3ef6 100%);
+    color:#fff;
+    padding: 120px 0 96px;
+    text-align:center;
+    border-radius: 16px;            /* nếu không muốn bo: xoá dòng này */
+}
+
+.about-hero .container{ max-width: 1100px; margin:0 auto; padding: 0 24px; }
+
+.hero-title{
+    /* size to giống ảnh */
+    font-size: clamp(40px, 6.2vw, 72px);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: .2px;
+    margin: 0 0 18px;
+    text-wrap: balance;             /* chia 2 dòng đẹp như mock */
+}
+
+.hero-sub{
+    font-size: clamp(16px, 1.6vw, 22px);
+    line-height: 1.6;
+    opacity: .98;
+    margin: 0 auto 36px;
+    max-width: 980px;               /* đúng chiều rộng dòng phụ */
+}
+
+/* Nút hero — giống hệt mock */
+.hero-actions{ display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+
+/* reset PrimeReact để mình kiểm soát */
+.hero-actions .p-button{
+    height: 56px;
+    padding: 0 26px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    border: 2px solid transparent;
+}
+
+/* Button chính: teal nền đặc + icon mũi tên bên trái */
+.hero-actions .p-button:not(.p-button-outlined){
+    background: #10b3b6;                 /* teal như ảnh */
+    border-color: #10b3b6;
+    color:#fff;
+}
+.hero-actions .p-button:not(.p-button-outlined):hover{
+    background:#0ea5a8; border-color:#0ea5a8;
+}
+
+/* Button phụ: outline xanh trong suốt, chữ xanh đậm */
+.hero-actions .p-button.p-button-outlined{
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.28);
+    color:#9cc3ff;
+}
+.hero-actions .p-button.p-button-outlined:hover{
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.42);
+    color:#beddff;
+}
+
+/* Icon mũi tên bên trái, khoảng cách đúng mock */
+.hero-actions .p-button .p-button-icon-left{
+    margin-right: 10px;
+    font-size: 18px;
+}

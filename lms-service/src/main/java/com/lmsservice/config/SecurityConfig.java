@@ -51,7 +51,8 @@ public class SecurityConfig {
         "/api/v1/payments/**",
         "/api/subject/**",
         "/api/v1/enrollments/result/**",
-        "/api/v1/enrollments/status/**"
+        "/api/v1/enrollments/status/**",
+        "/ws-notifications/**"
     };
 
     /**
@@ -71,6 +72,8 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/v1/enrollments/**")
                         .hasAnyRole("GUEST", "STUDENT")
+                        .requestMatchers("/api/adminit/**")
+                        .hasRole("ADMIN_IT")
                         .requestMatchers("/api/auth/change-password")
                         .authenticated()
                         .requestMatchers("/api/user/profile")
