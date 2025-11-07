@@ -40,9 +40,16 @@ export default {
   getMyNotifications: `${rootAPI}/notifications`,
   getUnseenNotifications: `${rootAPI}/notifications/unseen`,
   markAsSeen: (id) => `${rootAPI}/notifications/${id}/seen`,
-  getNotificationTypes: `${rootAPI}/notifications/types`,
 
   // AdminIT notifications
   sendNotification: `${rootAPI}/adminit/notifications/send`,
   getScheduledNotifications: `${rootAPI}/adminit/notifications/scheduled`,
+  // ===== Options & Search cho form gửi thông báo =====
+  notificationTypes: `${rootAPI}/adminit/notifications/types`,
+  roleOptions: `${rootAPI}/adminit/roles/options`,
+  // Autocomplete (GET ?q=&page=&size=)
+  searchUsers: `${rootAPI}/adminit/search/users`,
+  searchCourses: `${rootAPI}/adminit/search/courses`,
+  searchPrograms: `${rootAPI}/adminit/search/programs`,
+
 };

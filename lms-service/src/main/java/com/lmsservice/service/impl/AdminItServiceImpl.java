@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class AdminItServiceImpl implements AdminItService {
     NotificationRepository notificationRepo;
     NotificationTypeRepository notificationTypeRepo;
     NotificationSocketController socketController;
-
+    SimpMessagingTemplate simpMessagingTemplate;
     /**
      * ------------------- USER -------------------
      **/
@@ -213,30 +214,22 @@ public class AdminItServiceImpl implements AdminItService {
                 .findById(req.getNotificationTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_TYPE_NOT_FOUND));
 
+        // === Resolve receivers (dedupe) ===
         Set<User> receivers = new HashSet<>();
 
-        // Toàn hệ thống
         if (Boolean.TRUE.equals(req.getBroadcast())) {
             receivers.addAll(userRepo.findAll());
         }
-
-        // Theo role
         if (req.getTargetRoles() != null && !req.getTargetRoles().isEmpty()) {
             List<Role> roles = roleRepo.findAllByNameIn(req.getTargetRoles());
             receivers.addAll(userRepo.findByRoleIn(roles));
         }
-
-        // Theo user cụ thể
         if (req.getTargetUserIds() != null && !req.getTargetUserIds().isEmpty()) {
             receivers.addAll(userRepo.findAllById(req.getTargetUserIds()));
         }
-
-        // Theo lớp học
         if (req.getTargetCourseIds() != null && !req.getTargetCourseIds().isEmpty()) {
             receivers.addAll(userRepo.findStudentsByCourseIds(req.getTargetCourseIds()));
         }
-
-        // Theo chương trình
         if (req.getTargetProgramIds() != null && !req.getTargetProgramIds().isEmpty()) {
             receivers.addAll(userRepo.findStudentsByProgramIds(req.getTargetProgramIds()));
         }
@@ -245,7 +238,7 @@ public class AdminItServiceImpl implements AdminItService {
             throw new AppException(ErrorCode.NO_RECEIVER_FOUND);
         }
 
-        // Nếu có scheduledDate trong tương lai → chỉ lưu, chưa gửi
+        // === Nếu có schedule tương lai -> chỉ lưu, KHÔNG gửi realtime ===
         if (req.getScheduledDate() != null && req.getScheduledDate().isAfter(LocalDateTime.now())) {
             List<Notification> drafts = receivers.stream()
                     .map(u -> Notification.builder()
@@ -261,40 +254,72 @@ public class AdminItServiceImpl implements AdminItService {
                     .toList();
 
             notificationRepo.saveAll(drafts);
-            System.out.printf(
-                    "🕓 Đã lên lịch gửi [%s] cho %d người lúc %s%n",
+            System.out.printf("🕓 Đã lên lịch gửi [%s] cho %d người lúc %s%n",
                     req.getTitle(), receivers.size(), req.getScheduledDate());
-            return; // Dừng ở đây, không gửi realtime ngay
+            return;
         }
 
-        // Gửi ngay (nếu không có scheduledDate)
-        List<Notification> notis = receivers.stream()
-                .map(u -> Notification.builder()
-                        .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
-                        .severity((short) req.getSeverity())
-                        .url(req.getUrl())
-                        .notificationType(type)
-                        .user(u)
-                        .isSeen(false)
-                        .postedDate(LocalDateTime.now())
-                        .build())
-                .toList();
+        // === Gửi ngay (không schedule) ===
+        List<Notification> saved = notificationRepo.saveAll(
+                receivers.stream()
+                        .map(u -> Notification.builder()
+                                .content("<b>" + req.getTitle() + "</b><br/>" + req.getContent())
+                                .severity((short) req.getSeverity())
+                                .url(req.getUrl())
+                                .notificationType(type)
+                                .user(u)
+                                .isSeen(false)
+                                .postedDate(LocalDateTime.now())
+                                .build())
+                        .toList()
+        );
 
-        notificationRepo.saveAll(notis);
+        // 1) Broadcast (nếu bật)
+        if (Boolean.TRUE.equals(req.getBroadcast())) {
+            NotificationResponse broadcastPayload = NotificationResponse.builder()
+                    .id(null) // broadcast không bắt buộc id
+                    .title(req.getTitle())
+                    .content(req.getContent())
+                    .severity(req.getSeverity())
+                    .isSeen(false)
+                    .url(req.getUrl())
+                    .type(type.getTitle())
+                    .postedDate(LocalDateTime.now())
+                    .build();
+            try {
+                simpMessagingTemplate.convertAndSend("/topic/notifications.broadcast", broadcastPayload);
+            } catch (Exception e) {
+                System.out.println("[WS] send broadcast failed: " + e.getMessage());
+            }
+        }
+        // 2) Gửi từng user
+        for (Notification noti : saved) {
+            User u = noti.getUser();
+            String principalName = u.getUserName(); // phải trùng với Authentication.getName()
 
-        notis.forEach(noti -> socketController.sendToUser(
-                noti.getUser().getId(),
-                NotificationResponse.builder()
-                        .id(noti.getId())
-                        .title(req.getTitle())
-                        .content(req.getContent())
-                        .severity(req.getSeverity())
-                        .isSeen(false)
-                        .url(req.getUrl())
-                        .type(type.getTitle())
-                        .postedDate(noti.getPostedDate())
-                        .build()));
+            NotificationResponse payload = NotificationResponse.builder()
+                    .id(noti.getId())
+                    .title(req.getTitle())
+                    .content(req.getContent())
+                    .severity(req.getSeverity())
+                    .isSeen(false)
+                    .url(req.getUrl())
+                    .type(type.getTitle())
+                    .postedDate(noti.getPostedDate())
+                    .build();
+
+            try {
+                simpMessagingTemplate.convertAndSendToUser(
+                        principalName,           // principal name (username)
+                        "/topic/notifications",  // FE đang subscribe: /user/topic/notifications
+                        payload
+                );
+            } catch (Exception e) {
+                System.out.println("[WS] send to user failed (" + principalName + "): " + e.getMessage());
+            }
+        }
     }
+
 
     @Override
     public List<NotificationResponse> getScheduledNotifications() {

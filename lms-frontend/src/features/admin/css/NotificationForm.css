@@ -1,0 +1,87 @@
+/* Container */
+.nf-root {
+    display: flex;
+    justify-content: center;
+    padding: 32px 20px;
+    background: linear-gradient(180deg, #f7f8fb 0%, #ffffff 100%);
+    min-height: 100%;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color: #222;
+}
+.nf-card {
+    width: 920px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(36, 37, 38, 0.08);
+    padding: 28px;
+    border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+/* Fields */
+.nf-grid { display: grid; gap: 16px; }
+.nf-row-3 { grid-template-columns: repeat(3, 1fr); }
+.nf-row-2 { grid-template-columns: repeat(2, 1fr); }
+.nf-field { margin-bottom: 12px; }
+.nf-field > label {
+    display: block;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+/* Inputs override to look modern */
+.nf-field :where(.p-inputtext, .p-inputtextarea, .p-dropdown, .p-multiselect, .p-calendar, .p-autocomplete) {
+    border-radius: 10px;
+    border: 1px solid #e6e9ef !important;
+    box-shadow: none !important;
+    padding: 10px;
+    background: #fcfdff;
+}
+.nf-field :where(.p-inputtext:focus, .p-inputtextarea:focus, .p-dropdown:focus, .p-multiselect:focus, .p-calendar:focus, .p-autocomplete:focus) {
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.06);
+    border-color: rgba(59,130,246,0.6) !important;
+}
+
+/* Checkbox row */
+.nf-checkbox-row { display: flex; align-items: center; gap: 10px; height: 40px; }
+
+/* Suggestions */
+.nf-suggestion { display: flex; flex-direction: column; gap: 4px; padding: 8px 6px; }
+.nf-sugg-title { font-weight: 600; color: #0f172a; }
+.nf-sugg-sub { color: #64748b; font-size: 12px; }
+
+/* AutoComplete panel */
+.ac-panel {
+    border-radius: 10px !important;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.08) !important;
+    border: 1px solid rgba(10,15,25,0.06) !important;
+}
+.ac-control .p-autocomplete-input {
+    padding: 10px !important;
+}
+
+/* Buttons */
+.nf-actions { display: flex; gap: 12px; margin-top: 12px; }
+.p-button {
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 600;
+    box-shadow: none;
+}
+.p-button:not(.p-button-outlined) {
+    background: linear-gradient(90deg,#0ea5a4 0%, #06b6d4 100%);
+    border: none;
+    color: #fff;
+}
+.p-button.p-button-outlined {
+    background: transparent;
+    border: 1px solid #e6edf0;
+    color: #0f172a;
+}
+
+/* Responsive */
+@media (max-width: 940px) {
+    .nf-card { width: 100%; padding: 20px; }
+    .nf-row-3, .nf-row-2 { grid-template-columns: 1fr; }
+}

@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import {
-    getMyNotifications,
-    getUnseenNotifications,
-    markAsSeen,
-} from "../api/notificationService";
+import { getMyNotifications, getUnseenNotifications, markAsSeen } from "../api/notificationService";
 import useNotificationSocket from "./useNotificationSocket";
 
-export function useNotifications({ userId }) {
+export function useNotifications({ onPopup } = {}) {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -14,10 +10,7 @@ export function useNotifications({ userId }) {
         setLoading(true);
         try {
             const data = await getMyNotifications();
-            const sorted = (data || []).sort(
-                (a, b) => new Date(b.postedDate) - new Date(a.postedDate)
-            );
-            setNotifications(sorted);
+            setNotifications(data);
         } finally {
             setLoading(false);
         }
@@ -25,31 +18,36 @@ export function useNotifications({ userId }) {
 
     useEffect(() => { load(); }, [load]);
 
+    // 🔔 ĐÚNG chữ ký: (onMessage, options)
+    useNotificationSocket(
+        (newNoti) => {
+            console.log("[WS] New notification:", newNoti);
+            setNotifications((prev) => [newNoti, ...prev]);
+            if (typeof onPopup === "function") onPopup(newNoti);
+        },
+        { debug: import.meta.env.DEV }
+    );
+
     const markRead = async (id) => {
-        await markAsSeen(id);
-        setNotifications((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, isSeen: true } : n))
-        );
+        try {
+            await markAsSeen(id);
+            setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isSeen: true } : n)));
+        } catch {
+            console.log("Mark read failed for", id);
+        }
     };
 
     const markAllRead = async () => {
         try {
             const unseen = await getUnseenNotifications();
-            await Promise.all((unseen || []).map((n) => markAsSeen(n.id)));
-        } finally {
+            await Promise.allSettled(unseen.map((n) => markAsSeen(n.id)));
             setNotifications((prev) => prev.map((n) => ({ ...n, isSeen: true })));
+        } catch {
+            console.log("Mark all read failed");
         }
     };
 
-    const remove = async (id) => {
-        // Nếu chưa có API delete, tạm thời xóa local để UI gọn
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-    };
-
-    // 🔔 realtime
-    useNotificationSocket(userId, (newNoti) => {
-        setNotifications((prev) => [newNoti, ...prev]);
-    });
+    const remove = (id) => setNotifications((prev) => prev.filter((n) => n.id !== id));
 
     return { notifications, loading, load, markRead, markAllRead, remove, setNotifications };
 }

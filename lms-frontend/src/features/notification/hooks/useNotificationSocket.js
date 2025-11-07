@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import SockJS from "sockjs-client/dist/sockjs";
-import { Client } from "@stomp/stompjs";
+import {useEffect} from "react";
+import SockJS from "sockjs-client";
+import {Client} from "@stomp/stompjs";
 
 window.global = window;
 
@@ -8,32 +8,51 @@ const API_ROOT_RAW = (import.meta.env.VITE_API_ENDPOINT || "http://localhost:808
 const WS_ORIGIN = API_ROOT_RAW.replace(/\/api$/i, "");
 const WS_URL = `${WS_ORIGIN}/ws-notifications`;
 
-export default function useNotificationSocket(userId, onMessage) {
+export default function useNotificationSocket(onMessage, {debug = false} = {}) {
     useEffect(() => {
-        if (!userId) return;
-
         const client = new Client({
             webSocketFactory: () => new SockJS(WS_URL),
-            reconnectDelay: 5000,
-            debug: () => {},
-            onStompError: (frame) => console.error("[STOMP ERROR]", frame?.headers, frame?.body),
-            onWebSocketClose: (evt) => console.warn("[WS CLOSED]", evt?.code, evt?.reason),
+            reconnectDelay: 3000,
+            heartbeatIncoming: 15000,
+            heartbeatOutgoing: 15000,
+            debug: debug ? (s) => console.log("%c[STOMP]", "color:#0ea5a4", s) : () => {
+            },
+            onStompError: (frame) => console.error("[STOMP ERROR]", frame.headers?.message, frame.body),
+            onWebSocketClose: (e) => console.warn("[WS CLOSED]", e?.code, e?.reason || ""),
+            onWebSocketError: (e) => console.error("[WS ERROR]", e),
+            onUnhandledMessage: (msg) => {
+                // Nếu server gửi tới topic mà mình chưa sub đúng -> log ở đây
+                console.warn("[WS] Unhandled message:", msg.headers?.destination, msg.body);
+            },
         });
 
         client.onConnect = () => {
-            client.subscribe(`/topic/notifications/${userId}`, (msg) => {
-                if (!msg?.body) return;
+            console.log("[WS] connected", WS_URL);
+
+            // User-destination (convertAndSendToUser)
+            client.subscribe("/user/topic/notifications", (msg) => {
+                console.log("[WS] /user/topic/notifications <-", msg.body);
                 try {
-                    onMessage?.(JSON.parse(msg.body));
-                } catch (e) {
-                    console.warn("Cannot parse WS message", e, msg?.body);
+                    const data = JSON.parse(msg.body);
+                    onMessage?.(data);
+                } catch (err) {
+                    console.warn("[WS] parse user fail", err, msg?.body);
+                }
+            });
+
+            // Broadcast
+            client.subscribe("/topic/notifications.broadcast", (msg) => {
+                console.log("[WS] /topic/notifications.broadcast <-", msg.body);
+                try {
+                    const data = JSON.parse(msg.body);
+                    onMessage?.(data);
+                } catch (err) {
+                    console.warn("[WS] parse broadcast fail", err, msg?.body);
                 }
             });
         };
 
         client.activate();
-        return () => {
-            if (client.active) client.deactivate();
-        };
-    }, [userId, onMessage]);
+        return () => client.deactivate();
+    }, [onMessage, debug]);
 }
