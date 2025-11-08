@@ -77,59 +77,35 @@
 }
 .empty-state img{ width:220px; opacity:.9; margin-bottom:14px; }
 
-/* ===== Paginator (one-line, centered, pretty) ===== */
-.p-paginator{
-    display:flex !important;
-    align-items:center; justify-content:center;
-    gap:10px; padding:8px 0;
-    flex-wrap:nowrap !important; white-space:nowrap;
-    background:transparent; border:0;
-}
-.p-paginator .p-paginator-pages{
-    display:inline-flex !important; align-items:center; gap:8px;
-    flex-wrap:nowrap !important;
-}
-
-/* Arrow buttons */
-.p-paginator .p-paginator-first,
-.p-paginator .p-paginator-prev,
-.p-paginator .p-paginator-next,
-.p-paginator .p-paginator-last{
-    width:36px; height:36px; border-radius:10px;
-    border:1px solid #e7ecfe; background:#fff; color:#9aa6b2;
-    display:inline-flex; align-items:center; justify-content:center;
-    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-}
-.p-paginator .p-paginator-first:hover,
-.p-paginator .p-paginator-prev:hover,
-.p-paginator .p-paginator-next:hover,
-.p-paginator .p-paginator-last:hover{
-    background:#f6f8ff; box-shadow:0 2px 10px rgba(51,92,255,.12);
-    transform:translateY(-1px);
-}
-.p-paginator .p-disabled{
-    opacity:.4; cursor:not-allowed; box-shadow:none !important; transform:none !important;
+/* Gọn width dropdown trong paginator – KHÔNG ảnh hưởng chỗ khác */
+.p-datatable .p-paginator.p-paginator-bottom .p-dropdown {
+    width: auto;            /* thay vì 100% */
+    min-width: 84px;        /* vừa đủ chứa 2–3 chữ số + caret */
+    max-width: 120px;       /* phòng khi options dài */
+    flex: 0 0 auto;         /* không giãn theo hàng */
+    border-radius: 10px;
+    height: 36px;
+    border: 1px solid #e7ecfe;
+    background: #fff;
+    box-sizing: border-box;
 }
 
-/* Page pills */
-.p-paginator .p-paginator-page{
-    min-width:36px; height:36px; padding:0 12px;
-    border-radius:999px; border:1px solid #e7ecfe; background:#fff;
-    color:#334155; font-weight:600;
-    display:inline-flex; align-items:center; justify-content:center;
-    transition: all .15s ease;
-}
-.p-paginator .p-paginator-page:hover{
-    background:#f6f8ff; box-shadow:0 2px 10px rgba(51,92,255,.12);
-    transform:translateY(-1px);
-}
-.p-paginator .p-paginator-pages .p-paginator-page.p-highlight{
-    background:var(--pg-brand); border-color:var(--pg-brand); color:#fff;
-    box-shadow:0 6px 24px rgba(51,92,255,.35);
+/* Nhãn bên trong không “đội” width */
+.p-datatable .p-paginator.p-paginator-bottom .p-dropdown .p-dropdown-label {
+    padding: 0 10px;
+    line-height: 34px;
+    min-width: 0;           /* cho phép co lại */
+    white-space: nowrap;
 }
 
-/* (Nếu có) Dropdown trong paginator */
-.p-paginator .p-dropdown{ border-radius:10px; }
+/* Nút caret đúng 36px và bo tròn hợp khối */
+.p-datatable .p-paginator.p-paginator-bottom .p-dropdown .p-dropdown-trigger {
+    width: 36px;
+    border-left: 1px solid #e7ecfe;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
 
 /* ===== Responsive ===== */
 @media (max-width: 992px){
