@@ -251,3 +251,10 @@
 @keyframes pulse{
     0%{opacity:.7} 50%{opacity:1} 100%{opacity:.7}
 }
+.program-card .grid{
+    margin-left: 100px;
+    margin-right: 100px;
+}
+.programs-grid { align-items: stretch; }
+.pg-cell { height: 100%; display: flex; }
+.pg-cell > * { height: 100%; width: 100%; }
