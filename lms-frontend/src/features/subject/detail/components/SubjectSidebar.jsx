@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import {formatAmount} from "@/features/payment/utils/money.js";
 
 function formatVND(v) {
     if (v == null || isNaN(v)) return null;
@@ -37,8 +38,11 @@ export default function SubjectSidebar({ subject, onSelectUpcoming }) {
 
     const feeRange =
         subject.feeRange ??
-        (formatVND(subject.fee) || '3.2–4.2M VND');
+        (subject.tuitionMin || subject.tuitionMax
+            ? `${formatAmount(subject.tuitionMin)}–${formatAmount(subject.tuitionMax)} VND`
+            : formatAmount(subject.fee) + ' VND');
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const upcomings = useMemo(() => {
         return (subject.classes ?? [])
             .slice(0, 4)
