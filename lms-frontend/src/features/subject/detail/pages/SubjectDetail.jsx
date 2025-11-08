@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import { Skeleton } from 'primereact/skeleton';
@@ -11,6 +11,7 @@ import SubjectOutline from '../components/SubjectOutline.jsx';
 import SubjectClassTable from '../components/SubjectClassTable.jsx';
 import SubjectSidebar from '../components/SubjectSidebar.jsx';
 import { getSubjectDetail } from '@/features/subject/api/subjectService.js';
+import { parseCurrency } from '@/features/payment/utils/money.js';
 
 const tabs = [
     { label: 'Overview', icon: 'pi pi-home' },
@@ -61,6 +62,16 @@ export default function SubjectDetail() {
         setActive(2);
     };
 
+    // Click "Upcoming Sessions" ở sidebar → chuyển tab Sessions và scroll tới bảng
+    const handleSelectUpcoming = () => {
+        setActive(2);
+        setTimeout(() => {
+            document.getElementById('subject-classes')
+                ?.scrollIntoView({ behavior: 'smooth' });
+        }, 80);
+    };
+
+    // Đăng ký 1 lớp cụ thể → sang payment
     const handleRegister = (courseId, className, schedule, startDate) => {
         if (!subject) return;
         const selectedClass = subject.classes?.find((c) => c.courseId === courseId);
@@ -72,13 +83,14 @@ export default function SubjectDetail() {
             });
             return;
         }
+
         navigate('/payment', {
             state: {
                 selectedItem: {
                     type: 'subject',
                     subjectId: subject.id,
                     title: `${subject.title} - ${className || selectedClass.courseTitle}`,
-                    price: Number(subject.fee) || 0,
+                    price: parseCurrency(subject.fee) || 0,
                     meta: {
                         subject: {
                             id: subject.id,
@@ -193,12 +205,14 @@ export default function SubjectDetail() {
 
                             {(active === 3 || active === 4 || active === 5) && (
                                 <section className="sd-card">
-                                    <div className="text-600">Content for “{tabs[active].label}” will be updated soon.</div>
+                                    <div className="text-600">
+                                        Content for “{tabs[active].label}” will be updated soon.
+                                    </div>
                                 </section>
                             )}
                         </main>
 
-                        <SubjectSidebar subject={subject} />
+                        <SubjectSidebar subject={subject} onSelectUpcoming={handleSelectUpcoming} />
                     </div>
                 </>
             )}

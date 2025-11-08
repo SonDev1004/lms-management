@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { Paginator } from "primereact/paginator";
-import { getListProgram } from "@/features/program/api/programService";
+import {useEffect, useState} from "react";
+import {Paginator} from "primereact/paginator";
+import {getListProgram} from "@/features/program/api/programService";
 import ProgramCard from "@/features/home/component/ProgramCard";
 
 export default function ProgramList() {
     const [items, setItems] = useState([]);
-    const [paging, setPaging] = useState({ page: 1, size: 9, totalPages: 1, hasNext: false, hasPrevious: false });
+    const [paging, setPaging] = useState({page: 1, size: 9, totalPages: 1, hasNext: false, hasPrevious: false});
     const [loading, setLoading] = useState(false);
 
     const fetchData = async (page = 1, size = 9) => {
         try {
             setLoading(true);
-            const { items, paging } = await getListProgram({ page, size });
+            const {items, paging} = await getListProgram({page, size});
             setItems(items);
             setPaging(paging);
         } catch (e) {
@@ -33,18 +33,28 @@ export default function ProgramList() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto px-3 py-6">
-            <h1 className="text-3xl font-bold mb-4">Our Programs</h1>
+        <div className="mx-auto px-3 py-6">
+            <h1 className="text-3xl font-bold mb-4 center">Our Programs</h1>
 
             {loading && <p>Đang tải…</p>}
+            {!loading && items.length === 0 && (
+                <p className="text-center text-gray-500">Không có chương trình nào</p>
+            )}
+            {!loading && items.length > 0 && (
 
-            <div className="grid">
-                {items.map((p) => (
-                    <div key={p.id} className="col-12 md:col-6 lg:col-4">
-                        <ProgramCard program={p} />
-                    </div>
-                ))}
-            </div>
+                        <div className="program-card">
+                            <div className="grid">
+                                {items.map((p) => (
+                                    <div key={p.id} className="col-12 md:col-6 lg:col-4">
+                                        <div className="pg-cell">
+                                            <ProgramCard program={p}/>
+                                        </div>
+                                    </div>
+
+                                ))}
+                            </div>
+                        </div>
+            )}
 
             <Paginator
                 className="mt-4"
