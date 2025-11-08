@@ -37,14 +37,18 @@ export default function ProgramList() {
             <h1 className="text-3xl font-bold mb-4">Our Programs</h1>
 
             {loading && <p>Đang tải…</p>}
-
-            <div className="grid">
-                {items.map((p) => (
-                    <div key={p.id} className="col-12 md:col-6 lg:col-4">
-                        <ProgramCard program={p} />
-                    </div>
-                ))}
-            </div>
+            {!loading && items.length === 0 && (
+                <p className="text-center text-gray-500">Không có chương trình nào</p>
+            )}
+            {!loading && items.length > 0 && (
+                <div className="grid">
+                    {items.map((p) => (
+                        <div key={p.id} className="col-12 md:col-6 lg:col-4">
+                            <ProgramCard program={p} />
+                        </div>
+                    ))}
+                </div>
+            )}
 
             <Paginator
                 className="mt-4"

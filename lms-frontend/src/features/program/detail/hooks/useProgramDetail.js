@@ -1,6 +1,5 @@
-
-import { useEffect, useState } from "react";
-import { getProgramDetail } from "../api/programService";
+import {getProgramDetail} from "../api/programService";
+import {useEffect, useState} from "react";
 
 export default function useProgramDetail(id) {
     const [data, setData] = useState(null);
@@ -20,8 +19,10 @@ export default function useProgramDetail(id) {
                 if (isMounted) setLoading(false);
             }
         })();
-        return () => { isMounted = false; };
+        return () => {
+            isMounted = false;
+        };
     }, [id]);
 
-    return { data, loading, error };
+    return {data, loading, error};
 }

@@ -1,17 +1,16 @@
-import { AppUrls } from "@/shared/constants/index.js";
+import {AppUrls} from "@/shared/constants/index.js";
 import axiosClient from "@/shared/api/axiosClient.js";
 
 // Lấy danh sách program có phân trang
-export async function getListProgram({ page = 1, size = 10 } = {}) {
+export async function getListProgram({page = 1, size = 10} = {}) {
     const url = AppUrls.listProgram;
     try {
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token");
         const res = await axiosClient.get(url, {
-            params: { page, size },
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            params: {page, size},
+            headers: {Authorization: `Bearer ${token}`},
         });
+
         const data = res?.data ?? res;
         const result = data?.result ?? {};
 
@@ -32,17 +31,35 @@ export async function getListProgram({ page = 1, size = 10 } = {}) {
     }
 }
 
-function mapProgram(item) {
+//Mapper chấp nhận cả tên key của BE ở list và ở detail
+function mapProgram(item = {}) {
+    const title =
+        item.titleProgram ??
+        item.title ??
+        ""; // BE list có thể trả titleProgram
+
+    const code =
+        (item.codeProgram ?? item.code ?? "").trim();
+
+    const description =
+        item.descriptionProgram ?? item.description ?? "";
+
+    const img =
+        item.imgUrl ?? item.imageUrl ?? item.image ?? "/noimg.png";
+
+    const fee =
+        typeof item.fee === "string" ? Number(item.fee) || 0 : item.fee ?? 0;
+
     return {
         id: item.id,
-        title: item.title,
-        fee: item.fee,
-        code: (item.code || "").trim(),
-        minStudent: item.minStudent,
-        maxStudent: item.maxStudent,
-        description: item.description,
-        imageUrl: item.imageUrl,
-        isActive: !!item.isActive,
+        title,
+        code,
+        description,
+        imageUrl: img,
+        fee,
+        minStudent: item.minStudents ?? item.minStudent ?? 0,
+        maxStudent: item.maxStudents ?? item.maxStudent ?? 0,
+        isActive: Boolean(item.isActive),
     };
 }
 
