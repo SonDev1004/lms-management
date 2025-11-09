@@ -72,6 +72,7 @@ import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
 import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
 import AboutPage from "@/features/about/pages/AboutPage.jsx";
+import TuitionRevenueDashboard from "@/features/tuitionrevenue/pages/TuitionRevenueDashboard.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -168,6 +169,7 @@ const App = () => {
                         <Route path='upload' element={<AdminUpload />} />
                         <Route path='security' element={<AdminSecurity />} />
                         <Route path='profile' element={<AdminProfile />} />
+                        <Route path='tutionrevenue' element={<TuitionRevenueDashboard />} />
                     </Route>
                 </Route>
 
