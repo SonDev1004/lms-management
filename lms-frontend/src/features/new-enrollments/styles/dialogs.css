@@ -1,0 +1,74 @@
+.ne-dialog .p-dialog-header{ padding:18px 20px; border-bottom:1px solid #eef2ff; }
+.ne-dialog .p-dialog-content{ padding:0 20px 20px; }
+.ne-section{ background:#fff; border:1px solid #edf1ff; border-radius:16px; padding:18px; margin:16px 0; }
+.ne-section h4{ margin:0 0 10px; color:#0f1e39; }
+.ne-note-area .p-inputtextarea{ width:100%; min-height:120px; border-radius:12px; }
+.ne-dialog .p-dialog-footer{ padding:16px 20px; }
+
+.ne-btn-cancel.p-button{ background:#fff; border:1px solid #e7ecfe; color:#41506a; border-radius:12px; }
+.ne-btn-confirm.p-button{ background:var(--ok); border:0; border-radius:12px; }
+.p-dialog .p-dialog-title{ font-size:22px; font-weight:800; color:#0f1e39; }
+
+.p-dialog .p-button.p-confirm{
+    background:#16a34a; border-color:#16a34a; border-radius:12px;
+    padding:10px 18px; font-weight:800;
+}
+.p-dialog .p-button.p-confirm:hover{ filter:brightness(0.95); }
+
+.p-dialog .p-button.p-cancel{
+    background:#fff; color:#334155; border:1px solid #e7ecfe; border-radius:12px;
+}
+.p-dialog .p-button.p-cancel:hover{ box-shadow:0 0 0 4px var(--pg-ring) inset; }
+
+.ne-dialog .p-dialog {
+    border-radius: 18px;
+    overflow: hidden;
+}
+.ne-dialog .p-dialog-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid #eef2ff;
+}
+.ne-dialog .p-dialog-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f1e39;
+}
+.ne-dialog .p-dialog-header-icon {
+    width: 40px; height: 40px; border-radius: 999px;
+    background: #e6f7fb; color: #0891b2; border: 1px solid #d7f0f6;
+}
+.ne-dialog .p-dialog-content { padding: 18px 22px; }
+.ne-dialog .p-dialog-footer {
+    padding: 16px 22px;
+    border-top: 1px solid #eef2ff;
+    display: flex; justify-content: flex-end; gap: 10px;
+}
+
+.ne-dialog .p-inputtextarea {
+    width: 100%; min-height: 140px;
+    border-radius: 14px;
+}
+
+:root{
+    --ok:#16a34a;
+    --ok-2:#15803d;
+    --danger:#ef4444;
+    --danger-2:#dc2626;
+}
+
+.ne-btn-cancel.p-button {
+    background:#fff; color:#334155;
+    border:1px solid #e7ecfe; border-radius:12px; height:44px;
+}
+.ne-btn-cancel.p-button:hover { box-shadow:0 0 0 4px #e7eeff inset; }
+
+.ne-btn-confirm.p-button {
+    border-radius:12px; height:44px;
+    color:#fff; border:0;
+}
+.ne-btn-confirm.approve { background:var(--ok); }
+.ne-btn-confirm.approve:hover { background:var(--ok-2); }
+.ne-btn-confirm.reject  { background:var(--danger); }
+.ne-btn-confirm.reject:hover { background:var(--danger-2); }
+
+.ne-btn-confirm.p-button.p-disabled { opacity:.85; }
