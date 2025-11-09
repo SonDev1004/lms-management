@@ -3,36 +3,35 @@ import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import NotificationList from "../components/NotificationList.jsx";
+import NotificationList from "../components/notificationList.jsx";
+import NotificationViewDialog from "../components/dialogs/notificationDetailDialog.jsx";
 import { useNotifications } from "../hooks/useNotifications";
 import "../styles/Notifications.css";
 
-function stripHtml(html = "") {
+const stripHtml = (html = "") => {
     const div = document.createElement("div");
     div.innerHTML = html;
     return (div.textContent || div.innerText || "").trim();
-}
+};
 
 export default function NotificationsPage() {
     const toast = useRef(null);
-
-    const {
-        notifications, loading, load, markRead, markAllRead, remove
-    } = useNotifications({
-        onPopup: (n) => {
-            console.log("[POPUP] got", n);
+    const { notifications, loading, load, markRead, remove } = useNotifications({
+        enableSocket: true,
+        onPopup: (n) =>
             toast.current?.show({
-                severity: "info",
-                summary: n.title || "Thông báo mới",
-                detail: (n.content || "").replace(/<[^>]+>/g, ""),
+                severity: n.isSeen ? "info" : "success",
+                summary: n.title,
+                detail: stripHtml(n.content || ""),
                 life: 5000,
-            });
-        },
+            }),
     });
 
     const [query, setQuery] = useState("");
     const [filterType, setFilterType] = useState(null);
     const [statusFilter, setStatusFilter] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState(null);
 
     const TABS = [
         { label: "All", value: null },
@@ -53,7 +52,6 @@ export default function NotificationsPage() {
             const nType = (n.type || "").toLowerCase();
             const nTitle = (n.title || "").toLowerCase();
             const nContent = stripHtml(n.content || "").toLowerCase();
-
             if (filterType && nType !== filterType) return false;
             if (statusFilter === "unread" && n.isSeen) return false;
             if (statusFilter === "read" && !n.isSeen) return false;
@@ -74,6 +72,7 @@ export default function NotificationsPage() {
                 <div className="notifications-header">
                     <h2>Notifications</h2>
                     <div>{unreadCount} unread</div>
+
                     <div className="controls">
                         <div className="tabs">
                             {TABS.map((t) => (
@@ -111,10 +110,25 @@ export default function NotificationsPage() {
                 <NotificationList
                     notifications={filtered}
                     loading={loading}
-                    onMarkRead={(id) => markRead(id)}
-                    onDelete={(id) => remove(id)}
+                    onMarkRead={(id, obj) => markRead(id, obj)}
+                    onDelete={(idOrObj) => remove(idOrObj)}
+                    onOpen={(n) => {
+                        setSelected(n);
+                        setOpen(true);
+                        if (!n.isSeen) markRead(n.id, n); // ✅ đánh dấu đã đọc (kể cả broadcast)
+                    }}
                 />
             </div>
+
+            <NotificationViewDialog
+                visible={open}
+                noti={selected}
+                onClose={() => setOpen(false)}
+                onDelete={(id) => {
+                    remove(id ?? selected);
+                    setOpen(false);
+                }}
+            />
         </div>
     );
 }

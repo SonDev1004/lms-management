@@ -1,14 +1,5 @@
 package com.lmsservice.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.lmsservice.controller.NotificationSocketController;
 import com.lmsservice.dto.request.CreateUserRequest;
 import com.lmsservice.dto.request.SendNotificationRequest;
@@ -20,10 +11,17 @@ import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.repository.*;
 import com.lmsservice.service.AdminItService;
 import com.lmsservice.service.MailService;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,11 +35,10 @@ public class AdminItServiceImpl implements AdminItService {
     MailService mailService;
     NotificationRepository notificationRepo;
     NotificationTypeRepository notificationTypeRepo;
-    NotificationSocketController socketController;
+    NotificationSocketController socketController; // giữ lại nếu nơi khác dùng
     SimpMessagingTemplate simpMessagingTemplate;
-    /**
-     * ------------------- USER -------------------
-     **/
+
+    // ------------------- USER -------------------
     @Override
     public List<User> getUsers(String role, String keyword) {
         if (keyword != null && !keyword.isBlank()) {
@@ -85,46 +82,45 @@ public class AdminItServiceImpl implements AdminItService {
     public void sendAccountProvisionMail(User user, String tempPassword) {
         String html =
                 """
-							<div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-								<h3 style="color:#2c3e50;">Xin chào %s,</h3>
-								<p>
-									Chúng tôi rất vui được thông báo rằng tài khoản của bạn trên hệ thống
-									<strong>LMS Center</strong> đã được khởi tạo thành công.
-								</p>
+                <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                    <h3 style="color:#2c3e50;">Xin chào %s,</h3>
+                    <p>
+                        Chúng tôi rất vui được thông báo rằng tài khoản của bạn trên hệ thống
+                        <strong>LMS Center</strong> đã được khởi tạo thành công.
+                    </p>
 
-								<p>Thông tin đăng nhập của bạn như sau:</p>
-								<ul style="list-style-type:none; padding:0;">
-									<li><strong>Tên đăng nhập:</strong> %s</li>
-									<li><strong>Mật khẩu tạm thời:</strong> %s</li>
-								</ul>
+                    <p>Thông tin đăng nhập của bạn như sau:</p>
+                    <ul style="list-style-type:none; padding:0;">
+                        <li><strong>Tên đăng nhập:</strong> %s</li>
+                        <li><strong>Mật khẩu tạm thời:</strong> %s</li>
+                    </ul>
 
-								<p>
-									Vui lòng truy cập vào
-									<a href="http://localhost:5173/login"
-									style="color:#335CFF; text-decoration:none; font-weight:bold;">
-										LMS Center
-									</a>
-									để đăng nhập và đổi mật khẩu nhằm đảm bảo bảo mật thông tin cá nhân.
-								</p>
+                    <p>
+                        Vui lòng truy cập vào
+                        <a href="http://localhost:5173/login"
+                        style="color:#335CFF; text-decoration:none; font-weight:bold;">
+                            LMS Center
+                        </a>
+                        để đăng nhập và đổi mật khẩu nhằm đảm bảo bảo mật thông tin cá nhân.
+                    </p>
 
-								<p>
-									Nếu bạn gặp bất kỳ khó khăn nào trong quá trình đăng nhập,
-									vui lòng liên hệ với bộ phận hỗ trợ kỹ thuật của trung tâm để được trợ giúp kịp thời.
-								</p>
+                    <p>
+                        Nếu bạn gặp bất kỳ khó khăn nào trong quá trình đăng nhập,
+                        vui lòng liên hệ với bộ phận hỗ trợ kỹ thuật của trung tâm để được trợ giúp kịp thời.
+                    </p>
 
-								<br/>
-								<p>Trân trọng,<br/>
-								<strong>Phòng Quản trị Hệ thống – LMS Center</strong>
-								</p>
+                    <br/>
+                    <p>Trân trọng,<br/>
+                    <strong>Phòng Quản trị Hệ thống – LMS Center</strong>
+                    </p>
 
-								<hr style="border:none; border-top:1px solid #eee; margin-top:20px;"/>
-								<p style="font-size:12px; color:#888;">
-									Đây là email tự động, vui lòng không phản hồi trực tiếp.
-									Nếu cần hỗ trợ, vui lòng liên hệ qua kênh hỗ trợ chính thức của trung tâm.
-								</p>
-							</div>
-						"""
-                        .formatted(user.getFirstName() + " " + user.getLastName(), user.getUserName(), tempPassword);
+                    <hr style="border:none; border-top:1px solid #eee; margin-top:20px;"/>
+                    <p style="font-size:12px; color:#888;">
+                        Đây là email tự động, vui lòng không phản hồi trực tiếp.
+                        Nếu cần hỗ trợ, vui lòng liên hệ qua kênh hỗ trợ chính thức của trung tâm.
+                    </p>
+                </div>
+                """.formatted(user.getFirstName() + " " + user.getLastName(), user.getUserName(), tempPassword);
 
         mailService.sendMail(user.getEmail(), "[LMS Center] Cấp tài khoản mới", html);
     }
@@ -137,7 +133,6 @@ public class AdminItServiceImpl implements AdminItService {
     @Override
     public void deleteUser(Long id) {
         if (!userRepo.existsById(id)) throw new AppException(ErrorCode.USER_NOT_FOUND);
-
         userRepo.deleteById(id);
     }
 
@@ -149,9 +144,7 @@ public class AdminItServiceImpl implements AdminItService {
         return userRepo.save(u);
     }
 
-    /**
-     * ------------------- ROLE -------------------
-     **/
+    // ------------------- ROLE -------------------
     @Override
     public List<Role> getAllRoles() {
         return roleRepo.findAll();
@@ -169,9 +162,7 @@ public class AdminItServiceImpl implements AdminItService {
         roleRepo.deleteById(id);
     }
 
-    /**
-     * ------------------- PERMISSION -------------------
-     **/
+    // ------------------- PERMISSION -------------------
     @Override
     public List<Permission> getAllPermissions() {
         return permRepo.findAll();
@@ -190,33 +181,25 @@ public class AdminItServiceImpl implements AdminItService {
         permRepo.deleteById(id);
     }
 
-    /**
-     * ------------------- ASSIGN -------------------
-     **/
+    // ------------------- ASSIGN -------------------
     @Override
     public Role assignPermissions(Long roleId, List<Long> permIds) {
         Role role = roleRepo.findById(roleId).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED_ACCESS_ROLE));
-
         Set<Permission> perms = new HashSet<>(permRepo.findAllById(permIds));
-
         if (perms.isEmpty()) throw new AppException(ErrorCode.INVALID_REQUEST);
-
         role.setPermissions(perms);
         return roleRepo.save(role);
     }
 
-    /**
-     * ------------------- NOTIFICATION -------------------
-     **/
+    // ------------------- NOTIFICATION -------------------
     @Override
     public void sendNotification(SendNotificationRequest req) {
         NotificationType type = notificationTypeRepo
                 .findById(req.getNotificationTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_TYPE_NOT_FOUND));
 
-        // === Resolve receivers (dedupe) ===
+        // Resolve receivers (dedupe)
         Set<User> receivers = new HashSet<>();
-
         if (Boolean.TRUE.equals(req.getBroadcast())) {
             receivers.addAll(userRepo.findAll());
         }
@@ -233,12 +216,9 @@ public class AdminItServiceImpl implements AdminItService {
         if (req.getTargetProgramIds() != null && !req.getTargetProgramIds().isEmpty()) {
             receivers.addAll(userRepo.findStudentsByProgramIds(req.getTargetProgramIds()));
         }
+        if (receivers.isEmpty()) throw new AppException(ErrorCode.NO_RECEIVER_FOUND);
 
-        if (receivers.isEmpty()) {
-            throw new AppException(ErrorCode.NO_RECEIVER_FOUND);
-        }
-
-        // === Nếu có schedule tương lai -> chỉ lưu, KHÔNG gửi realtime ===
+        // Nếu schedule tương lai -> chỉ lưu, không gửi realtime
         if (req.getScheduledDate() != null && req.getScheduledDate().isAfter(LocalDateTime.now())) {
             List<Notification> drafts = receivers.stream()
                     .map(u -> Notification.builder()
@@ -259,7 +239,8 @@ public class AdminItServiceImpl implements AdminItService {
             return;
         }
 
-        // === Gửi ngay (không schedule) ===
+        // Gửi ngay (không schedule)
+        LocalDateTime now = LocalDateTime.now();
         List<Notification> saved = notificationRepo.saveAll(
                 receivers.stream()
                         .map(u -> Notification.builder()
@@ -269,33 +250,35 @@ public class AdminItServiceImpl implements AdminItService {
                                 .notificationType(type)
                                 .user(u)
                                 .isSeen(false)
-                                .postedDate(LocalDateTime.now())
+                                .postedDate(now)
                                 .build())
                         .toList()
         );
 
-        // 1) Broadcast (nếu bật)
+        // 1) Broadcast (nếu bật) — dùng một kênh thống nhất
         if (Boolean.TRUE.equals(req.getBroadcast())) {
             NotificationResponse broadcastPayload = NotificationResponse.builder()
-                    .id(null) // broadcast không bắt buộc id
+                    .id(null) // broadcast không cần id
                     .title(req.getTitle())
                     .content(req.getContent())
                     .severity(req.getSeverity())
                     .isSeen(false)
                     .url(req.getUrl())
                     .type(type.getTitle())
-                    .postedDate(LocalDateTime.now())
+                    .postedDate(now)
                     .build();
             try {
-                simpMessagingTemplate.convertAndSend("/topic/notifications.broadcast", broadcastPayload);
+                simpMessagingTemplate.convertAndSend("/topic/notifications", broadcastPayload);
             } catch (Exception e) {
                 System.out.println("[WS] send broadcast failed: " + e.getMessage());
             }
         }
-        // 2) Gửi từng user
+
+        // 2) Gửi từng user (private)
         for (Notification noti : saved) {
             User u = noti.getUser();
-            String principalName = u.getUserName(); // phải trùng với Authentication.getName()
+            // PHẢI trùng với Authentication#getName() đã set trong WebSocketConfig khi CONNECT
+            String principalName = u.getUserName(); // hoặc u.getEmail() nếu bạn dùng email làm principal
 
             NotificationResponse payload = NotificationResponse.builder()
                     .id(noti.getId())
@@ -310,8 +293,8 @@ public class AdminItServiceImpl implements AdminItService {
 
             try {
                 simpMessagingTemplate.convertAndSendToUser(
-                        principalName,           // principal name (username)
-                        "/topic/notifications",  // FE đang subscribe: /user/topic/notifications
+                        principalName,                //dùng principalName
+                        "/queue/notifications",       //FE sub: /user/queue/notifications
                         payload
                 );
             } catch (Exception e) {
@@ -320,11 +303,9 @@ public class AdminItServiceImpl implements AdminItService {
         }
     }
 
-
     @Override
     public List<NotificationResponse> getScheduledNotifications() {
         List<Notification> list = notificationRepo.findScheduledNotifications();
-
         return list.stream()
                 .map(n -> NotificationResponse.builder()
                         .id(n.getId())

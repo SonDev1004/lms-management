@@ -32,8 +32,7 @@ public class NotificationScheduler {
 
         pending.forEach(n -> {
             try {
-                // Gửi realtime qua socket
-                socketController.sendToUser(
+                socketController.sendToUserId(
                         n.getUser().getId(),
                         NotificationResponse.builder()
                                 .id(n.getId())
@@ -44,17 +43,14 @@ public class NotificationScheduler {
                                 .url(n.getUrl())
                                 .type(n.getNotificationType().getTitle())
                                 .postedDate(now)
-                                .build());
+                                .build()
+                );
 
-                // Cập nhật postedDate
                 n.setPostedDate(now);
                 notificationRepo.save(n);
 
-                log.info(
-                        "✅ Gửi thông báo hẹn giờ id={} cho userId={} lúc {}",
-                        n.getId(),
-                        n.getUser().getId(),
-                        now);
+                log.info("✅ Gửi thông báo hẹn giờ id={} cho userId={} lúc {}",
+                        n.getId(), n.getUser().getId(), now);
             } catch (Exception e) {
                 log.error("⚠️ Lỗi gửi thông báo hẹn giờ id={}: {}", n.getId(), e.getMessage());
             }

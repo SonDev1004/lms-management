@@ -13,7 +13,7 @@ export default function NotificationList({ notifications = [], loading, onMarkRe
     const openDetail = (n) => {
         setSelected(n);
         setOpen(true);
-        if (!n.read) onMarkRead(n.id);
+        if (!n.isSeen) onMarkRead(n.id);
     };
 
     const handlePageChange = (e) => {
