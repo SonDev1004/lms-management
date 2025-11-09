@@ -87,7 +87,7 @@ export default function LayoutNavbar({ role, children }) {
         {
             label: 'Notifications',
             icon: 'pi pi-bell',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
         {
