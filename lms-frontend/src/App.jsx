@@ -169,7 +169,7 @@ const App = () => {
                         <Route path='upload' element={<AdminUpload />} />
                         <Route path='security' element={<AdminSecurity />} />
                         <Route path='profile' element={<AdminProfile />} />
-                        <Route path='tutionrevenue' element={<TuitionRevenueDashboard />} />
+                        <Route path='tuitionrevenue' element={<TuitionRevenueDashboard />} />
                     </Route>
                 </Route>
 
