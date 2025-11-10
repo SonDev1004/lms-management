@@ -1,0 +1,264 @@
+:root{
+    --ink:#0f172a;          /* slate-900 */
+    --muted:#64748b;        /* slate-500 */
+    --surface:#ffffff;
+    --bg:#f8fafc;           /* slate-50 */
+    --border:#e5e7eb;       /* gray-200 */
+    --primary:#2563eb;      /* blue-600 */
+    --positive:#16a34a;     /* green-600 */
+    --shadow:0 1px 2px rgba(2,6,23,.06),0 8px 16px rgba(2,6,23,.04);
+    --radius:16px;
+}
+
+.att-shell{ padding:24px; background:var(--bg); min-height:100vh; color:var(--ink); }
+.att-header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.att-title h1{ margin:0; font-size:32px; font-weight:800; }
+.att-title p{ margin:4px 0 0; color:var(--muted); font-size:16px; }
+.att-date-pill{
+    background:#fff; border:1px solid var(--border); padding:10px 14px; border-radius:12px;
+    display:flex; align-items:center; gap:8px; color:#0f172a; box-shadow:var(--shadow);
+}
+
+/* ---- stats ---- */
+.att-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:12px 0 20px; }
+.att-stat{ border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); }
+.att-stat__top{ display:flex; justify-content:flex-end; }
+.att-stat__icon{ background:#eef2ff; color:#3730a3; border-radius:12px; padding:8px; }
+.att-stat__icon.is-pos{ background:#ecfdf5; color:var(--positive); }
+.att-stat__body{ padding-top:6px; }
+.att-stat__title{ color:var(--muted); font-size:14px; }
+.att-stat__value{ font-size:28px; font-weight:800; margin-top:2px; }
+
+/* ---- toolbar ---- */
+.att-toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:4px 0 14px; }
+.att-search input{ width:520px; max-width:100%; }
+.att-controls{ display:flex; gap:10px; align-items:center; }
+.att-views{ display:flex; gap:8px; }
+.att-controls .is-active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+
+/* ---- tabs ---- */
+.att-tabs{
+    display:flex; gap:8px; background:#eef2f7; border:1px solid var(--border);
+    padding:6px; border-radius:12px; margin:10px 0 16px;
+}
+.att-tab{
+    flex:1; padding:10px; border-radius:10px; font-weight:600; color:#0b1220;
+    background:transparent; border:none; cursor:pointer;
+}
+.att-tab.is-active{ background:#fff; box-shadow:var(--shadow); }
+
+/* ---- list/grid ---- */
+.att-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.att-list{ display:grid; grid-template-columns:1fr; gap:16px; }
+
+/* ---- class card ---- */
+.att-class{ border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); }
+.att-class__head{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.att-class__title{ display:flex; align-items:center; gap:10px; }
+.att-class__title h3{ margin:0; font-size:22px; font-weight:800; }
+.att-star{ border:none; background:transparent; font-size:18px; color:#94a3b8; cursor:pointer; }
+.att-star.is-on{ color:#f59e0b; }
+
+.att-status{
+    background:#eef2ff; color:#334155; padding:6px 10px; border-radius:28px; font-weight:600;
+    display:inline-flex; align-items:center; gap:8px; border:1px solid var(--border);
+}
+.att-status--secondary{ background:#f1f5f9; }
+.att-status--success{ background:#ecfdf5; color:#166534; }
+.att-status--info{ background:#eff6ff; color:#1d4ed8; }
+
+.att-class__meta{ display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; color:#0f172a; }
+.att-line{ display:inline-flex; align-items:center; gap:8px; color:#0f172a; }
+.att-line i{ color:#64748b; }
+
+.att-class__tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.att-class .p-tag{ border-radius:999px; }
+
+.att-class__foot{
+    margin-top:14px; display:flex; align-items:center; gap:16px; justify-content:space-between; flex-wrap:wrap;
+}
+.att-class__enrolled{ display:flex; align-items:center; gap:8px; color:#0f172a; }
+.att-class__rate{ margin-left:auto; color:#f59e0b; font-weight:700; }
+.att-class__cta .p-button{ width:100%; }
+
+/* ---- empty ---- */
+.att-empty{ border-radius:16px; border:1px dashed var(--border); }
+.att-empty__inner{ text-align:center; padding:40px 20px; color:var(--muted); }
+.att-empty__inner i{ font-size:32px; display:block; margin-bottom:8px; }
+
+/* ---- responsive ---- */
+@media (max-width: 1200px){
+    .att-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width: 720px){
+    .att-stats{ grid-template-columns:repeat(2,1fr); }
+    .att-grid{ grid-template-columns:1fr; }
+    .att-toolbar{ flex-direction:column; align-items:stretch; }
+    .att-class__cta .p-button{ width:100%; }
+}
+/* ===== Container: luôn kéo các card bằng chiều cao nhau trong 1 hàng ===== */
+.att-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    align-items:stretch;            /* kéo card cao bằng nhau theo hàng */
+}
+
+/* ===== Card: 4 hàng, nút luôn dính đáy ===== */
+.att-class{
+    display:grid;
+    grid-template-rows: auto auto 1fr auto; /* H1, H2 cố định; H3 giãn; H4 đáy */
+    height:100%;
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+}
+
+/* Giữ header, meta có chiều cao tối thiểu (tránh nhảy layout khi hiện/ẩn icon) */
+.att-class__head{ min-height:48px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.att-class__meta{ min-height:32px; display:flex; flex-wrap:wrap; gap:14px; }
+
+/* Vùng tags là hàng 3 – cho phép co giãn nhưng vẫn giữ độ cao đủ để các card bằng nhau */
+.att-class__tags{
+    display:flex; flex-wrap:wrap; gap:8px;
+    min-height: 44px;              /* ≈ 1–2 dòng chip tuỳ thiết kế */
+    /* Nếu muốn cố định 2 dòng chip tối đa: */
+    max-height: 92px;              /* 2 dòng * (chip-height ~ 36–44) */
+    overflow:hidden;               /* khi mở thêm tag không làm cao hơn card khác */
+}
+
+/* Footer luôn bám đáy nhờ grid-row:4; không cần position */
+.att-class__foot{ display:flex; align-items:center; gap:16px; justify-content:space-between; }
+
+/* Nút rộng cố định để tất cả thẻ căn thẳng hàng */
+.att-class__cta .p-button{ width:240px; }
+/* Giữ chỗ cho status pill ở header (khi ẩn không làm header thấp đi) */
+.att-status{ min-height:32px; display:inline-flex; align-items:center; }
+.att-status.is-hidden{ visibility:hidden; }   /* giữ kích thước, chỉ ẩn nhìn */
+/* === Container: stretch cards trong cùng một hàng === */
+.att-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    align-items:stretch; /* ép mọi card cao bằng nhau */
+}
+
+/* === PrimeReact Card: đảm bảo root cao 100% === */
+.att-class.p-card{               /* div.p-card.att-class */
+    height:100%;
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+}
+
+/* === Grid 4 hàng đặt vào p-card-body === */
+.att-class .p-card-body{
+    height:100%;
+    display:grid;
+    grid-template-rows:auto auto 1fr auto; /* Head | Meta | Content | Footer */
+    padding:1.25rem;                        /* giữ padding mặc định đẹp */
+}
+
+/* Header & Meta giữ chỗ ổn định */
+.att-class__head{
+    min-height:48px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.att-class__meta{
+    min-height:32px;
+    display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; color:#0f172a;
+}
+
+/* Tags là vùng co giãn (hàng 3) */
+.att-class__tags{
+    display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;
+    min-height:44px;         /* 1 dòng chip mặc định */
+    max-height:96px;         /* tối đa 2 dòng */
+    overflow:hidden;         /* không cho card vọt cao */
+}
+.att-class .p-tag{ border-radius:999px; }
+
+/* Footer (hàng 4) luôn dính đáy tự nhiên */
+.att-class__foot{
+    margin-top:14px;
+    display:flex; align-items:center; gap:16px; justify-content:space-between; flex-wrap:wrap;
+}
+
+/* Nút: dùng 240px để các nút thẳng hàng; trên mobile sẽ về 100% ở @media */
+.att-class__cta .p-button{ width:240px; }
+
+/* Status giữ chỗ khi ẩn/hiện */
+.att-status{ min-height:32px; display:inline-flex; align-items:center; gap:8px;
+    background:#eef2ff; color:#334155; padding:6px 10px; border-radius:28px; font-weight:600;
+    border:1px solid var(--border);
+}
+.att-status.is-hidden{ visibility:hidden; }
+.att-status--secondary{ background:#f1f5f9; }
+.att-status--success{ background:#ecfdf5; color:#166534; }
+.att-status--info{ background:#eff6ff; color:#1d4ed8; }
+
+/* Responsive */
+@media (max-width: 1200px){
+    .att-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width: 720px){
+    .att-stats{ grid-template-columns:repeat(2,1fr); }
+    .att-grid{ grid-template-columns:1fr; }
+    .att-toolbar{ flex-direction:column; align-items:stretch; }
+    .att-class__cta .p-button{ width:100%; }   /* mobile full-width */
+}
+/* ===== page shell polish ===== */
+.att-shell{
+    padding:24px;
+    background:linear-gradient(180deg, #f4f7fb 0%, #f8fafc 140px) no-repeat, var(--bg);
+    min-height:100vh; color:var(--ink);
+    box-shadow: inset 0 12px 24px rgba(15,23,42,.04);
+}
+
+/* header */
+.att-header{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.att-title h1{ margin:0; font-size:40px; line-height:1.1; font-weight:800; letter-spacing:.2px; }
+.att-title p{ margin:8px 0 0; color:#6a7280; font-size:18px; }
+
+/* date pill (top-right) */
+.att-date-pill{
+    display:flex; align-items:center; gap:10px;
+    padding:12px 16px; background:#fff; border:1px solid var(--border);
+    border-radius:14px; box-shadow:0 6px 18px rgba(2,6,23,.06);
+    color:#0f172a; font-weight:600;
+}
+.att-date-pill i{ font-size:1rem; color:#64748b; }
+
+/* ===== stats row ===== */
+.att-stats{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:18px; margin:18px 0 20px;
+}
+
+.att-stat{
+    position:relative;
+    border-radius:20px; border:1px solid var(--border);
+    background:#fff; box-shadow:0 8px 24px rgba(2,6,23,.05);
+    min-height:148px;
+    padding:22px 22px 20px 22px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+}
+.att-stat__title{ color:#6b7280; font-weight:700; margin:0 0 6px; }
+.att-stat__value{ font-size:34px; font-weight:800; letter-spacing:.2px; }
+
+.att-stat__iconbox{
+    position:absolute; top:16px; right:16px;
+    width:40px; height:40px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    background:#eef2ff; color:#4f46e5;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,.6);
+}
+
+/* tones */
+.att-stat--success .att-stat__value{ color:#16a34a; }
+.att-stat--students .att-stat__value{ color:#16a34a; }
+.att-stat--neutral .att-stat__value{ color:#0f172a; }
+
+/* small up-trend arrow next to % */
+.att-trend{ display:inline-flex; align-items:center; gap:6px; font-weight:800; color:#16a34a; }
+.att-trend i{ font-size:.9rem; }
