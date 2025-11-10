@@ -74,8 +74,15 @@ public enum ErrorCode {
     SESSION_NOT_FOUND(1051, "Session not found", HttpStatus.NOT_FOUND),
     INTERNAL_ERROR(1052, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR),
     STUDENT_NOT_IN_COURSE(1053, "Student not in course", HttpStatus.NOT_FOUND),
-    INVALID_DATE(1054, "Invalid date", HttpStatus.BAD_REQUEST);
-
+    INVALID_DATE(1054, "Invalid date", HttpStatus.BAD_REQUEST),
+    // create user
+    DUPLICATE_USER(1055, "User with the same username or email already exists", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_FOUND(1056, "Role not found", HttpStatus.NOT_FOUND),
+    // Notification
+    NOTIFICATION_NOT_FOUND(1057, "Notification not found", HttpStatus.NOT_FOUND),
+    NOTIFICATION_TYPE_NOT_FOUND(1058, "Notification type not found", HttpStatus.NOT_FOUND),
+    NO_RECEIVER_FOUND(1059, "No receiver found for the notification", HttpStatus.BAD_REQUEST),
+    UNAUTHORIZED_ACCESS(1060, "Unauthorized access to the resource", HttpStatus.FORBIDDEN);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

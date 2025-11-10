@@ -23,13 +23,18 @@ export default function SubjectClassTable({ classes = [], onRegister }) {
     }, [classes]);
 
     const filtered = useMemo(() => {
-        return (classes || []).filter(c => {
-            const byMode = mode === 'All' || String(c.mode || '').toLowerCase().includes(mode.toLowerCase());
-            const byCampus = campus === 'All' || (c.place || c.room || '—') === campus;
-            const byDate = !date || (c.startDate && new Date(c.startDate) >= new Date(date.setHours(0, 0, 0, 0)));
+        return (classes || []).filter((c) => {
+            const byMode =
+                mode === 'All' || String(c.mode || '').toLowerCase().includes(mode.toLowerCase());
+            const byCampus =
+                campus === 'All' || (c.place || c.room || '—') === campus;
+            const byDate =
+                !date ||
+                (c.startDate && new Date(c.startDate) >= new Date(new Date(date).setHours(0, 0, 0, 0)));
             return byMode && byCampus && byDate;
         });
     }, [classes, mode, campus, date]);
+
 
     return (
         <section className="sd-card">

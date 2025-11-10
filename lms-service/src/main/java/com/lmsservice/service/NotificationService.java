@@ -1,16 +1,21 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.lmsservice.repository.NotificationRepository;
+import com.lmsservice.dto.response.NotificationResponse;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+public interface NotificationService {
+    List<NotificationResponse> getMyNotifications();
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class NotificationService {
-    NotificationRepository notificationRepository;
+    List<NotificationResponse> getUnseenNotifications();
+
+    void markAsSeen(Long notificationId);
+
+    NotificationResponse getById(Long id);
+
+    void markAllAsSeen();
+
+    long countUnseen();
+
+    void deleteNotification(Long id);
 }

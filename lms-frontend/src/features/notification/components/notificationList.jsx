@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Card } from 'primereact/card';
 import { Paginator } from 'primereact/paginator';
-import NotificationItem from './NotificationItem';
-import NotificationDetailDialog from './dialogs/NotificationDetailDialog';
+import NotificatioItem from './notificatioItem.jsx';
+import NotificationDetailDialog from './dialogs/notificationDetailDialog.jsx';
 
 export default function NotificationList({ notifications = [], loading, onMarkRead, onDelete }) {
     const [first, setFirst] = useState(0);
@@ -31,7 +31,7 @@ export default function NotificationList({ notifications = [], loading, onMarkRe
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                         {notifications.slice(first, first + rows).map((n) => (
-                            <NotificationItem key={n.id} n={n} onOpen={openDetail} onDelete={onDelete} />
+                            <NotificatioItem key={n.id} n={n} onOpen={openDetail} onDelete={onDelete} />
                         ))}
                     </div>
                 )}
