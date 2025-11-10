@@ -97,12 +97,12 @@ export default function LayoutNavbar({ role, children }) {
             command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
 
-        {
-            label: 'Profile',
-            icon: 'pi pi-user',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
-            command: () => navigate(`/${roleToRoute(role)}/profile`)
-        },
+        // {
+        //     label: 'Profile',
+        //     icon: 'pi pi-user',
+        //     roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+        //     command: () => navigate(`/${roleToRoute(role)}/profile`)
+        // },
 
         {
             label: 'System Administration',
