@@ -1,16 +1,9 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.lmsservice.repository.NotificationTypeRepository;
+import com.lmsservice.dto.response.OptionDto;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class NotificationTypeService {
-    NotificationTypeRepository notificationTypeRepository;
+public interface NotificationTypeService {
+    List<OptionDto> getTypeOptions();
 }

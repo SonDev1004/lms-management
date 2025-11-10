@@ -28,7 +28,8 @@ export default function ProgramsTabs() {
                                     {!loading && list.length === 0 && (
                                         <div className="programs-empty">No suitable courses available yet.</div>
                                     )}
-                                    {!loading && list.map((p) => <ProgramCard key={p.id} p={p} />)}
+                                    {!loading && list.map((p) => <ProgramCard key={p.id} program={p} />
+                                    )}
                                 </div>
                                 {error && <div className="programs-error">Failed to load data. Please try again.</div>}
                             </TabPanel>
