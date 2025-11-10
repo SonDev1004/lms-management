@@ -62,7 +62,7 @@ import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx
 import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
 import Home from "@/features/home/pages/Home.jsx";
 import ProgramDetailPage from "@/features/program/detail/pages/ProgramDetailPage.jsx";
-import {FeedbackPage} from "@/features/feedback/index.js";
+import { FeedbackPage } from "@/features/feedback/index.js";
 import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
 import UserProfile from "@/features/user/pages/UserProfile.jsx";
 import StudentManagement from "@/features/academic_manager/list/student/pages/StudentManagement.jsx";
@@ -71,7 +71,13 @@ import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
 import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
 import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
+import AttendancePage from "@/features/attendance/teacher/pages/AttendancePage.jsx";
+import AttendanceDetailPage from "@/features/attendance/teacher/detail/pages/AttendanceDetailPage.jsx";
+import TeacherAttendance from "@/features/teacher/pages/TeacherAttendance.jsx";
+import StudentAttendance from "@/features/student/pages/StudentAttendance.jsx";
+import RecentActivity from "@/features/recentactivity/pages/RecentActivity.jsx";
 import AboutPage from "@/features/about/pages/AboutPage.jsx";
+import NewEnrollmentsPage from "@/features/new-enrollments/pages/NewEnrollmentsPage.jsx";
 import NotificationForm from "@/features/admin/pages/NotificationForm.jsx";
 import ScheduledNotifications from "@/features/admin/pages/ScheduledNotifications.jsx";
 
@@ -107,17 +113,18 @@ const App = () => {
                 </Route>
 
                 {/* Student Route */}
-                <Route element={<ProtectedRoute allowedRoles={['STUDENT']}/>}>
-                    <Route path='student' element={<LayoutStudent/>}>
-                        <Route index element={<StudentDashboard/>}/>
-                        <Route path='courses' element={<StudentCourses/>}/>
-                        <Route path='courses/:slug' element={<CourseDetailStudent/>}/>
-                        <Route path='schedule' element={<StudentSchedule/>}/>
-                        <Route path='score' element={<StudentScore/>}/>
-                        <Route path='assignment' element={<Exercise/>}/>
-                        <Route path='enrollment' element={<StudentEnrollment/>}/>
-                        <Route path='notification' element={<StudentNotification/>}/>
-                        <Route path='profile' element={<StudentProfile/>}/>
+                <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+                    <Route path='student' element={<LayoutStudent />}>
+                        <Route index element={<StudentDashboard />} />
+                        <Route path='courses' element={<StudentCourses />} />
+                        <Route path='courses/:slug' element={<CourseDetailStudent />} />
+                        <Route path='schedule' element={<StudentSchedule />} />
+                        <Route path='score' element={<StudentScore />} />
+                        <Route path='assignment' element={<Exercise />} />
+                        <Route path='enrollment' element={<StudentEnrollment />} />
+                        <Route path='notification' element={<StudentNotification />} />
+                        <Route path='attendance' element={<StudentAttendance />} />
+                        <Route path='profile' element={<StudentProfile />} />
                     </Route>
                 </Route>
 
@@ -133,7 +140,8 @@ const App = () => {
                             <Route path="sessions/:sessionId/attendance/full" element={<AttendanceTeacherSummary/>}/>
                         </Route>
                         <Route path='assignment' element={<ExerciseBuilder/>}/>
-
+                        <Route path="attendance" element={<TeacherAttendance/>} />
+                        <Route path="attendance/detail/:classId" element={<AttendanceDetailPage />} />
                         <Route path="schedule" element={<TeacherSchedule/>}/>
                         <Route path="notification" element={<TeacherNotification/>}/>
                         <Route path="profile" element={<TeacherProfile/>}/>
@@ -149,17 +157,18 @@ const App = () => {
                         <Route path='courses' element={<AMCourse/>}>
                             <Route path='detail/:id' element={<AMCourseDetail/>}/>
                         </Route>
-                        <Route path="feedback" element={<FeedbackPage/>}/>
-                        <Route path='teacher' element={<AMTeacher/>}/>
-                        <Route path='teacher-list' element={<TeacherManagement/>}/>
-                        <Route path='teacher-list/:id' element={<AMTeacherProfile/>}/>
-                        <Route path='student' element={<AMStudent/>}/>
-                        <Route path='student-manager' element={<StudentManagement/>}/>
-                        <Route path="student-manager/:id" element={<MStudentProfile/>}/>
-                        <Route path='schedule' element={<AMSchedule/>}/>
-                        <Route path='report' element={<AMReport/>}/>
-                        <Route path='notification' element={<AMNotification/>}/>
-                        <Route path='profile' element={<AMProfile/>}/>
+                        <Route path="feedback" element={<FeedbackPage />} />
+                        <Route path='teacher' element={<AMTeacher />} />
+                        <Route path='teacher-list' element={<TeacherManagement />} />
+                        <Route path='teacher-list/:id' element={<AMTeacherProfile/>} />
+                        <Route path='student' element={<AMStudent />} />
+                        <Route path='student-manager' element={<StudentManagement />} />
+                        <Route path="student-manager/:id" element={<MStudentProfile />} />
+                        <Route path='schedule' element={<AMSchedule />} />
+                        <Route path='report' element={<AMReport />} />
+                        <Route path='notification' element={<AMNotification />} />
+                        <Route path='attendance' element={<AttendancePage />} />
+                        <Route path='profile' element={<AMProfile />} />
 
                     </Route>
                 </Route>
@@ -179,6 +188,9 @@ const App = () => {
                         </Route>
                         <Route path='profile' element={<AdminProfile/>}/>
                         <Route path='tuitionrevenue' element={<TuitionRevenueDashboard />} />
+                        <Route path='new-enrollment' element={<NewEnrollmentsPage />} />
+                        <Route path='recentactivity' element={<RecentActivity />}/>
+
                     </Route>
                 </Route>
 

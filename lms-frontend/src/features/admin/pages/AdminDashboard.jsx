@@ -1,6 +1,8 @@
+import React from "react";
+import AdminDashboardView from "../../dashboard/admin/pages/AdminDashboardView.jsx";
+
 const AdminDashboard = () => {
-    return (<><h1>Admin Dashboard</h1>
-    </>);
+    return <AdminDashboardView/>;
 }
 
 export default AdminDashboard;

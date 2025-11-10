@@ -1,0 +1,101 @@
+.ne-filters{
+    width:100%;
+    padding:18px 20px;
+    border-radius:18px;
+    background:#fff;
+    box-shadow:0 8px 24px rgba(15,23,42,.06), 0 1px 1px rgba(15,23,42,.04);
+    border:1px solid #eef2ff;
+}
+
+.ne-field-label{
+    font-size:13px;
+    font-weight:800;
+    color:#0f1e39;
+    margin:0 0 6px;
+}
+
+.ne-select .p-dropdown,
+.ne-input .p-inputtext,
+.ne-calendar .p-inputtext{
+    width:100%;
+    height:46px;
+    border-radius:12px;
+}
+
+.ne-calendar .p-datepicker-trigger.p-button{
+    height:46px; width:46px; border-radius:12px;
+    background:#06b6d4; border-color:#06b6d4;
+}
+.ne-calendar .p-datepicker-trigger.p-button:hover{
+    filter:brightness(.95);
+}
+
+.ne-inline{
+    display:grid;
+    grid-template-columns: repeat(12, minmax(0,1fr));
+    grid-template-areas:
+    "status status status pay pay pay actions actions actions actions actions actions"
+    "from   from   from   to  to  to  program program program course  course  course";
+    gap:14px 16px;
+    align-items:end;
+}
+
+.ne-field-status  { grid-area: status; }
+.ne-field-pay     { grid-area: pay; }
+.ne-qa            {
+    grid-area: actions;
+    display:flex; justify-content:flex-end; gap:10px;
+}
+
+.ne-field-from    { grid-area: from; }
+.ne-field-to      { grid-area: to; }
+.ne-field-program { grid-area: program; }
+.ne-field-course  { grid-area: course; }
+
+.ne-btn-reset.p-button,
+.ne-btn-export.p-button{
+    height:40px; border-radius:12px;
+    background:#fff; color:#334155; border:1px solid #e7ecfe;
+}
+.ne-btn-reset.p-button:hover,
+.ne-btn-export.p-button:hover{
+    box-shadow:0 0 0 4px #e7eeff inset;
+}
+
+.ne-presets{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.ne-presets button{
+    height:26px; padding:0 10px; border-radius:999px;
+    font-size:12px; font-weight:700;
+    background:#f6f8ff; color:#334155; border:1px solid #e7ecfe;
+}
+.ne-presets button:hover{ box-shadow:0 0 0 3px #e7eeff inset; }
+.ne-presets .muted{ background:#fff; }
+
+.ne-field-to .ne-presets{ display:none; }
+
+body, .ne-wrap{ background:var(--pg-bg); }
+
+@media (max-width: 1200px){
+    .ne-inline{
+        grid-template-columns: repeat(8, minmax(0,1fr));
+        grid-template-areas:
+      "status status pay pay actions actions actions actions"
+      "from   from   to  to  program program course  course";
+    }
+}
+
+@media (max-width: 720px){
+    .ne-inline{
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        grid-template-areas:
+      "status status"
+      "pay    pay"
+      "actions actions"
+      "from   from"
+      "to     to"
+      "program program"
+      "course  course";
+    }
+    .ne-btn-reset.p-button,
+    .ne-btn-export.p-button{ width:100%; }
+}

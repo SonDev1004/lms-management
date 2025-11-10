@@ -1,0 +1,23 @@
+.ne-btn-approve.p-button{
+    background:var(--pg-approve); border-color:var(--pg-approve);
+    color:#fff; border-radius:14px; height:44px; padding:0 18px; font-weight:800;
+}
+.ne-btn-approve.p-button:hover{ filter:brightness(.95); }
+
+.ne-btn-reject.p-button{
+    background:var(--pg-reject); border-color:var(--pg-reject);
+    color:#fff; border-radius:14px; height:44px; padding:0 18px; font-weight:800;
+}
+.ne-btn-reject.p-button:hover{ filter:brightness(.96); }
+
+.ne-row-actions .p-button{
+    width:46px; height:46px; border-radius:14px;
+    background:var(--pg-primary); border-color:var(--pg-primary); color:#fff;
+}
+.ne-row-actions .p-button:hover{ filter:brightness(.96); }
+.ne-row-actions .p-button.p-button-danger{ background:var(--pg-reject); border-color:var(--pg-reject); }
+
+.ne-actions-bar{
+    background:#fff; border-bottom:1px solid #eef2ff;
+    border-top-left-radius:18px; border-top-right-radius:18px;
+}
