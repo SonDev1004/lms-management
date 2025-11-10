@@ -62,7 +62,7 @@ import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx
 import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
 import Home from "@/features/home/pages/Home.jsx";
 import ProgramDetailPage from "@/features/program/detail/pages/ProgramDetailPage.jsx";
-import {FeedbackPage} from "@/features/feedback/index.js";
+import { FeedbackPage } from "@/features/feedback/index.js";
 import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
 import UserProfile from "@/features/user/pages/UserProfile.jsx";
 import StudentManagement from "@/features/academic_manager/list/student/pages/StudentManagement.jsx";
@@ -77,6 +77,7 @@ import TeacherAttendance from "@/features/teacher/pages/TeacherAttendance.jsx";
 import StudentAttendance from "@/features/student/pages/StudentAttendance.jsx";
 import RecentActivity from "@/features/recentactivity/pages/RecentActivity.jsx";
 import AboutPage from "@/features/about/pages/AboutPage.jsx";
+import NewEnrollmentsPage from "@/features/new-enrollments/pages/NewEnrollmentsPage.jsx";
 import NotificationForm from "@/features/admin/pages/NotificationForm.jsx";
 import ScheduledNotifications from "@/features/admin/pages/ScheduledNotifications.jsx";
 
@@ -185,6 +186,7 @@ const App = () => {
                             <Route path='scheduled' element={<ScheduledNotifications/>}/>
                         </Route>
                         <Route path='profile' element={<AdminProfile/>}/>
+                        <Route path='new-enrollment' element={<NewEnrollmentsPage />} />
                         <Route path='recentactivity' element={<RecentActivity />}/>
                     </Route>
                 </Route>

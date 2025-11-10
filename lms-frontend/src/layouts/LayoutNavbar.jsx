@@ -121,6 +121,12 @@ export default function LayoutNavbar({ role, children }) {
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/upload')
                 },
+                {
+                    label: 'New Enrollment',
+                    icon: 'pi pi-user-plus',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/new-enrollment')
+                },
             ]
         },
         {
