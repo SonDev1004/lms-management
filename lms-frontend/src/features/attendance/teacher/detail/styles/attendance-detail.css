@@ -1,0 +1,167 @@
+.attd-shell{
+    padding: 24px;
+    background: linear-gradient(180deg,#f2f6fb 0,#f8fafc 120px);
+    min-height: 100vh; color: var(--ink);
+}
+
+.attd-head{ display:flex; align-items:flex-start; justify-content:space-between; }
+.attd-head__left{ display:flex; gap:14px; align-items:flex-start; }
+
+.attd-back.p-button{
+    border-radius: 14px; padding: 10px 14px; font-weight: 700;
+    border-color:#bfe6ef; color:#0b4a52; background:#e6fbff;
+}
+.attd-back .pi{ margin-right: 6px; }
+
+.attd-title{ margin: -4px 0 2px; font-size: 44px; line-height:1.1; font-weight: 900; letter-spacing:.2px; }
+.attd-sub{ color:#64748b; font-weight:600; letter-spacing:.2px; }
+
+/* ===== Stats row ===== */
+.attd-stats-cards{
+    position: relative;
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 18px; margin: 18px 0 16px;
+}
+
+.attd-stat.p-card{
+    border-radius: 24px;
+    border:1px solid #e8edf5;
+    box-shadow: 0 10px 28px rgba(2,6,23,.06);
+    overflow: hidden; background:#fff;
+}
+.attd-stat .p-card-body{ padding: 22px 22px 20px; }
+
+.attd-kv{ display:flex; align-items:center; gap:10px; color:#475569; font-weight:800; }
+.attd-kv .pi{ color:#64748b; }
+
+.attd-stat__value{
+    margin-top: 10px;
+    font-size: 32px; font-weight: 900; letter-spacing:.2px;
+    max-width: 260px;            /* giúp chuỗi giờ tự wrap như mock */
+    line-height: 1.2;
+}
+.attd-stat__hint{ color:#6b7280; margin-top: 6px; }
+
+/* ===== Session badge (top-right) ===== */
+.attd-session-badge{
+    position:absolute; right: 8px; top: -38px;
+    background:#edf2f7; color:#0f172a;
+    border:1px solid #dee6f1; border-radius: 999px;
+    padding: 8px 14px; font-weight:800;
+    box-shadow: 0 4px 12px rgba(2,6,23,.04);
+}
+
+/* ===== Warning banner ===== */
+.attd-banner{
+    display:flex; align-items:center; gap:12px;
+    background:#fff4e6; color:#9a4f19;
+    border:1px solid #ffd7a8; border-radius: 14px;
+    padding: 12px 16px; margin: 10px 0 18px;
+}
+.attd-banner .pi{ font-size: 1.1rem; }
+
+/* ===== Content split ===== */
+.attd-content{ display:grid; grid-template-columns: minmax(0,1fr) 360px; gap: 18px; }
+.attd-left{ min-width:0; }
+.attd-right{ display:flex; flex-direction:column; gap:16px; }
+
+.attd-h2{ font-size: 30px; font-weight: 900; margin: 8px 0 12px; }
+
+/* ===== Toolbar / Counters ===== */
+.attd-toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    background:#fff; border:1px solid var(--border); border-radius: 16px; padding:12px;
+    margin-bottom: 12px;
+}
+.attd-toolbar__right{ display:flex; gap:12px; align-items:center; color:#6b7280; }
+.attd-count{ margin-left:8px; font-weight:800; }
+.attd-count--p{ color:#16a34a } .attd-count--l{ color:#f59e0b }
+.attd-count--a{ color:#ef4444 } .attd-count--e{ color:#2563eb }
+
+/* ===== Table ===== */
+.attd-table{ border:1px solid var(--border); background:#fff; border-radius:16px; overflow:hidden; }
+.attd-thead, .attd-row{
+    display:grid; grid-template-columns: 60px 1.5fr 1fr 120px 1.2fr 1.5fr 120px; align-items:center;
+}
+.attd-thead{ background:#f8fafc; color:#475569; font-weight:800; padding:12px 14px; border-bottom:1px solid var(--border); }
+.attd-row{ padding:12px 14px; border-bottom:1px solid var(--border); }
+.attd-row:last-child{ border-bottom:none; }
+.attd-row.is-active{ background:#f1f5f9; }
+
+.col-student{ display:flex; align-items:center; gap:12px; }
+.avatar{ width:38px; height:38px; border-radius:999px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-weight:800; color:#334155; }
+.name{ font-weight:800; } .code{ color:#64748b; font-size:12px; }
+
+/* Status dropdown look */
+.status-dd.p-dropdown{ width: 180px; }
+.status-chip{ display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-weight:800; }
+.status-item{ display:flex; align-items:center; gap:8px; }
+.status-P{ background:#ecfdf5; color:#166534; }
+.status-L{ background:#fff7ed; color:#92400e; }
+.status-A{ background:#fee2e2; color:#991b1b; }
+.status-E{ background:#eff6ff; color:#1d4ed8; }
+
+.late-input{ width:84px; text-align:center; }
+.reason-dd.p-dropdown{ width:100%; }
+
+.attd-side{ border-radius:16px; border:1px solid var(--border); box-shadow:0 8px 24px rgba(2,6,23,.05) }
+.attd-side__title{ font-weight:900; margin-bottom:10px; }
+.kbd-row{ display:inline-flex; align-items:center; gap:10px; margin-right:14px; margin-bottom:8px; }
+.kbd-row kbd{ border:1px solid var(--border); padding:4px 8px; border-radius:8px; background:#fff; }
+
+.attd-sync .row{ display:flex; justify-content:space-between; margin:8px 0; }
+.attd-sync .ok{ color:#16a34a; }
+
+.attd-actions{ display:flex; justify-content:flex-end; gap:12px; margin-top: 16px; }
+
+/* Responsive */
+@media (max-width: 1200px){
+    .attd-content{ grid-template-columns: 1fr; }
+    .attd-session-badge{ position:static; margin-left:auto; margin-bottom:10px; }
+}
+/* === Container width & centering === */
+.attd-shell{ padding:24px 28px; }
+.attd-stats-cards,
+.attd-left { max-width: 1200px; margin: 0 auto; }  /* căn giữa */
+.attd-toolbar { max-width: 1200px; margin: 0 auto 12px; }
+
+/* Khi không có sidebar, dùng layout 1 cột */
+.attd-content.attd-single{ display:block; }  /* bỏ grid */
+.attd-left{ min-width:0; }
+
+/* Làm “hộp” toolbar giống ảnh: bo góc lớn + bóng nhẹ */
+.attd-toolbar{
+    display:flex; justify-content:space-between; align-items:center;
+    background:#fff; border:1px solid #e8edf5; border-radius:18px;
+    padding:14px 16px; margin-bottom:14px;
+    box-shadow:0 8px 24px rgba(2,6,23,.06);
+}
+
+/* Bảng chiếm full chiều rộng container, khoảng đệm mềm hơn */
+.attd-table{ border:1px solid #e8edf5; background:#fff; border-radius:18px; overflow:hidden;
+    box-shadow:0 10px 28px rgba(2,6,23,.06);
+}
+.attd-thead{ padding:14px 16px; }
+.attd-row{ padding:14px 16px; }
+
+/* Cột chia tỉ lệ hợp lý với màn rộng */
+.attd-thead, .attd-row{
+    grid-template-columns: 64px 1.6fr 1fr 132px 1.4fr 1.6fr 132px;
+}
+
+/* Nút hành động cuối trang: dính đáy, nổi nhẹ */
+.attd-actions{
+    position: sticky; bottom: 12px;
+    display:flex; justify-content:flex-end; gap:12px;
+    padding:10px; margin-top:16px;
+    background:rgba(248,250,252,.7); backdrop-filter: blur(4px);
+    border:1px solid #e8edf5; border-radius:14px;
+    box-shadow:0 8px 24px rgba(2,6,23,.06);
+}
+
+/* Nhịp dọc: tiêu đề & khoảng cách */
+.attd-h2{ max-width:1200px; margin:8px auto 12px; font-size:30px; font-weight:900; }
+
+/* Một chút zebra + hover để bảng thoáng hơn */
+.attd-row:nth-child(odd){ background:#fbfdff; }
+.attd-row:hover{ background:#f6f9ff; }
