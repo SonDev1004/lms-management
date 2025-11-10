@@ -81,6 +81,7 @@ import NewEnrollmentsPage from "@/features/new-enrollments/pages/NewEnrollmentsP
 import NotificationForm from "@/features/admin/pages/NotificationForm.jsx";
 import ScheduledNotifications from "@/features/admin/pages/ScheduledNotifications.jsx";
 
+import TuitionRevenueDashboard from "@/features/tuitionrevenue/pages/TuitionRevenueDashboard.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -186,8 +187,10 @@ const App = () => {
                             <Route path='scheduled' element={<ScheduledNotifications/>}/>
                         </Route>
                         <Route path='profile' element={<AdminProfile/>}/>
+                        <Route path='tuitionrevenue' element={<TuitionRevenueDashboard />} />
                         <Route path='new-enrollment' element={<NewEnrollmentsPage />} />
                         <Route path='recentactivity' element={<RecentActivity />}/>
+
                     </Route>
                 </Route>
 
