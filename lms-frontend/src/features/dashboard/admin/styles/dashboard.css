@@ -1,0 +1,98 @@
+:root{
+    --ink:#0f172a;              /* slate-900 */
+    --muted:#6b7280;            /* slate-500 */
+    --surface:#ffffff;          /* card bg */
+    --bg:#f8fafc;               /* page bg */
+    --border:#e5e7eb;           /* gray-200 */
+    --ring:#dbeafe;             /* blue-100 */
+    --primary:#2563eb;          /* blue-600 */
+    --ok:#16a34a;
+    --warn:#f59e0b;
+    --bad:#ef4444;
+    --chip:#0ea5e9;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.04);
+}
+
+body { background: var(--bg); color: var(--ink); }
+
+/* ====== LAYOUT ====== */
+.adm-shell{display:flex;flex-direction:column;gap:24px;padding:24px}
+.adm-grid{
+    display:grid; gap:20px;
+    grid-template-columns: repeat(12, 1fr);
+}
+.card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+}
+
+.kpi-grid{ grid-column: 1 / -1; display:grid; gap:20px; grid-template-columns: repeat(12,1fr);}
+.kpi{ grid-column: span 3; padding:18px; display:flex; align-items:center; justify-content:space-between; }
+.kpi .meta{display:flex; flex-direction:column; gap:6px}
+.kpi .title{font-weight:600}
+.kpi .value{font-size:28px; font-weight:800}
+.kpi .delta{font-size:14px;}
+.kpi .delta.ok{ color: var(--ok); }
+.kpi .delta.bad{ color: var(--bad); }
+.kpi .ic{
+    width:48px;height:48px; border-radius:12px; display:grid; place-items:center;
+    background: var(--ring);
+}
+
+.panels{ grid-column:1 / -1; display:grid; gap:20px; grid-template-columns: 1fr 1fr 1fr;}
+.panel{ padding:18px; }
+.panel h3{ margin:0 0 12px; font-size:20px; font-weight:800; display:flex; align-items:center; gap:10px}
+.panel h3 .lead{ color: var(--muted); font-weight:600; font-size:14px; margin-left:auto}
+
+.qa-list{ display:flex; flex-direction:column; gap:14px; }
+.qa{ display:flex; gap:12px; align-items:flex-start; padding:12px; border:1px dashed transparent; border-radius:12px;}
+.qa:hover{ background:#f1f5f9; border-color:#e2e8f0 }
+.qa .qa-ic{ width:40px; height:40px; border-radius:10px; display:grid; place-items:center; background:#e0f2fe }
+.qa .qa-main{ flex:1 }
+.qa .qa-title{ font-weight:700 }
+.qa .qa-desc{ color:var(--muted); margin-top:2px }
+
+.activity-list{ display:flex; flex-direction:column; gap:12px }
+.activity{ display:flex; gap:12px; padding:12px; border:1px solid #eaf2ff; border-radius:12px; }
+.activity .dot{ width:12px; height:12px; border-radius:999px; margin-top:6px }
+.activity .dot.ok{ background:var(--ok) }
+.activity .dot.warn{ background:var(--warn) }
+.activity .dot.bad{ background:var(--bad) }
+.activity .body{ flex:1 }
+.activity .title{ font-weight:700 }
+.activity .detail{ color:var(--muted) }
+.activity .time{ color:var(--muted); font-size:13px }
+
+.license-list{ display:flex; flex-direction:column; gap:16px }
+.license{ padding:12px; border:1px dashed transparent; border-radius:12px }
+.license:hover{ background:#f8fafc; border-color:#e2e8f0 }
+.license .row{ display:flex; align-items:center; gap:12px }
+.license .name{ font-weight:700; flex:1 }
+.license .meta{ color:var(--muted) }
+.exb-badge{ padding:5px 10px; border-radius:999px; font-size:12px; border:1px solid var(--border); }
+.exb-badge--ok{ background:#ecfdf5; border-color:#bbf7d0; color:#166534 }
+.exb-badge--warn{ background:#fffbeb; border-color:#fde68a; color:#92400e }
+.exb-badge--bad{ background:#fef2f2; border-color:#fecaca; color:#991b1b }
+
+.progress{ height:10px; background:#e5e7eb; border-radius:999px; overflow:hidden }
+.progress > span{ display:block; height:100%; background:linear-gradient(90deg,#60a5fa,#22d3ee); }
+
+.header{ grid-column:1 / -1; }
+.header .sub{ color:var(--muted); margin-top:8px }
+
+.manage-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    margin-top:12px; width:100%; padding:12px 14px; border-radius:12px;
+    background:var(--primary); color:#fff; font-weight:700; border:none; cursor:pointer;
+}
+.manage-btn:hover{ filter:brightness(.95) }
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 1200px){
+    .kpi{ grid-column: span 6; }
+    .panels{ grid-template-columns: 1fr; }
+}
+@media (max-width: 640px){
+    .kpi{ grid-column: span 12; }
+}

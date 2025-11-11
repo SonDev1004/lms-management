@@ -63,11 +63,17 @@ export default function LayoutNavbar({ role, children }) {
                     command: () => navigate(`/${roleToRoute(role)}/teacher-list`)
                 },
                 {
-                    label: 'Feedback',
+                    label: 'Monitoring & Feedback',
                     icon: 'pi pi-check-square',
                     roles: ['ACADEMIC_MANAGER'],
                     command: () => navigate(`/${roleToRoute(role)}/feedback`)
                 },
+                {
+                    label: 'Master Timetable',
+                    icon: 'pi pi-table',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/schedule-overview`)
+                }
             ]
         },
 
@@ -81,9 +87,22 @@ export default function LayoutNavbar({ role, children }) {
         {
             label: 'Notifications',
             icon: 'pi pi-bell',
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+            command: () => navigate(`/${roleToRoute(role)}/notification`)
+        },
+        {
+            label: 'Attendance',
+            icon: 'pi pi-check-square',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
+
+        // {
+        //     label: 'Profile',
+        //     icon: 'pi pi-user',
+        //     roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
+        //     command: () => navigate(`/${roleToRoute(role)}/profile`)
+        // },
 
         {
             label: 'System Administration',
@@ -101,6 +120,17 @@ export default function LayoutNavbar({ role, children }) {
                     icon: 'pi pi-upload',
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/upload')
+                },
+                {
+                    label: 'Tuition Revenue',
+                    icon: 'pi pi-chart-line',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/tuitionrevenue')
+                },
+                    label: 'New Enrollment',
+                    icon: 'pi pi-user-plus',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/new-enrollment')
                 },
             ]
         },
