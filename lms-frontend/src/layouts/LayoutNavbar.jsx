@@ -90,19 +90,13 @@ export default function LayoutNavbar({ role, children }) {
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
         },
+
         {
             label: 'Attendance',
             icon: 'pi pi-check-square',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
-            command: () => navigate(`/${roleToRoute(role)}/notification`)
+            command: () => navigate(`/${roleToRoute(role)}/attendance`) // <- sửa route đúng
         },
-
-        // {
-        //     label: 'Profile',
-        //     icon: 'pi pi-user',
-        //     roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
-        //     command: () => navigate(`/${roleToRoute(role)}/profile`)
-        // },
 
         {
             label: 'System Administration',
@@ -127,24 +121,25 @@ export default function LayoutNavbar({ role, children }) {
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/tuitionrevenue')
                 },
-                    label: 'New Enrollment',
+                {
+                    label: 'New Enrollment', // <- THÊM dấu { mở phần tử
                     icon: 'pi pi-user-plus',
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/new-enrollment')
-                },
+                }
             ]
         },
+
         {
             label: 'Profile',
             icon: 'pi pi-user',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/profile`)
-        },
-
+        }
     ];
 
-    const filterByRole = (list, role) => {
-        return list
+    const filterByRole = (list, role) =>
+        list
             .map((item) => {
                 const newItem = { ...item };
                 if (item.items) newItem.items = filterByRole(item.items, role);
@@ -155,7 +150,6 @@ export default function LayoutNavbar({ role, children }) {
                 const hasVisibleChildren = Array.isArray(item.items) && item.items.length > 0;
                 return hasRole || hasVisibleChildren;
             });
-    };
 
     const visibleItems = filterByRole(items, role);
 
@@ -166,7 +160,7 @@ export default function LayoutNavbar({ role, children }) {
             typeof window !== 'undefined' &&
             window.matchMedia &&
             window.matchMedia('(max-width: 767px)').matches;
-        setCollapsed(isSmall ? true : true);
+        setCollapsed(isSmall); // trước đây luôn true
     }, []);
 
     const isOpen = !collapsed || hoverOpen;
