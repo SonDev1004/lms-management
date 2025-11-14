@@ -1,0 +1,99 @@
+:root { --am-field-h: 46px; }
+
+.filters{
+    display:grid;
+    grid-template-columns: 1.2fr 0.9fr 0.9fr 1.2fr;
+    grid-template-areas:
+    "search roles  status  dot"
+    "sort   sort   dates   dates";
+    gap:18px;
+    align-items:end;
+}
+
+.item--search{ grid-area: search; }
+.item--roles { grid-area: roles;  }
+.item--status{ grid-area: status; }
+.item--sort  { grid-area: sort;   }
+.item--dates { grid-area: dates;  }
+
+.field{ display:flex; flex-direction:column; gap:8px; }
+.label{ font-weight:800; color:var(--am-ink); font-size:16px; }
+
+.dates-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:14px;
+}
+
+.am-card .p-inputtext,
+.am-card .p-dropdown,
+.am-card .p-calendar .p-inputtext{
+    height: var(--am-field-h);
+    line-height: calc(var(--am-field-h) - 2px);
+    padding: 0 14px;
+    border-radius: 14px;
+    font-size: 16px;
+    width: 100%;
+}
+
+.am-card .p-dropdown .p-dropdown-label{
+    padding: 0 14px;
+    height: 100%;
+    display:flex; align-items:center;
+    line-height:1;
+}
+
+.am-card .p-dropdown .p-dropdown-trigger{
+    width: 40px; height: 100%;
+    display:flex; align-items:center; justify-content:center;
+    border-left: 1px solid var(--am-border);
+    border-top-right-radius:14px; border-bottom-right-radius:14px;
+}
+
+.am-card .p-calendar .p-inputtext{ padding-right:44px; }
+.am-card .p-calendar .p-datepicker-trigger{
+    width:40px; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:12px;
+}
+.am-card .p-inputtext::placeholder{ color:#9aa6b2; }
+
+.filters-row2{
+    display:flex; gap:16px; align-items:center;
+    margin-top:16px;
+}
+.left-info{ color:var(--am-muted); font-weight:600; }
+.actions .p-button{ line-height:1; }
+
+.ghost{
+    background:#f2f6ff; border:1px solid #dfe7ff; color:#2741cc;
+    font-weight:700; border-radius:14px; padding:10px 18px;
+}
+.apply{
+    background:var(--am-brand); border:1px solid var(--am-brand); color:#fff;
+    font-weight:800; border-radius:14px; padding:10px 18px;
+}
+.ghost:hover{ filter:brightness(.98); }
+.apply:hover{ filter:brightness(.95); }
+
+@media (max-width: 1200px){
+    .filters{
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+      "search search"
+      "roles  status"
+      "sort   dates";
+    }
+}
+@media (max-width: 680px){
+    .filters{
+        grid-template-columns: 1fr;
+        grid-template-areas:
+      "search"
+      "roles"
+      "status"
+      "sort"
+      "dates";
+    }
+    .dates-grid{ grid-template-columns: 1fr; }
+}

@@ -1,0 +1,22 @@
+.badge{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 12px; border-radius:var(--am-r-pill);
+    font-weight:800; font-size:12px; letter-spacing:.2px;
+}
+.badge.role-teacher{ background:#eef2ff; color:#2741cc; }
+.badge.role-student{ background:#e8fff3; color:#0f7a43; }
+.badge.role-admin{ background:#fff4e6; color:#b45309; }
+.badge.role-manager{ background:#f3e8ff; color:#6d28d9; }
+
+.badge.active{ background:#dcfce7; color:#166534; }
+.badge.inactive{ background:#e5e7eb; color:#374151; }
+.badge.pending{ background:#fff7ed; color:#9a3412; }
+
+.detail-bar{
+    width:100%; height:34px; border-radius:18px; display:flex; align-items:center; justify-content:center;
+    font-weight:800;
+}
+.detail-bar.role{ background:#11a36f; color:#fff; }
+.detail-bar.status-active{ background:#16a34a; color:#fff; }
+.detail-bar.status-inactive{ background:#9ca3af; color:#fff; }
+.detail-bar.status-pending{ background:#f59e0b; color:#fff; }

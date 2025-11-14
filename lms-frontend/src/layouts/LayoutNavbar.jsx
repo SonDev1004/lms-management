@@ -122,10 +122,16 @@ export default function LayoutNavbar({ role, children }) {
                     command: () => navigate('/admin/tuitionrevenue')
                 },
                 {
-                    label: 'New Enrollment', // <- THÊM dấu { mở phần tử
+                    label: 'New Enrollment',
                     icon: 'pi pi-user-plus',
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/new-enrollment')
+                },
+                {
+                    label: 'Account Management ',
+                    icon: 'pi pi-users',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/account-management')
                 }
             ]
         },

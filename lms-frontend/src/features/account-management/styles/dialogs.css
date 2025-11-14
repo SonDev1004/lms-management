@@ -1,0 +1,60 @@
+.am-dialog .p-dialog-header{ padding:14px 20px; }
+.am-dialog .p-dialog-content{ padding:8px 20px 20px; }
+.am-dialog .p-dialog-header .p-dialog-title{ font-weight:900; color:var(--am-ink); font-size:24px; }
+.am-dialog .field{ margin:12px 0; }
+.am-dialog .label{ display:block; font-weight:800; margin-bottom:6px; color:var(--am-ink); }
+.am-dialog .footer{ display:flex; justify-content:flex-end; gap:12px; padding:0 20px 16px; }
+
+.am-detail .detail-header{
+    display:flex; justify-content:space-between; align-items:center; width:100%;
+    font-weight:900; color:var(--am-ink); font-size:22px;
+}
+.am-detail .icon-ghost{
+    background:#f1f5ff; border:1px solid #dfe5ff; border-radius:12px; padding:8px 10px; cursor:pointer;
+}
+.am-detail .icon-ghost:hover{ filter:brightness(.98); }
+
+.am-detail .avatar-lg{
+    width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+    background:#2e5bff; color:#fff; font-weight:900; margin-right:12px;
+}
+.am-detail .detail-block{ display:flex; align-items:center; margin:4px 0 14px; }
+.am-detail .kv{ margin:14px 0; }
+.am-detail .k{ color:#475569; font-weight:800; margin-bottom:6px; }
+.am-detail .v{ color:#0f1e39; font-weight:700; }
+.am-detail .footer.right{ justify-content:flex-end; }
+.btn-link{ background:transparent; border:none; color:#2741cc; font-weight:800; cursor:pointer; }
+.am-dialog .p-dialog-header { padding: 14px 20px; }
+.am-dialog .p-dialog-header .p-dialog-title {
+    font-weight: 900; color: var(--am-ink); font-size: 24px;
+}
+
+.am-detail .detail-header{
+    display:flex; align-items:center; justify-content:space-between; width:100%;
+}
+
+.am-detail .header-actions{
+    display:flex; gap:10px; align-items:center;
+}
+
+.icon-ghost{
+    background:#f1f6ff;
+    border:1px solid #dfe7ff;
+    border-radius:12px;
+    padding:8px 10px;
+    cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center;
+}
+.icon-ghost:hover{ filter:brightness(.98); }
+
+.am-dialog .p-dialog-content{ padding:8px 20px 20px; }
+.am-detail .avatar-lg{
+    width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+    background:#2e5bff; color:#fff; font-weight:900; margin-right:12px;
+}
+.am-detail .detail-block{ display:flex; align-items:center; margin:4px 0 14px; }
+.am-detail .kv{ margin:14px 0; }
+.am-detail .k{ color:#475569; font-weight:800; margin-bottom:6px; }
+.am-detail .v{ color:#0f1e39; font-weight:700; }
+.am-detail .footer.right{ justify-content:flex-end; }
+.btn-link{ background:transparent; border:none; color:#2741cc; font-weight:800; cursor:pointer; }

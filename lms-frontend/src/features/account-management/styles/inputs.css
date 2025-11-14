@@ -1,0 +1,60 @@
+:root { --am-field-h: 46px; }
+
+.am-container .p-inputtext,
+.am-container .p-dropdown,
+.am-container .p-calendar .p-inputtext,
+.am-dialog    .p-inputtext,
+.am-dialog    .p-dropdown,
+.am-dialog    .p-calendar .p-inputtext{
+    height: var(--am-field-h);
+    line-height: calc(var(--am-field-h) - 2px);
+    padding: 0 14px;
+    border-radius: 14px;
+    font-size: 16px;
+}
+
+.am-container .p-dropdown .p-dropdown-label,
+.am-dialog    .p-dropdown .p-dropdown-label{
+    padding: 0 14px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    line-height: 1;
+}
+
+.am-container .p-dropdown .p-dropdown-trigger,
+.am-dialog    .p-dropdown .p-dropdown-trigger{
+    width: 40px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--am-border);
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+.am-container .p-calendar,
+.am-dialog    .p-calendar{
+    width: 100%;
+}
+.am-container .p-calendar .p-inputtext,
+.am-dialog    .p-calendar .p-inputtext{
+    padding-right: 44px;
+}
+
+.am-container .p-inputtext::placeholder,
+.am-dialog    .p-inputtext::placeholder{
+    color: #9aa6b2;
+}
+
+.am-dialog textarea.p-inputtextarea{
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 16px;
+}
+
+.am-container .p-inputtext,
+.am-dialog    .p-inputtext{ line-height: normal; }
+
+.filters .actions .p-button{ line-height: 1; }

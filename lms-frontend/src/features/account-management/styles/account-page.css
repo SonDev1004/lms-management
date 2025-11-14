@@ -1,0 +1,7 @@
+.am-wrap{ min-height:100vh; background:var(--am-bg); }
+.am-container{ max-width:1200px; margin:0 auto; padding:32px var(--am-gutter) 96px; }
+.am-title{ font-size:56px; font-weight:900; color:var(--am-ink); letter-spacing:-.5px; }
+.am-sub{ margin-top:10px; color:var(--am-muted); font-size:18px; }
+
+.am-card{ background:var(--am-card); border:1px solid var(--am-border); border-radius:var(--am-r); box-shadow:var(--am-shadow); }
+.am-p-20{ padding:20px; }

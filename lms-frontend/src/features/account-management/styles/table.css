@@ -1,0 +1,153 @@
+/* ===== TABLE ===== */
+.am-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    background:#fff;
+    border-radius:16px;
+    border:1px solid var(--am-border);
+    overflow:hidden;
+}
+
+/* Header */
+.am-thead th{
+    position:sticky;
+    top:0;
+    background:var(--am-card);
+    font-weight:700;
+    color:var(--am-ink);
+    padding:14px 16px;
+    border-bottom:1px solid var(--am-border);
+    text-align:left;
+}
+
+/* Body */
+.am-tbody td{
+    padding:18px 16px;
+    border-bottom:1px solid var(--am-border);
+    color:#0f1e39;
+    vertical-align:middle;
+}
+.am-row:hover{ background:#fafbff; }
+
+.am-col-name{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-weight:700;
+}
+.am-avatar{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:#2e5bff;
+    color:#fff;
+    font-weight:700;
+}
+
+.am-email{ color:#445; opacity:.9; }
+
+/* Row actions (nếu dùng) */
+.am-actions{
+    display:flex;
+    gap:16px;
+    justify-content:flex-end;
+}
+.am-actions .icon-btn{
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    padding:6px;
+    color:#334;
+    opacity:.8;
+}
+.am-actions .icon-btn:hover{
+    opacity:1;
+    transform:translateY(-1px);
+}
+
+/* ===== FOOTER + PAGER ===== */
+/* Ô footer của bảng */
+.am-table tfoot td{
+    padding:12px 16px;
+    border-top:1px solid var(--am-border);
+    background:#fff;
+    text-align:center; /* canh giữa */
+}
+
+/* wrapper footer */
+.am-footer{
+    display:block;     /* để text-align ở td tác dụng */
+    text-align:center;
+    padding:12px;
+    border-top:0;
+    background:transparent;
+}
+
+/* cụm pager */
+.am-pager{
+    display:inline-flex;   /* bám theo text-align center */
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin:0 auto;
+}
+
+/* Nút trang & mũi tên */
+.am-pager .page,
+.am-pager .nav{
+    min-width:34px;
+    height:34px;
+    padding:0 8px;
+    border-radius:8px;
+    border:1px solid var(--am-border);
+    background:#fff;
+    color:#274060;
+    font-weight:700;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:transform .04s ease, background .12s ease, border-color .12s ease;
+}
+
+/* Hover */
+.am-pager .page:hover,
+.am-pager .nav:hover{
+    background:#f7faff;
+    border-color:#d7e4ff;
+}
+
+/* Trang hiện tại */
+.am-pager .page.is-active{
+    background:#eef4ff;
+    border-color:#cfe0ff;
+    color:#2741cc;
+    transform:translateY(-1px);
+}
+
+/* Disable mũi tên */
+.am-pager .nav[aria-disabled="true"]{
+    opacity:.45;
+    cursor:default;
+    pointer-events:none;
+}
+
+/* Dấu 3 chấm */
+.am-pager .gap{
+    color:#95a1b5;
+    padding:0 2px;
+}
+
+/* Responsive */
+@media (max-width:640px){
+    .am-pager .page,
+    .am-pager .nav{
+        min-width:30px;
+        height:30px;
+        border-radius:7px;
+        font-weight:600;
+    }
+}
