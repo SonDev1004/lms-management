@@ -23,8 +23,8 @@ export default function NotificationsPage() {
                 severity: n.isSeen ? "info" : "success",
                 summary: n.title,
                 detail: stripHtml(n.content || ""),
-                life: 5000,
-            }),
+                life: 5000
+            })
     });
 
     const [query, setQuery] = useState("");
@@ -38,12 +38,12 @@ export default function NotificationsPage() {
         { label: "Assignment", value: "assignment" },
         { label: "Event", value: "event" },
         { label: "Feedback", value: "feedback" },
-        { label: "System", value: "system" },
+        { label: "System", value: "system" }
     ];
     const statusOptions = [
         { label: "All", value: null },
         { label: "Unread", value: "unread" },
-        { label: "Read", value: "read" },
+        { label: "Read", value: "read" }
     ];
 
     const filtered = useMemo(() => {
@@ -68,17 +68,24 @@ export default function NotificationsPage() {
     return (
         <div className="notifications-page p-p-6">
             <Toast ref={toast} position="top-right" />
+
             <div className="notifications-container">
                 <div className="notifications-header">
-                    <h2>Notifications</h2>
-                    <div>{unreadCount} unread</div>
+                    <div>
+                        <h2 className="notifications-title">Notifications</h2>
+                        <p className="notifications-sub">
+                            {unreadCount} unread notifications
+                        </p>
+                    </div>
 
                     <div className="controls">
                         <div className="tabs">
                             {TABS.map((t) => (
                                 <button
                                     key={t.label}
-                                    className={`tab-btn ${filterType === t.value ? "active" : ""}`}
+                                    className={`tab-btn ${
+                                        filterType === t.value ? "active" : ""
+                                    }`}
                                     onClick={() => setFilterType(t.value)}
                                 >
                                     {t.label}
@@ -86,12 +93,12 @@ export default function NotificationsPage() {
                             ))}
                         </div>
 
-                        <div className="p-input-icon-left">
+                        <div className="p-input-icon-left search-input">
                             <i className="pi pi-search" />
                             <InputText
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search..."
+                                placeholder="Search notifications"
                             />
                         </div>
 
@@ -101,9 +108,15 @@ export default function NotificationsPage() {
                             onChange={(e) => setStatusFilter(e.value)}
                             optionLabel="label"
                             placeholder="Status"
+                            className="status-dropdown"
                         />
 
-                        <Button icon="pi pi-refresh" label="Refresh" onClick={load} />
+                        <Button
+                            icon="pi pi-refresh"
+                            label="Refresh"
+                            onClick={load}
+                            className="refresh-btn"
+                        />
                     </div>
                 </div>
 
@@ -115,7 +128,7 @@ export default function NotificationsPage() {
                     onOpen={(n) => {
                         setSelected(n);
                         setOpen(true);
-                        if (!n.isSeen) markRead(n.id, n); // ✅ đánh dấu đã đọc (kể cả broadcast)
+                        if (!n.isSeen) markRead(n.id, n);
                     }}
                 />
             </div>
