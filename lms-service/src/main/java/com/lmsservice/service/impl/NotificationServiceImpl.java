@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.entity.Notification;
@@ -83,12 +84,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @Transactional
     public void markAsSeen(Long notificationId) {
-        Notification n = notificationRepo
-                .findById(notificationId)
-                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_FOUND));
-        n.setSeen(true);
-        notificationRepo.save(n);
+        User user = getCurrentUser();
+        int updated = notificationRepo.markSeenByIdAndUser(notificationId, user.getId());
+        if (updated == 0) {
+            throw new AppException(ErrorCode.NOTIFICATION_NOT_FOUND);
+        }
     }
 
     @Override
@@ -96,8 +98,6 @@ public class NotificationServiceImpl implements NotificationService {
         User user = getCurrentUser();
         Notification n =
                 notificationRepo.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_FOUND));
-
-        // chỉ cho phép xem thông báo của chính user
         if (!n.getUser().getId().equals(user.getId())) {
             throw new AppException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
@@ -115,29 +115,28 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @Transactional
     public void markAllAsSeen() {
         User user = getCurrentUser();
-        List<Notification> list = notificationRepo.findUnseenByUserId(user.getId());
-        list.forEach(n -> n.setSeen(true));
-        notificationRepo.saveAll(list);
+        notificationRepo.markAllSeenByUser(user.getId());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long countUnseen() {
         User user = getCurrentUser();
-        return notificationRepo.findUnseenByUserId(user.getId()).size();
+        return notificationRepo.countUnseenByUserId(user.getId());
     }
 
     @Override
+    @Transactional
     public void deleteNotification(Long id) {
         User user = getCurrentUser();
         Notification n =
                 notificationRepo.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_FOUND));
-
         if (!n.getUser().getId().equals(user.getId())) {
             throw new AppException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
-
         notificationRepo.delete(n);
     }
 }

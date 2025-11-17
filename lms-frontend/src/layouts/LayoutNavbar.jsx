@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PanelMenu } from 'primereact/panelmenu';
 import roleToRoute from '../app/router/roleToRoute.js';
@@ -151,7 +151,7 @@ export default function LayoutNavbar({ role, children }) {
                 return hasRole || hasVisibleChildren;
             });
 
-    const visibleItems = filterByRole(items, role);
+    const visibleItems = useMemo(() => filterByRole(items, role), [items, role]);
 
     useEffect(() => {
         if (mountedRef.current) return;
@@ -160,7 +160,7 @@ export default function LayoutNavbar({ role, children }) {
             typeof window !== 'undefined' &&
             window.matchMedia &&
             window.matchMedia('(max-width: 767px)').matches;
-        setCollapsed(isSmall); // trước đây luôn true
+        setCollapsed(isSmall);
     }, []);
 
     const isOpen = !collapsed || hoverOpen;
@@ -172,6 +172,7 @@ export default function LayoutNavbar({ role, children }) {
             window.matchMedia('(max-width: 767px)').matches;
         if (collapsed && !isSmall) setHoverOpen(true);
     };
+
     const handleMouseLeave = () => {
         if (hoverOpen) setHoverOpen(false);
     };
