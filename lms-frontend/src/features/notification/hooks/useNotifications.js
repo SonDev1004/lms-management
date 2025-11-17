@@ -1,66 +1,100 @@
-import { useEffect, useState } from "react";
-import { getMyNotifications, getUnseenNotifications, markAsSeen } from "../api/notificationService";
+import {useEffect, useState} from "react";
+import {
+    getMyNotifications,
+    getUnseenNotifications,
+    markAsSeen,
+} from "../api/notificationService";
 import useNotificationSocket from "./useNotificationSocket";
 
-// ===== store module-level (dùng chung toàn app) =====
 const listeners = new Set();
+
 const toId = (v) => (v === null || v === undefined ? null : String(v));
 const eqId = (a, b) => a != null && b != null && String(a) === String(b);
+
 const normalize = (m = {}) => ({
-    id: toId(m.id), title: m.title ?? "", content: m.content ?? m.message ?? "",
-    isSeen: m.isSeen ?? m.read ?? false, type: m.type ?? m.notificationType ?? "system",
-    postedDate: m.postedDate ?? m.date ?? m.createdAt ?? null, sender: m.sender ?? "System",
-    url: m.url || "", course: m.course || "",
+    id: toId(m.id),
+    title: m.title ?? "",
+    content: m.content ?? m.message ?? "",
+    isSeen: !!(m.isSeen ?? m.read),
+    type: m.type ?? m.notificationType ?? "system",
+    postedDate: m.postedDate ?? m.date ?? m.createdAt ?? null,
+    sender: m.sender ?? "System",
+    url: m.url || "",
+    course: m.course || "",
 });
-const isSameLogical = (a, b) => {
-    if (!a || !b) return false;
-    if (a.id && b.id) return eqId(a.id, b.id);
-    return a.title === b.title && a.type === b.type &&
-        a.postedDate && b.postedDate && String(a.postedDate) === String(b.postedDate);
+
+const store = {
+    notifications: [],
+    loading: true,
 };
 
-const store = { notifications: [], loading: true };
-const emit  = () => listeners.forEach(cb => cb({ notifications: store.notifications, loading: store.loading }));
+const emit = () => {
+    const snapshot = {
+        notifications: store.notifications,
+        loading: store.loading,
+    };
+    listeners.forEach((cb) => cb(snapshot));
+};
 
 async function loadAll() {
-    store.loading = true; emit();
+    store.loading = true;
+    emit();
     try {
         const data = await getMyNotifications();
         store.notifications = (data || []).map(normalize);
     } finally {
-        store.loading = false; emit();
+        store.loading = false;
+        emit();
     }
 }
-const setLocalSeen = (id, original, seen) => {
+
+function setLocalSeen(id, seen) {
     const normId = toId(id);
-    store.notifications = store.notifications.map(n =>
-        (normId ? eqId(n.id, normId) : isSameLogical(n, original)) ? { ...n, isSeen: seen } : n
+    if (!normId) return;
+    store.notifications = store.notifications.map((n) =>
+        eqId(n.id, normId) ? {...n, isSeen: seen} : n
     );
     emit();
-};
+}
 
-// ===== hook public =====
-export function useNotifications({ onPopup, enableSocket = false } = {}) {
-    const [state, setState] = useState({ notifications: store.notifications, loading: store.loading });
+export function useNotifications({onPopup, enableSocket = false} = {}) {
+    const [state, setState] = useState({
+        notifications: store.notifications,
+        loading: store.loading,
+    });
 
     // subscribe store
     useEffect(() => {
         const cb = (s) => setState(s);
         listeners.add(cb);
-        if (store.notifications.length === 0) loadAll();
+
+        if (store.notifications.length === 0) {
+            loadAll();
+        } else {
+            cb({
+                notifications: store.notifications,
+                loading: store.loading,
+            });
+        }
+
         return () => listeners.delete(cb);
     }, []);
 
-    // ✅ GỌI HOOK Ở TOP-LEVEL (không đặt trong useEffect)
+    // socket
     useNotificationSocket(
-        (newNoti) => {
-            const safe = normalize(newNoti);
-            store.notifications = [safe, ...store.notifications.filter(x => !isSameLogical(x, safe))];
+        (raw) => {
+            const safe = normalize(raw);
+            const idx = store.notifications.findIndex((n) => eqId(n.id, safe.id));
+            if (idx >= 0) {
+                store.notifications[idx] = {...store.notifications[idx], ...safe};
+            } else {
+                store.notifications = [safe, ...store.notifications];
+            }
             emit();
             onPopup?.(safe);
         },
         {
-            enabled: enableSocket,                    // chỉ Provider bật true
+            enabled: enableSocket,
             debug: import.meta.env.DEV,
             getToken: () => localStorage.getItem("accessToken"),
         }
@@ -69,36 +103,54 @@ export function useNotifications({ onPopup, enableSocket = false } = {}) {
     // actions
     const load = () => loadAll();
 
-    const markRead = async (id, original) => {
+    const markRead = async (id) => {
         const normId = toId(id);
-        setLocalSeen(normId, original, true);   // optimistic
-        if (!normId) return true;               // broadcast (không id)
+        if (!normId) return false;
 
-        try { await markAsSeen(normId); return true; }
-        catch (e) { setLocalSeen(normId, original, false); console.warn("markRead failed", e); return false; }
+        setLocalSeen(normId, true); // optimistic
+        try {
+            await markAsSeen(normId);
+            return true;
+        } catch (e) {
+            console.warn("markRead failed", e);
+            setLocalSeen(normId, false); // rollback nếu BE lỗi
+            return false;
+        }
     };
 
     const markAllRead = async () => {
-        const snapshot = store.notifications;
-        store.notifications = snapshot.map(n => ({ ...n, isSeen: true })); emit();
+        const prev = store.notifications;
+        store.notifications = prev.map((n) => ({...n, isSeen: true}));
+        emit();
+
         try {
             const unseen = await getUnseenNotifications();
-            await Promise.allSettled((unseen || []).map(n => markAsSeen(toId(n.id))));
+            await Promise.allSettled(
+                (unseen || []).map((n) => markAsSeen(toId(n.id)))
+            );
         } catch (e) {
-            store.notifications = snapshot; emit();
             console.warn("markAllRead failed", e);
+            store.notifications = prev;
+            emit();
         }
     };
 
     const remove = (idOrObj) => {
-        const normId = typeof idOrObj === "object" ? toId(idOrObj?.id) : toId(idOrObj);
-        store.notifications = store.notifications.filter(n => {
-            if (normId) return !eqId(n.id, normId);
-            if (typeof idOrObj === "object") return !isSameLogical(n, idOrObj);
-            return true;
-        });
+        const normId =
+            typeof idOrObj === "object" ? toId(idOrObj?.id) : toId(idOrObj);
+        if (!normId) return;
+        store.notifications = store.notifications.filter(
+            (n) => !eqId(n.id, normId)
+        );
         emit();
     };
 
-    return { notifications: state.notifications, loading: state.loading, load, markRead, markAllRead, remove };
+    return {
+        notifications: state.notifications,
+        loading: state.loading,
+        load,
+        markRead,
+        markAllRead,
+        remove,
+    };
 }

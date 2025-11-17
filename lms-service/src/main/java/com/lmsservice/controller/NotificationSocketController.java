@@ -28,7 +28,8 @@ public class NotificationSocketController {
 
     /** Nếu đang cầm userId -> map sang username trước khi gửi. */
     public void sendToUserId(Long userId, NotificationResponse noti) {
-        User user = userRepository.findById(userId)
+        User user = userRepository
+                .findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
 
         // CHÚ Ý: giá trị này PHẢI trùng với Authentication#getName() bạn set ở CONNECT

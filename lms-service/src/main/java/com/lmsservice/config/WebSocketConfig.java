@@ -1,9 +1,5 @@
 package com.lmsservice.config;
 
-import com.lmsservice.security.JwtTokenProvider;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -18,6 +14,12 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import com.lmsservice.security.JwtTokenProvider;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
@@ -28,16 +30,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-notifications")     // <— FE sẽ connect vào đây
+        registry.addEndpoint("/ws-notifications") // <— FE sẽ connect vào đây
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");   // bật cả /queue cho user-destination
+        registry.enableSimpleBroker("/topic", "/queue"); // bật cả /queue cho user-destination
         registry.setApplicationDestinationPrefixes("/app");
-        registry.setUserDestinationPrefix("/user");        // chuẩn Spring cho convertAndSendToUser
+        registry.setUserDestinationPrefix("/user"); // chuẩn Spring cho convertAndSendToUser
     }
 
     @Override
@@ -45,8 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
                     try {
                         String auth = accessor.getFirstNativeHeader("Authorization");
@@ -75,4 +76,3 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         });
     }
 }
-

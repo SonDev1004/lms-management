@@ -1,11 +1,11 @@
-import React, { useMemo, useRef, useState } from "react";
-import { Toast } from "primereact/toast";
-import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { Button } from "primereact/button";
+import React, {useMemo, useRef, useState} from "react";
+import {Toast} from "primereact/toast";
+import {InputText} from "primereact/inputtext";
+import {Dropdown} from "primereact/dropdown";
+import {Button} from "primereact/button";
 import NotificationList from "../components/notificationList.jsx";
 import NotificationViewDialog from "../components/dialogs/notificationDetailDialog.jsx";
-import { useNotifications } from "../hooks/useNotifications";
+import {useNotifications} from "../hooks/useNotifications";
 import "../styles/Notifications.css";
 
 const stripHtml = (html = "") => {
@@ -16,7 +16,7 @@ const stripHtml = (html = "") => {
 
 export default function NotificationsPage() {
     const toast = useRef(null);
-    const { notifications, loading, load, markRead, remove } = useNotifications({
+    const {notifications, loading, load, markRead, remove} = useNotifications({
         enableSocket: true,
         onPopup: (n) =>
             toast.current?.show({
@@ -31,19 +31,19 @@ export default function NotificationsPage() {
     const [filterType, setFilterType] = useState(null);
     const [statusFilter, setStatusFilter] = useState(null);
     const [open, setOpen] = useState(false);
-    const [selected, setSelected] = useState(null);
+    const [selected] = useState(null);
 
     const TABS = [
-        { label: "All", value: null },
-        { label: "Assignment", value: "assignment" },
-        { label: "Event", value: "event" },
-        { label: "Feedback", value: "feedback" },
-        { label: "System", value: "system" }
+        {label: "All", value: null},
+        {label: "Assignment", value: "assignment"},
+        {label: "Event", value: "event"},
+        {label: "Feedback", value: "feedback"},
+        {label: "System", value: "system"}
     ];
     const statusOptions = [
-        { label: "All", value: null },
-        { label: "Unread", value: "unread" },
-        { label: "Read", value: "read" }
+        {label: "All", value: null},
+        {label: "Unread", value: "unread"},
+        {label: "Read", value: "read"}
     ];
 
     const filtered = useMemo(() => {
@@ -67,7 +67,7 @@ export default function NotificationsPage() {
 
     return (
         <div className="notifications-page p-p-6">
-            <Toast ref={toast} position="top-right" />
+            <Toast ref={toast} position="top-right"/>
 
             <div className="notifications-container">
                 <div className="notifications-header">
@@ -94,7 +94,7 @@ export default function NotificationsPage() {
                         </div>
 
                         <div className="p-input-icon-left search-input">
-                            <i className="pi pi-search" />
+                            <i className="pi pi-search"/>
                             <InputText
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
@@ -123,14 +123,10 @@ export default function NotificationsPage() {
                 <NotificationList
                     notifications={filtered}
                     loading={loading}
-                    onMarkRead={(id, obj) => markRead(id, obj)}
+                    onMarkRead={markRead}
                     onDelete={(idOrObj) => remove(idOrObj)}
-                    onOpen={(n) => {
-                        setSelected(n);
-                        setOpen(true);
-                        if (!n.isSeen) markRead(n.id, n);
-                    }}
                 />
+
             </div>
 
             <NotificationViewDialog

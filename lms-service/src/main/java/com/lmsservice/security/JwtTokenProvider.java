@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +20,7 @@ import com.lmsservice.exception.UnAuthorizeException;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
@@ -183,6 +182,7 @@ public class JwtTokenProvider {
         Claims claims = getAllClaimsFromToken(token, isRefreshToken);
         return claims != null ? claims.getExpiration().toInstant() : null;
     }
+
     public Authentication getAuthentication(String token) {
         try {
             if (!validateToken(token, false)) return null; // false = access token
@@ -193,5 +193,4 @@ public class JwtTokenProvider {
             return null;
         }
     }
-
 }
