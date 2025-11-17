@@ -95,8 +95,7 @@ export default function LayoutNavbar({ role, children }) {
             label: 'Attendance',
             icon: 'pi pi-check-square',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
-            // FIX: route đúng là /attendance
-            command: () => navigate(`/${roleToRoute(role)}/attendance`)
+            command: () => navigate(`/${roleToRoute(role)}/attendance`) // <- sửa route đúng
         },
 
         {
@@ -118,14 +117,12 @@ export default function LayoutNavbar({ role, children }) {
                 },
                 {
                     label: 'Tuition Revenue',
-                    // FIX: icon hợp lý cho thống kê doanh thu
                     icon: 'pi pi-chart-line',
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/tuitionrevenue')
                 },
                 {
-                    label: 'New Enrollment',
-                    // FIX: item bị thiếu dấu { } trước đó
+                    label: 'New Enrollment', // <- THÊM dấu { mở phần tử
                     icon: 'pi pi-user-plus',
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/new-enrollment')
@@ -163,8 +160,7 @@ export default function LayoutNavbar({ role, children }) {
             typeof window !== 'undefined' &&
             window.matchMedia &&
             window.matchMedia('(max-width: 767px)').matches;
-        // FIX: trước đây luôn set true; giờ desktop mở, mobile đóng
-        setCollapsed(isSmall ? true : false);
+        setCollapsed(isSmall);
     }, []);
 
     const isOpen = !collapsed || hoverOpen;
