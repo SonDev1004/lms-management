@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
-import { Paginator } from "primereact/paginator";
-import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { Skeleton } from "primereact/skeleton";
-import { getListSubject } from "@/features/subject/api/subjectService.js";
+import {useEffect, useMemo, useState} from "react";
+import {Paginator} from "primereact/paginator";
+import {InputText} from "primereact/inputtext";
+import {Dropdown} from "primereact/dropdown";
+import {Skeleton} from "primereact/skeleton";
+import {getListSubject} from "@/features/subject/api/subjectService.js";
 import SubjectCard from "@/features/subject/components/SubjectCard.jsx";
 import "../styles/subject-list.css";
 
 const SORTS = [
-    { label: "Default", value: "default" },
-    { label: "Name (A → Z)", value: "title-asc" },
-    { label: "Name (Z → A)", value: "title-desc" },
-    { label: "Tuition: Low to High", value: "price-asc" },
-    { label: "Tuition: High to Low", value: "price-desc" },
+    {label: "Default", value: "default"},
+    {label: "Name (A → Z)", value: "title-asc"},
+    {label: "Name (Z → A)", value: "title-desc"},
+    {label: "Tuition: Low to High", value: "price-asc"},
+    {label: "Tuition: High to Low", value: "price-desc"},
 ];
 
 export default function SubjectList() {
@@ -23,12 +23,12 @@ export default function SubjectList() {
     const [q, setQ] = useState("");
     const [kw, setKw] = useState("");
     const [sort, setSort] = useState("default");
-    const [paging, setPaging] = useState({ page: 1, size: 9 });
+    const [paging, setPaging] = useState({page: 1, size: 9});
 
     const fetchAll = async () => {
         try {
             setLoading(true);
-            const { items } = await getListSubject({ page: 1, size: 500 });
+            const {items} = await getListSubject({page: 1, size: 500});
             setAll(items || []);
         } catch (e) {
             console.error(e);
@@ -49,7 +49,7 @@ export default function SubjectList() {
 
     // reset về trang 1 khi đổi keyword
     useEffect(() => {
-        setPaging((p) => ({ ...p, page: 1 }));
+        setPaging((p) => ({...p, page: 1}));
     }, [kw]);
 
     // lọc + sort
@@ -64,6 +64,8 @@ export default function SubjectList() {
                     (it?.audience || "").toLowerCase().includes(kw)
             );
         }
+        const val = (s) =>
+            (s.tuitionMin ?? s.tuitionMax ?? s.fee ?? 0) * 1;
 
         switch (sort) {
             case "title-asc":
@@ -73,19 +75,12 @@ export default function SubjectList() {
                 data.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
                 break;
             case "price-asc":
-                data.sort(
-                    (a, b) =>
-                        (a.tuitionMin ?? a.tuitionMax ?? 0) -
-                        (b.tuitionMin ?? b.tuitionMax ?? 0)
-                );
+                data.sort((a, b) => val(a) - val(b));
                 break;
             case "price-desc":
-                data.sort(
-                    (a, b) =>
-                        (b.tuitionMin ?? b.tuitionMax ?? 0) -
-                        (a.tuitionMin ?? a.tuitionMax ?? 0)
-                );
+                data.sort((a, b) => val(b) - val(a));
                 break;
+
             default:
                 break;
         }
@@ -101,14 +96,14 @@ export default function SubjectList() {
 
     const onPageChange = (e) => {
         const page = Math.floor(e.first / e.rows) + 1;
-        setPaging({ page, size: e.rows });
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        setPaging({page, size: e.rows});
+        window.scrollTo({top: 0, behavior: "smooth"});
     };
 
     const clearFilters = () => {
         setQ("");
         setSort("default");
-        setPaging({ page: 1, size: 9 });
+        setPaging({page: 1, size: 9});
     };
 
     return (
@@ -125,7 +120,7 @@ export default function SubjectList() {
                 <div className="subject-toolbar">
                     {/* Search (full width on mobile) */}
                     <span className="p-input-icon-left subject-search">
-                        <i className="pi pi-search" />
+                        <i className="pi pi-search"/>
                         <InputText
                             value={q}
                             onChange={(e) => setQ(e.target.value)}
@@ -142,7 +137,7 @@ export default function SubjectList() {
                                 value={sort}
                                 onChange={(e) => {
                                     setSort(e.value);
-                                    setPaging((p) => ({ ...p, page: 1 }));
+                                    setPaging((p) => ({...p, page: 1}));
                                 }}
                                 className="subject-sort"
                             />
@@ -157,7 +152,7 @@ export default function SubjectList() {
                                     value: n,
                                 }))}
                                 onChange={(e) =>
-                                    setPaging((p) => ({ ...p, size: e.value, page: 1 }))
+                                    setPaging((p) => ({...p, size: e.value, page: 1}))
                                 }
                                 className="subject-size"
                             />
@@ -181,13 +176,13 @@ export default function SubjectList() {
 
             {loading ? (
                 <div className="grid">
-                    {Array.from({ length: 6 }).map((_, i) => (
+                    {Array.from({length: 6}).map((_, i) => (
                         <div key={i} className="col-12 md:col-6 lg:col-4">
                             <div className="card skeleton-card">
-                                <Skeleton height="180px" className="mb-3" />
-                                <Skeleton width="70%" className="mb-2" />
-                                <Skeleton width="40%" className="mb-3" />
-                                <Skeleton height="40px" />
+                                <Skeleton height="180px" className="mb-3"/>
+                                <Skeleton width="70%" className="mb-2"/>
+                                <Skeleton width="40%" className="mb-3"/>
+                                <Skeleton height="40px"/>
                             </div>
                         </div>
                     ))}
@@ -197,7 +192,7 @@ export default function SubjectList() {
                     <div className="grid">
                         {items.map((p) => (
                             <div key={p.id} className="col-12 md:col-6 lg:col-4">
-                                <SubjectCard subject={p} />
+                                <SubjectCard subject={p}/>
                             </div>
                         ))}
                     </div>
@@ -213,7 +208,7 @@ export default function SubjectList() {
                 </>
             ) : (
                 <div className="empty-state">
-                    <img alt="No data" src="/no-data-illustration.svg" />
+                    <img alt="No data" src="/no-data-illustration.svg"/>
                     <h3>No matching subjects found</h3>
                     <p>Try a different keyword or remove sorting options.</p>
                 </div>

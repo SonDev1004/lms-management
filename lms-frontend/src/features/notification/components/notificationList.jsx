@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Card } from 'primereact/card';
-import { Paginator } from 'primereact/paginator';
-import NotificatioItem from './notificatioItem.jsx';
-import NotificationDetailDialog from './dialogs/notificationDetailDialog.jsx';
+import React, {useState} from "react";
+import {Card} from "primereact/card";
+import {Paginator} from "primereact/paginator";
+import NotificatioItem from "./notificatioItem.jsx";
+import NotificationDetailDialog from "./dialogs/notificationDetailDialog.jsx";
 
-export default function NotificationList({ notifications = [], loading, onMarkRead, onDelete }) {
+export default function NotificationList({notifications = [], loading, onMarkRead, onDelete}) {
     const [first, setFirst] = useState(0);
     const [rows, setRows] = useState(6);
     const [selected, setSelected] = useState(null);
@@ -13,7 +13,9 @@ export default function NotificationList({ notifications = [], loading, onMarkRe
     const openDetail = (n) => {
         setSelected(n);
         setOpen(true);
-        if (!n.read) onMarkRead(n.id);
+        if (!n.isSeen && onMarkRead) {
+            onMarkRead(n.id);
+        }
     };
 
     const handlePageChange = (e) => {
@@ -21,27 +23,63 @@ export default function NotificationList({ notifications = [], loading, onMarkRe
         setRows(e.rows);
     };
 
+    const pageItems = notifications.slice(first, first + rows);
+
     return (
         <div>
             <Card className="notifications-card">
                 {loading ? (
-                    <div style={{ padding: 24, textAlign: 'center' }}>Đang tải...</div>
-                ) : notifications.length === 0 ? (
-                    <div style={{ padding: 24, textAlign: 'center' }}>Không có thông báo.</div>
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {notifications.slice(first, first + rows).map((n) => (
-                            <NotificatioItem key={n.id} n={n} onOpen={openDetail} onDelete={onDelete} />
-                        ))}
+                    <div style={{padding: 24, textAlign: "center"}}>
+                        Đang tải...
                     </div>
-                )}
+                ) : notifications.length === 0 ? (
+                    <div style={{padding: 24, textAlign: "center"}}>
+                        Không có thông báo.
+                    </div>
+                ) : (
+                    <>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 12,
+                            }}
+                        >
+                            {pageItems.map((n) => (
+                                <NotificatioItem
+                                    key={n.id}
+                                    n={n}
+                                    onOpen={openDetail}
+                                    onDelete={onDelete}
+                                />
+                            ))}
+                        </div>
 
-                <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-                    <Paginator first={first} rows={rows} totalRecords={notifications.length} onPageChange={handlePageChange} rowsPerPageOptions={[6, 12, 24]} />
-                </div>
+                        <div
+                            style={{
+                                marginTop: 16,
+                                display: "flex",
+                                justifyContent: "flex-end",
+                            }}
+                        >
+                            <Paginator
+                                first={first}
+                                rows={rows}
+                                totalRecords={notifications.length}
+                                onPageChange={handlePageChange}
+                                rowsPerPageOptions={[6, 12, 24]}
+                            />
+                        </div>
+                    </>
+                )}
             </Card>
 
-            <NotificationDetailDialog visible={open} onHide={() => setOpen(false)} notification={selected} onDelete={onDelete} />
+            <NotificationDetailDialog
+                visible={open}
+                onHide={() => setOpen(false)}
+                notification={selected}
+                onDelete={onDelete}
+            />
         </div>
     );
 }

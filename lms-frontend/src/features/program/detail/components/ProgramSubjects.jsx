@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import { sessionsText, shortDate } from "../utils/format";
 import CourseClassesDialog from "@/features/program/detail/components/CourseClassesDialog.jsx";
 import "../styles/subjects-section.css";
+import {parseCurrency} from "@/features/payment/utils/money.js";
 
 export default function ProgramSubjects({ program }) {
     const navigate = useNavigate();
@@ -45,25 +46,19 @@ export default function ProgramSubjects({ program }) {
 
     // ---- navigate to payment
     const handleRegister = (subject, course) => {
-        const price =
-            course?.price ??
-            course?.tuition ??
-            subject?.price ??
-            program?.price ??
-            0;
+        const rawPrice =
+            course?.price ?? course?.fee ?? course?.tuition ??
+            subject?.price ?? subject?.fee ??
+            program?.fee ?? program?.price ?? 0;
+
+        const price = parseCurrency(rawPrice);
 
         const selectedItem = {
-            type: "subject",
+            type: 'subject',
             programId: program?.id ?? null,
             subjectId: subject?.id ?? null,
-            title:
-                course?.displayName ||
-                course?.name ||
-                course?.title ||
-                subject?.title ||
-                "Course",
-            price,
-            // meta để PaymentForm hiển thị “card bên trái”
+            title: course?.displayName || course?.name || course?.title || subject?.title || 'Course',
+            price,                                   // 👈 số thô
             meta: {
                 subject: {
                     id: subject?.id,
@@ -73,21 +68,15 @@ export default function ProgramSubjects({ program }) {
                 },
                 class: {
                     id: course?.id,
-                    schedule: course?.scheduleText || "",
+                    schedule: course?.scheduleText || '',
                     startDate: course?.startDate || null,
-                    capacity:
-                        typeof course?.capacity === "number"
-                            ? course.capacity
-                            : null,
-                    statusName:
-                        course?.statusName ||
-                        course?.status ||
-                        "Upcoming",
+                    capacity: typeof course?.capacity === 'number' ? course.capacity : null,
+                    statusName: course?.statusName || course?.status || 'Upcoming',
                 },
             },
         };
 
-        navigate("/payment", { state: { selectedItem } });
+        navigate('/payment', { state: { selectedItem } });
     };
 
     return (

@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import com.lmsservice.entity.Permission;
@@ -16,7 +20,9 @@ import com.lmsservice.exception.UnAuthorizeException;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Component
 /**
  * Cung cấp các phương thức để tạo và xác thực JWT (JSON Web Token).
@@ -24,6 +30,7 @@ import io.jsonwebtoken.security.Keys;
  * trong ứng dụng Spring Security.
  */
 public class JwtTokenProvider {
+    private final UserDetailsService userDetailsService;
 
     @Value("${jwt.accessKey}")
     private String accessSecret;
@@ -174,5 +181,16 @@ public class JwtTokenProvider {
     public Instant getExpirationDate(String token, boolean isRefreshToken) {
         Claims claims = getAllClaimsFromToken(token, isRefreshToken);
         return claims != null ? claims.getExpiration().toInstant() : null;
+    }
+
+    public Authentication getAuthentication(String token) {
+        try {
+            if (!validateToken(token, false)) return null; // false = access token
+            String username = getUsernameFromToken(token, false);
+            UserDetails principal = userDetailsService.loadUserByUsername(username);
+            return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

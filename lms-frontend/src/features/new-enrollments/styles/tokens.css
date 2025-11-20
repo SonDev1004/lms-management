@@ -1,0 +1,33 @@
+:root{
+    --pg-ink:#0f1e39;
+    --pg-muted:#5b6f87;
+    --pg-card:#ffffff;
+    --pg-bg:#f6f8ff;
+    --pg-ring:#e7eeff;
+
+    --pg-primary:#06b6d4;
+    --pg-primary-weak:#eefbff;
+
+    --pg-approve:#16a34a;
+    --pg-approve-bg:#e9fbf2;
+
+    --pg-reject:#ef4444;
+    --pg-reject-bg:#ffe9ec;
+
+    --pg-pending:#8a6a13;
+    --pg-pending-bg:#fff6db;
+
+    --pg-paid:#138a5b;
+    --pg-paid-bg:#e9fbf2;
+
+    --pg-unpaid:#b23a48;
+    --pg-unpaid-bg:#ffe9ec;
+
+    --pg-refunded:#3a5eb2;
+    --pg-refunded-bg:#e9efff;
+
+    --pg-partial:#8a6a13;
+    --pg-partial-bg:#fff6db;
+
+    --pg-shadow:0 14px 38px rgba(15,23,42,.08), 0 2px 6px rgba(15,23,42,.04);
+}

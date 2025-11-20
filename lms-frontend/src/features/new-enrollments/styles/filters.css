@@ -1,0 +1,246 @@
+/* ==== FILTER CARD – chỉ dùng trong trang NewEnrollments (.ne-wrap) ==== */
+
+.ne-wrap .ne-field :where(.p-inputtext, .p-inputtextarea, .p-dropdown, .p-multiselect, .p-calendar, .p-autocomplete) {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 10px;
+    border: 1px solid #e6e9ef !important;
+    box-shadow: none !important;
+    background: #fcfdff;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+
+/* Label */
+.ne-wrap .ne-field-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f1e39;
+    margin: 0 0 6px;
+}
+
+/* ==== GRID 2 HÀNG:
+   Hàng 1: Status | Payment | Reset/Export
+   Hàng 2: From | To | Program | Course
+==== */
+
+.ne-wrap .ne-inline {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 10px;
+    align-items: flex-end;
+}
+
+.ne-wrap .ne-field {
+    width: 100%;
+}
+
+/* Hàng trên */
+.ne-wrap .ne-field-status {
+    grid-column: span 4;
+}
+
+.ne-wrap .ne-field-pay {
+    grid-column: span 4;
+}
+
+.ne-wrap .ne-qa {
+    grid-column: span 4;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Hàng dưới */
+.ne-wrap .ne-field-from,
+.ne-wrap .ne-field-to,
+.ne-wrap .ne-field-program,
+.ne-wrap .ne-field-course {
+    grid-column: span 3;
+}
+
+/* ==== PRIME INPUTS – chỉ trong NewEnrollments ==== */
+
+.ne-wrap
+.ne-field
+:where(
+        .p-inputtext,
+        .p-inputtextarea,
+        .p-dropdown,
+        .p-multiselect,
+        .p-calendar,
+        .p-autocomplete
+    ) {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 10px;
+    border: 1px solid #e6e9ef !important;
+    box-shadow: none !important;
+    background: #fcfdff;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+/* text input */
+.ne-wrap .ne-field .p-inputtext,
+.ne-wrap .ne-field .p-inputtextarea {
+    padding: 10px 12px;
+}
+
+/* dropdown */
+/* ==== DROPDOWN – căn lại cho thẳng hàng ==== */
+
+/* wrapper dropdown: không padding, chỉ border & radius */
+.ne-wrap .ne-field .p-dropdown {
+    padding: 0;
+    min-height: 44px;
+    border-radius: 10px;
+    border: 1px solid #e6e9ef !important;
+    background: #fcfdff;
+    display: flex;
+    align-items: stretch;
+}
+
+/* phần label bên trái: căn giữa dọc, padding 2 bên */
+.ne-wrap .ne-field .p-dropdown .p-dropdown-label {
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 0%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* nút mũi tên bên phải */
+.ne-wrap .ne-field .p-dropdown .p-dropdown-trigger {
+    flex: 0 0 auto;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    height: 44px;
+}
+
+
+/* calendar */
+.ne-wrap .ne-field .p-calendar .p-inputtext {
+    padding: 10px 12px;
+}
+
+.ne-wrap .ne-field .p-calendar .p-datepicker-trigger.p-button {
+    width: 40px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+/* focus */
+.ne-wrap .ne-field .p-inputtext:focus,
+.ne-wrap .ne-field .p-inputtextarea:focus {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.06) !important;
+    border-color: rgba(59, 130, 246, 0.6) !important;
+}
+
+/* ==== PRESETS dưới From Date ==== */
+
+.ne-wrap .ne-presets {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.ne-wrap .ne-presets button {
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #f6f8ff;
+    color: #334155;
+    border: 1px solid #e7ecfe;
+    cursor: pointer;
+}
+
+.ne-wrap .ne-presets button:hover {
+    box-shadow: 0 0 0 3px #e7eeff inset;
+}
+
+.ne-wrap .ne-presets .muted {
+    background: #ffffff;
+}
+
+/* ==== NÚT Reset / Export ==== */
+
+.ne-wrap .ne-btn-reset.p-button,
+.ne-wrap .ne-btn-export.p-button {
+    height: 40px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #334155;
+    border: 1px solid #e7ecfe;
+    padding: 0 14px;
+    font-weight: 600;
+}
+
+.ne-wrap .ne-btn-reset.p-button:hover,
+.ne-wrap .ne-btn-export.p-button:hover {
+    box-shadow: 0 0 0 4px #e7eeff inset;
+}
+
+/* ==== RESPONSIVE ==== */
+
+@media (max-width: 992px) {
+    .ne-wrap .ne-inline {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .ne-wrap .ne-field-status,
+    .ne-wrap .ne-field-pay {
+        grid-column: span 3;
+    }
+
+    .ne-wrap .ne-qa {
+        grid-column: span 6;
+        justify-content: flex-start;
+    }
+
+    .ne-wrap .ne-field-from,
+    .ne-wrap .ne-field-to,
+    .ne-wrap .ne-field-program,
+    .ne-wrap .ne-field-course {
+        grid-column: span 3;
+    }
+}
+
+@media (max-width: 640px) {
+    .ne-wrap .ne-inline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ne-wrap .ne-field-status,
+    .ne-wrap .ne-field-pay,
+    .ne-wrap .ne-qa,
+    .ne-wrap .ne-field-from,
+    .ne-wrap .ne-field-to,
+    .ne-wrap .ne-field-program,
+    .ne-wrap .ne-field-course {
+        grid-column: span 2;
+    }
+
+    .ne-wrap .ne-qa {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .ne-wrap .ne-btn-reset.p-button,
+    .ne-wrap .ne-btn-export.p-button {
+        width: 100%;
+    }
+}
