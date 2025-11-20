@@ -1,10 +1,10 @@
 import axiosClient from "@/shared/api/axiosClient.js";
-import { AppUrls } from "@/shared/constants/index.js";
+import {AppUrls} from "@/shared/constants/index.js";
 
-export async function getListSubject({ page = 1, size = 10 } = {}) {
+export async function getListSubject({page = 1, size = 10} = {}) {
     const url = AppUrls.listSubject;
     try {
-        const res = await axiosClient.get(url, { params: { page, size } });
+        const res = await axiosClient.get(url, {params: {page, size}});
         const data = res?.data ?? res;
         const result = data?.result ?? {};
         return {
@@ -24,20 +24,34 @@ export async function getListSubject({ page = 1, size = 10 } = {}) {
     }
 }
 
-function mapSubject(item) {
+function mapSubject(item = {}) {
+
+    const image = item.imgUrl ?? item.image ?? "/noimg.png";
+
+    const fee = Number(item.fee) || 0;
+
+    const tuitionMin =
+        Number(item.tuitionMin ?? item.minFee ?? item.feeMin ?? fee) || 0;
+    const tuitionMax =
+        Number(item.tuitionMax ?? item.maxFee ?? item.feeMax ?? fee) || 0;
+
     return {
         id: item.id,
         title: item.title,
         code: item.code?.trim?.() ?? "",
         sessionNumber: Number(item.sessionNumber) || 0,
-        fee: Number(item.fee),
-        image: item.image || "/noimg.png",
+        fee,
+        tuitionMin,
+        tuitionMax,
+        image,
         minStudent: Number(item.minStudent) || 0,
         maxStudent: Number(item.maxStudent) || 0,
         description: item.description ?? "",
+        audience: item.audience ?? "",
         isActive: Boolean(item.isActive),
     };
 }
+
 
 export async function getSubjectDetail(subjectId) {
     const url = AppUrls.getDetailSubject(subjectId);

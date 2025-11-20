@@ -1,0 +1,18 @@
+.audit-header{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:24px; }
+.eyebrow{ color:#111827; font-weight:700; margin-bottom:6px; }
+.audit-title{ margin:0; font-size:32px; font-weight:800; line-height:1.1; }
+.audit-sub{ color:var(--muted); margin-top:8px; }
+
+.audit-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+.p-button.p-button-outlined{ background:#fff; color:#0f172a; border:1px solid var(--border); border-radius:12px; padding:10px 16px; font-weight:700; }
+.p-button.p-button-outlined:hover{ background:#f8fafc; border-color:#e2e8f0; }
+.p-button:focus{ box-shadow:0 0 0 3px var(--ring); }
+.p-button .p-button-icon{ margin-right:8px; }
+
+.audit-meta{ display:flex; align-items:center; gap:10px; color:var(--muted); margin:12px 0; }
+
+.table-card{ padding:0; margin-top:6px; }
+.p-datatable .p-datatable-header{ border:0; background:#fff; }
+.p-datatable .p-datatable-thead > tr > th{ background:#fff; border-top:1px solid var(--border); border-bottom:1px solid var(--border); font-weight:700; }
+.p-datatable .p-datatable-tbody > tr > td{ border:0; border-top:1px solid #f1f5f9; }
+.ip-eye{ cursor:pointer; }

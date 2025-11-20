@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PanelMenu } from 'primereact/panelmenu';
 import roleToRoute from '../app/router/roleToRoute.js';
@@ -63,11 +63,17 @@ export default function LayoutNavbar({ role, children }) {
                     command: () => navigate(`/${roleToRoute(role)}/teacher-list`)
                 },
                 {
-                    label: 'Feedback',
+                    label: 'Monitoring & Feedback',
                     icon: 'pi pi-check-square',
                     roles: ['ACADEMIC_MANAGER'],
                     command: () => navigate(`/${roleToRoute(role)}/feedback`)
                 },
+                {
+                    label: 'Master Timetable',
+                    icon: 'pi pi-table',
+                    roles: ['ACADEMIC_MANAGER'],
+                    command: () => navigate(`/${roleToRoute(role)}/schedule-overview`)
+                }
             ]
         },
 
@@ -81,8 +87,15 @@ export default function LayoutNavbar({ role, children }) {
         {
             label: 'Notifications',
             icon: 'pi pi-bell',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/notification`)
+        },
+
+        {
+            label: 'Attendance',
+            icon: 'pi pi-check-square',
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/attendance`) // <- sửa route đúng
         },
 
         {
@@ -102,19 +115,31 @@ export default function LayoutNavbar({ role, children }) {
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/upload')
                 },
+                {
+                    label: 'Tuition Revenue',
+                    icon: 'pi pi-chart-line',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/tuitionrevenue')
+                },
+                {
+                    label: 'New Enrollment', // <- THÊM dấu { mở phần tử
+                    icon: 'pi pi-user-plus',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate('/admin/new-enrollment')
+                }
             ]
         },
+
         {
             label: 'Profile',
             icon: 'pi pi-user',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/profile`)
-        },
-
+        }
     ];
 
-    const filterByRole = (list, role) => {
-        return list
+    const filterByRole = (list, role) =>
+        list
             .map((item) => {
                 const newItem = { ...item };
                 if (item.items) newItem.items = filterByRole(item.items, role);
@@ -125,9 +150,8 @@ export default function LayoutNavbar({ role, children }) {
                 const hasVisibleChildren = Array.isArray(item.items) && item.items.length > 0;
                 return hasRole || hasVisibleChildren;
             });
-    };
 
-    const visibleItems = filterByRole(items, role);
+    const visibleItems = useMemo(() => filterByRole(items, role), [items, role]);
 
     useEffect(() => {
         if (mountedRef.current) return;
@@ -136,7 +160,7 @@ export default function LayoutNavbar({ role, children }) {
             typeof window !== 'undefined' &&
             window.matchMedia &&
             window.matchMedia('(max-width: 767px)').matches;
-        setCollapsed(isSmall ? true : true);
+        setCollapsed(isSmall);
     }, []);
 
     const isOpen = !collapsed || hoverOpen;
@@ -148,6 +172,7 @@ export default function LayoutNavbar({ role, children }) {
             window.matchMedia('(max-width: 767px)').matches;
         if (collapsed && !isSmall) setHoverOpen(true);
     };
+
     const handleMouseLeave = () => {
         if (hoverOpen) setHoverOpen(false);
     };
