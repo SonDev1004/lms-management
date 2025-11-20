@@ -6,7 +6,7 @@ import StatsRow from "../components/about/StatsRow";
 import MethodGrid from "../components/about/MethodGrid";
 import TeachersGrid from "../components/about/TeachersGrid";
 import BadgesGrid from "../components/about/BadgesGrid";
-import Timeline from "../components/about/Timeline";
+import TimeLine from "../components/about/TimeLine.jsx";
 import Testimonials from "../components/about/Testimonials";
 import FAQ from "../components/about/FAQ";
 
@@ -43,7 +43,7 @@ export default function AboutPage() {
 
                 <section className="section section--soft">
                     <h2 className="section-title">5 Years of Growing with Vietnamese Learners</h2>
-                    <Timeline />
+                    <TimeLine />
                 </section>
 
                 <section className="section">

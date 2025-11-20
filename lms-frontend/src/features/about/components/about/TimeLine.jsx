@@ -2,7 +2,7 @@ import React from "react";
 import { timeline } from "../../mocks/about.mocks";
 import "../../styles/timeline.css";
 
-export default function Timeline() {
+export default function TimeLine() {
     return (
         <section className="section tl">
             <h2 className="tl__title">5 Years of Growing with Vietnamese Learners</h2>
