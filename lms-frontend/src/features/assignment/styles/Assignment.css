@@ -4,15 +4,22 @@
 .assignment-root {
     padding: 12px;
     font-family: inherit;
+    /* phóng to base một chút */
+    font-size: 0.95rem;
 }
 
 /* filter row */
 .assign-filter-row .assign-filter-btn {
-    padding: 4px 8px;     /* thu nhỏ nút */
-    font-size: 0.78rem;   /* chữ nhỏ hơn */
-    height: 30px;
+    padding: 6px 10px;
+    font-size: 0.9rem;      /* TO HƠN */
+    height: 34px;
     line-height: 1;
-    border-radius: 6px;
+    border-radius: 8px;
+}
+
+/* chữ bên trong nút filter (PrimeReact Button) */
+.assign-filter-btn .p-button-label {
+    font-size: 0.9rem;      /* TO HƠN */
 }
 
 /* danh sách */
@@ -28,7 +35,7 @@
     grid-template-columns: 1fr 140px 200px 180px; /* title | due | status | action */
     gap: 12px;
     align-items: center;
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-bottom: 1px solid #eee;
     background: #fff;
 }
@@ -51,20 +58,22 @@
     align-items: center;
 }
 .assign-icon {
-    font-size: 1.5rem;
+    font-size: 1.6rem;      /* icon to hơn chút */
 }
 .assign-title-text {
     font-weight: 600;
+    font-size: 1rem;        /* TO HƠN */
 }
 .assign-sub {
     margin-top: 4px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;      /* TO HƠN */
     color: #6b7280;
 }
 
 /* due column */
 .ar-col--due .due-date {
     font-weight: 500;
+    font-size: 0.95rem;     /* TO HƠN */
 }
 
 /* status column */
@@ -74,37 +83,44 @@
     gap: 6px;
 }
 .status-tag {
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+}
+/* chữ trong Tag */
+.status-tag .p-tag-value {
+    font-size: 0.9rem;      /* TO HƠN */
 }
 .overdue-text {
     color: #dc2626; /* danger red */
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.9rem;      /* TO HƠN */
 }
 
 /* action column */
 .action-row {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
     justify-content: flex-end;
 }
-.btn-view {
-    min-width: 84px;
-}
+.btn-view,
+.btn-grade,
 .btn-upload .p-button {
-    /* FileUpload basic mode uses internal button - keep default small */
+    font-size: 0.9rem;      /* TO HƠN */
+}
+.btn-view {
+    min-width: 90px;
 }
 .btn-grade {
-    min-width: 56px;
-    border-radius: 10px;
+    min-width: 60px;
+    border-radius: 12px;
 }
 
 /* empty */
 .assign-empty {
     padding: 12px;
     color: #6b7280;
+    font-size: 0.95rem;     /* TO HƠN */
 }
 
 /* highlight overdue row slightly */

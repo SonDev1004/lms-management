@@ -1,4 +1,3 @@
-// src/components/dialogs/NotificationDetailDialog.jsx
 import React from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Avatar } from 'primereact/avatar';

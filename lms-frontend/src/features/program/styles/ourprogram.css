@@ -1,4 +1,3 @@
-/* ===== Tokens (tham chiếu nếu đã có tokens chung) ===== */
 :root{
     --ourp-bg:#F6F9FF;
     --ourp-ink:#0f1e39;
@@ -7,13 +6,11 @@
     --ourp-ring:#E7EEFF;
 }
 
-/* ===== Layout wrap ===== */
 .ourp-wrap{
     background:var(--ourp-bg);
     padding:24px 16px 56px;
 }
 
-/* ===== Header ===== */
 .ourp-head{
     display:flex;
     align-items:center;
@@ -26,68 +23,80 @@
     margin:0;
     color:var(--ourp-ink);
     font-weight:800;
-    font-size:40px; /* 38–44 tuỳ theme */
+    font-size:40px;
     line-height:1.1;
 }
 
-/* Cụm bên phải */
 .ourp-right{
-    flex:1;
+    flex:0 0 auto;
     display:flex;
     justify-content:flex-end;
 }
 
-/* Searchbar: input + clear + tag kết quả */
 .ourp-searchbar{
     display:flex;
     align-items:center;
     gap:10px;
-    max-width:760px;
-    width:100%;
+    width:auto;
+    max-width:460px;
+    justify-content:flex-end;
 }
 
 .ourp-input{
-    flex:1;
+    flex:1 1 auto;
+    min-width:260px;
 }
-.ourp-searchbar .p-input-icon-left{ width:100%; }
+
+.ourp-searchbar .p-input-icon-left{
+    width:100%;
+}
+
 .ourp-searchbar .p-inputtext{
     width:100%;
     border-radius:14px;
     border:1px solid #e5e7eb;
     background:#fff;
-    padding-left:2.25rem; /* chừa chỗ cho icon */
+    padding-left:2.25rem;
 }
 
-/* tinh chỉnh icon-left */
 .p-input-icon-left > i{ left:.75rem; }
 
-/* Tag đếm kết quả */
 .ourp-count{
     border-radius:999px;
     padding:6px 12px;
     font-weight:600;
 }
 
-/* ===== Grid/Card spacing ===== */
 .program-card{ margin-top:8px; }
 .pg-cell{ height:100%; }
 
-/* ===== Paginator center ===== */
 .ourp-paginator{
     margin-top:8px;
     display:flex;
     justify-content:center;
 }
 
-/* ===== Responsive ===== */
 @media (max-width: 992px){
-    .ourp-searchbar{ max-width:100%; }
+    .ourp-searchbar{
+        max-width:100%;
+    }
 }
+
 @media (max-width: 768px){
     .ourp-head{
         align-items:flex-start;
         flex-direction:column;
         gap:12px;
     }
-    .ourp-right{ width:100%; }
+    .ourp-right{
+        width:100%;
+        justify-content:flex-end;
+    }
+    .ourp-searchbar{
+        width:100%;
+        max-width:100%;
+    }
+    .ourp-input{
+        min-width:0;
+    }
 }

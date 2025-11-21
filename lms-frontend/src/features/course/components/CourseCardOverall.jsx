@@ -46,7 +46,7 @@ export default function CourseCardOverall({ course, role, onAction }) {
                 </div>
             }
             subTitle={<div className="text-sm">{course.subject_name}</div>}
-            className=" mb-3 shadow-2 rounded-2xl h-full"
+            className=" mb-2 shadow-2 rounded-2xl h-full"
             footer={footer}
         >
             <div className="">

@@ -1,264 +1,186 @@
-/* ===============================
-   Teacher Edit Dialog – Polished
-   Works with dialogClassName="teacher-edit-dialog"
-   PrimeReact 9+ friendly
-   =============================== */
-
-/* ---------- Theme tokens ---------- */
-:root{
-    --tg-text-900:#0f172a;         /* main text */
-    --tg-text-600:#475569;         /* secondary text */
-    --tg-muted:#64748b;
-    --tg-border:#e2e8f0;
-    --tg-surface:#ffffff;
-    --tg-surface-2:#f8fafc;
-    --tg-primary:#0ea5e9;
-    --tg-primary-700:#0284c7;
-    --tg-success:#10b981;
-    --tg-danger:#ef4444;
-    --tg-warning:#f59e0b;
-    --tg-radius:14px;
-    --tg-radius-sm:10px;
-    --tg-shadow:0 14px 36px rgba(2,38,53,.12);
+.teacher-edit-dialog .p-dialog {
+    border-radius: 18px;
+    overflow: hidden;
 }
 
-/* Optional dark mode (if app toggles a .dark class on body) */
-.dark .teacher-edit-dialog{
-    --tg-text-900:#e5e7eb;
-    --tg-text-600:#cbd5e1;
-    --tg-muted:#a8b3cf;
-    --tg-border:#334155;
-    --tg-surface:#0b1220;
-    --tg-surface-2:#0f172a;
-    --tg-shadow:0 14px 36px rgba(0,0,0,.6);
-    --tg-primary:#38bdf8;
-    --tg-primary-700:#0891b2;
+.teacher-edit-dialog .p-dialog-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eef2f7;
 }
 
-/* ---------- Dialog chrome ---------- */
-.teacher-edit-dialog .p-dialog{
-    width:min(920px, 92vw);
-    background:var(--tg-surface);
-    border-radius:calc(var(--tg-radius) + 2px);
-    box-shadow:var(--tg-shadow);
-    overflow:hidden;
+.teacher-edit-dialog .p-dialog-title {
+    font-weight: 700;
+    font-size: 18px;
 }
 
-.teacher-edit-dialog .p-dialog-header{
-    padding:18px 24px;
-    border-bottom:1px solid var(--tg-border);
-    background:linear-gradient(180deg, var(--tg-surface-2), var(--tg-surface));
+.teacher-edit-dialog .p-dialog-content {
+    padding: 18px 20px 16px;
 }
 
-.teacher-edit-dialog .p-dialog-title{
-    font-size:1.25rem;
-    font-weight:700;
-    color:var(--tg-text-900);
-    letter-spacing:.2px;
+.teacher-edit-dialog .form-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 20px;
+    align-items: flex-start;
 }
 
-.teacher-edit-dialog .p-dialog-header-icon{
-    border-radius:10px;
-}
-.teacher-edit-dialog .p-dialog-header-icon:hover{
-    background:rgba(2,38,53,.06);
-}
-
-.teacher-edit-dialog .p-dialog-content{
-    padding:20px 24px 8px;
-    background:var(--tg-surface);
+.teacher-edit-dialog .avatar-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
-/* Sticky footer with subtle blur */
-.teacher-edit-dialog .p-dialog-footer{
-    position:sticky;
-    bottom:0;
-    background:color-mix(in oklab, var(--tg-surface) 86%, transparent);
-    backdrop-filter:saturate(1.2) blur(6px);
-    border-top:1px solid var(--tg-border);
-    padding:12px 20px;
-    z-index:2;
+.teacher-edit-dialog .avatar-card .avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e5e9f0;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
-/* ---------- Layout grid ---------- */
-.teacher-edit-dialog .form-grid{
-    display:grid;
-    grid-template-columns: 220px 1fr; /* avatar/side – form */
-    gap:22px;
-    align-items:start;
+.teacher-edit-dialog .form-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    row-gap: 14px;
 }
 
-/* Two-column form area */
-.teacher-edit-dialog .form-fields{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:16px 18px;
+.teacher-edit-dialog .form-group,
+.teacher-edit-dialog .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-/* Make some fields span 2 columns by adding form-group--full (optional) */
-.teacher-edit-dialog .form-group--full{ grid-column:1 / -1; }
-
-/* ---------- Avatar block ---------- */
-.teacher-edit-dialog .avatar-card{
-    background:var(--tg-surface-2);
-    border:1px dashed var(--tg-border);
-    border-radius:var(--tg-radius);
-    padding:18px;
-    text-align:center;
+.teacher-edit-dialog .form-group > label,
+.teacher-edit-dialog .field > label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0f172a;
 }
 
-.teacher-edit-dialog .avatar{
-    width:128px; height:128px;
-    border-radius:50%;
-    object-fit:cover;
-    box-shadow:0 6px 18px rgba(2,38,53,.16);
-    border:4px solid var(--tg-surface);
-    margin:6px auto 12px;
-    display:block;
+.teacher-edit-dialog input.p-inputtext,
+.teacher-edit-dialog textarea.p-inputtext,
+.teacher-edit-dialog .p-inputnumber-input {
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
 }
 
-.teacher-edit-dialog .change-photo{
-    display:inline-flex; gap:8px; align-items:center;
-    color:var(--tg-primary);
-    font-weight:600;
-    cursor:pointer;
-    padding:8px 10px;
-    border-radius:10px;
-    transition:all .18s ease;
-}
-.teacher-edit-dialog .change-photo:hover{
-    background:color-mix(in oklab, var(--tg-primary) 12%, transparent);
-}
-
-/* ---------- Field wrappers ---------- */
-.teacher-edit-dialog .form-group label{
-    display:block;
-    font-size:.9rem;
-    font-weight:700;
-    color:var(--tg-text-600);
-    margin-bottom:6px;
+.teacher-edit-dialog .p-dropdown {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #dbe5f3;
+    background: #ffffff;
+    box-shadow: none;
+    font-size: 14px;
+    padding: 0;
 }
 
-.teacher-edit-dialog .hint{
-    font-size:.8rem;
-    color:var(--tg-muted);
-    margin-top:6px;
+.teacher-edit-dialog .p-dropdown .p-dropdown-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    height: 100%;
+    margin: 0;
+    padding: 0 32px !important;
+    text-align: center !important;
+    line-height: 1;
 }
 
-/* ---------- Prime inputs normalization ---------- */
-.teacher-edit-dialog .p-inputtext,
-.teacher-edit-dialog .p-dropdown,
-.teacher-edit-dialog .p-multiselect,
-.teacher-edit-dialog .p-inputnumber,
-.teacher-edit-dialog .p-calendar{
-    width:100%;
+.teacher-edit-dialog .p-dropdown .p-inputtext {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-.teacher-edit-dialog .p-inputtext,
-.teacher-edit-dialog .p-dropdown .p-inputtext,
-.teacher-edit-dialog .p-dropdown-label,
-.teacher-edit-dialog .p-multiselect-label,
-.teacher-edit-dialog .p-inputnumber-input{
-    min-height:44px;
-    border-radius:12px !important;
+.teacher-edit-dialog .p-dropdown .p-dropdown-trigger {
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #dbe5f3;
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
 }
 
-.teacher-edit-dialog .p-inputtext{
-    background:var(--tg-surface-2);
-    border:1px solid var(--tg-border);
-    color:var(--tg-text-900);
-    transition:all .16s ease;
-    padding:10px 12px;
-}
-.teacher-edit-dialog .p-inputtext:focus{
-    box-shadow:0 0 0 3px color-mix(in oklab, var(--tg-primary) 18%, transparent);
-    border-color:color-mix(in oklab, var(--tg-primary) 54%, var(--tg-border));
+.teacher-edit-dialog .p-dropdown:not(.p-disabled).p-focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.15rem rgba(37, 99, 235, 0.15);
 }
 
-/* Dropdown / multiselect shells */
-.teacher-edit-dialog .p-dropdown,
-.teacher-edit-dialog .p-multiselect,
-.teacher-edit-dialog .p-calendar{
-    background:var(--tg-surface-2);
-    border:1px solid var(--tg-border);
-    border-radius:12px;
-}
-.teacher-edit-dialog .p-dropdown:not(.p-disabled):hover,
-.teacher-edit-dialog .p-multiselect:not(.p-disabled):hover,
-.teacher-edit-dialog .p-calendar:not(.p-disabled):hover{
-    border-color:color-mix(in oklab, var(--tg-primary) 36%, var(--tg-border));
+.teacher-edit-dialog .p-multiselect {
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #dbe5f3;
+    background: #ffffff;
+    box-shadow: none;
+    font-size: 14px;
 }
 
-/* Chip styling inside multiselect */
-.teacher-edit-dialog .p-multiselect-token{
-    background:color-mix(in oklab, var(--tg-primary) 14%, var(--tg-surface-2));
-    color:var(--tg-text-900);
-    border-radius:999px;
-    padding:4px 8px;
+.teacher-edit-dialog .p-multiselect .p-multiselect-label {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 1.25rem;
+    line-height: 1;
 }
 
-/* ---------- Small badges / counters ---------- */
-.teacher-edit-dialog .badge{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:.78rem; font-weight:700;
-    color:#0b5;
-    background:color-mix(in oklab, var(--tg-success) 12%, transparent);
-    padding:4px 8px; border-radius:999px;
+.teacher-edit-dialog .p-calendar {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #dbe5f3;
+    background: #ffffff;
 }
 
-/* ---------- Footer buttons ---------- */
-.teacher-edit-dialog .p-dialog-footer .p-button{
-    min-height:40px;
-    border-radius:12px;
-    font-weight:700;
-}
-.teacher-edit-dialog .p-dialog-footer .p-button.p-button-primary{
-    background:var(--tg-primary);
-    border-color:var(--tg-primary);
-}
-.teacher-edit-dialog .p-dialog-footer .p-button.p-button-primary:hover{
-    background:var(--tg-primary-700);
-    border-color:var(--tg-primary-700);
+.teacher-edit-dialog .p-calendar .p-inputtext {
+    flex: 1 1 auto;
+    height: 44px;
+    border-radius: 999px 0 0 999px;
+    border: none;
+    border-right: 1px solid #dbe5f3;
+    padding: 0 1.25rem;
+    font-size: 14px;
 }
 
-/* ---------- Validation states ---------- */
-.teacher-edit-dialog .p-inputtext.p-invalid,
-.teacher-edit-dialog .p-dropdown.p-invalid,
-.teacher-edit-dialog .p-multiselect.p-invalid{
-    border-color:var(--tg-danger) !important;
-    box-shadow:0 0 0 2px color-mix(in oklab, var(--tg-danger) 24%, transparent) !important;
-}
-.teacher-edit-dialog .field-error{
-    color:var(--tg-danger);
-    font-size:.8rem; margin-top:6px;
+.teacher-edit-dialog .p-calendar .p-button {
+    width: 44px;
+    height: 44px;
+    border-radius: 0 999px 999px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* ---------- Minor utilities ---------- */
-.teacher-edit-dialog .row-span-2{ grid-row: span 2; }
-.teacher-edit-dialog .col-span-2{ grid-column: span 2; }
-
-/* ---------- Responsive ---------- */
-@media (max-width: 980px){
-    .teacher-edit-dialog .p-dialog{ width:min(760px, 94vw); }
+.teacher-edit-dialog .field-error,
+.teacher-edit-dialog .p-error {
+    font-size: 12px;
+    color: #ef4444;
 }
-@media (max-width: 840px){
-    .teacher-edit-dialog .form-grid{
+
+.teacher-edit-dialog .p-inputnumber-input,
+.teacher-edit-dialog .p-inputnumber .p-inputtext {
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .teacher-edit-dialog .form-grid {
         grid-template-columns: 1fr;
     }
-    .teacher-edit-dialog .avatar-card{ order:0; }
-}
-@media (max-width: 640px){
-    .teacher-edit-dialog .form-fields{ grid-template-columns: 1fr; }
-    .teacher-edit-dialog .p-dialog{ width:96vw; }
-}
 
-/* ---------- Nice scrollbar for long forms ---------- */
-.teacher-edit-dialog .p-dialog-content{
-    max-height:min(78vh, 880px);
-    overflow:auto;
-}
-.teacher-edit-dialog .p-dialog-content::-webkit-scrollbar{ width:10px; }
-.teacher-edit-dialog .p-dialog-content::-webkit-scrollbar-thumb{
-    background:color-mix(in oklab, var(--tg-text-600) 18%, transparent);
-    border-radius:999px;
+    .teacher-edit-dialog .form-fields {
+        grid-template-columns: 1fr;
+    }
 }

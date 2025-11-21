@@ -75,6 +75,7 @@ export default function AddTeacherDialog({
     };
 
     const onPickAvatar = () => fileRef.current?.click();
+
     const onFile = (e) => {
         const file = e.target?.files?.[0];
         if (!file) return;

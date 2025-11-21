@@ -1,0 +1,200 @@
+/* ===== Page shell ===== */
+.page-wrap {
+    padding: 1rem;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.title-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.subtitle {
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.title-icon {
+    font-size: 1.75rem;
+    margin-right: 0.75rem;
+    color: #0f172a;
+}
+
+/* ===== Card, section ===== */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.card-title .pi {
+    font-size: 1.25rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0.25rem 0 1rem;
+}
+
+/* ===== Filters row ===== */
+.search-card .p-inputtext {
+    height: 3rem;
+    border-radius: 999px;
+}
+
+/* icon search trong input */
+.search-card .p-input-icon-left > .p-inputtext {
+    border-radius: 999px;
+}
+
+/* dropdown filter: pill + text center như All Classes */
+.search-card .p-dropdown {
+    display: flex;
+    align-items: center;
+    height: 3rem;
+    border-radius: 999px;
+    border: 1px solid #dbe5f3;
+    background: #ffffff;
+    box-shadow: none;
+    font-size: 14px;
+}
+
+/* label ở giữa, padding hai bên để chừa chỗ cho mũi tên */
+.search-card .p-dropdown .p-dropdown-label {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    height: 100%;
+    margin: 0;
+    padding: 0 32px;
+    text-align: center !important;
+    line-height: 1;
+}
+
+/* mũi tên bên phải, có đường line ngăn cách */
+.search-card .p-dropdown .p-dropdown-trigger {
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #dbe5f3;
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
+}
+
+.search-card .p-dropdown:not(.p-disabled).p-focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.15rem rgba(37, 99, 235, 0.15);
+}
+
+.search-card .search-grid {
+    row-gap: 0.75rem;
+}
+
+.search-card .export-col .p-button {
+    height: 3rem;
+    border-radius: 999px;
+    padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+    .search-card .export-col {
+        margin-top: 0;
+    }
+}
+
+/* ===== Table look ===== */
+.students-table .p-datatable-header {
+    display: none;
+}
+
+.students-table .p-datatable-thead > tr > th {
+    background: #ffffff;
+    font-weight: 600;
+}
+
+/* ===== Chips / tags ===== */
+.p-badge.p-component {
+    background: #e6f2ff;
+    color: #0f4c81;
+    border-radius: 999px;
+    padding: 0.35rem 0.6rem;
+}
+
+.p-tag.rounded {
+    border-radius: 999px;
+}
+/* ===== Global dropdown style cho module teacher ===== */
+.p-dropdown {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid #dbe5f3;
+    background: #ffffff;
+    box-shadow: none;
+    font-size: 14px;
+    padding: 0;
+}
+
+.p-dropdown .p-dropdown-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    height: 100%;
+    margin: 0;
+    padding: 0 32px !important;
+    text-align: center !important;
+    line-height: 1;
+}
+
+/* xoá border riêng trên label nếu PrimeReact gắn .p-inputtext */
+.p-dropdown .p-inputtext {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.p-dropdown .p-dropdown-trigger {
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #dbe5f3;
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
+}

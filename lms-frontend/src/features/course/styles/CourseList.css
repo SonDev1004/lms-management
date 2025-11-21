@@ -1,0 +1,103 @@
+/* ===== Layout tổng ===== */
+.course-list-root {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 24px 32px;
+}
+
+/* ===== TabMenu filter ===== */
+.cl-tabmenu .p-tabmenu-nav {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #f0f9ff;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    display: flex;
+    gap: 8px;
+    list-style: none;
+}
+
+.cl-tabmenu .p-tabmenu-nav li {
+    flex: 1 1 0;
+}
+
+/* Link tab */
+.cl-tabmenu .p-tabmenu-nav li .p-menuitem-link {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cl-tabmenu .p-tabmenu-nav li .p-menuitem-text {
+    font-weight: 700;
+    font-size: 0.98rem;
+    color: #0b2947;
+}
+
+/* Hover nhẹ */
+.cl-tabmenu .p-tabmenu-nav li .p-menuitem-link:hover {
+    background: rgba(59, 130, 246, 0.06);
+}
+
+/* Active: chỉ đổi màu chữ + gạch dưới, không fill khối xanh */
+.cl-tabmenu .p-tabmenu-nav li.p-highlight .p-menuitem-link {
+    background: transparent;
+}
+
+.cl-tabmenu .p-tabmenu-nav li.p-highlight .p-menuitem-text {
+    color: #0284c7;
+}
+
+/* Gạch dưới màu xanh cho tab active */
+.cl-tabmenu .p-tabmenu-nav li.p-highlight .p-menuitem-link::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: -3px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #22c1dc, #0ea5e9);
+}
+
+/* ===== Grid course ===== */
+.course-grid {
+    margin-top: 20px;
+    margin-left: -12px;   /* để padding col không làm lệch */
+    margin-right: -12px;
+}
+
+.course-card-col {
+    padding: 0 12px 24px;
+}
+
+/* 2 card / hàng trên màn lớn (md trở lên đã 2 col vì md:col-6) */
+@media (min-width: 1200px) {
+    .course-list-root {
+        max-width: 1200px;
+    }
+}
+
+/* ===== State ===== */
+.course-loading,
+.course-empty {
+    width: 100%;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.course-empty {
+    color: #6b7280;
+    font-weight: 500;
+}

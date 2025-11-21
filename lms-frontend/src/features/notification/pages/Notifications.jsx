@@ -1,13 +1,11 @@
 import React, { useMemo, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import NotificationList from "../components/NotificationList.jsx"; // Sửa tên file viết hoa
+import NotificationList from "../components/NotificationList.jsx";
 import { useNotifications } from "../hooks/useNotifications";
 import "../styles/Notifications.css";
 
-// util nhỏ: bỏ tag HTML để search theo text
 function stripHtml(html = "") {
     try {
         const div = document.createElement("div");
@@ -22,7 +20,6 @@ export default function NotificationsPage() {
     const toast = useRef(null);
 
     // TODO: truyền userId từ auth store/context của bạn để bật realtime socket
-    // ví dụ: const { currentUser } = useAuthStore(); const userId = currentUser?.id;
     const userId = undefined;
 
     const {
@@ -214,14 +211,14 @@ export default function NotificationsPage() {
                             />
                         </div>
 
-                        <Dropdown
-                            value={statusFilter}
-                            options={statusOptions}
-                            onChange={(e) => setStatusFilter(e.value)}
-                            optionLabel="label"
-                            placeholder="Status"
-                            aria-label="Filter by status"
-                        />
+                        {/*<Dropdown*/}
+                        {/*    value={statusFilter}*/}
+                        {/*    options={statusOptions}*/}
+                        {/*    onChange={(e) => setStatusFilter(e.value)}*/}
+                        {/*    optionLabel="label"*/}
+                        {/*    placeholder="Status"*/}
+                        {/*    aria-label="Filter by status"*/}
+                        {/*/>*/}
 
                         <Button
                             icon="pi pi-check"

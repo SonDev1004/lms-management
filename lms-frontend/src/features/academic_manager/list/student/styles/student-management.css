@@ -128,9 +128,111 @@
     background: #fff; font-weight: 600;
 }
 
-/* Search card spacing */
-.search-card .p-inputtext { height: 3rem; }
-.search-card .p-dropdown { height: 3rem; }
+/* Search & Filters – canh giữa All Status / All Classes */
+.search-card .grid {
+    align-items: center;
+    row-gap: .75rem;
+}
+
+/* input search + dropdown cùng chiều cao, chữ canh giữa */
+.search-card .p-input-icon-left > .p-inputtext {
+    width: 100%;
+    padding-block: .7rem;
+    padding-left: 2.4rem;
+    border-radius: 999px;
+    border: 1px solid #dbe4f0;
+}
+
+.search-card .p-dropdown {
+    width: 100%;
+    min-height: 2.8rem;
+    border-radius: 999px;
+    border: 1px solid #dbe4f0;
+    display: inline-flex;          /* giúp label + icon canh giữa */
+    align-items: center;
+}
+
+/* chữ bên trong dropdown canh giữa theo chiều dọc */
+.search-card .p-dropdown .p-dropdown-label {
+    padding-block: 0;              /* bỏ padding thừa */
+    padding-inline: .9rem;
+    font-size: .95rem;
+}
+
+/* icon mũi tên */
+.search-card .p-dropdown .p-dropdown-trigger {
+    border-left: none;
+}
+/* Hàng nút Export/Import riêng, canh phải */
+.search-card .export-row {
+    margin-top: .75rem;
+}
+
+@media (min-width: 768px) {
+    .search-card .export-row {
+        justify-content: flex-end;
+    }
+}
+/* ===== Course chips trong cột Courses ===== */
+.course-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+}
+
+.course-chips .chip-pill {
+    padding: .25rem .7rem;
+    border-radius: 999px;
+    background: #e6f2ff;
+    color: #0f4c81;
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;          /* không cho SPEAK-CLUB bị xuống dòng */
+}
+
+.course-chips .chip-more {
+    background: #eff4ff;
+    color: #1d4ed8;
+}
+/* Hàng nút Export / Import riêng */
+.search-card .export-row {
+    margin-top: .75rem;
+}
+
+@media (min-width: 768px) {
+    .search-card .export-row {
+        justify-content: flex-end;
+    }
+}
+/* ===== Chips cho Courses / Subjects (dùng chung) ===== */
+.course-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+}
+
+.course-chips .chip-pill {
+    padding: .25rem .7rem;
+    border-radius: 999px;
+    background: #e6f2ff;
+    color: #0f4c81;
+    font-size: .8rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;          /* tránh ENG-B1, IELTS-Writing bị gãy hàng */
+}
+
+.course-chips .chip-more {
+    background: #eff4ff;
+    color: #1d4ed8;
+}
+
+/* Status tag bo tròn (dùng cho cả student & teacher) */
+.p-tag.rounded {
+    border-radius: 999px;
+}
+
 
 /* Action buttons spacing */
 .students-table .p-button.p-button-text.p-button-rounded { width: 2.25rem; height: 2.25rem; }

@@ -1,74 +1,247 @@
 :root{
-    --apd-accent:#0f62fe;
-    --apd-border:#e6e9ef;
-    --apd-muted:#64748b;
+    --apd-accent: var(--pg-brand, #2563eb);
+    --apd-ink:    var(--pg-ink, #0f1e39);
+    --apd-muted:  var(--pg-muted, #64748b);
+    --apd-border: var(--pg-border, #e6e9ef);
 }
 
-/* Header sticky + mô tả */
-.add-program-dialog .p-dialog-header{
-    padding:16px 18px 10px;
-    border-bottom:1px solid #eef3f7;
-    position:sticky; top:0; z-index:2; background:#fff;
-}
-.add-program-dialog .p-dialog-title{ font-weight:800; letter-spacing:-.2px; }
-.add-program-dialog .p-dialog-content{ padding:14px 18px 12px; max-height:calc(100vh - 220px); overflow:auto; }
-.add-program-dialog .apd-desc{ margin:6px 0 10px; font-size:12.5px; color:var(--apd-muted); }
+/* ========== BASE DIALOG (.dlg) ========== */
 
-/* Section title */
-.add-program-dialog .apd-subhead{
-    margin:14px 0 6px; font-size:12.5px; font-weight:800;
-    text-transform:uppercase; letter-spacing:.06em; color:#475569;
+/* overlay blur */
+.p-dialog-mask.p-component-overlay.p-component-overlay-enter{
+    backdrop-filter: blur(6px) saturate(120%);
+    background: color-mix(in oklab, #0b1020 35%, transparent);
 }
 
-/* Grid 2 cols -> 1 on small; min width để không bị bóp */
-.add-program-dialog .apd-grid{
-    display:grid; grid-template-columns:repeat(2, minmax(260px, 1fr));
-    gap:14px 18px;
+/* header / footer sticky */
+.dlg .p-dialog-header{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #eef3f7;
+    backdrop-filter: saturate(160%) blur(6px);
 }
-@media (max-width:640px){ .add-program-dialog .apd-grid{ grid-template-columns:1fr; } }
-
-/* Field + label */
-.add-program-dialog .apd-field{ display:flex; flex-direction:column; gap:6px; }
-.add-program-dialog .apd-field label{ font-size:13px; font-weight:700; color:#334155; }
-.add-program-dialog .apd-req{ color:#ef4444; }
-
-/* Unified controls */
-.add-program-dialog :is(.p-inputtext, .p-dropdown, .p-inputnumber .p-inputtext){
-    height:44px; border:1px solid #e9edf3; border-radius:12px; background:#fff;
-    box-shadow:none; transition:border-color .15s ease, box-shadow .15s ease;
+.dlg .p-dialog-title{
+    font-weight: 800;
+    letter-spacing: -.2px;
+    color: var(--apd-ink);
 }
-.add-program-dialog ::placeholder{ color:#9aa4b2; opacity:1; }
-
-/* Focus ring */
-.add-program-dialog :is(.p-inputtext:focus, .p-dropdown:not(.p-disabled).p-focus, .p-inputnumber .p-inputtext:focus){
-    outline:none; border-color:#96b4ff; box-shadow:0 0 0 3px rgba(15,98,254,.10);
+.dlg .p-dialog-content{
+    padding: 0;
+}
+.dlg .dlg-scroll{
+    max-height: calc(100dvh - 220px);
+    overflow: auto;
+    padding: 14px 18px 12px;
+}
+.dlg .dlg-footer{
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background: #fff;
+    padding: 10px 18px 16px;
+    border-top: 1px solid #eef3f7;
 }
 
-/* InputNumber tweaks */
-.add-program-dialog .p-inputnumber .p-inputnumber-button{ width:36px; border-radius:10px; background: #005cff; border-color: #0055f6; }
-.add-program-dialog .p-inputnumber .p-inputnumber-button:enabled:hover{ filter:brightness(.98); }
-.add-program-dialog .p-inputnumber .p-inputtext{ padding-right:50px; } /* tránh đè chữ */
-
-/* Hint & error */
-.add-program-dialog .apd-hint{ font-size:12px; color:var(--apd-muted); margin-top:6px; padding-left:2px; }
-.add-program-dialog .p-error{ margin-top:4px; }
-
-/* Footer */
-.add-program-dialog .p-dialog-footer{
-    padding:10px 18px 16px; border-top:1px solid #eef3f7;
-    display:flex; justify-content:flex-end; gap:8px;
+/* section */
+.dlg .dlg-sec{
+    margin-bottom: 10px;
 }
-.add-program-dialog .p-dialog-footer .p-button{ height:44px; border-radius:12px; }
-.add-program-dialog .p-dialog-footer .p-button:not(.p-button-text){
-    background:var(--apd-accent); border-color:var(--apd-accent);
-    box-shadow:0 8px 18px rgba(15,98,254,.12);
+.dlg .dlg-sec-title{
+    margin: 12px 0 8px;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #475569;
 }
-.add-program-dialog .p-dialog-footer .p-button:disabled{
-    background: #004dff !important; border-color:#e8eefc !important; color:#7c8aa6 !important; box-shadow:none;
-}
-.add-program-dialog .p-dialog-footer .p-button.p-button-text{ color:var(--apd-muted); }
 
-/* Close hover */
-.add-program-dialog .p-dialog-header .p-dialog-header-icon:enabled:hover{
-    background:#f1f5f9; border-radius:8px;
+/* grid */
+.dlg .frm-grid{
+    display: grid;
+    gap: 14px 18px;
+    grid-template-columns: repeat(2, minmax(280px,1fr));
+}
+@media (max-width: 640px){
+    .dlg .frm-grid{ grid-template-columns: 1fr; }
+}
+
+/* field + label */
+.dlg .frm-field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.dlg .frm-field > label{
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+}
+.dlg .req{ color: #ef4444; }
+
+/* inputs (text, dropdown, inputnumber) */
+.dlg :is(.p-inputtext, .p-dropdown, .p-inputnumber .p-inputtext){
+    height: 44px;
+    border: 1px solid #e9edf3;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: none;
+    transition: border-color .15s, box-shadow .15s;
+    width: 100%;
+}
+.dlg ::placeholder{
+    color: #9aa4b2;
+    opacity: 1;
+}
+.dlg :is(
+    .p-inputtext:focus,
+    .p-dropdown:not(.p-disabled).p-focus,
+    .p-inputnumber .p-inputtext:focus
+){
+    outline: none;
+    border-color: color-mix(in oklab, var(--apd-accent) 45%, white);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--apd-accent) 18%, transparent);
+}
+
+/* invalid + helper */
+.dlg :is(
+    .p-inputtext.p-invalid,
+    .p-dropdown.p-invalid,
+    .p-inputnumber .p-inputtext.p-invalid
+){
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239,68,68,.12) !important;
+}
+.dlg .hint{
+    font-size: 12px;
+    color: var(--apd-muted);
+    padding-left: 2px;
+    margin-top: 2px;
+}
+.dlg .error{
+    font-size: 12px;
+    color: #ef4444;
+    padding-left: 2px;
+    margin-top: 2px;
+}
+
+/* spinner buttons ghost (áp dụng class apd-step) */
+.dlg .p-inputnumber .apd-step{
+    width: 28px;
+    height: 22px;              /* 22 + 22 = 44 */
+    border: 0;
+    background: transparent;
+    color: var(--apd-accent);
+    box-shadow: none;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dlg .p-inputnumber .apd-step:enabled:hover{
+    background: color-mix(in oklab, var(--apd-accent) 10%, #ffffff);
+}
+.dlg .p-inputnumber .apd-step .pi{
+    font-size: .9rem;
+}
+.dlg .p-inputnumber .p-inputtext{
+    padding-right: 40px;
+}
+
+/* buttons */
+.dlg .p-button{
+    height: 44px;
+    border-radius: 12px;
+}
+.dlg .p-button:not(.p-button-text){
+    background: var(--apd-accent);
+    border-color: var(--apd-accent);
+    box-shadow: 0 8px 18px color-mix(in oklab, var(--apd-accent) 25%, transparent);
+}
+.dlg .p-button:disabled{
+    background: color-mix(in oklab, var(--apd-accent) 65%, white) !important;
+    border-color: #e8eefc !important;
+    color: #7c8aa6 !important;
+    box-shadow: none;
+}
+.dlg .p-button.p-button-text{
+    color: var(--apd-muted);
+}
+
+/* close icon hover */
+.dlg .p-dialog-header .p-dialog-header-icon:enabled:hover{
+    background: #f1f5f9;
+    border-radius: 8px;
+}
+
+/* dark mode */
+@media (prefers-color-scheme: dark){
+    .p-dialog-mask.p-component-overlay.p-component-overlay-enter{
+        background: color-mix(in oklab, #010615 60%, transparent);
+        backdrop-filter: blur(8px) saturate(120%);
+    }
+    .dlg .p-dialog-header,
+    .dlg .dlg-footer{
+        background:#0b1220;
+        border-color:#1f2a44;
+    }
+    .dlg .dlg-scroll{ background:#0b1220; }
+    .dlg :is(.p-inputtext, .p-dropdown, .p-inputnumber .p-inputtext){
+        background:#0e1628;
+        border-color:#213252;
+        color:#e7eefc;
+    }
+    .dlg ::placeholder{ color:#93a4c6; }
+    .dlg .dlg-sec-title{ color:#9fb4d6; }
+    .dlg .hint{ color:#8ca0c1; }
+}
+
+/* ========== SPECIFIC: AddProgramDialog (.add-program-dialog) ========== */
+
+/* căn label dropdown giữa */
+.add-program-dialog .p-dropdown .p-dropdown-label{
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+}
+
+/* trigger dropdown căn giữa icon */
+.add-program-dialog .p-dropdown .p-dropdown-trigger{
+    width: 40px;
+    border-left: 1px solid var(--apd-border);
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* InputNumber text & bước */
+.add-program-dialog .p-inputnumber .p-inputtext{
+    padding-inline: 12px;
+}
+
+/* chỉnh lại step button màu xanh nhạt một chút */
+.add-program-dialog .p-inputnumber .apd-step{
+    background: #e0f2fe;
+    color: #0369a1;
+}
+.add-program-dialog .p-inputnumber .apd-step:enabled:hover{
+    background: #bae6fd;
+}
+/* Center kiểu "All Classes": chữ giữa, caret bên phải */
+.program-detail-dialog .p-dropdown .p-dropdown-label {
+    width: 100%;
+    text-align: center;
+    padding-right: 2rem;      /* chừa chỗ cho caret bên phải */
+    display: block;           /* đảm bảo không bị flex kéo lệch */
+}
+.program-detail-dialog .p-inputnumber-input,
+.program-detail-dialog .p-inputnumber .p-inputtext {
+    text-align: center !important;
 }

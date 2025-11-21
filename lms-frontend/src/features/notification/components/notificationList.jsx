@@ -37,7 +37,7 @@ export default function NotificationList({ notifications = [], loading, onMarkRe
                 )}
 
                 <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-                    <Paginator first={first} rows={rows} totalRecords={notifications.length} onPageChange={handlePageChange} rowsPerPageOptions={[6, 12, 24]} />
+                    <Paginator first={first} rows={rows} totalRecords={notifications.length} onPageChange={handlePageChange} />
                 </div>
             </Card>
 

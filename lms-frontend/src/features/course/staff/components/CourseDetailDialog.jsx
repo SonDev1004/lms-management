@@ -27,6 +27,7 @@ export default function CourseDetailDialog({
     const [errors, setErrors] = useState({});
     const titleRef = useRef(null);
 
+    // reset khi mở dialog
     useEffect(() => {
         if (visible) {
             setMode('view');
@@ -35,8 +36,11 @@ export default function CourseDetailDialog({
         }
     }, [visible, course]);
 
+    // focus khi vào chế độ edit
     useEffect(() => {
-        if (mode === 'edit') setTimeout(() => titleRef.current?.focus(), 30);
+        if (mode === 'edit') {
+            setTimeout(() => titleRef.current?.focus(), 30);
+        }
     }, [mode]);
 
     const setField = (k, v) => {
@@ -46,6 +50,7 @@ export default function CourseDetailDialog({
 
     const canSave = useMemo(() => {
         if (mode !== 'edit') return false;
+
         const okTitle = !!form.title?.trim();
         const okTeacher = !!form.teacher?.trim();
         const okCap =
@@ -59,6 +64,7 @@ export default function CourseDetailDialog({
             !form.startDate ||
             !form.endDate ||
             new Date(form.startDate).getTime() <= new Date(form.endDate).getTime();
+
         return okTitle && okTeacher && okCap && okEnr && okDate;
     }, [mode, form]);
 
@@ -108,11 +114,15 @@ export default function CourseDetailDialog({
         });
     }
 
+    // dùng form để tính duration cho đúng khi edit
     const durationDays = useMemo(() => {
-        if (!course?.startDate || !course?.endDate) return '-';
-        const d = (new Date(course.endDate) - new Date(course.startDate)) / 86400000;
+        if (!form?.startDate || !form?.endDate) return '-';
+        const s = new Date(form.startDate);
+        const e = new Date(form.endDate);
+        if (Number.isNaN(s.getTime()) || Number.isNaN(e.getTime())) return '-';
+        const d = (e - s) / 86400000;
         return Math.max(0, Math.round(d)) + ' days';
-    }, [course]);
+    }, [form.startDate, form.endDate]);
 
     const Header = (
         <div className="cd-header">
@@ -126,38 +136,6 @@ export default function CourseDetailDialog({
                     <span className="sep">•</span>
                     <span className="code">{course?.id}</span>
                 </div>
-            </div>
-
-            <div className="cd-actions">
-                {mode === 'view' ? (
-                    <>
-                        <Button label="Edit" icon="pi pi-pencil" onClick={() => setMode('edit')} />
-                        <Button
-                            label="Delete"
-                            icon="pi pi-trash"
-                            className="p-button-danger"
-                            onClick={handleDelete}
-                        />
-                    </>
-                ) : (
-                    <>
-                        <Button
-                            label="Cancel"
-                            className="p-button-text"
-                            onClick={() => {
-                                setForm(course);
-                                setMode('view');
-                            }}
-                        />
-                        <Button
-                            label="Save"
-                            icon="pi pi-check"
-                            className="p-button-primary"
-                            disabled={!canSave}
-                            onClick={handleSave}
-                        />
-                    </>
-                )}
             </div>
         </div>
     );
@@ -179,19 +157,19 @@ export default function CourseDetailDialog({
                     <div className="cd-stats">
                         <div className="stat">
                             <div className="sm-muted">Teacher</div>
-                            <div className="big">{course?.teacher || '-'}</div>
+                            <div className="big">{form?.teacher || '-'}</div>
                         </div>
                         <div className="stat">
                             <div className="sm-muted">Class</div>
-                            <div className="big">{course?.class || '-'}</div>
+                            <div className="big">{form?.class || '-'}</div>
                         </div>
                         <div className="stat">
                             <div className="sm-muted">Capacity</div>
-                            <div className="big">{course?.capacity ?? '-'}</div>
+                            <div className="big">{form?.capacity ?? '-'}</div>
                         </div>
                         <div className="stat">
                             <div className="sm-muted">Enrolled</div>
-                            <div className="big">{course?.enrolled ?? '-'}</div>
+                            <div className="big">{form?.enrolled ?? '-'}</div>
                         </div>
                         <div className="stat">
                             <div className="sm-muted">Duration</div>
@@ -213,7 +191,9 @@ export default function CourseDetailDialog({
                                 disabled={mode === 'view'}
                                 className={errors.title ? 'p-invalid w-full' : 'w-full'}
                             />
-                            {errors.title && <small className="p-error field-error">{errors.title}</small>}
+                            {errors.title && (
+                                <small className="p-error field-error">{errors.title}</small>
+                            )}
                         </div>
 
                         <div className="field">
@@ -227,7 +207,9 @@ export default function CourseDetailDialog({
                                 disabled={mode === 'view'}
                                 className={errors.teacher ? 'p-invalid w-full' : 'w-full'}
                             />
-                            {errors.teacher && <small className="p-error field-error">{errors.teacher}</small>}
+                            {errors.teacher && (
+                                <small className="p-error field-error">{errors.teacher}</small>
+                            )}
                         </div>
 
                         <div className="field">
@@ -277,7 +259,9 @@ export default function CourseDetailDialog({
                                 disabled={mode === 'view'}
                                 className={errors.endDate ? 'p-invalid' : undefined}
                             />
-                            {errors.endDate && <small className="p-error field-error">{errors.endDate}</small>}
+                            {errors.endDate && (
+                                <small className="p-error field-error">{errors.endDate}</small>
+                            )}
                         </div>
 
                         <div className="field">
@@ -311,6 +295,43 @@ export default function CourseDetailDialog({
                                 <small className="p-error field-error">{errors.enrolled}</small>
                             )}
                         </div>
+                    </div>
+
+                    {/* Actions row – nằm SAU form, dồn phải */}
+                    <div className="cd-actions-row">
+                        {mode === 'view' ? (
+                            <>
+                                <Button
+                                    label="Edit"
+                                    icon="pi pi-pencil"
+                                    onClick={() => setMode('edit')}
+                                />
+                                <Button
+                                    label="Delete"
+                                    icon="pi pi-trash"
+                                    className="p-button-danger"
+                                    onClick={handleDelete}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <Button
+                                    label="Cancel"
+                                    className="p-button-text"
+                                    onClick={() => {
+                                        setForm(course);
+                                        setMode('view');
+                                    }}
+                                />
+                                <Button
+                                    label="Save"
+                                    icon="pi pi-check"
+                                    className="p-button-primary"
+                                    disabled={!canSave}
+                                    onClick={handleSave}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             </Dialog>
