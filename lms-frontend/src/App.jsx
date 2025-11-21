@@ -82,6 +82,7 @@ import NotificationForm from "@/features/admin/pages/NotificationForm.jsx";
 import ScheduledNotifications from "@/features/admin/pages/ScheduledNotifications.jsx";
 
 import TuitionRevenueDashboard from "@/features/tuitionrevenue/pages/TuitionRevenueDashboard.jsx";
+import EmailAccountFormPage from "@/features/account-mail/pages/EmailAccountFormPage.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -166,6 +167,7 @@ const App = () => {
                         <Route path="student-manager/:id" element={<MStudentProfile />} />
                         <Route path='schedule' element={<AMSchedule />} />
                         <Route path='report' element={<AMReport />} />
+                        <Route  path='create-account' element={<EmailAccountFormPage />} />
                         <Route path='notification' element={<AMNotification />} />
                         <Route path='attendance' element={<AttendancePage />} />
                         <Route path='profile' element={<AMProfile />} />

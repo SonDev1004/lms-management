@@ -1,0 +1,156 @@
+.eaf-page {
+    min-height: 100vh;
+    padding: 40px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: linear-gradient(180deg, #eef4ff 0%, #f8fafc 100%);
+}
+
+.eaf-card {
+    width: 100%;
+    max-width: 720px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+}
+
+.eaf-card-header {
+    padding: 24px 32px;
+    background: #1d4ed8;
+    color: #ffffff;
+}
+
+.eaf-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.eaf-subtitle {
+    margin: 8px 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.eaf-card-body {
+    padding: 28px 32px 32px;
+}
+
+.eaf-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.eaf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.eaf-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.eaf-required {
+    color: #ef4444;
+    margin-left: 4px;
+}
+
+/* input pill */
+.eaf-input.p-inputtext {
+    width: 100%;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1.05rem;
+    font-size: 14px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.03);
+}
+
+/* dropdown / multiselect pill */
+.eaf-dropdown.p-dropdown,
+.eaf-dropdown.p-multiselect {
+    width: 100%;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.03);
+    background: #ffffff;
+}
+
+/* dropdown height + label align center */
+.eaf-dropdown.p-dropdown {
+    height: 44px;
+}
+
+.eaf-dropdown.p-dropdown .p-dropdown-label,
+.eaf-dropdown.p-dropdown .p-dropdown-label.p-placeholder {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 1.05rem;
+    font-size: 14px;
+}
+
+/* multiselect label */
+.eaf-dropdown.p-multiselect .p-multiselect-label,
+.eaf-dropdown.p-multiselect .p-multiselect-label.p-placeholder {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.75rem 1.05rem;
+    font-size: 14px;
+}
+
+/* arrow icon */
+.eaf-dropdown.p-dropdown .p-dropdown-trigger,
+.eaf-dropdown.p-multiselect .p-multiselect-trigger {
+    padding-right: 0.85rem;
+    color: #6b7280;
+}
+
+/* focus */
+.eaf-input.p-inputtext:focus,
+.eaf-dropdown.p-dropdown.p-focus,
+.eaf-dropdown.p-multiselect.p-focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow:
+            0 0 0 1px #2563eb,
+            0 18px 45px rgba(15, 23, 42, 0.04);
+}
+
+/* button */
+.eaf-actions {
+    margin-top: 12px;
+}
+
+.eaf-submit-btn {
+    width: 100%;
+    justify-content: center;
+    background: #16a34a;
+    border-color: #16a34a;
+    font-weight: 600;
+    padding-block: 0.85rem;
+    border-radius: 999px;
+}
+
+.eaf-submit-btn:hover {
+    background: #15803d;
+    border-color: #15803d;
+}
+
+/* responsive */
+@media (max-width: 575.98px) {
+    .eaf-card-header,
+    .eaf-card-body {
+        padding-inline: 20px;
+    }
+
+    .eaf-title {
+        font-size: 20px;
+    }
+}
