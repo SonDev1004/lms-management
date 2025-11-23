@@ -95,7 +95,7 @@ export default function LayoutNavbar({ role, children }) {
             label: 'Attendance',
             icon: 'pi pi-check-square',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
-            command: () => navigate(`/${roleToRoute(role)}/attendance`) // <- sửa route đúng
+            command: () => navigate(`/${roleToRoute(role)}/attendance`)
         },
 
         {

@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import LayoutHome from 'layouts/home/LayoutHome';
 import Login from '@/features/auth/pages/Login.jsx';
 import Register from '@/features/auth/pages/Register.jsx';
@@ -62,13 +62,11 @@ import AMCourseDetail from "@/features/academic_manager/pages/AMCourseDetail.jsx
 import AMProgramDetail from "@/features/academic_manager/pages/AMProgramDetail.jsx";
 import Home from "@/features/home/pages/Home.jsx";
 import ProgramDetailPage from "@/features/program/detail/pages/ProgramDetailPage.jsx";
-import { FeedbackPage } from "@/features/feedback/index.js";
+import {FeedbackPage} from "@/features/feedback/index.js";
 import PaymentPage from "@/features/payment/pages/PaymentPage.jsx";
 import UserProfile from "@/features/user/pages/UserProfile.jsx";
 import StudentManagement from "@/features/academic_manager/list/student/pages/StudentManagement.jsx";
 import TeacherManagement from "@/features/academic_manager/list/teacher/pages/TeacherManagement.jsx";
-import Exercise from "@/features/assignment/student/pages/Exercise.jsx";
-import ExerciseBuilder from "@/features/assignment/teacher/index.jsx";
 import MStudentProfile from "@/features/academic_manager/profile/student/pages/StudentProfile.jsx";
 import AMTeacherProfile from "@/features/academic_manager/pages/AMTeacherProfile.jsx";
 import AttendancePage from "@/features/attendance/teacher/pages/AttendancePage.jsx";
@@ -82,6 +80,13 @@ import NotificationForm from "@/features/admin/pages/NotificationForm.jsx";
 import ScheduledNotifications from "@/features/admin/pages/ScheduledNotifications.jsx";
 
 import TuitionRevenueDashboard from "@/features/tuitionrevenue/pages/TuitionRevenueDashboard.jsx";
+
+import TeacherAssignmentPage from "@/features/assignment/teacher/pages/TeacherAssignmentPage.jsx";
+import StudentAssignmentsPage from "@/features/assignment/student/pages/StudentAssignmentsPage.jsx";
+import StudentQuizPage from "@/features/assignment/student/pages/StudentQuizPage.jsx";
+import TeacherQuizBuilderPage from "@/features/assignment/teacher/pages/TeacherQuizBuilderPage.jsx";
+import AcademicManagerQuestionBankPage from "@/features/assignment/manager/pages/AcademicManagerQuestionBankPage.jsx";
+
 const App = () => {
     return (
         <BrowserRouter>
@@ -113,18 +118,22 @@ const App = () => {
                 </Route>
 
                 {/* Student Route */}
-                <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
-                    <Route path='student' element={<LayoutStudent />}>
-                        <Route index element={<StudentDashboard />} />
-                        <Route path='courses' element={<StudentCourses />} />
-                        <Route path='courses/:slug' element={<CourseDetailStudent />} />
-                        <Route path='schedule' element={<StudentSchedule />} />
-                        <Route path='score' element={<StudentScore />} />
-                        <Route path='assignment' element={<Exercise />} />
-                        <Route path='enrollment' element={<StudentEnrollment />} />
-                        <Route path='notification' element={<StudentNotification />} />
-                        <Route path='attendance' element={<StudentAttendance />} />
-                        <Route path='profile' element={<StudentProfile />} />
+                <Route element={<ProtectedRoute allowedRoles={['STUDENT']}/>}>
+                    <Route path='student' element={<LayoutStudent/>}>
+                        <Route index element={<StudentDashboard/>}/>
+                        <Route path='courses' element={<StudentCourses/>}/>
+                        <Route path='courses/:slug' element={<CourseDetailStudent/>}/>
+                        <Route path='schedule' element={<StudentSchedule/>}/>
+                        <Route path='score' element={<StudentScore/>}/>
+
+                        {/* STUDENT – Assignment & Quiz (mới) */}
+                        <Route path='assignments' element={<StudentAssignmentsPage/>}/>
+                        <Route path='assignments/:assignmentId/quiz' element={<StudentQuizPage />} />
+
+                        <Route path='enrollment' element={<StudentEnrollment/>}/>
+                        <Route path='notification' element={<StudentNotification/>}/>
+                        <Route path='attendance' element={<StudentAttendance/>}/>
+                        <Route path='profile' element={<StudentProfile/>}/>
                     </Route>
                 </Route>
 
@@ -139,9 +148,18 @@ const App = () => {
                             <Route path="sessions/:sessionId/attendance" element={<AttendanceTeacherPanel/>}/>
                             <Route path="sessions/:sessionId/attendance/full" element={<AttendanceTeacherSummary/>}/>
                         </Route>
-                        <Route path='assignment' element={<ExerciseBuilder/>}/>
-                        <Route path="attendance" element={<TeacherAttendance/>} />
-                        <Route path="attendance/detail/:classId" element={<AttendanceDetailPage />} />
+
+                        {/* TEACHER – Assignment list */}
+                        <Route path='assignment' element={<TeacherAssignmentPage/>}/>
+                        {/* alias plural nếu trong component navigate tới /teacher/assignments/... */}
+                        <Route path='assignments' element={<TeacherAssignmentPage/>}/>
+
+                        {/* TEACHER – Quiz Builder cho 1 assignment */}
+                        <Route path='assignment/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
+                        <Route path='assignments/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
+
+                        <Route path="attendance" element={<TeacherAttendance/>}/>
+                        <Route path="attendance/detail/:classId" element={<AttendanceDetailPage/>}/>
                         <Route path="schedule" element={<TeacherSchedule/>}/>
                         <Route path="notification" element={<TeacherNotification/>}/>
                         <Route path="profile" element={<TeacherProfile/>}/>
@@ -157,19 +175,24 @@ const App = () => {
                         <Route path='courses' element={<AMCourse/>}>
                             <Route path='detail/:id' element={<AMCourseDetail/>}/>
                         </Route>
-                        <Route path="feedback" element={<FeedbackPage />} />
-                        <Route path='teacher' element={<AMTeacher />} />
-                        <Route path='teacher-list' element={<TeacherManagement />} />
-                        <Route path='teacher-list/:id' element={<AMTeacherProfile/>} />
-                        <Route path='student' element={<AMStudent />} />
-                        <Route path='student-manager' element={<StudentManagement />} />
-                        <Route path="student-manager/:id" element={<MStudentProfile />} />
-                        <Route path='schedule' element={<AMSchedule />} />
-                        <Route path='report' element={<AMReport />} />
-                        <Route path='notification' element={<AMNotification />} />
-                        <Route path='attendance' element={<AttendancePage />} />
-                        <Route path='profile' element={<AMProfile />} />
+                        <Route path="feedback" element={<FeedbackPage/>}/>
+                        <Route path='teacher' element={<AMTeacher/>}/>
+                        <Route path='teacher-list' element={<TeacherManagement/>}/>
+                        <Route path='teacher-list/:id' element={<AMTeacherProfile/>}/>
+                        <Route path='student' element={<AMStudent/>}/>
+                        <Route path='student-manager' element={<StudentManagement/>}/>
+                        <Route path="student-manager/:id" element={<MStudentProfile/>}/>
+                        <Route path='schedule' element={<AMSchedule/>}/>
+                        <Route path='report' element={<AMReport/>}/>
+                        <Route path='notification' element={<AMNotification/>}/>
+                        <Route path='attendance' element={<AttendancePage/>}/>
+                        <Route path='profile' element={<AMProfile/>}/>
 
+                        {/* ACADEMIC MANAGER – Question Bank */}
+                        <Route path='question-bank' element={<AcademicManagerQuestionBankPage/>}/>
+
+                        {/* ACADEMIC MANAGER – dùng chung Quiz Builder với Teacher */}
+                        <Route path='assignments/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
                     </Route>
                 </Route>
 
@@ -187,10 +210,9 @@ const App = () => {
                             <Route path='scheduled' element={<ScheduledNotifications/>}/>
                         </Route>
                         <Route path='profile' element={<AdminProfile/>}/>
-                        <Route path='tuitionrevenue' element={<TuitionRevenueDashboard />} />
-                        <Route path='new-enrollment' element={<NewEnrollmentsPage />} />
-                        <Route path='recentactivity' element={<RecentActivity />}/>
-
+                        <Route path='tuitionrevenue' element={<TuitionRevenueDashboard/>}/>
+                        <Route path='new-enrollment' element={<NewEnrollmentsPage/>}/>
+                        <Route path='recentactivity' element={<RecentActivity/>}/>
                     </Route>
                 </Route>
 

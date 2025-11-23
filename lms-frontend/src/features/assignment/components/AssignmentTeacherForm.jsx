@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { Calendar } from 'primereact/calendar';
-import { Card } from 'primereact/card';
-import { Toast } from "primereact/toast";
-import { InputNumber } from "primereact/inputnumber";
-import { useParams } from "react-router-dom";
-import { MultiSelect } from 'primereact/multiselect';
+import {useEffect, useRef, useState} from 'react';
+import {Button} from 'primereact/button';
+import {InputText} from 'primereact/inputtext';
+import {Calendar} from 'primereact/calendar';
+import {Card} from 'primereact/card';
+import {Toast} from "primereact/toast";
+import {InputNumber} from "primereact/inputnumber";
+import {useParams} from "react-router-dom";
+import {MultiSelect} from 'primereact/multiselect';
 
-const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => {
-    const { courseId } = useParams();
+const AssignmentTeacherForm = ({defaultValues, onSave, onCancel, session}) => {
+    const {courseId} = useParams();
     const toast = useRef(null);
     const [title, setTitle] = useState(defaultValues?.title || "");
     const [maxScore, setMaxScore] = useState(defaultValues?.max_score ?? 10);
@@ -20,9 +20,9 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
     const [file, setFile] = useState(null);
     const [selectedAssignmentType, setSelectedAssignmentType] = useState(null);
     const assignmentType = [
-        { name: 'Home', code: 'HOME' },
-        { name: 'Class', code: 'CLASS' },
-        { name: 'Exam', code: 'EXAM' }
+        {name: 'Home', code: 'HOME'},
+        {name: 'Class', code: 'CLASS'},
+        {name: 'Exam', code: 'EXAM'}
     ];
 
 
@@ -35,11 +35,15 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
 
     const handleSave = () => {
         if (!title.trim()) {
-            toast.current.show({ severity: "warn", summary: "Missing title", detail: "Please enter a title." });
+            toast.current.show({severity: "warn", summary: "Missing title", detail: "Please enter a title."});
             return;
         }
         if (!dueDate) {
-            toast.current.show({ severity: "warn", summary: "Missing due date", detail: "Please select a due date and time." });
+            toast.current.show({
+                severity: "warn",
+                summary: "Missing due date",
+                detail: "Please select a due date and time."
+            });
             return;
         }
         //Check ngày giao bài đúng với buổi học, hạn nộp không được trước ngày giao bài --BEGIN--
@@ -64,7 +68,7 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         //Check ngày giao bài đúng với buổi học, hạn nộp không được trước ngày giao bài --END--
 
         if (!courseId && !defaultValues?.course_id) {
-            toast.current.show({ severity: "warn", summary: "Missing  Course", detail: "Course ID not found." });
+            toast.current.show({severity: "warn", summary: "Missing  Course", detail: "Course ID not found."});
             return;
         }
         const payload = {
@@ -81,12 +85,16 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
         };
 
         onSave?.(payload);
-        toast.current.show({ severity: "success", summary: "Assignment created", detail: "The assignment was successfully created/assigned." });
+        toast.current.show({
+            severity: "success",
+            summary: "Assignment created",
+            detail: "The assignment was successfully created/assigned."
+        });
     };
     const footer = (
         <div className="flex justify-content-end gap-2">
-            <Button label="Cancel" severity="secondary" onClick={() => onCancel?.()} />
-            <Button label="Assign" icon="pi pi-send" onClick={handleSave} />
+            <Button label="Cancel" severity="secondary" onClick={() => onCancel?.()}/>
+            <Button label="Assign" icon="pi pi-send" onClick={handleSave}/>
         </div>
     );
     return (<div>
@@ -105,7 +113,7 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
             }
             footer={footer}
         >
-            <Toast ref={toast} />
+            <Toast ref={toast}/>
             <div className="flex flex-column gap-4">
                 <span className="p-float-label w-full">
                     <InputText
@@ -157,13 +165,13 @@ const AssignmentTeacherForm = ({ defaultValues, onSave, onCancel, session }) => 
                         showTime
                         hourFormat="24"
                         className="w-full"
-                        style={{ width: '100%' }}
+                        style={{width: '100%'}}
                     />
                     <label htmlFor="asg-due">Due Date</label>
                 </span>
                 <div className="flex flex-column gap-2">
                     <label className="text-500">Attached File</label>
-                    <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+                    <input type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)}/>
                     <small className="text-500">
                         {file?.name ? `Selected: ${file.name}` : (defaultValues?.file_name ? `Current: ${defaultValues.file_name}` : "No file chosen")}
                     </small>

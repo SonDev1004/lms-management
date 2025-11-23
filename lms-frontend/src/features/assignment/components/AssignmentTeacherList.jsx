@@ -1,5 +1,5 @@
 //Show danh sách các bài tập đã giao cho buổi học hôm đó
-const AssignmentTeacherList = ({ sessionId, assignments = [] }) => {
+const AssignmentTeacherList = ({sessionId, assignments = []}) => {
     //Lọc các bài tập có session_id trùng với sessionId được truyền vào
     const sessionAssignment = assignments.filter(assignment => assignment.session_id === sessionId);
 

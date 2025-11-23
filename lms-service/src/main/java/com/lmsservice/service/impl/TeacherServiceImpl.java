@@ -1,27 +1,25 @@
 package com.lmsservice.service.impl;
 
-import java.util.Set;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
 import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.common.paging.PageableUtils;
 import com.lmsservice.dto.request.course.TeacherCourseFilterRequest;
 import com.lmsservice.dto.response.course.TeacherCourse;
-import com.lmsservice.entity.*;
+import com.lmsservice.entity.Course;
 import com.lmsservice.mapper.TeacherCourseMapper;
 import com.lmsservice.repository.CourseRepository;
 import com.lmsservice.repository.SessionRepository;
 import com.lmsservice.security.CurrentUserService;
 import com.lmsservice.service.TeacherService;
 import com.lmsservice.spec.CourseSpecifications;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -50,9 +48,4 @@ public class TeacherServiceImpl implements TeacherService {
         return PageResponse.from(dtoPage);
     }
 
-    @Override
-    public PageResponse<TeacherCourse> getCoursesByTeacherId(
-            Long teacherId, TeacherCourseFilterRequest filter, Pageable pageable) {
-        return null;
-    }
 }

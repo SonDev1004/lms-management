@@ -28,6 +28,12 @@ public class Assignment extends EntityAbstract {
 
     LocalDateTime dueDate;
 
+    public enum AssignmentType {QUIZ, UPLOAD, HOMEWORK, EXAM}
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "assignment_type", columnDefinition = "nvarchar(max)", nullable = false)
+    AssignmentType assignmentType;
+
     @Column(columnDefinition = "bit default 1", nullable = false)
     boolean isActive;
 
