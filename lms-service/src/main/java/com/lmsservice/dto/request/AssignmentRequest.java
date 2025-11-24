@@ -18,5 +18,5 @@ public class AssignmentRequest {
     private Double factor;
     private LocalDateTime dueDate;
     private Boolean isActive;
-    private List<String> assignmentType; // ["UPLOAD","QUIZ"]
+    private List<String> assignmentType; // [QUIZ_PHASE, MID_TEST, FINAL_TEST]
 }

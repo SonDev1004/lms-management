@@ -101,7 +101,7 @@ export default function StudentAssignmentsPage({ course }) {
 
     const actionsBodyTemplate = (row) => {
         const types = normalizeTypes(row.assignmentType);
-        const isQuiz = types.includes("QUIZ");
+        const isQuiz = types.includes("QUIZ_PHASE");
         if (!isQuiz) return null;
 
         const s = normalizeStatus(row.studentStatus);

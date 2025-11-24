@@ -137,21 +137,39 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
                 .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
 
         Submission submission = new Submission();
-        submission.setAssignment(assignment);
-        submission.setStudent(student);
+
+        submission.setFileName("QUIZ-" + assignmentId + "-" + studentId + "-" + System.currentTimeMillis());
+        submission.setScore(BigDecimal.ZERO);        // score float default 0
+        submission.setAutoScore(BigDecimal.ZERO);    // auto_score decimal default 0
+        submission.setGradedStatus(0);               // graded_status tinyint default 0 (0 = chưa chấm)
+
+        // 2) Thời gian bắt đầu làm bài
         submission.setStartedAt(LocalDateTime.now());
         submission.setFinishedAt(null);
-        submission.setAnswersJson(null);
-        // điểm lúc bắt đầu = 0
-        submission.setScore(BigDecimal.ZERO);
 
+        // 3) Chưa có câu trả lời
+        submission.setAnswersJson(null);
+        submission.setSubmittedDate(null);
+        submission.setAssignment(assignment);
+        submission.setStudent(student);
         submission = submissionRepository.save(submission);
+        try {
+            submission = submissionRepository.save(submission);
+        } catch (Exception e) {
+            log.error("Failed saving Submission id={} assignmentId={} studentId={}: {}",
+                    submission.getId(),
+                    submission.getAssignment() != null ? submission.getAssignment().getId() : null,
+                    submission.getStudent() != null ? submission.getStudent().getId() : null,
+                    e.toString(), e);
+            throw e;
+        }
 
         QuizStartResponse resp = new QuizStartResponse();
         resp.setAssignmentId(assignmentId);
         resp.setSubmissionId(submission.getId());
         return resp;
     }
+
 
     /* ==========================================================
      *               SUBMIT + AUTO GRADE (DTO)

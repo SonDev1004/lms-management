@@ -8,9 +8,9 @@ import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
 
 const assignmentTypeOptions = [
-    { label: "Quiz", value: "QUIZ" },
-    { label: "Upload", value: "UPLOAD" },
-    { label: "Homework", value: "HOMEWORK" },
+    { label: "Quiz phase", value: "QUIZ_PHASE" },
+    { label: "Mid test", value: "MID_TEST" },
+    { label: "Final test", value: "FINAL_TEST" },
 ];
 
 export default function TeacherAssignmentForm({

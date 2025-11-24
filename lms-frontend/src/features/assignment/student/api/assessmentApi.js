@@ -31,41 +31,90 @@ function loadLocal(assignmentId) {
     }
 }
 
-// ===== API calls =====
-
-// Lấy state làm bài (ưu tiên state lưu local, nếu không có thì gọi /start để mở bài mới)
+/**
+ * Lấy state làm bài:
+ *  1. Nếu đã có state trong localStorage, chưa completed và có câu hỏi → dùng luôn.
+ *  2. Nếu chưa có → POST /student/assignments/{id}/start để tạo submission.
+ *  3. Sau đó GET /student/assignments/{id}/quiz để lấy đề.
+ */
 export async function fetchAssessment(assignmentId) {
     const local = loadLocal(assignmentId);
-    if (local && !local.completed) {
+    if (
+        local &&
+        !local.completed &&
+        Array.isArray(local.questions) &&
+        local.questions.length > 0
+    ) {
         return local;
     }
 
-    // VERY IMPORTANT: dùng axiosClient để có token
-    const res = await axiosClient.post(
-        AppUrls.studentStartQuiz(assignmentId)
-    );
-    const data = res.data?.result;
+    let startData;
+    let quizData;
 
-    const questions = (data.questions || []).map((q, index) => ({
-        id: q.questionId,
-        order: q.orderNumber ?? index + 1,
-        points: q.points ?? 1,
-        meta: {
-            title: q.content,
-            type: q.type,
-            audioUrl: q.audioUrl,
-        },
-        // BE trả options là [{key,text},...]
-        options: q.options || [],
-        answer: null, // chưa chọn
-    }));
+    // 1) START QUIZ
+    try {
+        const startRes = await axiosClient.post(
+            AppUrls.studentStartQuiz(assignmentId)
+        );
+        startData = startRes.data?.result || {};
+        if (!startData.submissionId) {
+            throw new Error("Start quiz không trả về submissionId");
+        }
+    } catch (e) {
+        clearAssessment(assignmentId);
+        console.error("Failed to start quiz", e);
+        throw new Error("Failed to start quiz");
+    }
+
+    // 2) GET QUIZ
+    try {
+        const quizRes = await axiosClient.get(
+            AppUrls.studentGetQuiz(assignmentId)
+        );
+        quizData = quizRes.data?.result || {};
+    } catch (e) {
+        clearAssessment(assignmentId);
+        console.error("Failed to load quiz", e);
+        throw new Error("Failed to load quiz");
+    }
+
+    const rawQuestions = quizData.questions || [];
+
+    const questions = rawQuestions.map((q, index) => {
+        const id = q.questionId ?? q.id;
+        if (id == null) {
+            throw new Error(
+                `Missing questionId from backend for question index ${index}`
+            );
+        }
+        return {
+            id,
+            order: q.orderNumber ?? index + 1,
+            points: q.points ?? 1,
+            meta: {
+                title: q.content ?? "",
+                type: q.type ?? null,
+                audioUrl: q.audioUrl ?? null,
+            },
+            // BE trả [{ key: "A", text: "cat" }, ...]
+            options: q.options || [],
+            answer: null,
+        };
+    });
+
+    const durationMinutes =
+        quizData.durationMinutes != null ? quizData.durationMinutes : null;
 
     const state = {
-        assignmentId: data.assignmentId,
-        title: data.assignmentTitle,
-        submissionId: data.submissionId,
-        durationMinutes: data.durationMinutes ?? null,
-        timeLeftSec: data.durationMinutes ? data.durationMinutes * 60 : null,
+        assignmentId:
+            quizData.assignmentId ??
+            startData.assignmentId ??
+            Number(assignmentId),
+        title: quizData.assignmentTitle ?? "",
+        submissionId: startData.submissionId,
+        durationMinutes,
+        timeLeftSec:
+            durationMinutes != null ? durationMinutes * 60 : null,
         currentIndex: 1,
         questions,
         completed: false,
@@ -75,28 +124,37 @@ export async function fetchAssessment(assignmentId) {
     return state;
 }
 
-// Nộp bài
+/**
+ * Nộp bài:
+ *  FE → map { "<assignmentDetailId>": "<selectedKey>" }
+ *  Ví dụ: { "7": "A", "8": "C" }
+ *  để khớp với submitInternal() trong QuizSubmissionServiceImpl.
+ */
 export async function submitQuiz(assignmentId, submissionId, state) {
-    // Map state => payload BE mong muốn
-    const answers = (state.questions || []).map((q) => {
+    const answers = {};
+
+    (state.questions || []).forEach((q) => {
         const selectedIndex = q.answer;
-        const selected =
-            selectedIndex != null ? q.options[selectedIndex] : null;
+        if (selectedIndex == null) return;
 
-        return {
-            questionId: q.id,
-            // tuỳ BE yêu cầu: ở đây gửi key + index
-            selectedOptionKey: selected?.key ?? null,
-            selectedOptionIndex:
-                selectedIndex != null ? selectedIndex : null,
-        };
+        const opt = q.options?.[selectedIndex];
+        const key =
+            opt?.key ??
+            opt?.optionKey ??
+            opt?.label ??
+            null;
+
+        if (key != null && q.id != null) {
+            // q.id = AssignmentDetail.id / questionId từ BE
+            answers[String(q.id)] = key;
+        }
     });
-
-    const payload = { answers };
 
     const res = await axiosClient.post(
         AppUrls.studentSubmitQuiz(assignmentId, submissionId),
-        payload
+        answers
     );
+
+    // BE hiện đang trả Submission entity
     return res.data?.result ?? res.data;
 }

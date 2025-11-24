@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -25,16 +25,26 @@ export default function StudentQuizPage() {
     const [result, setResult] = useState(null);
     const [timeLeftSec, setTimeLeftSec] = useState(null);
 
-    const [toastRef] = useState(null);
+    const toastRef = useRef(null);
 
+    // Load state: ưu tiên local → nếu không có thì /start + /quiz
     const loadState = useCallback(async () => {
         try {
             setLoading(true);
             const data = await fetchAssessment(assignmentId);
             setState(data);
-            setTimeLeftSec(data.timeLeftSec ?? data.durationMinutes * 60);
+            setTimeLeftSec(
+                data.timeLeftSec ??
+                (data.durationMinutes ? data.durationMinutes * 60 : null)
+            );
         } catch (e) {
             console.error(e);
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Không tải được bài quiz.",
+            });
+            setState(null);
         } finally {
             setLoading(false);
         }
@@ -45,6 +55,7 @@ export default function StudentQuizPage() {
     }, [loadState]);
 
     // Timer
+    // lms-frontend/src/features/assignment/student/pages/StudentQuizPage.jsx
     useEffect(() => {
         if (!state || result) return;
         if (timeLeftSec === null) return;
@@ -58,14 +69,16 @@ export default function StudentQuizPage() {
             setTimeLeftSec((prev) => {
                 if (prev === null) return prev;
                 const next = prev - 1;
-                const newState = { ...state, timeLeftSec: Math.max(next, 0) };
-                saveAssessment(assignmentId, newState);
+                setState((oldState) => {
+                    const newState = { ...oldState, timeLeftSec: Math.max(next, 0) };
+                    saveAssessment(assignmentId, newState);
+                    return newState;
+                });
                 return next;
             });
         }, 1000);
 
         return () => clearInterval(id);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state, timeLeftSec, result]);
 
     const handleChooseOption = (qIndex, optionIndex) => {
@@ -81,13 +94,23 @@ export default function StudentQuizPage() {
     };
 
     const handleChangeQuestion = (index) => {
-        setState((prev) =>
-            prev ? { ...prev, currentIndex: index + 1 } : prev
-        );
+        setState((prev) => {
+            if (!prev) return prev;
+            const nextState = { ...prev, currentIndex: index + 1 };
+            saveAssessment(assignmentId, nextState);
+            return nextState;
+        });
     };
 
     const handleAutoSubmit = async () => {
-        if (result) return;
+        if (result || !state || !state.submissionId) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Missing submission ID.",
+            });
+            return;
+        }
         try {
             setSubmitting(true);
             const res = await submitQuiz(
@@ -99,7 +122,7 @@ export default function StudentQuizPage() {
             clearAssessment(assignmentId);
         } catch (e) {
             console.error(e);
-            toastRef?.show({
+            toastRef.current?.show({
                 severity: "error",
                 summary: "Error",
                 detail: "Không nộp được bài",
@@ -151,6 +174,22 @@ export default function StudentQuizPage() {
     const minutes = Math.floor((timeLeftSec ?? 0) / 60);
     const seconds = (timeLeftSec ?? 0) % 60;
 
+    const totalPoints = state.questions.reduce(
+        (sum, q) => sum + (q.points ?? 1),
+        0
+    );
+
+    const rawScore = result
+        ? result.score ??
+        result.totalScore ??
+        null
+        : null;
+
+    const computedPercentage =
+        rawScore != null && totalPoints > 0
+            ? Math.round((rawScore / totalPoints) * 100)
+            : null;
+
     return (
         <div className="page-wrap">
             <Toast ref={toastRef} />
@@ -169,15 +208,11 @@ export default function StudentQuizPage() {
                 <div className="flex flex-column align-items-end gap-2">
                     <div className="flex align-items-center gap-2">
                         <Tag
-                            value={`Time left: ${minutes
-                                .toString()
-                                .padStart(2, "0")}:${seconds
-                                .toString()
-                                .padStart(2, "0")}`}
+                            value={`Time left: ${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`}
                             severity={
-                                timeLeftSec <= 60
+                                timeLeftSec != null && timeLeftSec <= 60
                                     ? "danger"
-                                    : timeLeftSec <= 300
+                                    : timeLeftSec != null && timeLeftSec <= 300
                                         ? "warning"
                                         : "info"
                             }
@@ -232,31 +267,54 @@ export default function StudentQuizPage() {
                         />
                     </div>
 
-                    <p className="mb-4 text-lg">{currentQuestion.meta?.title}</p>
+                    <p className="mb-4 text-lg">
+                        {currentQuestion.meta?.title}
+                    </p>
+
+                    {currentQuestion.meta?.audioUrl && (
+                        <audio
+                            src={currentQuestion.meta.audioUrl}
+                            controls
+                            className="mb-3"
+                        />
+                    )}
 
                     <div className="flex flex-column gap-2">
                         {(currentQuestion.options || []).map((opt, idx) => {
                             const label =
                                 typeof opt === "string"
                                     ? opt
-                                    : opt.text || opt.label || `Option ${idx + 1}`;
+                                    : opt.text ||
+                                    opt.content ||
+                                    opt.label ||
+                                    `Option ${idx + 1}`;
+
+                            // Hiển thị thêm key A/B/C nếu có
+                            const prefix = opt.key ? `${opt.key}. ` : "";
+
                             return (
                                 <div
                                     key={idx}
                                     className="flex align-items-center gap-2 p-2 border-round surface-100"
-                                    onClick={() => handleChooseOption(currentIndex, idx)}
+                                    onClick={() =>
+                                        handleChooseOption(currentIndex, idx)
+                                    }
                                 >
                                     <RadioButton
                                         inputId={`q${currentQuestion.id}_o${idx}`}
                                         checked={currentQuestion.answer === idx}
                                         onChange={() =>
-                                            handleChooseOption(currentIndex, idx)
+                                            handleChooseOption(
+                                                currentIndex,
+                                                idx
+                                            )
                                         }
                                     />
                                     <label
                                         htmlFor={`q${currentQuestion.id}_o${idx}`}
                                         className="cursor-pointer"
                                     >
+                                        {prefix}
                                         {label}
                                     </label>
                                 </div>
@@ -270,7 +328,9 @@ export default function StudentQuizPage() {
                             outlined
                             disabled={currentIndex === 0}
                             onClick={() =>
-                                handleChangeQuestion(Math.max(currentIndex - 1, 0))
+                                handleChangeQuestion(
+                                    Math.max(currentIndex - 1, 0)
+                                )
                             }
                         />
                         <div className="flex gap-2">
@@ -288,7 +348,9 @@ export default function StudentQuizPage() {
                                 }
                             />
                             <Button
-                                label={submitting ? "Submitting..." : "Submit"}
+                                label={
+                                    submitting ? "Submitting..." : "Submit"
+                                }
                                 icon="pi pi-check"
                                 onClick={handleSubmit}
                                 disabled={submitting || !!result}
@@ -300,13 +362,17 @@ export default function StudentQuizPage() {
                         <div className="mt-4 border-top pt-3">
                             <h4>Kết quả</h4>
                             <p>
-                                Score:{" "}
+                                Điểm:{" "}
                                 <strong>
-                                    {result.score}/{result.maxScore}
-                                </strong>{" "}
-                                ({result.percentage}%)
+                                    {rawScore ?? "-"} / {totalPoints}
+                                </strong>
+                                {computedPercentage != null && (
+                                    <> ({computedPercentage}%)</>
+                                )}
                             </p>
-                            <p>Status: {result.status}</p>
+                            {result.status && (
+                                <p>Status: {result.status}</p>
+                            )}
                         </div>
                     )}
                 </Card>

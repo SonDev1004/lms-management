@@ -38,13 +38,12 @@ export default function TeacherAssignmentPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        loadMyCourses();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        loadMyCourses().then(r => console.log("Loaded courses",r));
     }, []);
 
     useEffect(() => {
         if (selectedCourseId) {
-            loadAssignments(selectedCourseId);
+            loadAssignments(selectedCourseId).then(r => console.log("Assignment selected",r));
         } else {
             setAssignments([]);
         }
@@ -56,7 +55,6 @@ export default function TeacherAssignmentPage() {
             const res = await axiosClient.get(AppUrls.getTeacherCourses);
             const apiRes = res.data || {};
 
-            // ApiResponse<PageResponse<TeacherCourse>> hoặc ApiResponse<List<TeacherCourse>>
             const payload = apiRes.result ?? apiRes.data ?? [];
             const list = Array.isArray(payload)
                 ? payload
@@ -169,7 +167,7 @@ export default function TeacherAssignmentPage() {
                 });
 
                 // Nếu form chọn QUIZ → nhảy thẳng sang Quiz Builder
-                if ((toSend.assignmentType || []).includes("QUIZ")) {
+                if ((toSend.assignmentType || []).includes("QUIZ_PHASE")) {
                     setFormVisible(false);
                     setEditing(null);
                     navigate(

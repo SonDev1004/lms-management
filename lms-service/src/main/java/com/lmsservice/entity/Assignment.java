@@ -28,7 +28,7 @@ public class Assignment extends EntityAbstract {
 
     LocalDateTime dueDate;
 
-    public enum AssignmentType {QUIZ, UPLOAD, HOMEWORK, EXAM}
+    public enum AssignmentType {QUIZ_PHASE, MID_TEST, FINAL_TEST}
 
     @Enumerated(EnumType.STRING)
     @Column(name = "assignment_type", columnDefinition = "nvarchar(max)", nullable = false)
