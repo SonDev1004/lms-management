@@ -211,7 +211,7 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
 
         // 3) Lưu điểm & trạng thái chấm
         submission.setAutoScore(BigDecimal.valueOf(totalScore));
-        submission.setScore(BigDecimal.valueOf(totalScore)); // đang dùng rawScore = tổng points
+        submission.setScore(BigDecimal.valueOf(totalScore));
         submission.setGradedStatus(1); // 1 = auto_done
 
         Submission saved = submissionRepository.save(submission);
@@ -251,13 +251,10 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
                 log.error("Error parsing question snapshot for AssignmentDetail {}", detail.getId(), e);
                 continue;
             }
-
-            // hiện tại: giả định câu hỏi MCQ single, snapshot có "correctKey"
             Object typeObj = snapshot.get("type");
             int type = (typeObj instanceof Number n) ? n.intValue() : 0;
 
             if (type != 1) {
-                // sau này mở rộng thêm loại khác
                 continue;
             }
 
@@ -265,8 +262,6 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
             if (correctKey == null) {
                 continue;
             }
-
-            // FE gửi answer map với key = id của AssignmentDetail
             Object studentAnswer = answers.get(String.valueOf(detail.getId()));
             if (studentAnswer == null) {
                 continue;
