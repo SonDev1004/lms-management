@@ -13,7 +13,7 @@ const AssignmentTeacherForm = ({defaultValues, onSave, onCancel, session}) => {
     const toast = useRef(null);
     const [title, setTitle] = useState(defaultValues?.title || "");
     const [maxScore, setMaxScore] = useState(defaultValues?.max_score ?? 10);
-    const [factor, setFactor] = useState(defaultValues?.factor ?? 0.1);
+    const [factor] = useState(defaultValues?.factor ?? 0.1);
     const [dueDate, setDueDate] = useState(
         defaultValues?.due_date ? new Date(defaultValues.due_date) : null
     );

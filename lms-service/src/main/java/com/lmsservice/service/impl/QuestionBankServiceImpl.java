@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +76,7 @@ public class QuestionBankServiceImpl implements QuestionBankService {
         qb.setIsActive(false);
         questionBankRepository.save(qb);
     }
+
     @Override
     public Page<QuestionBankSummaryDto> searchQuestions(
             Long subjectId,
@@ -87,6 +89,7 @@ public class QuestionBankServiceImpl implements QuestionBankService {
         Page<QuestionBank> page = questionBankRepository.search(subjectId, type, active, kw, pageable);
         return page.map(this::toSummaryDto);
     }
+
 
     private QuestionBankSummaryDto toSummaryDto(QuestionBank q) {
         QuestionBankSummaryDto dto = new QuestionBankSummaryDto();

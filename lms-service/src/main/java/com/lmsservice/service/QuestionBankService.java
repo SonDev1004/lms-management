@@ -3,8 +3,11 @@ package com.lmsservice.service;
 import com.lmsservice.dto.request.CreateMcqQuestionRequest;
 import com.lmsservice.dto.response.QuestionBankSummaryDto;
 import com.lmsservice.entity.QuestionBank;
+import com.lmsservice.entity.Subject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface QuestionBankService {
 
@@ -27,4 +30,5 @@ public interface QuestionBankService {
             String keyword,
             Pageable pageable
     );
+
 }

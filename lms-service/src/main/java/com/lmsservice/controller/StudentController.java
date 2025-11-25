@@ -45,19 +45,5 @@ public class StudentController {
                 .build());
     }
 
-    @GetMapping("/courses/{courseId}/assignments")
-    public ResponseEntity<ApiResponse<List<AssignmentResponse>>> getAssignmentsByCourse(
-            @PathVariable Long courseId) {
-
-        List<AssignmentResponse> list = assignmentService.getAssignmentsByCourseId(courseId);
-
-        ApiResponse<List<AssignmentResponse>> resp = ApiResponse.<List<AssignmentResponse>>builder()
-                .code(HttpStatus.OK.value())
-                .message("Lấy danh sách assignment thành công")
-                .result(list)
-                .build();
-
-        return ResponseEntity.ok(resp);
-    }
 }
 

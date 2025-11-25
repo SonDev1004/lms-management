@@ -3,6 +3,7 @@ package com.lmsservice.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.lmsservice.entity.Submission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,9 @@ public interface CourseStudentRepository extends JpaRepository<CourseStudent, Lo
     List<CourseStudent> findByCourseId(Long courseId);
 
     Optional<CourseStudent> findByCourseIdAndStudentId(Long courseId, Long studentId);
+
+    Optional<CourseStudent> findByCourse_IdAndStudent_Id(Long courseId, Long studentId);
+
+    List<CourseStudent> findByStudent_Id(Long studentId);
 }
+

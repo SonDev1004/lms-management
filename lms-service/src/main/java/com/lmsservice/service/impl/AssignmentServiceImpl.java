@@ -1,8 +1,15 @@
 // com.lmsservice.service.impl.AssignmentServiceImpl.java
 package com.lmsservice.service.impl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
+import com.lmsservice.dto.response.StudentAssignmentItemResponse;
+import com.lmsservice.entity.Submission;
+import com.lmsservice.repository.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +22,6 @@ import com.lmsservice.entity.User;
 import com.lmsservice.exception.ErrorCode;
 import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.mapper.AssignmentMapper;
-import com.lmsservice.repository.AssignmentRepository;
-import com.lmsservice.repository.CourseRepository;
-import com.lmsservice.repository.CourseStudentRepository;
-import com.lmsservice.repository.UserRepository;
 import com.lmsservice.service.AssignmentService;
 
 import lombok.AccessLevel;
@@ -35,7 +38,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     UserRepository userRepository;
     CourseStudentRepository courseStudentRepository;
     CourseRepository courseRepository;
-
+    SubmissionRepository submissionRepository;
     /* ======================== HELPER ======================== */
 
     private User getCurrentUser() {
@@ -122,37 +125,37 @@ public class AssignmentServiceImpl implements AssignmentService {
      *                 TEACHER SIDE – CREATE
      * ========================================================== */
 
-@Override
-@Transactional
-public AssignmentResponse createAssignmentForTeacher(Long courseId, AssignmentRequest req) {
-    ensureTeacherOfCourse(courseId);
+    @Override
+    @Transactional
+    public AssignmentResponse createAssignmentForTeacher(Long courseId, AssignmentRequest req) {
+        ensureTeacherOfCourse(courseId);
 
-    Course course = courseRepository.findById(courseId)
-            .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
-    Assignment entity = new Assignment();
-    entity.setCourse(course);
-    entity.setTitle(req.getTitle());
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+        Assignment entity = new Assignment();
+        entity.setCourse(course);
+        entity.setTitle(req.getTitle());
 
-    if (req.getMaxScore() != null) {
-        entity.setMaxScore(req.getMaxScore().toString());
+        if (req.getMaxScore() != null) {
+            entity.setMaxScore(req.getMaxScore().toString());
+        }
+
+        entity.setFileName(req.getFileName());
+
+        if (req.getFactor() != null) {
+            entity.setFactor(req.getFactor().intValue());
+        }
+        entity.setDueDate(req.getDueDate());
+        entity.setActive(req.getIsActive() != null ? req.getIsActive() : Boolean.TRUE);
+
+        if (req.getAssignmentType() != null && !req.getAssignmentType().isEmpty()) {
+            String typeStr = req.getAssignmentType().getFirst();
+            entity.setAssignmentType(Assignment.AssignmentType.valueOf(typeStr.toUpperCase()));
+        }
+
+        Assignment saved = assignmentRepository.save(entity);
+        return assignmentMapper.toResponse(saved);
     }
-
-    entity.setFileName(req.getFileName());
-
-    if (req.getFactor() != null) {
-        entity.setFactor(req.getFactor().intValue());
-    }
-    entity.setDueDate(req.getDueDate());
-    entity.setActive(req.getIsActive() != null ? req.getIsActive() : Boolean.TRUE);
-
-    if (req.getAssignmentType() != null && !req.getAssignmentType().isEmpty()) {
-        String typeStr = req.getAssignmentType().getFirst();
-        entity.setAssignmentType(Assignment.AssignmentType.valueOf(typeStr.toUpperCase()));
-    }
-
-    Assignment saved = assignmentRepository.save(entity);
-    return assignmentMapper.toResponse(saved);
-}
 
     /* ==========================================================
      *                 TEACHER SIDE – UPDATE
@@ -217,5 +220,53 @@ public AssignmentResponse createAssignmentForTeacher(Long courseId, AssignmentRe
         entity.setActive(false);
         assignmentRepository.save(entity);
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StudentAssignmentItemResponse> getAssignmentsForStudent(Long courseId, Long studentId) {
+        List<Assignment> assignments =
+                assignmentRepository.findByCourseId(courseId);
+
+        List<StudentAssignmentItemResponse> result = new ArrayList<>();
+
+        for (Assignment a : assignments) {
+            StudentAssignmentItemResponse dto = new StudentAssignmentItemResponse();
+            dto.setId(a.getId());
+            dto.setTitle(a.getTitle());
+            dto.setDueDate(a.getDueDate());
+            dto.setAssignmentType(
+                    a.getAssignmentType() != null ? a.getAssignmentType().name() : null
+            );
+            dto.setMaxScore(a.getMaxScore());
+
+            // ===== lookup submission mới nhất của student này =====
+            Optional<Submission> optSub =
+                    submissionRepository.findTopByAssignment_IdAndStudent_IdOrderByStartedAtDesc(
+                            a.getId(), studentId
+                    );
+
+            String status = "NOT_SUBMITTED";
+            BigDecimal studentScore = null;
+
+            if (optSub.isPresent()) {
+                Submission s = optSub.get();
+                Integer gs = s.getGradedStatus(); // 0=chưa chấm, 1=auto_done,...
+
+                if (Objects.equals(gs, 1)) {
+                    status = "GRADED";
+                    studentScore = s.getScore();
+                } else {
+                    status = "SUBMITTED";
+                }
+            }
+
+            dto.setStudentStatus(status);
+            dto.setStudentScore(studentScore);
+
+            result.add(dto);
+        }
+
+        return result;
     }
 }

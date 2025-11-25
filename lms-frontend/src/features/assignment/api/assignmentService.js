@@ -199,7 +199,6 @@ function mapAssignmentDtoToUi(dto) {
         dto.status ?? dto.studentStatus ?? dto.submissionStatus ?? null;
 
     return {
-        // 🔥 Lấy id từ nhiều key để bắt được mọi kiểu BE trả
         id:
             dto.id ??
             dto.assignmentId ??

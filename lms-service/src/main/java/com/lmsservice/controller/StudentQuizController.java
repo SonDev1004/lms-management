@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lmsservice.dto.request.CreateMcqQuestionRequest;
 import com.lmsservice.dto.request.SubmitQuizRequest;
-import com.lmsservice.dto.response.ApiResponse;
-import com.lmsservice.dto.response.QuizQuestionViewDto;
-import com.lmsservice.dto.response.QuizStartResponse;
-import com.lmsservice.dto.response.QuizViewResponse;
+import com.lmsservice.dto.response.*;
 import com.lmsservice.entity.Assignment;
 import com.lmsservice.entity.AssignmentDetail;
 import com.lmsservice.entity.Submission;
@@ -43,21 +40,7 @@ public class StudentQuizController {
     public ResponseEntity<ApiResponse<QuizViewResponse>> getQuiz(
             @PathVariable Long assignmentId
     ) {
-        Assignment assignment = assignmentRepository.findById(assignmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
-
-        List<AssignmentDetail> details =
-                assignmentDetailRepository.findByAssignmentIdOrderByOrderNumberAsc(assignmentId);
-
-        QuizViewResponse body = new QuizViewResponse();
-        body.setAssignmentId(assignment.getId());
-        body.setAssignmentTitle(assignment.getTitle());
-
-        List<QuizQuestionViewDto> questionDtos = new ArrayList<>();
-        for (AssignmentDetail d : details) {
-            questionDtos.add(buildQuestionViewFromSnapshot(d));
-        }
-        body.setQuestions(questionDtos);
+        QuizViewResponse body = quizSubmissionService.getQuizView(assignmentId);
 
         ApiResponse<QuizViewResponse> resp = ApiResponse.<QuizViewResponse>builder()
                 .message("Lấy đề quiz thành công")
@@ -67,9 +50,10 @@ public class StudentQuizController {
         return ResponseEntity.ok(resp);
     }
 
+
     // -------- SUBMIT QUIZ --------
     @PostMapping("/{assignmentId}/submissions/{submissionId}/submit-quiz")
-    public ResponseEntity<ApiResponse<Submission>> submitQuiz(
+    public ResponseEntity<ApiResponse<SubmissionResponse>> submitQuiz(
             @PathVariable Long assignmentId,
             @PathVariable Long submissionId,
             @RequestBody Map<String, Object> answers
@@ -77,7 +61,6 @@ public class StudentQuizController {
         Submission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> new IllegalArgumentException("Submission not found: " + submissionId));
 
-        // Validate: submission phải thuộc assignmentId trong path
         if (!submission.getAssignment().getId().equals(assignmentId)) {
             throw new IllegalArgumentException("Submission does not belong to assignment " + assignmentId);
         }
@@ -86,14 +69,16 @@ public class StudentQuizController {
         req.setSubmissionId(submissionId);
         req.setAnswers(answers);
 
-        Submission updated = quizSubmissionService.submitAndAutoGrade(req);
-        ApiResponse<Submission> resp = ApiResponse.<Submission>builder()
+        SubmissionResponse updated = quizSubmissionService.submitAndGrade(req);
+
+        ApiResponse<SubmissionResponse> resp = ApiResponse.<SubmissionResponse>builder()
                 .message("Nộp bài quiz thành công")
                 .result(updated)
                 .build();
 
         return ResponseEntity.ok(resp);
     }
+
 
     // -------- Helper: build câu hỏi từ snapshot --------
     @SuppressWarnings("unchecked")
@@ -111,7 +96,8 @@ public class StudentQuizController {
         try {
             Map<String, Object> snapshot = objectMapper.readValue(
                     snapshotJson,
-                    new TypeReference<Map<String, Object>>() {}
+                    new TypeReference<Map<String, Object>>() {
+                    }
             );
 
             dto.setType((Integer) castNumber(snapshot.get("type"), Integer.class));
@@ -123,7 +109,8 @@ public class StudentQuizController {
                 List<CreateMcqQuestionRequest.OptionDto> options =
                         objectMapper.convertValue(
                                 optionsObj,
-                                new TypeReference<List<CreateMcqQuestionRequest.OptionDto>>() {}
+                                new TypeReference<List<CreateMcqQuestionRequest.OptionDto>>() {
+                                }
                         );
                 dto.setOptions(options);
             }

@@ -16,6 +16,7 @@ import com.lmsservice.repository.AssignmentDetailRepository;
 import com.lmsservice.repository.AssignmentRepository;
 import com.lmsservice.repository.StudentRepository;
 import com.lmsservice.repository.SubmissionRepository;
+import com.lmsservice.service.CourseScoreService;
 import com.lmsservice.service.QuizSubmissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,21 +37,17 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
     private final SubmissionRepository submissionRepository;
     private final StudentRepository studentRepository;
     private final ObjectMapper objectMapper;
+    private final CourseScoreService courseScoreService;   // <-- thêm
 
     /* ==========================================================
      *               METHOD CŨ (ENTITY) – DÙNG LẠI LOGIC MỚI
      * ========================================================== */
 
-    /**
-     * Giữ để tương thích ngược: chỗ nào BE cũ gọi submitAndAutoGrade
-     * vẫn chạy đúng. Logic chấm điểm dùng chung với submitAndGrade.
-     */
     @Override
     @Transactional
     public Submission submitAndAutoGrade(SubmitQuizRequest req) {
-        Submission submission = submitInternal(req);
-        // trả về entity cho code cũ nếu còn dùng
-        return submission;
+        // dùng chung core logic
+        return submitInternal(req);
     }
 
     /* ==========================================================
@@ -74,14 +71,12 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         QuizViewResponse resp = new QuizViewResponse();
         resp.setAssignmentId(assignment.getId());
         resp.setAssignmentTitle(assignment.getTitle());
-        // nếu sau này có durationMinutes thì set thêm
         resp.setQuestions(questions);
         return resp;
     }
 
     private QuizQuestionViewDto toQuizQuestionView(AssignmentDetail detail) {
         QuizQuestionViewDto dto = new QuizQuestionViewDto();
-        // dùng id của AssignmentDetail làm questionId cho FE
         dto.setQuestionId(detail.getId());
         dto.setOrderNumber(detail.getOrderNumber());
         dto.setPoints(detail.getPoints());
@@ -135,32 +130,35 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found: " + studentId));
+        Optional<Submission> latest = submissionRepository
+                .findTopByAssignment_IdAndStudent_IdOrderBySubmittedDateDesc(assignmentId, studentId);
 
+        if (latest.isPresent() && Objects.equals(latest.get().getGradedStatus(), 1)) {
+            throw new IllegalStateException("Quiz already submitted and graded");
+        }
         Submission submission = new Submission();
 
-        submission.setFileName("QUIZ-" + assignmentId + "-" + studentId + "-" + System.currentTimeMillis());
-        submission.setScore(BigDecimal.ZERO);        // score float default 0
-        submission.setAutoScore(BigDecimal.ZERO);    // auto_score decimal default 0
-        submission.setGradedStatus(0);               // graded_status tinyint default 0 (0 = chưa chấm)
-
-        // 2) Thời gian bắt đầu làm bài
-        submission.setStartedAt(LocalDateTime.now());
-        submission.setFinishedAt(null);
-
-        // 3) Chưa có câu trả lời
-        submission.setAnswersJson(null);
-        submission.setSubmittedDate(null);
+        // Quan hệ bắt buộc
         submission.setAssignment(assignment);
         submission.setStudent(student);
-        submission = submissionRepository.save(submission);
+
+        // Các cột NOT NULL / default
+        submission.setFileName("QUIZ-" + assignmentId + "-" + studentId + "-" + System.currentTimeMillis());
+        submission.setScore(BigDecimal.ZERO);      // điểm ban đầu
+        submission.setAutoScore(BigDecimal.ZERO);  // auto_score
+        submission.setGradedStatus(0);             // 0 = chưa chấm
+
+        // Thời gian + answers
+        submission.setStartedAt(LocalDateTime.now());
+        submission.setFinishedAt(null);
+        submission.setSubmittedDate(null);
+        submission.setAnswersJson(null);
+
         try {
             submission = submissionRepository.save(submission);
         } catch (Exception e) {
-            log.error("Failed saving Submission id={} assignmentId={} studentId={}: {}",
-                    submission.getId(),
-                    submission.getAssignment() != null ? submission.getAssignment().getId() : null,
-                    submission.getStudent() != null ? submission.getStudent().getId() : null,
-                    e.toString(), e);
+            log.error("Failed saving Submission assignmentId={} studentId={}: {}",
+                    assignmentId, studentId, e.toString(), e);
             throw e;
         }
 
@@ -169,7 +167,6 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         resp.setSubmissionId(submission.getId());
         return resp;
     }
-
 
     /* ==========================================================
      *               SUBMIT + AUTO GRADE (DTO)
@@ -198,7 +195,7 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         Map<String, Object> answers =
                 Optional.ofNullable(req.getAnswers()).orElseGet(HashMap::new);
 
-        // lưu answers_json
+        // 1) Lưu answers_json
         try {
             String answersJson = objectMapper.writeValueAsString(answers);
             submission.setAnswersJson(answersJson);
@@ -207,14 +204,28 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         }
 
         submission.setFinishedAt(LocalDateTime.now());
+        submission.setSubmittedDate(LocalDateTime.now());
 
-        // auto grade theo snapshot
+        // 2) Auto grade theo snapshot → tổng điểm (raw)
         double totalScore = autoGradeSubmission(submission, answers);
 
-        // lưu điểm dưới dạng BigDecimal
-        submission.setScore(BigDecimal.valueOf(totalScore));
+        // 3) Lưu điểm & trạng thái chấm
+        submission.setAutoScore(BigDecimal.valueOf(totalScore));
+        submission.setScore(BigDecimal.valueOf(totalScore)); // đang dùng rawScore = tổng points
+        submission.setGradedStatus(1); // 1 = auto_done
 
-        return submissionRepository.save(submission);
+        Submission saved = submissionRepository.save(submission);
+
+        try {
+            Long courseId = saved.getAssignment().getCourse().getId();
+            Long studentId = saved.getStudent().getId();
+            courseScoreService.recalcCourseStudentAverage(courseId, studentId);
+        } catch (Exception ex) {
+            log.warn("Không tính lại được course average cho submission {}: {}",
+                    saved.getId(), ex.getMessage(), ex);
+        }
+
+        return saved;
     }
 
     private double autoGradeSubmission(Submission submission, Map<String, Object> answers) {
@@ -290,6 +301,7 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         dto.setAssignmentId(s.getAssignment().getId());
         dto.setScore(s.getScore());
 
+        // maxScore
         String maxScoreStr = s.getAssignment().getMaxScore();
         BigDecimal maxScore = null;
         try {
@@ -302,7 +314,8 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         try {
             BigDecimal scoreBd = Optional.ofNullable(s.getScore()).orElse(BigDecimal.ZERO);
             double score = scoreBd.doubleValue();
-            double max = Optional.ofNullable(maxScore).orElse(BigDecimal.ZERO).doubleValue();
+            double max = Optional.ofNullable(maxScore).orElse(BigDecimal.TEN).doubleValue(); // default 10
+
             if (max > 0) {
                 int pct = (int) Math.round(score * 100.0 / max);
                 dto.setPercentage(pct);
@@ -311,7 +324,28 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
             dto.setPercentage(null);
         }
 
-        dto.setStatus("GRADED");
+        // ====== STATUS MAPPING ======
+        String status;
+        Integer gs = s.getGradedStatus();
+
+        if (gs != null) {
+            switch (gs) {
+                case 1 -> status = "GRADED";
+                case 2 -> status = "REVIEWED";
+                default -> status = "SUBMITTED";
+            }
+        } else {
+            if (s.getFinishedAt() != null) {
+                status = "SUBMITTED";
+            } else if (s.getStartedAt() != null) {
+                status = "IN_PROGRESS";
+            } else {
+                status = "NOT_STARTED";
+            }
+        }
+
+        dto.setStatus(status);
+
         dto.setStartedAt(s.getStartedAt());
         dto.setFinishedAt(s.getFinishedAt());
         return dto;

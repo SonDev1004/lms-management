@@ -37,7 +37,6 @@ public class AssignmentQuizServiceImpl implements AssignmentQuizService {
         Assignment assignment = assignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
 
-        // Xóa config cũ
         assignmentDetailRepository.deleteByAssignmentId(assignmentId);
 
         if (items == null || items.isEmpty()) {
@@ -69,16 +68,59 @@ public class AssignmentQuizServiceImpl implements AssignmentQuizService {
         snapshot.put("audioUrl", qb.getAudioUrl());
 
         try {
+            // options
             Object options = null;
             if (qb.getOptionsJson() != null) {
                 options = objectMapper.readValue(qb.getOptionsJson(), Object.class);
             }
             snapshot.put("options", options);
+
+            // ===== NEW: correctKey từ answers_json =====
+            String correctKey = extractCorrectKey(qb);
+            snapshot.put("correctKey", correctKey);
+
             return objectMapper.writeValueAsString(snapshot);
         } catch (Exception e) {
             log.error("Error building question snapshot for question {}", qb.getId(), e);
             throw new RuntimeException("Error building question snapshot", e);
         }
+    }
+
+    /**
+     * Lấy key đúng từ question_bank.answers_json.
+     * Hỗ trợ các format: ["A"], "A", {"key":"A",...}, [{"key":"A",...}]
+     */
+    private String extractCorrectKey(QuestionBank qb) {
+        String answersJson = qb.getAnswersJson();
+        if (answersJson == null || answersJson.isBlank()) {
+            return null;
+        }
+
+        try {
+            JsonNode node = objectMapper.readTree(answersJson);
+
+            if (node.isArray() && node.size() > 0) {
+                JsonNode first = node.get(0);
+                if (first.isTextual()) {
+                    // ["A"]
+                    return first.asText();
+                }
+                if (first.isObject() && first.hasNonNull("key")) {
+                    // [{"key":"A","text":"..."}]
+                    return first.get("key").asText();
+                }
+            } else if (node.isObject() && node.hasNonNull("key")) {
+                // {"key":"A","text":"..."}
+                return node.get("key").asText();
+            } else if (node.isTextual()) {
+                // "A"
+                return node.asText();
+            }
+        } catch (Exception e) {
+            log.warn("Cannot parse answers_json for QuestionBank {}: {}",
+                    qb.getId(), e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override

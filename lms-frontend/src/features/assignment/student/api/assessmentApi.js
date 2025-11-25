@@ -31,12 +31,7 @@ function loadLocal(assignmentId) {
     }
 }
 
-/**
- * Lấy state làm bài:
- *  1. Nếu đã có state trong localStorage, chưa completed và có câu hỏi → dùng luôn.
- *  2. Nếu chưa có → POST /student/assignments/{id}/start để tạo submission.
- *  3. Sau đó GET /student/assignments/{id}/quiz để lấy đề.
- */
+//Lấy state làm bài:
 export async function fetchAssessment(assignmentId) {
     const local = loadLocal(assignmentId);
     if (
@@ -130,6 +125,7 @@ export async function fetchAssessment(assignmentId) {
  *  Ví dụ: { "7": "A", "8": "C" }
  *  để khớp với submitInternal() trong QuizSubmissionServiceImpl.
  */
+// Nộp bài: FE gửi map { "<assignmentDetailId>": "<selectedKey>" }
 export async function submitQuiz(assignmentId, submissionId, state) {
     const answers = {};
 
@@ -145,16 +141,16 @@ export async function submitQuiz(assignmentId, submissionId, state) {
             null;
 
         if (key != null && q.id != null) {
-            // q.id = AssignmentDetail.id / questionId từ BE
+            // id = assignmentDetailId
             answers[String(q.id)] = key;
         }
     });
 
     const res = await axiosClient.post(
         AppUrls.studentSubmitQuiz(assignmentId, submissionId),
-        answers
+        answers            // <-- gửi trực tiếp map
     );
 
-    // BE hiện đang trả Submission entity
     return res.data?.result ?? res.data;
 }
+

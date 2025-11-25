@@ -1,12 +1,12 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { RadioButton } from "primereact/radiobutton";
-import { ProgressBar } from "primereact/progressbar";
-import { Tag } from "primereact/tag";
-import { Toast } from "primereact/toast";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import {useEffect, useState, useCallback, useRef} from "react";
+import {useParams, useNavigate} from "react-router-dom";
+import {Card} from "primereact/card";
+import {Button} from "primereact/button";
+import {RadioButton} from "primereact/radiobutton";
+import {ProgressBar} from "primereact/progressbar";
+import {Tag} from "primereact/tag";
+import {Toast} from "primereact/toast";
+import {ConfirmDialog, confirmDialog} from "primereact/confirmdialog";
 
 import {
     fetchAssessment,
@@ -16,7 +16,7 @@ import {
 } from "@/features/assignment/student/api/assessmentApi.js";
 
 export default function StudentQuizPage() {
-    const { assignmentId } = useParams();
+    const {assignmentId} = useParams();
     const navigate = useNavigate();
 
     const [state, setState] = useState(null);
@@ -54,8 +54,7 @@ export default function StudentQuizPage() {
         void loadState();
     }, [loadState]);
 
-    // Timer
-    // lms-frontend/src/features/assignment/student/pages/StudentQuizPage.jsx
+
     useEffect(() => {
         if (!state || result) return;
         if (timeLeftSec === null) return;
@@ -70,7 +69,7 @@ export default function StudentQuizPage() {
                 if (prev === null) return prev;
                 const next = prev - 1;
                 setState((oldState) => {
-                    const newState = { ...oldState, timeLeftSec: Math.max(next, 0) };
+                    const newState = {...oldState, timeLeftSec: Math.max(next, 0)};
                     saveAssessment(assignmentId, newState);
                     return newState;
                 });
@@ -85,9 +84,9 @@ export default function StudentQuizPage() {
         setState((prev) => {
             if (!prev) return prev;
             const questions = [...prev.questions];
-            const q = { ...questions[qIndex], answer: optionIndex };
+            const q = {...questions[qIndex], answer: optionIndex};
             questions[qIndex] = q;
-            const nextState = { ...prev, questions };
+            const nextState = {...prev, questions};
             saveAssessment(assignmentId, nextState);
             return nextState;
         });
@@ -96,21 +95,14 @@ export default function StudentQuizPage() {
     const handleChangeQuestion = (index) => {
         setState((prev) => {
             if (!prev) return prev;
-            const nextState = { ...prev, currentIndex: index + 1 };
+            const nextState = {...prev, currentIndex: index + 1};
             saveAssessment(assignmentId, nextState);
             return nextState;
         });
     };
 
     const handleAutoSubmit = async () => {
-        if (result || !state || !state.submissionId) {
-            toastRef.current?.show({
-                severity: "error",
-                summary: "Error",
-                detail: "Missing submission ID.",
-            });
-            return;
-        }
+        if (result || !state) return;
         try {
             setSubmitting(true);
             const res = await submitQuiz(
@@ -118,6 +110,13 @@ export default function StudentQuizPage() {
                 state.submissionId,
                 state
             );
+
+            // đánh dấu đã hoàn thành + dừng timer
+            setState((prev) =>
+                prev ? {...prev, completed: true} : prev
+            );
+            setTimeLeftSec(null);
+
             setResult(res);
             clearAssessment(assignmentId);
         } catch (e) {
@@ -131,6 +130,7 @@ export default function StudentQuizPage() {
             setSubmitting(false);
         }
     };
+
 
     const handleSubmit = () => {
         confirmDialog({
@@ -146,7 +146,7 @@ export default function StudentQuizPage() {
     if (loading) {
         return (
             <div className="page-wrap flex justify-content-center align-items-center">
-                <i className="pi pi-spin pi-spinner mr-2" />
+                <i className="pi pi-spin pi-spinner mr-2"/>
                 Đang tải bài quiz...
             </div>
         );
@@ -156,7 +156,7 @@ export default function StudentQuizPage() {
         return (
             <div className="page-wrap flex flex-column gap-3 align-items-center justify-content-center">
                 <p>Không tải được bài quiz.</p>
-                <Button label="Quay lại" onClick={() => navigate(-1)} />
+                <Button label="Quay lại" onClick={() => navigate(-1)}/>
             </div>
         );
     }
@@ -192,11 +192,11 @@ export default function StudentQuizPage() {
 
     return (
         <div className="page-wrap">
-            <Toast ref={toastRef} />
-            <ConfirmDialog />
+            <Toast ref={toastRef}/>
+            <ConfirmDialog/>
             <div className="header-row">
                 <div className="title-block">
-                    <i className="pi pi-stopwatch title-icon" />
+                    <i className="pi pi-stopwatch title-icon"/>
                     <div>
                         <h2 className="title">{state.title}</h2>
                         <p className="subtitle">
@@ -222,7 +222,7 @@ export default function StudentQuizPage() {
                             severity="success"
                         />
                     </div>
-                    <ProgressBar value={percent} style={{ width: "260px" }} />
+                    <ProgressBar value={percent} style={{width: "260px"}}/>
                 </div>
             </div>
 
@@ -296,18 +296,19 @@ export default function StudentQuizPage() {
                                 <div
                                     key={idx}
                                     className="flex align-items-center gap-2 p-2 border-round surface-100"
-                                    onClick={() =>
-                                        handleChooseOption(currentIndex, idx)
-                                    }
+                                    onClick={() => {
+                                        if (!result) {
+                                            handleChooseOption(currentIndex, idx);
+                                        }
+                                    }}
+
                                 >
                                     <RadioButton
                                         inputId={`q${currentQuestion.id}_o${idx}`}
                                         checked={currentQuestion.answer === idx}
+                                        disabled={!!result}
                                         onChange={() =>
-                                            handleChooseOption(
-                                                currentIndex,
-                                                idx
-                                            )
+                                            !result && handleChooseOption(currentIndex, idx)
                                         }
                                     />
                                     <label
@@ -326,7 +327,7 @@ export default function StudentQuizPage() {
                         <Button
                             label="Previous"
                             outlined
-                            disabled={currentIndex === 0}
+                            disabled={currentIndex === 0 || !!result}
                             onClick={() =>
                                 handleChangeQuestion(
                                     Math.max(currentIndex - 1, 0)
@@ -337,7 +338,9 @@ export default function StudentQuizPage() {
                             <Button
                                 label="Next"
                                 outlined
-                                disabled={currentIndex === totalQuestions - 1}
+                                disabled={
+                                    currentIndex === totalQuestions - 1 || !!result
+                                }
                                 onClick={() =>
                                     handleChangeQuestion(
                                         Math.min(
@@ -370,9 +373,15 @@ export default function StudentQuizPage() {
                                     <> ({computedPercentage}%)</>
                                 )}
                             </p>
-                            {result.status && (
-                                <p>Status: {result.status}</p>
-                            )}
+                            {result.status && <p>Status: {result.status}</p>}
+
+                            <div className="flex gap-2 mt-3">
+                                <Button
+                                    label="Quay lại danh sách"
+                                    outlined
+                                    onClick={() => navigate(-1)}
+                                />
+                            </div>
                         </div>
                     )}
                 </Card>

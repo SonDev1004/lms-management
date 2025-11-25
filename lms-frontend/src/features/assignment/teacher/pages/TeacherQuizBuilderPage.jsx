@@ -1,26 +1,26 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
 
-import { Card } from "primereact/card";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { InputNumber } from "primereact/inputnumber";
-import { Dialog } from "primereact/dialog";
-import { Dropdown } from "primereact/dropdown";
-import { InputText } from "primereact/inputtext";
-import { Tag } from "primereact/tag";
-import { Toast } from "primereact/toast";
+import {Card} from "primereact/card";
+import {DataTable} from "primereact/datatable";
+import {Column} from "primereact/column";
+import {Button} from "primereact/button";
+import {InputNumber} from "primereact/inputnumber";
+import {Dialog} from "primereact/dialog";
+import {Dropdown} from "primereact/dropdown";
+import {InputText} from "primereact/inputtext";
+import {Tag} from "primereact/tag";
+import {Toast} from "primereact/toast";
 
 import axiosClient from "@/shared/api/axiosClient.js";
-import { AppUrls } from "@/shared/constants/index.js";
+import {AppUrls} from "@/shared/constants/index.js";
 import {
     fetchAssignmentQuizConfig,
     saveAssignmentQuizConfig,
 } from "@/features/assignment/api/assignmentService.js";
 
 export default function TeacherQuizBuilderPage() {
-    const { assignmentId } = useParams();
+    const {assignmentId} = useParams();
 
     const [config, setConfig] = useState(null);
     const [items, setItems] = useState([]);
@@ -33,8 +33,29 @@ export default function TeacherQuizBuilderPage() {
     const [bankKeyword, setBankKeyword] = useState("");
     const [bankSubject, setBankSubject] = useState(null);
     const [bankSelection, setBankSelection] = useState([]);
+    const [subjectOptions, setSubjectOptions] = useState([]);
 
-    const [toastRef] = useState(null);
+    const toastRef = useState(null);
+    useEffect(() => {
+        loadSubjects();
+    }, []);
+
+    const loadSubjects = async () => {
+        try {
+            const res = await axiosClient.get(AppUrls.subjectList);
+            const apiRes = res.data || {};
+            const payload = apiRes.result ?? apiRes.data ?? apiRes ?? [];
+            const list = Array.isArray(payload) ? payload : payload.content || [];
+
+            const opts = list.map((s) => ({
+                label: s.name || s.title,
+                value: s.id,
+            }));
+            setSubjectOptions(opts);
+        } catch (e) {
+            console.error("Failed to load subjects", e);
+        }
+    };
 
     useEffect(() => {
         if (!assignmentId || assignmentId === "null") return;
@@ -58,7 +79,7 @@ export default function TeacherQuizBuilderPage() {
     const handleChangePoints = (row, points) => {
         setItems((prev) =>
             prev.map((it) =>
-                it.questionId === row.questionId ? { ...it, points } : it
+                it.questionId === row.questionId ? {...it, points} : it
             )
         );
     };
@@ -66,7 +87,7 @@ export default function TeacherQuizBuilderPage() {
     const handleChangeOrder = (row, orderNumber) => {
         setItems((prev) =>
             prev.map((it) =>
-                it.questionId === row.questionId ? { ...it, orderNumber } : it
+                it.questionId === row.questionId ? {...it, orderNumber} : it
             )
         );
     };
@@ -161,10 +182,10 @@ export default function TeacherQuizBuilderPage() {
 
     return (
         <div className="page-wrap">
-            <Toast ref={toastRef} />
+            <Toast ref={toastRef}/>
             <div className="header-row">
                 <div className="title-block">
-                    <i className="pi pi-list-check title-icon" />
+                    <i className="pi pi-list-check title-icon"/>
                     <div>
                         <h2 className="title">
                             Quiz Builder – Assignment #{assignmentId}
@@ -203,7 +224,7 @@ export default function TeacherQuizBuilderPage() {
                 <DataTable
                     value={items}
                     loading={loadingConfig}
-                    dataKey="questionId"   // 🔥 KEY THEO questionId, KHÔNG CÒN null
+                    dataKey="questionId"
                     size="small"
                     stripedRows
                     responsiveLayout="scroll"
@@ -219,10 +240,10 @@ export default function TeacherQuizBuilderPage() {
                                 }
                                 min={1}
                                 max={999}
-                                inputStyle={{ width: "4rem" }}
+                                inputStyle={{width: "4rem"}}
                             />
                         )}
-                        style={{ width: "6rem" }}
+                        style={{width: "6rem"}}
                     />
                     <Column
                         field="content"
@@ -249,10 +270,10 @@ export default function TeacherQuizBuilderPage() {
                                 }
                                 min={0}
                                 max={100}
-                                inputStyle={{ width: "4rem" }}
+                                inputStyle={{width: "4rem"}}
                             />
                         )}
-                        style={{ width: "8rem" }}
+                        style={{width: "8rem"}}
                     />
                     <Column
                         header=""
@@ -265,7 +286,7 @@ export default function TeacherQuizBuilderPage() {
                                 onClick={() => handleRemoveItem(row)}
                             />
                         )}
-                        style={{ width: "4rem" }}
+                        style={{width: "4rem"}}
                     />
                 </DataTable>
             </Card>
@@ -274,12 +295,12 @@ export default function TeacherQuizBuilderPage() {
             <Dialog
                 header="Question Bank"
                 visible={bankVisible}
-                style={{ width: "900px" }}
+                style={{width: "900px"}}
                 onHide={() => setBankVisible(false)}
             >
                 <div className="flex gap-2 mb-3">
                     <span className="p-input-icon-left flex-1">
-                        <i className="pi pi-search" />
+                        <i className="pi pi-search"/>
                         <InputText
                             placeholder="Search content..."
                             value={bankKeyword}
@@ -293,7 +314,7 @@ export default function TeacherQuizBuilderPage() {
                     </span>
                     <Dropdown
                         value={bankSubject}
-                        options={[]}
+                        options={subjectOptions}
                         onChange={(e) => setBankSubject(e.value)}
                         placeholder="Subject"
                         className="w-12rem"
@@ -316,9 +337,9 @@ export default function TeacherQuizBuilderPage() {
                 >
                     <Column
                         selectionMode="multiple"
-                        headerStyle={{ width: "4rem" }}
+                        headerStyle={{width: "4rem"}}
                     />
-                    <Column field="id" header="ID" style={{ width: "6rem" }} />
+                    <Column field="id" header="ID" style={{width: "6rem"}}/>
                     <Column
                         field="contentPreview"
                         header="Content"
@@ -327,12 +348,12 @@ export default function TeacherQuizBuilderPage() {
                     <Column
                         field="subjectName"
                         header="Subject"
-                        style={{ width: "10rem" }}
+                        style={{width: "10rem"}}
                     />
                     <Column
                         field="level"
                         header="Level"
-                        style={{ width: "8rem" }}
+                        style={{width: "8rem"}}
                     />
                 </DataTable>
 

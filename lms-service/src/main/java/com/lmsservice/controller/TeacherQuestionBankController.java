@@ -4,6 +4,7 @@ import com.lmsservice.dto.request.CreateMcqQuestionRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.QuestionBankSummaryDto;
 import com.lmsservice.entity.QuestionBank;
+import com.lmsservice.entity.Subject;
 import com.lmsservice.security.CurrentUserService;
 import com.lmsservice.service.QuestionBankService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Question bank cho giáo viên / Academic Manager
@@ -87,4 +90,5 @@ public class TeacherQuestionBankController {
 
         return ResponseEntity.ok(resp);
     }
+
 }

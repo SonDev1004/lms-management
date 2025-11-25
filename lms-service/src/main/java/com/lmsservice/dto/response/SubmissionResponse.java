@@ -12,7 +12,7 @@ public class SubmissionResponse {
     private BigDecimal score;        // điểm cuối cùng
     private BigDecimal maxScore;     // điểm tối đa của bài
     private Integer percentage;      // score/maxScore * 100 (làm tròn)
-    private String status;           // IN_PROGRESS / SUBMITTED / GRADED / ABORTED ...
+    private String status;
     private LocalDateTime startedAt;
     private LocalDateTime finishedAt;
 }
