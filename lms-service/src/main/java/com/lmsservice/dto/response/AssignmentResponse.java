@@ -3,6 +3,7 @@ package com.lmsservice.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,7 +21,11 @@ public class AssignmentResponse {
     Integer factor;
     LocalDateTime dueDate;
     List<String> assignmentType;
-    boolean isActive;
+    @JsonProperty("isActive")
+    Boolean isActive;
+    public Boolean getActive() {
+        return isActive;
+    }
     Long courseId;
     String courseTitle;
     Boolean status;

@@ -10,4 +10,5 @@ public class QuizViewResponse {
     private String assignmentTitle;
     private Integer durationMinutes; // nếu Assignment có, không thì để null
     private List<QuizQuestionViewDto> questions;
+    private String assignmentType;
 }

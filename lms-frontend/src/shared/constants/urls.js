@@ -66,6 +66,7 @@ export default {
 
     // Question Bank (ngân hàng đề)
     questionBankList: `${rootAPI}/teacher/question-bank`,
+    questionBankListBySubject: `${rootAPI}/teacher/question-bank/list-questions-by-subject`,
     questionBankCreateMcq: `${rootAPI}/teacher/question-bank/mcq-single`,
     questionBankDeactivate: (id) => `${rootAPI}/teacher/question-bank/${id}`,
 

@@ -58,6 +58,11 @@ export const createTeacherAssignment = async (courseId, formPayload) => {
 
     const url = AppUrls.createTeacherAssignment(courseId);
 
+    const isActiveValue =
+        typeof formPayload.isActive === "boolean"
+            ? formPayload.isActive
+            : undefined;
+
     const body = {
         id: formPayload.id ?? null,
         courseId: formPayload.courseId ?? courseId,
@@ -67,18 +72,16 @@ export const createTeacherAssignment = async (courseId, formPayload) => {
         fileName: formPayload.fileName ?? null,
         dueDate: formPayload.dueDate ?? null,
         assignmentType: formPayload.assignmentType ?? [],
-        isActive: formPayload.isActive ?? true,
+        isActive: isActiveValue,
+        active: isActiveValue,
         sessionId: formPayload.sessionId ?? null,
-
     };
 
     const res = await axiosClient.post(url, body);
     const apiRes = res.data || {};
 
-    // ✅ Lấy đúng data từ response
     const dto = apiRes.result ?? apiRes.data;
 
-    // ✅ Kiểm tra nếu không có dto hoặc không có id thì throw error
     if (!dto) {
         console.error("API Response:", apiRes);
         throw new Error("Backend không trả về assignment data");
@@ -94,6 +97,7 @@ export const createTeacherAssignment = async (courseId, formPayload) => {
     return mapped;
 };
 
+
 /**
  * Update assignment cho teacher
  * PUT /teacher/assignments/{assignmentId}
@@ -103,6 +107,11 @@ export const updateTeacherAssignment = async (assignmentId, formPayload) => {
 
     const url = AppUrls.updateTeacherAssignment(assignmentId);
 
+    const isActiveValue =
+        typeof formPayload.isActive === "boolean"
+            ? formPayload.isActive
+            : undefined;
+
     const body = {
         id: formPayload.id ?? assignmentId,
         courseId: formPayload.courseId ?? null,
@@ -111,7 +120,8 @@ export const updateTeacherAssignment = async (assignmentId, formPayload) => {
         factor: formPayload.factor,
         fileName: formPayload.fileName ?? null,
         dueDate: formPayload.dueDate ?? null,
-        isActive: formPayload.isActive ?? true,
+        isActive: isActiveValue,
+        active: isActiveValue,
         sessionId: formPayload.sessionId ?? null,
         assignmentType: formPayload.assignmentType ?? [],
     };
@@ -121,6 +131,8 @@ export const updateTeacherAssignment = async (assignmentId, formPayload) => {
     const dto = apiRes.result ?? apiRes.data ?? null;
     return mapAssignmentDtoToUi(dto || body);
 };
+
+
 
 /**
  * Delete assignment
@@ -183,8 +195,6 @@ function mapAssignmentDtoToUi(dto) {
 
     const rawDue =
         dto.dueDate ?? dto.due_date ?? dto.due ?? null;
-
-    // assignmentType trong DB có thể là string ("QUIZ") hoặc array
     let typeVal = dto.assignmentType ?? dto.type ?? null;
     let typeArr;
     if (Array.isArray(typeVal)) {
@@ -193,6 +203,14 @@ function mapAssignmentDtoToUi(dto) {
         typeArr = [typeVal];
     } else {
         typeArr = [];
+    }
+
+    let activeRaw = dto.isActive ?? dto.active;
+    let isActive = true;
+    if (typeof activeRaw === "boolean") {
+        isActive = activeRaw;
+    } else if (activeRaw != null) {
+        isActive = String(activeRaw).toLowerCase() === "true";
     }
 
     const rawStatus =
@@ -207,12 +225,10 @@ function mapAssignmentDtoToUi(dto) {
 
         title: dto.title ?? dto.assignmentTitle ?? "",
 
-        // dùng cho Student list
         due: rawDue,
-        // dùng cho Teacher form
+
         dueDate: rawDue,
 
-        // FE đang dùng: 'not_submitted' | 'submitted' | 'graded'
         studentStatus: mapStatus(rawStatus),
         grade: dto.studentScore ?? dto.score ?? null,
 
@@ -221,7 +237,7 @@ function mapAssignmentDtoToUi(dto) {
         courseId: dto.courseId ?? dto.course_id ?? null,
 
         assignmentType: typeArr,
-        isActive: dto.isActive ?? dto.active ?? true,
+        isActive,
     };
 }
 

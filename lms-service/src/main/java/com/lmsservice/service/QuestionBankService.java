@@ -1,6 +1,8 @@
 package com.lmsservice.service;
 
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateMcqQuestionRequest;
+import com.lmsservice.dto.response.QuestionBankItemResponse;
 import com.lmsservice.dto.response.QuestionBankSummaryDto;
 import com.lmsservice.entity.QuestionBank;
 import com.lmsservice.entity.Subject;
@@ -30,5 +32,10 @@ public interface QuestionBankService {
             String keyword,
             Pageable pageable
     );
-
+    PageResponse<QuestionBankItemResponse> listQuestionBank(
+            Long subjectId,
+            String keyword,
+            int page,
+            int size
+    );
 }

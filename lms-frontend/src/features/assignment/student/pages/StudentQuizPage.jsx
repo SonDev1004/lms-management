@@ -27,16 +27,52 @@ export default function StudentQuizPage() {
 
     const toastRef = useRef(null);
 
-    // Load state: ưu tiên local → nếu không có thì /start + /quiz
+    const getDefaultDurationMinutes = (data) => {
+        let typeVal =
+            data.assignmentType ??
+            data.type ??
+            data.assignment_type ??
+            (data.assignment ? data.assignment.assignmentType : null);
+
+        if (Array.isArray(typeVal) && typeVal.length > 0) {
+            typeVal = typeVal[0];
+        }
+
+        if (typeof typeVal === "string") {
+            const code = typeVal.toUpperCase();
+            if (code === "QUIZ_PHASE" || code === "QUIZ") return 45;
+            if (code === "MID_TEST" || code === "MIDTERM") return 60;
+            if (code === "FINAL_TEST" || code === "FINAL") return 60;
+        }
+
+        return null;
+    };
+
+
     const loadState = useCallback(async () => {
         try {
             setLoading(true);
             const data = await fetchAssessment(assignmentId);
             setState(data);
-            setTimeLeftSec(
-                data.timeLeftSec ??
-                (data.durationMinutes ? data.durationMinutes * 60 : null)
-            );
+
+            let sec = null;
+
+            if (data.timeLeftSec != null) {
+                sec = data.timeLeftSec;
+            }
+
+            else if (data.durationMinutes != null) {
+                sec = data.durationMinutes * 60;
+            }
+
+            else {
+                const mins = getDefaultDurationMinutes(data);
+                if (mins != null) {
+                    sec = mins * 60;
+                }
+            }
+
+            setTimeLeftSec(sec);
         } catch (e) {
             console.error(e);
             toastRef.current?.show({
@@ -49,6 +85,7 @@ export default function StudentQuizPage() {
             setLoading(false);
         }
     }, [assignmentId]);
+
 
     useEffect(() => {
         void loadState();
@@ -171,8 +208,18 @@ export default function StudentQuizPage() {
 
     const percent = Math.round((answeredCount / totalQuestions) * 100);
 
-    const minutes = Math.floor((timeLeftSec ?? 0) / 60);
-    const seconds = (timeLeftSec ?? 0) % 60;
+    const minutes =
+        timeLeftSec != null ? Math.floor(timeLeftSec / 60) : null;
+    const seconds = timeLeftSec != null ? timeLeftSec % 60 : null;
+
+    const timeLabel =
+        timeLeftSec == null
+            ? "No limit"
+            : `${minutes.toString().padStart(2, "0")}:${seconds
+                .toString()
+                .padStart(2, "0")}`;
+
+
 
     const totalPoints = state.questions.reduce(
         (sum, q) => sum + (q.points ?? 1),
@@ -208,7 +255,7 @@ export default function StudentQuizPage() {
                 <div className="flex flex-column align-items-end gap-2">
                     <div className="flex align-items-center gap-2">
                         <Tag
-                            value={`Time left: ${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`}
+                            value={`Time left: ${timeLabel}`}
                             severity={
                                 timeLeftSec != null && timeLeftSec <= 60
                                     ? "danger"
@@ -254,7 +301,6 @@ export default function StudentQuizPage() {
                         })}
                     </div>
                 </Card>
-
                 {/* Main: nội dung câu hỏi */}
                 <Card className="flex-1">
                     <div className="flex justify-content-between align-items-center mb-3">

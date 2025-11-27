@@ -1,9 +1,9 @@
 // src/features/assignment/student/api/assessmentApi.js
 import axiosClient from "@/shared/api/axiosClient.js";
-import { AppUrls } from "@/shared/constants/index.js";
+import {AppUrls} from "@/shared/constants/index.js";
 
 // ===== Local storage helpers =====
-const KEY = (assignmentId) => `quiz_state_${assignmentId}`;
+const KEY = (assignmentId) => `quiz_state_v2_${assignmentId}`;
 
 export function saveAssessment(assignmentId, state) {
     try {
@@ -91,11 +91,16 @@ export async function fetchAssessment(assignmentId) {
                 type: q.type ?? null,
                 audioUrl: q.audioUrl ?? null,
             },
-            // BE trả [{ key: "A", text: "cat" }, ...]
             options: q.options || [],
             answer: null,
         };
     });
+
+    const assignmentType =
+        quizData.assignmentType ??
+        quizData.type ??
+        quizData.assignment_type ??
+        (quizData.assignment ? quizData.assignment.assignmentType : null);
 
     const durationMinutes =
         quizData.durationMinutes != null ? quizData.durationMinutes : null;
@@ -107,6 +112,9 @@ export async function fetchAssessment(assignmentId) {
             Number(assignmentId),
         title: quizData.assignmentTitle ?? "",
         submissionId: startData.submissionId,
+
+        assignmentType,
+
         durationMinutes,
         timeLeftSec:
             durationMinutes != null ? durationMinutes * 60 : null,
@@ -114,6 +122,7 @@ export async function fetchAssessment(assignmentId) {
         questions,
         completed: false,
     };
+
 
     saveAssessment(assignmentId, state);
     return state;
@@ -148,7 +157,7 @@ export async function submitQuiz(assignmentId, submissionId, state) {
 
     const res = await axiosClient.post(
         AppUrls.studentSubmitQuiz(assignmentId, submissionId),
-        answers            // <-- gửi trực tiếp map
+        answers
     );
 
     return res.data?.result ?? res.data;

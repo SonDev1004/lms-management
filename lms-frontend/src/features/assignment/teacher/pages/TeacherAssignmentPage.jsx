@@ -205,10 +205,11 @@ export default function TeacherAssignmentPage() {
     };
 
     const statusBodyTemplate = (row) => {
+        const active = row.isActive ?? row.active ?? false;
         return (
             <Tag
-                value={row.isActive ? "Active" : "Inactive"}
-                severity={row.isActive ? "success" : "danger"}
+                value={active ? "Active" : "Inactive"}
+                severity={active ? "success" : "danger"}
             />
         );
     };

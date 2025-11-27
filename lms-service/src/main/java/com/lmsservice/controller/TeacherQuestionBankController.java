@@ -1,7 +1,9 @@
 package com.lmsservice.controller;
 
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateMcqQuestionRequest;
 import com.lmsservice.dto.response.ApiResponse;
+import com.lmsservice.dto.response.QuestionBankItemResponse;
 import com.lmsservice.dto.response.QuestionBankSummaryDto;
 import com.lmsservice.entity.QuestionBank;
 import com.lmsservice.entity.Subject;
@@ -89,6 +91,22 @@ public class TeacherQuestionBankController {
                         .build();
 
         return ResponseEntity.ok(resp);
+    }
+    @GetMapping("/list-questions-by-subject")
+    public ResponseEntity<ApiResponse<PageResponse<QuestionBankItemResponse>>> list(
+            @RequestParam(required = false) Long subjectId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        var result = questionBankService.listQuestionBank(subjectId, keyword, page, size);
+        return ResponseEntity.ok(
+                ApiResponse.<PageResponse<QuestionBankItemResponse>>builder()
+                        .code(1000)
+                        .message("Lấy question bank thành công")
+                        .result(result)
+                        .build()
+        );
     }
 
 }

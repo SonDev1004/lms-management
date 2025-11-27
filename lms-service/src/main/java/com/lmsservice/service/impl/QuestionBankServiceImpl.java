@@ -2,7 +2,10 @@ package com.lmsservice.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lmsservice.common.paging.PageResponse;
 import com.lmsservice.dto.request.CreateMcqQuestionRequest;
+
+import com.lmsservice.dto.response.QuestionBankItemResponse;
 import com.lmsservice.dto.response.QuestionBankSummaryDto;
 import com.lmsservice.entity.QuestionBank;
 import com.lmsservice.entity.Subject;
@@ -14,7 +17,9 @@ import com.lmsservice.service.QuestionBankService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -88,6 +93,54 @@ public class QuestionBankServiceImpl implements QuestionBankService {
         String kw = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
         Page<QuestionBank> page = questionBankRepository.search(subjectId, type, active, kw, pageable);
         return page.map(this::toSummaryDto);
+    }
+
+    @Override
+    public PageResponse<QuestionBankItemResponse> listQuestionBank(
+            Long subjectId,
+            String keyword,
+            int page,
+            int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<QuestionBank> pageData =
+                questionBankRepository.filterBySubjectAndKeyword(subjectId, keyword, pageable);
+
+        List<QuestionBankItemResponse> items = pageData.getContent().stream()
+                .map(this::toItemResponse)
+                .toList();
+
+        return PageResponse.<QuestionBankItemResponse>builder()
+                .page(pageData.getNumber())
+                .size(pageData.getSize())
+                .totalItems(pageData.getTotalElements())
+                .totalPages(pageData.getTotalPages())
+                .hasNext(pageData.hasNext())
+                .hasPrevious(pageData.hasPrevious())
+                .items(items)
+                .build();
+    }
+    private QuestionBankItemResponse toItemResponse(QuestionBank q) {
+        QuestionBankItemResponse dto = new QuestionBankItemResponse();
+        dto.setId(q.getId());
+        dto.setType(q.getType());
+        dto.setContent(q.getContent());
+
+        // contentPreview: cắt ngắn cho đẹp list
+        String c = q.getContent();
+        if (c != null && c.length() > 120) {
+            dto.setContentPreview(c.substring(0, 117) + "...");
+        } else {
+            dto.setContentPreview(c);
+        }
+
+        if (q.getSubject() != null) {
+            dto.setSubjectId(q.getSubject().getId());
+            dto.setSubjectName(q.getSubject().getTitle());
+        }
+
+        return dto;
     }
 
 

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useRef} from "react";
 import {useParams} from "react-router-dom";
 
 import {Card} from "primereact/card";
@@ -34,28 +34,44 @@ export default function TeacherQuizBuilderPage() {
     const [bankSubject, setBankSubject] = useState(null);
     const [bankSelection, setBankSelection] = useState([]);
     const [subjectOptions, setSubjectOptions] = useState([]);
+    const toastRef = useRef(null);
+    const buildSubjectOptionsFromList = (questions) => {
+        const map = new Map();
 
-    const toastRef = useState(null);
+        (questions || []).forEach((q) => {
+            if (q.subjectId && q.subjectName && !map.has(q.subjectId)) {
+                map.set(q.subjectId, {
+                    label: q.subjectName,
+                    value: q.subjectId,
+                });
+            }
+        });
+
+        setSubjectOptions(Array.from(map.values()));
+    };
     useEffect(() => {
         loadSubjects();
     }, []);
 
     const loadSubjects = async () => {
         try {
-            const res = await axiosClient.get(AppUrls.subjectList);
-            const apiRes = res.data || {};
-            const payload = apiRes.result ?? apiRes.data ?? apiRes ?? [];
-            const list = Array.isArray(payload) ? payload : payload.content || [];
+            // LẤY DS MÔN HỌC ĐÚNG API
+            const res = await axiosClient.get(AppUrls.listSubject);
+            const items = res.data?.result || [];
 
-            const opts = list.map((s) => ({
-                label: s.name || s.title,
-                value: s.id,
-            }));
-            setSubjectOptions(opts);
+            if (Array.isArray(items) && items.length > 0) {
+                const opts = items.map((s) => ({
+                    label: s.title ?? s.name,
+                    value: s.id,
+                }));
+                setSubjectOptions(opts);
+            }
         } catch (e) {
             console.error("Failed to load subjects", e);
         }
     };
+
+
 
     useEffect(() => {
         if (!assignmentId || assignmentId === "null") return;
@@ -103,28 +119,57 @@ export default function TeacherQuizBuilderPage() {
         loadQuestionBank();
     };
 
-    const loadQuestionBank = async () => {
+    const loadQuestionBank = async (override = {}) => {
         try {
             setBankLoading(true);
+
+            const effectiveSubjectId =
+                override.subjectId !== undefined ? override.subjectId : bankSubject;
+            const effectiveKeyword =
+                override.keyword !== undefined ? override.keyword : bankKeyword;
+
             const params = {
-                keyword: bankKeyword || undefined,
-                subjectId: bankSubject?.value || undefined,
+                keyword: effectiveKeyword || undefined,
+                subjectId: effectiveSubjectId || undefined,
                 page: 0,
                 size: 50,
             };
-            const res = await axiosClient.get(AppUrls.questionBankList, {
-                params,
-            });
-            const apiRes = res.data || {};
-            const payload = apiRes.result ?? apiRes.data ?? {};
-            const list = payload.content || payload.items || payload || [];
+
+            const res = await axiosClient.get(AppUrls.questionBankListBySubject, { params });
+
+            const payload = res.data?.result || {};
+            const list = Array.isArray(payload.items) ? payload.items : [];
+
             setBankList(list);
+
+            if (!subjectOptions.length) {
+                buildSubjectOptionsFromList(list);
+            }
+
+            if (!list.length) {
+                toastRef.current?.show({
+                    severity: "info",
+                    summary: "No questions",
+                    detail: "Không tìm thấy câu hỏi nào phù hợp bộ lọc.",
+                    life: 2500,
+                });
+            }
         } catch (e) {
             console.error("Failed to load question bank", e);
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Không tải được Question Bank. Vui lòng thử lại.",
+                life: 3000,
+            });
         } finally {
             setBankLoading(false);
         }
     };
+
+
+
+
 
     const handleAddFromBank = () => {
         const existingIds = new Set(items.map((it) => it.questionId));
@@ -162,7 +207,7 @@ export default function TeacherQuizBuilderPage() {
         try {
             setSaving(true);
             await saveAssignmentQuizConfig(assignmentId, items);
-            toastRef?.show({
+            toastRef.current?.show({
                 severity: "success",
                 summary: "Saved",
                 detail: "Quiz configuration saved",
@@ -170,7 +215,7 @@ export default function TeacherQuizBuilderPage() {
             await loadConfig();
         } catch (e) {
             console.error(e);
-            toastRef?.show({
+            toastRef.current?.show({
                 severity: "error",
                 summary: "Error",
                 detail: "Không lưu được cấu hình quiz",
@@ -315,10 +360,15 @@ export default function TeacherQuizBuilderPage() {
                     <Dropdown
                         value={bankSubject}
                         options={subjectOptions}
-                        onChange={(e) => setBankSubject(e.value)}
                         placeholder="Subject"
-                        className="w-12rem"
+                        showClear
+                        onChange={(e) => {
+                            const newSubjectId = e.value ?? null;
+                            setBankSubject(newSubjectId);
+                            loadQuestionBank({ subjectId: newSubjectId });
+                        }}
                     />
+
                     <Button
                         label="Filter"
                         icon="pi pi-filter"

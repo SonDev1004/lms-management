@@ -39,4 +39,17 @@ public interface QuestionBankRepository extends JpaRepository<QuestionBank, Long
             @Param("keyword") String keyword,
             Pageable pageable
     );
+    @Query("""
+    select q from QuestionBank q
+    where q.isActive = true
+      and (:subjectId is null or q.subject.id = :subjectId)
+      and (:keyword is null 
+           or lower(q.content) like lower(concat('%', :keyword, '%')))
+""")
+    Page<QuestionBank> filterBySubjectAndKeyword(
+            @Param("subjectId") Long subjectId,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
+
 }

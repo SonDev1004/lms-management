@@ -46,7 +46,6 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
     @Override
     @Transactional
     public Submission submitAndAutoGrade(SubmitQuizRequest req) {
-        // dùng chung core logic
         return submitInternal(req);
     }
 
@@ -72,7 +71,23 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
         resp.setAssignmentId(assignment.getId());
         resp.setAssignmentTitle(assignment.getTitle());
         resp.setQuestions(questions);
+
+        if (assignment.getAssignmentType() != null) {
+            resp.setAssignmentType(assignment.getAssignmentType().name());
+        }
+
+        Integer durationMinutes = null;
+        if (assignment.getAssignmentType() != null) {
+            switch (assignment.getAssignmentType()) {
+                case QUIZ_PHASE -> durationMinutes = 45;
+                case MID_TEST, FINAL_TEST -> durationMinutes = 60;
+                default -> durationMinutes = null;
+            }
+        }
+        resp.setDurationMinutes(durationMinutes);
+
         return resp;
+
     }
 
     private QuizQuestionViewDto toQuizQuestionView(AssignmentDetail detail) {
@@ -144,9 +159,9 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
 
         // Các cột NOT NULL / default
         submission.setFileName("QUIZ-" + assignmentId + "-" + studentId + "-" + System.currentTimeMillis());
-        submission.setScore(BigDecimal.ZERO);      // điểm ban đầu
-        submission.setAutoScore(BigDecimal.ZERO);  // auto_score
-        submission.setGradedStatus(0);             // 0 = chưa chấm
+        submission.setScore(BigDecimal.ZERO);
+        submission.setAutoScore(BigDecimal.ZERO);
+        submission.setGradedStatus(0);
 
         // Thời gian + answers
         submission.setStartedAt(LocalDateTime.now());

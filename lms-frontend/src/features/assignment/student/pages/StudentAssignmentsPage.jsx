@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Card } from "primereact/card";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Tag } from "primereact/tag";
-import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState, useRef} from "react";
+import {Card} from "primereact/card";
+import {DataTable} from "primereact/datatable";
+import {Column} from "primereact/column";
+import {Tag} from "primereact/tag";
+import {Button} from "primereact/button";
+import {Toast} from "primereact/toast";
+import {useNavigate} from "react-router-dom";
 
-import { fetchStudentAssignments } from "@/features/assignment/api/assignmentService.js";
+import {fetchStudentAssignments} from "@/features/assignment/api/assignmentService.js";
 
 function normalizeStatus(status) {
     if (!status) return "not_submitted";
@@ -17,7 +17,6 @@ function normalizeStatus(status) {
     return "not_submitted";
 }
 
-// giống bên Teacher
 function normalizeTypes(raw) {
     if (!raw) return [];
     if (Array.isArray(raw)) return raw;
@@ -45,7 +44,7 @@ function normalizeTypes(raw) {
     return [];
 }
 
-export default function StudentAssignmentsPage({ course }) {
+export default function StudentAssignmentsPage({course}) {
     const courseId =
         course?.id ?? course?.courseId ?? course?.course_id ?? null;
 
@@ -79,12 +78,12 @@ export default function StudentAssignmentsPage({ course }) {
     const statusBodyTemplate = (row) => {
         const s = normalizeStatus(row.studentStatus);
         if (s === "graded") {
-            return <Tag value="Graded" severity="success" />;
+            return <Tag value="Graded" severity="success"/>;
         }
         if (s === "submitted") {
-            return <Tag value="Submitted" severity="info" />;
+            return <Tag value="Submitted" severity="info"/>;
         }
-        return <Tag value="Not submitted" severity="warning" />;
+        return <Tag value="Not submitted" severity="warning"/>;
     };
 
     const typeBodyTemplate = (row) => {
@@ -93,7 +92,7 @@ export default function StudentAssignmentsPage({ course }) {
         return (
             <div className="flex gap-2 flex-wrap">
                 {types.map((t) => (
-                    <Tag key={t} value={t} />
+                    <Tag key={t} value={t}/>
                 ))}
             </div>
         );
@@ -106,16 +105,27 @@ export default function StudentAssignmentsPage({ course }) {
 
         const s = normalizeStatus(row.studentStatus);
         const label = s === "graded" ? "View result" : "Start";
-
-        return (
-            <div className="flex gap-2 justify-content-end">
-                <Button
-                    label={label}
-                    size="small"
-                    onClick={() => navigate(`/student/assignments/${row.id}/quiz`)}
-                />
-            </div>
-        );
+        if (s === "submitted") {
+            return (
+                <div className="flex gap-2 justify-content-end">
+                    <Button
+                        label="View submission"
+                        size="small"
+                        onClick={() => navigate(`/student/assignments/${row.id}/submission`)}
+                    />
+                </div>
+            )
+        } else {
+            return (
+                <div className="flex gap-2 justify-content-end">
+                    <Button
+                        label={label}
+                        size="small"
+                        onClick={() => navigate(`/student/assignments/${row.id}/quiz`)}
+                    />
+                </div>
+            );
+        }
     };
 
     const dueBodyTemplate = (row) => {
@@ -128,11 +138,11 @@ export default function StudentAssignmentsPage({ course }) {
 
     return (
         <div className="page-wrap">
-            <Toast ref={toastRef} />
+            <Toast ref={toastRef}/>
 
             <div className="header-row">
                 <div className="title-block">
-                    <i className="pi pi-clipboard title-icon" />
+                    <i className="pi pi-clipboard title-icon"/>
                     <div>
                         <h2 className="title">Assignments</h2>
                         <p className="subtitle">
@@ -155,7 +165,7 @@ export default function StudentAssignmentsPage({ course }) {
                             : "Không xác định được khóa học."
                     }
                 >
-                    <Column field="title" header="Title" sortable />
+                    <Column field="title" header="Title" sortable/>
                     <Column
                         field="due"
                         header="Due"
@@ -167,12 +177,12 @@ export default function StudentAssignmentsPage({ course }) {
                         header="Max Score"
                         body={(row) => row.maxScore ?? "-"}
                     />
-                    <Column header="Type" body={typeBodyTemplate} />
-                    <Column header="Status" body={statusBodyTemplate} />
+                    <Column header="Type" body={typeBodyTemplate}/>
+                    <Column header="Status" body={statusBodyTemplate}/>
                     <Column
                         header=""
                         body={actionsBodyTemplate}
-                        style={{ width: "12rem" }}
+                        style={{width: "12rem"}}
                     />
                 </DataTable>
             </Card>
