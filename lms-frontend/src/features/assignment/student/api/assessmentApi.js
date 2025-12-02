@@ -163,3 +163,31 @@ export async function submitQuiz(assignmentId, submissionId, state) {
     return res.data?.result ?? res.data;
 }
 
+export const fetchStudentSubmissionSummary = async (assignmentId) => {
+    if (!assignmentId) return null;
+
+    const url = AppUrls.studentSubmissionSummary(assignmentId);
+    const res = await axiosClient.get(url);
+    const apiRes = res.data || {};
+    const dto = apiRes.result ?? apiRes.data ?? null;
+    if (!dto) return null;
+
+    const title =
+        dto.assignmentTitle ??
+        (dto.assignment && dto.assignment.title) ??
+        dto.title ??
+        "";
+
+    return {
+        submissionId: dto.submissionId ?? dto.id ?? null,
+        assignmentId: dto.assignmentId ?? assignmentId,
+        assignmentTitle: title,
+        score: dto.score ?? null,
+        maxScore: dto.maxScore ?? null,
+        percentage: dto.percentage ?? null,
+        status: dto.status ?? null,
+        submittedAt:
+            dto.submittedAt ?? dto.submittedDate ?? dto.finishedAt ?? null,
+    };
+};
+

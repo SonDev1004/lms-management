@@ -2,6 +2,7 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
+import com.lmsservice.dto.response.AssignmentStudentStatusDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,17 @@ public class TeacherAssignmentController {
         return ApiResponse.<AssignmentResponse>builder().result(result).message("Assignment updated successfully").build();
     }
 
+    @Operation(summary = "Giáo viên gửi bài tập cho học sinh (publish assignment)")
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/assignments/{assignmentId}/publish")
+    public ApiResponse<AssignmentResponse> publish(@PathVariable Long assignmentId) {
+        AssignmentResponse result = assignmentService.publishAssignment(assignmentId);
+        return ApiResponse.<AssignmentResponse>builder()
+                .result(result)
+                .message("Assignment published successfully")
+                .build();
+    }
+
     // ===== DELETE =====
     // DELETE /teacher/assignments/{assignmentId}
     @Operation(summary = "Giáo viên xoá assignment")
@@ -61,5 +73,30 @@ public class TeacherAssignmentController {
     public ApiResponse<Void> delete(@PathVariable Long assignmentId) {
         assignmentService.deleteAssignmentForTeacher(assignmentId);
         return ApiResponse.<Void>builder().message("Assignment deleted successfully").build();
+    }
+
+    @Operation(summary = "Giáo viên xem danh sách học sinh / trạng thái nộp cho 1 assignment")
+    @PreAuthorize("hasRole('TEACHER')")
+    @GetMapping("/assignments/{assignmentId}/students")
+    public ApiResponse<List<AssignmentStudentStatusDto>> getStudentsForAssignment(
+            @PathVariable Long assignmentId
+    ) {
+        List<AssignmentStudentStatusDto> result =
+                assignmentService.getAssignmentStudentsForTeacher(assignmentId);
+
+        return ApiResponse.<List<AssignmentStudentStatusDto>>builder()
+                .result(result)
+                .message("Assignment student statuses retrieved")
+                .build();
+    }
+
+    @Operation(summary = "Giáo viên nhắc những học sinh chưa nộp bài")
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/assignments/{assignmentId}/remind-not-submitted")
+    public ApiResponse<Void> remindNotSubmitted(@PathVariable Long assignmentId) {
+        assignmentService.remindNotSubmittedStudents(assignmentId);
+        return ApiResponse.<Void>builder()
+                .message("Reminders sent successfully")
+                .build();
     }
 }

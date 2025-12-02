@@ -35,4 +35,6 @@ public interface QuizSubmissionService {
      * Lấy lại kết quả 1 lần nộp bài
      */
     SubmissionResponse getResult(Long submissionId);
+
+    SubmissionResponse getMyLatestSubmission (Long assignmentId);
 }

@@ -15,6 +15,9 @@ async function getAttendanceBySession(sessionId) {
     return res.data?.result ?? [];
 }
 
+export function fetchStudentAttendanceOverview() {
+    return axiosClient.get(urls.studentAttendanceOverview);
+}
 // lưu điểm danh
 async function markAttendance(sessionId, students, courseId, date) {
     const res = await axiosClient.post(AppUrls.markAttendance, {

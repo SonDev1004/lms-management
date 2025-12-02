@@ -14,6 +14,7 @@ function normalizeStatus(status) {
     const s = String(status).toUpperCase();
     if (s === "GRADED") return "graded";
     if (s === "SUBMITTED") return "submitted";
+    if (s === "MISSING") return "missing";
     return "not_submitted";
 }
 
@@ -77,14 +78,19 @@ export default function StudentAssignmentsPage({course}) {
 
     const statusBodyTemplate = (row) => {
         const s = normalizeStatus(row.studentStatus);
+
         if (s === "graded") {
             return <Tag value="Graded" severity="success"/>;
         }
         if (s === "submitted") {
             return <Tag value="Submitted" severity="info"/>;
         }
+        if (s === "missing") {
+            return <Tag value="Missing" severity="danger"/>;
+        }
         return <Tag value="Not submitted" severity="warning"/>;
     };
+
 
     const typeBodyTemplate = (row) => {
         const types = normalizeTypes(row.assignmentType);
@@ -113,6 +119,12 @@ export default function StudentAssignmentsPage({course}) {
                         size="small"
                         onClick={() => navigate(`/student/assignments/${row.id}/submission`)}
                     />
+                </div>
+            )
+        } else if (s === "missing") {
+            return (
+                <div className="flex gap-2 justify-content-end">
+                    <Button label="Missed" size="small" disabled/>
                 </div>
             )
         } else {

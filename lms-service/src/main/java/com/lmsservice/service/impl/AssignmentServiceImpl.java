@@ -1,38 +1,42 @@
 // com.lmsservice.service.impl.AssignmentServiceImpl.java
 package com.lmsservice.service.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.lmsservice.controller.NotificationSocketController;
+import com.lmsservice.dto.request.AssignmentRequest;
+import com.lmsservice.dto.response.AssignmentResponse;
+import com.lmsservice.dto.response.AssignmentStudentStatusDto;
+import com.lmsservice.dto.response.NotificationResponse;
 import com.lmsservice.dto.response.StudentAssignmentItemResponse;
-import com.lmsservice.entity.Submission;
+import com.lmsservice.entity.*;
+import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.exception.UnAuthorizeException;
+import com.lmsservice.mapper.AssignmentMapper;
 import com.lmsservice.repository.*;
+import com.lmsservice.service.AssignmentService;
+import com.lmsservice.service.NotificationService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lmsservice.dto.request.AssignmentRequest;
-import com.lmsservice.dto.response.AssignmentResponse;
-import com.lmsservice.entity.Assignment;
-import com.lmsservice.entity.Course;
-import com.lmsservice.entity.User;
-import com.lmsservice.exception.ErrorCode;
-import com.lmsservice.exception.UnAuthorizeException;
-import com.lmsservice.mapper.AssignmentMapper;
-import com.lmsservice.service.AssignmentService;
-
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class AssignmentServiceImpl implements AssignmentService {
 
+    NotificationService notificationService;
+    NotificationSocketController notificationSocketController;
     AssignmentRepository assignmentRepository;
     AssignmentMapper assignmentMapper;
     UserRepository userRepository;
@@ -40,14 +44,12 @@ public class AssignmentServiceImpl implements AssignmentService {
     CourseRepository courseRepository;
     SubmissionRepository submissionRepository;
     /* ======================== HELPER ======================== */
+    private static final Logger log = LoggerFactory.getLogger(AssignmentServiceImpl.class);
 
     private User getCurrentUser() {
-        String username = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return userRepository.findByUserName(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findByUserName(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     /**
@@ -62,8 +64,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             throw new UnAuthorizeException(ErrorCode.UNAUTHORIZED);
         }
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
 
         // Nếu Course có quan hệ tới User teacher:
 //        if (!course.getTeacher().getId().equals(currentUser.getId())) {
@@ -93,17 +94,14 @@ public class AssignmentServiceImpl implements AssignmentService {
             assignments = assignmentRepository.findByCourseId(courseId);
         } else {
             // Học viên phải enrol mới xem được
-            boolean enrolled = courseStudentRepository
-                    .existsByCourseIdAndStudentId(courseId, currentUser.getId());
+            boolean enrolled = courseStudentRepository.existsByCourseIdAndStudentId(courseId, currentUser.getId());
             if (!enrolled) {
                 throw new UnAuthorizeException(ErrorCode.STUDENT_IS_NOT_ENROLLED);
             }
             assignments = assignmentRepository.findByCourseIdAndIsActiveTrue(courseId);
         }
 
-        return assignments.stream()
-                .map(assignmentMapper::toResponse)
-                .toList();
+        return assignments.stream().map(assignmentMapper::toResponse).toList();
     }
 
     /* ==========================================================
@@ -116,9 +114,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     public List<AssignmentResponse> getAssignmentsByCourseForTeacher(Long courseId) {
         ensureTeacherOfCourse(courseId);
         List<Assignment> assignments = assignmentRepository.findByCourseId(courseId);
-        return assignments.stream()
-                .map(assignmentMapper::toResponse)
-                .toList();
+        return assignments.stream().map(assignmentMapper::toResponse).toList();
     }
 
     /* ==========================================================
@@ -130,8 +126,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     public AssignmentResponse createAssignmentForTeacher(Long courseId, AssignmentRequest req) {
         ensureTeacherOfCourse(courseId);
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
         Assignment entity = new Assignment();
         entity.setCourse(course);
         entity.setTitle(req.getTitle());
@@ -154,8 +149,69 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
 
         Assignment saved = assignmentRepository.save(entity);
+
         return assignmentMapper.toResponse(saved);
     }
+
+    @Override
+    @Transactional
+    public AssignmentResponse publishAssignment(Long assignmentId) {
+        Assignment entity = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
+
+        Long courseId = entity.getCourse().getId();
+        ensureTeacherOfCourse(courseId);
+
+        if (Boolean.TRUE.equals(entity.isActive())) {
+            return assignmentMapper.toResponse(entity);
+        }
+
+        entity.setActive(true);
+        Assignment saved = assignmentRepository.save(entity);
+
+        try {
+            notifyNewAssignmentToCourseStudents(saved);
+        } catch (Exception ex) {
+            log.error("Failed to send notifications for assignment " + saved.getId(), ex);
+        }
+
+        return assignmentMapper.toResponse(saved);
+    }
+
+    private void notifyNewAssignmentToCourseStudents(Assignment assignment) {
+        Long courseId = assignment.getCourse().getId();
+        String courseTitle = assignment.getCourse().getTitle();
+        String assignmentTitle = assignment.getTitle();
+
+        List<CourseStudent> courseStudents = courseStudentRepository.findByCourseId(courseId);
+
+        for (CourseStudent cs : courseStudents) {
+            try {
+                Long studentUserId = cs.getStudent().getUser().getId();
+
+                String title = "Bài tập mới: " + assignmentTitle;
+                String content = "<b>Bài tập mới: " + assignmentTitle + "</b><br/>Khoá: " + courseTitle;
+                // URL để FE bấm vào sẽ mở màn Assignment list / Quiz list của học sinh
+                String url = "/student/courses/" + courseId + "/assignments";
+
+                NotificationResponse noti =
+                        notificationService.createForUser(studentUserId, title, content, url);
+
+                if (noti != null) {
+                    notificationSocketController.sendToUserId(studentUserId, noti);
+                }
+            } catch (Exception e) {
+                log.error(
+                        "Failed to send notification for assignment {} to student {}",
+                        assignment.getId(),
+                        cs.getStudent().getId(),
+                        e
+                );
+            }
+        }
+    }
+
+
 
     /* ==========================================================
      *                 TEACHER SIDE – UPDATE
@@ -164,8 +220,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public AssignmentResponse updateAssignmentForTeacher(Long assignmentId, AssignmentRequest req) {
-        Assignment entity = assignmentRepository.findById(assignmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
+        Assignment entity = assignmentRepository.findById(assignmentId).orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
 
         Long courseId = entity.getCourse().getId();
         ensureTeacherOfCourse(courseId);
@@ -191,8 +246,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
         if (req.getCourseId() != null && !req.getCourseId().equals(courseId)) {
             ensureTeacherOfCourse(req.getCourseId());
-            Course newCourse = courseRepository.findById(req.getCourseId())
-                    .orElseThrow(() -> new IllegalArgumentException("Course not found: " + req.getCourseId()));
+            Course newCourse = courseRepository.findById(req.getCourseId()).orElseThrow(() -> new IllegalArgumentException("Course not found: " + req.getCourseId()));
             entity.setCourse(newCourse);
         }
 
@@ -207,8 +261,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     @Transactional
     public void deleteAssignmentForTeacher(Long assignmentId) {
-        Assignment entity = assignmentRepository.findById(assignmentId)
-                .orElse(null);
+        Assignment entity = assignmentRepository.findById(assignmentId).orElse(null);
 
         if (entity == null) {
             return;
@@ -226,9 +279,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Transactional(readOnly = true)
     public List<StudentAssignmentItemResponse> getAssignmentsForStudent(Long courseId, Long studentId) {
         List<Assignment> assignments =
-                assignmentRepository.findByCourseId(courseId);
+                assignmentRepository.findByCourseIdAndIsActiveTrue(courseId);
 
         List<StudentAssignmentItemResponse> result = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
 
         for (Assignment a : assignments) {
             StudentAssignmentItemResponse dto = new StudentAssignmentItemResponse();
@@ -240,24 +294,30 @@ public class AssignmentServiceImpl implements AssignmentService {
             );
             dto.setMaxScore(a.getMaxScore());
 
-            // ===== lookup submission mới nhất của student này =====
             Optional<Submission> optSub =
                     submissionRepository.findTopByAssignment_IdAndStudent_IdOrderByStartedAtDesc(
                             a.getId(), studentId
                     );
 
-            String status = "NOT_SUBMITTED";
+            String status;
             BigDecimal studentScore = null;
 
             if (optSub.isPresent()) {
                 Submission s = optSub.get();
-                Integer gs = s.getGradedStatus(); // 0=chưa chấm, 1=auto_done,...
+                Integer gs = s.getGradedStatus();
 
                 if (Objects.equals(gs, 1)) {
                     status = "GRADED";
                     studentScore = s.getScore();
                 } else {
                     status = "SUBMITTED";
+                }
+            } else {
+                LocalDateTime due = a.getDueDate();
+                if (due != null && due.isBefore(now)) {
+                    status = "MISSING";
+                } else {
+                    status = "NOT_SUBMITTED";
                 }
             }
 
@@ -268,5 +328,87 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
 
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<AssignmentStudentStatusDto> getAssignmentStudentsForTeacher(Long assignmentId) {
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
+
+        Long courseId = assignment.getCourse().getId();
+        ensureTeacherOfCourse(courseId);
+
+        List<CourseStudent> courseStudents = courseStudentRepository.findByCourseId(courseId);
+        List<AssignmentStudentStatusDto> result = new ArrayList<>();
+
+        for (CourseStudent cs : courseStudents) {
+            Student s = cs.getStudent();
+            Course c = cs.getCourse();   // 👈 lấy course (class)
+
+            AssignmentStudentStatusDto dto = new AssignmentStudentStatusDto();
+            dto.setStudentId(s.getId());
+            dto.setStudentCode(s.getCode());
+            dto.setFullName(s.getUser().getFirstName() + " " + s.getUser().getLastName());
+
+            // "className" = tên course
+            dto.setClassName(c != null ? c.getTitle() : null);
+
+            Optional<Submission> latestOpt =
+                    submissionRepository.findTopByAssignment_IdAndStudent_IdOrderByStartedAtDesc(
+                            assignmentId, s.getId()
+                    );
+
+            if (latestOpt.isPresent()) {
+                Submission sub = latestOpt.get();
+                dto.setSubmittedAt(sub.getSubmittedDate());
+                if (Objects.equals(sub.getGradedStatus(), 1)) {
+                    dto.setStatus("GRADED");
+                } else {
+                    dto.setStatus("SUBMITTED");
+                }
+                dto.setScore(sub.getScore());
+            } else {
+                dto.setStatus("NOT_SUBMITTED");
+            }
+
+            result.add(dto);
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void remindNotSubmittedStudents(Long assignmentId) {
+        Assignment assignment = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
+
+        Long courseId = assignment.getCourse().getId();
+        ensureTeacherOfCourse(courseId);
+
+        List<CourseStudent> courseStudents = courseStudentRepository.findByCourseId(courseId);
+
+        for (CourseStudent cs : courseStudents) {
+            Long studentId = cs.getStudent().getId();
+            Optional<Submission> latestOpt =
+                    submissionRepository.findTopByAssignment_IdAndStudent_IdOrderByStartedAtDesc(
+                            assignmentId, studentId);
+
+            if (latestOpt.isPresent()) {
+
+                continue;
+            }
+
+            Long studentUserId = cs.getStudent().getUser().getId();
+
+            String title = "Nhắc nộp bài: " + assignment.getTitle();
+            String content = "<b>Nhắc nộp bài: " + assignment.getTitle() + "</b><br/>Khoá: "
+                    + assignment.getCourse().getTitle();
+            String url = "/student/courses/" + courseId + "/assignments";
+
+            NotificationResponse noti =
+                    notificationService.createForUser(studentUserId, title, content, url);
+
+            notificationSocketController.sendToUserId(studentUserId, noti);
+        }
     }
 }

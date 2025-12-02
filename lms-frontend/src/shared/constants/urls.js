@@ -84,10 +84,17 @@ export default {
     //Assignment - STUDENT
     studentAssignmentsByCourse: (courseId) =>
         `${rootAPI}/student/courses/${courseId}/assignments`,
-
-//Assignment - TEACHER
+    studentSubmissionSummary: (assignmentId) =>
+        `${rootAPI}/student/assignments/${assignmentId}/submission-summary`,
+    //Assignment - TEACHER
     teacherAssignmentsByCourse: (courseId) =>
         `${rootAPI}/teacher/courses/${courseId}/assignments`,
+    teacherAssignmentStudents: (assignmentId) =>
+        `${rootAPI}/teacher/assignments/${assignmentId}/students`,
+    teacherRemindStudent: (assignmentId) =>
+        `${rootAPI}/teacher/assignments/${assignmentId}/remind-not-submitted`,
+    teacherPublishAssignment: (assignmentId) =>
+        `${rootAPI}/teacher/assignments/${assignmentId}/publish`,
 
     createTeacherAssignment: (courseId) =>
         `${rootAPI}/teacher/courses/${courseId}/assignments`,
@@ -98,7 +105,15 @@ export default {
         `${rootAPI}/teacher/assignments/${assignmentId}`,
     deleteTeacherAssignment: (assignmentId) =>
         `${rootAPI}/teacher/assignments/${assignmentId}`,
+    // Student gửi yêu cầu học bù
+    studentCreateMakeupRequest: `${rootAPI}/student/makeup-requests`,
+    // Student attendance overview
+    studentAttendanceOverview: `${rootAPI}/student/attendance/overview`,
 
+    // Academic Manager / AdminIT xem danh sách yêu cầu học bù (phân trang)
+    adminMakeupRequests: `${rootAPI}/adminit/makeup-requests`,
 
+    // Academic Manager / AdminIT xác nhận đã học bù cho 1 request
+    adminMarkMakeupAttended: (id) => `${rootAPI}/adminit/makeup-requests/${id}/mark-attended`,
 
 };

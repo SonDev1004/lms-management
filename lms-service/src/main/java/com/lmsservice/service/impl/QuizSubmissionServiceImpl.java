@@ -8,18 +8,13 @@ import com.lmsservice.dto.response.QuizQuestionViewDto;
 import com.lmsservice.dto.response.QuizStartResponse;
 import com.lmsservice.dto.response.QuizViewResponse;
 import com.lmsservice.dto.response.SubmissionResponse;
-import com.lmsservice.entity.Assignment;
-import com.lmsservice.entity.AssignmentDetail;
-import com.lmsservice.entity.Student;
-import com.lmsservice.entity.Submission;
-import com.lmsservice.repository.AssignmentDetailRepository;
-import com.lmsservice.repository.AssignmentRepository;
-import com.lmsservice.repository.StudentRepository;
-import com.lmsservice.repository.SubmissionRepository;
+import com.lmsservice.entity.*;
+import com.lmsservice.repository.*;
 import com.lmsservice.service.CourseScoreService;
 import com.lmsservice.service.QuizSubmissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +32,8 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
     private final SubmissionRepository submissionRepository;
     private final StudentRepository studentRepository;
     private final ObjectMapper objectMapper;
-    private final CourseScoreService courseScoreService;   // <-- thêm
+    private final CourseScoreService courseScoreService;
+    private final UserRepository userRepository;
 
     /* ==========================================================
      *               METHOD CŨ (ENTITY) – DÙNG LẠI LOGIC MỚI
@@ -304,6 +300,28 @@ public class QuizSubmissionServiceImpl implements QuizSubmissionService {
                 .orElseThrow(() -> new IllegalArgumentException("Submission not found: " + submissionId));
         return toSubmissionResponse(submission);
     }
+
+    @Override
+    public SubmissionResponse getMyLatestSubmission(Long assignmentId) {
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Student student = studentRepository.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+
+        Optional<Submission> latestOpt =
+                submissionRepository.findTopByAssignment_IdAndStudent_IdOrderByStartedAtDesc(
+                        assignmentId,
+                        student.getId()
+                );
+
+        return latestOpt.map(this::toSubmissionResponse).orElse(null);
+    }
+
 
     private SubmissionResponse toSubmissionResponse(Submission s) {
         SubmissionResponse dto = new SubmissionResponse();

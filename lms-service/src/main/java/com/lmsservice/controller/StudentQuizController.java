@@ -145,4 +145,17 @@ public class StudentQuizController {
 
         return ResponseEntity.ok(resp);
     }
+    @GetMapping("/{assignmentId}/submission-summary")
+    public ApiResponse<SubmissionResponse> getMyLatestSubmission(
+            @PathVariable Long assignmentId
+    ) {
+        SubmissionResponse data = quizSubmissionService.getMyLatestSubmission(assignmentId);
+
+        ApiResponse<SubmissionResponse> resp = ApiResponse.<SubmissionResponse>builder()
+                .message("Lấy lần nộp bài mới nhất thành công")
+                .result(data)
+                .build();
+
+        return resp;
+    }
 }

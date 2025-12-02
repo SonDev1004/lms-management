@@ -22,6 +22,8 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
             Long assignmentId,
             Long studentId
     );
+
+    
     Optional<Submission> findTopByAssignment_IdAndStudent_IdOrderByStartedAtDesc(
             Long assignmentId,
             Long studentId

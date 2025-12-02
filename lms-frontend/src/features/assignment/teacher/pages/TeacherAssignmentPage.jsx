@@ -18,6 +18,7 @@ import {
     createTeacherAssignment,
     updateTeacherAssignment,
     deleteTeacherAssignment,
+    publishTeacherAssignment,
 } from "@/features/assignment/api/assignmentService.js";
 
 import TeacherAssignmentForm from "@/features/assignment/teacher/components/TeacherAssignmentForm.jsx";
@@ -29,6 +30,7 @@ export default function TeacherAssignmentPage() {
 
     const [loadingCourses, setLoadingCourses] = useState(false);
     const [loadingAssignments, setLoadingAssignments] = useState(false);
+    const [tableLoading, setTableLoading] = useState(false);
 
     const [formVisible, setFormVisible] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
@@ -38,12 +40,12 @@ export default function TeacherAssignmentPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        loadMyCourses().then(r => console.log("Loaded courses",r));
+        loadMyCourses();
     }, []);
 
     useEffect(() => {
         if (selectedCourseId) {
-            loadAssignments(selectedCourseId).then(r => console.log("Assignment selected",r));
+            loadAssignments(selectedCourseId);
         } else {
             setAssignments([]);
         }
@@ -70,7 +72,6 @@ export default function TeacherAssignmentPage() {
 
             setCourses(options);
             if (options.length > 0) {
-                // auto chọn khoá đầu tiên
                 setSelectedCourseId(options[0].value);
             }
         } catch (e) {
@@ -154,19 +155,16 @@ export default function TeacherAssignmentPage() {
                     ...payload,
                     courseId: selectedCourseId,
                 };
-                console.log("Creating assignment with payload:", toSend);
                 const created = await createTeacherAssignment(
                     selectedCourseId,
                     toSend
                 );
-                console.log("Created assignment:", created);
                 toastRef.current?.show({
                     severity: "success",
                     summary: "Created",
                     detail: "Assignment created",
                 });
 
-                // Nếu form chọn QUIZ → nhảy thẳng sang Quiz Builder
                 if ((toSend.assignmentType || []).includes("QUIZ_PHASE")) {
                     setFormVisible(false);
                     setEditing(null);
@@ -214,10 +212,55 @@ export default function TeacherAssignmentPage() {
         );
     };
 
+    const handlePublish = async (row) => {
+        if (!selectedCourseId) return;
+        try {
+            setTableLoading(true);
+            await publishTeacherAssignment(row.id);
+            await loadAssignments(selectedCourseId);
+
+            toastRef.current?.show({
+                severity: "success",
+                summary: "Sent",
+                detail: `Đã gửi bài "${row.title}" cho học sinh.`,
+            });
+        } catch (e) {
+            console.error(e);
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Không gửi được bài tập.",
+            });
+        } finally {
+            setTableLoading(false);
+        }
+    };
+
     const actionsBodyTemplate = (row) => {
-        console.log("Assignment row:", row);
+        const isActive = row.isActive ?? row.active ?? false;
+
         return (
             <div className="flex gap-2 justify-content-end">
+                {!isActive && (
+                    <Button
+                        label="Send"
+                        size="small"
+                        severity="success"
+                        onClick={() => handlePublish(row)}
+                    />
+                )}
+
+                <Button
+                    label="Students"
+                    size="small"
+                    outlined
+                    onClick={() =>
+                        navigate(
+                            `/teacher/assignments/${row.id}/students`
+                        )
+                    }
+                />
+
                 <Button
                     label="Quiz Builder"
                     size="small"
@@ -287,7 +330,7 @@ export default function TeacherAssignmentPage() {
             <Card>
                 <DataTable
                     value={assignments}
-                    loading={loadingAssignments}
+                    loading={loadingAssignments || tableLoading}
                     stripedRows
                     size="small"
                     responsiveLayout="scroll"
@@ -318,7 +361,7 @@ export default function TeacherAssignmentPage() {
                     <Column
                         header=""
                         body={actionsBodyTemplate}
-                        style={{ width: "16rem" }}
+                        style={{ width: "20rem" }}
                     />
                 </DataTable>
             </Card>

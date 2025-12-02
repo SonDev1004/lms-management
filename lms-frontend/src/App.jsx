@@ -86,6 +86,9 @@ import StudentAssignmentsPage from "@/features/assignment/student/pages/StudentA
 import StudentQuizPage from "@/features/assignment/student/pages/StudentQuizPage.jsx";
 import TeacherQuizBuilderPage from "@/features/assignment/teacher/pages/TeacherQuizBuilderPage.jsx";
 import AcademicManagerQuestionBankPage from "@/features/assignment/manager/pages/AcademicManagerQuestionBankPage.jsx";
+import StudentSubmissionPage from "@/features/assignment/student/pages/StudentSubmissionPage.jsx";
+import TeacherAssignmentStudentsPage from "@/features/assignment/teacher/pages/TeacherAssignmentStudentsPage.jsx";
+import AMMakeupRequestsPage from "@/features/attendance/manager/pages/AMMakeupRequestsPage.jsx";
 
 const App = () => {
     return (
@@ -128,8 +131,8 @@ const App = () => {
 
                         {/* STUDENT – Assignment & Quiz (mới) */}
                         <Route path='assignments' element={<StudentAssignmentsPage/>}/>
-                        <Route path='assignments/:assignmentId/quiz' element={<StudentQuizPage />} />
-
+                        <Route path='assignments/:assignmentId/quiz' element={<StudentQuizPage/>}/>
+                        <Route path='assignments/:assignmentId/submission-summary' element={<StudentSubmissionPage/>}/>
                         <Route path='enrollment' element={<StudentEnrollment/>}/>
                         <Route path='notification' element={<StudentNotification/>}/>
                         <Route path='attendance' element={<StudentAttendance/>}/>
@@ -153,7 +156,10 @@ const App = () => {
                         <Route path='assignment' element={<TeacherAssignmentPage/>}/>
                         {/* alias plural nếu trong component navigate tới /teacher/assignments/... */}
                         <Route path='assignments' element={<TeacherAssignmentPage/>}/>
-
+                        <Route
+                            path="/teacher/assignments/:assignmentId/students"
+                            element={<TeacherAssignmentStudentsPage/>}
+                        />
                         {/* TEACHER – Quiz Builder cho 1 assignment */}
                         <Route path='assignment/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
                         <Route path='assignments/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
@@ -166,7 +172,6 @@ const App = () => {
                     </Route>
                 </Route>
 
-                {/* Academic Manager Route */}
                 <Route element={<ProtectedRoute allowedRoles={['ACADEMIC_MANAGER']}/>}>
                     <Route path='staff' element={<LayoutAcademicManager/>}>
                         <Route index element={<AMDashboard/>}/>
@@ -175,6 +180,12 @@ const App = () => {
                         <Route path='courses' element={<AMCourse/>}>
                             <Route path='detail/:id' element={<AMCourseDetail/>}/>
                         </Route>
+
+                        {/* Attendance chung */}
+                        <Route path='attendance' element={<AttendancePage/>}/>
+                        <Route path='attendance/makeup-requests' element={<AMMakeupRequestsPage/>}/>
+
+                        <Route path='profile' element={<AMProfile/>}/>
                         <Route path="feedback" element={<FeedbackPage/>}/>
                         <Route path='teacher' element={<AMTeacher/>}/>
                         <Route path='teacher-list' element={<TeacherManagement/>}/>
@@ -185,16 +196,15 @@ const App = () => {
                         <Route path='schedule' element={<AMSchedule/>}/>
                         <Route path='report' element={<AMReport/>}/>
                         <Route path='notification' element={<AMNotification/>}/>
-                        <Route path='attendance' element={<AttendancePage/>}/>
-                        <Route path='profile' element={<AMProfile/>}/>
 
-                        {/* ACADEMIC MANAGER – Question Bank */}
+                        {/* Question Bank */}
                         <Route path='question-bank' element={<AcademicManagerQuestionBankPage/>}/>
 
-                        {/* ACADEMIC MANAGER – dùng chung Quiz Builder với Teacher */}
+                        {/* Quiz Builder */}
                         <Route path='assignments/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
                     </Route>
                 </Route>
+
 
                 {/* Admin Route */}
                 <Route element={<ProtectedRoute allowedRoles={['ADMIN_IT']}/>}>

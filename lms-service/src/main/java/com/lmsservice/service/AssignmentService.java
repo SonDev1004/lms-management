@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.lmsservice.dto.request.AssignmentRequest;
 import com.lmsservice.dto.response.AssignmentResponse;
+import com.lmsservice.dto.response.AssignmentStudentStatusDto;
 import com.lmsservice.dto.response.StudentAssignmentItemResponse;
 
 public interface AssignmentService {
@@ -22,4 +23,11 @@ public interface AssignmentService {
     void deleteAssignmentForTeacher(Long assignmentId);
 
     List<StudentAssignmentItemResponse> getAssignmentsForStudent(Long courseId, Long studentId);
+
+    List<AssignmentStudentStatusDto> getAssignmentStudentsForTeacher(Long assignmentId);
+
+    void remindNotSubmittedStudents(Long assignmentId);
+
+    AssignmentResponse publishAssignment(Long assignmentId);
+
 }

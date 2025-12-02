@@ -82,7 +82,10 @@ public enum ErrorCode {
     NOTIFICATION_NOT_FOUND(1057, "Notification not found", HttpStatus.NOT_FOUND),
     NOTIFICATION_TYPE_NOT_FOUND(1058, "Notification type not found", HttpStatus.NOT_FOUND),
     NO_RECEIVER_FOUND(1059, "No receiver found for the notification", HttpStatus.BAD_REQUEST),
-    UNAUTHORIZED_ACCESS(1060, "Unauthorized access to the resource", HttpStatus.FORBIDDEN);
+    UNAUTHORIZED_ACCESS(1060, "Unauthorized access to the resource", HttpStatus.FORBIDDEN),
+    MAKEUP_REQUEST_NOT_FOUND(1061, "Make-up request not found", HttpStatus.NOT_FOUND),
+    MAKEUP_REQUEST_ALREADY_DONE(1062, "Make-up request has already been processed", HttpStatus.BAD_REQUEST),
+    ATTENDANCE_JSON_INVALID(1063, "Attendance JSON is invalid", HttpStatus.BAD_REQUEST);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

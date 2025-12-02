@@ -11,6 +11,7 @@ import {AppUrls} from "@/shared/constants/index.js";
  * Backend tự lấy student từ JWT nên FE chỉ cần gửi courseId.
  */
 export const fetchStudentAssignments = async (courseId) => {
+
     if (!courseId) return [];
 
     const url = AppUrls.studentAssignmentsByCourse(courseId);
@@ -22,8 +23,11 @@ export const fetchStudentAssignments = async (courseId) => {
         ? payload
         : payload.content ?? payload.items ?? [];
 
-    if (!Array.isArray(list)) return [];
     return list.map(mapAssignmentDtoToUi).filter(Boolean);
+
+    // return mapped.filter((item) => item.isActive !== false);
+
+
 };
 
 /* ===================================================================
@@ -47,6 +51,42 @@ export const fetchTeacherAssignmentsByCourse = async (courseId) => {
 
     if (!Array.isArray(list)) return [];
     return list.map(mapAssignmentDtoToUi).filter(Boolean);
+};
+/**
+ * Lấy danh sách học sinh + trạng thái 1 assignment cho teacher
+ */
+export const fetchAssignmentStudentsForTeacher = async (assignmentId) => {
+    if (!assignmentId) return [];
+
+    const url = AppUrls.teacherAssignmentStudents(assignmentId);
+    const res = await axiosClient.get(url);
+    const apiRes = res.data || {};
+    const payload = apiRes.result ?? apiRes.data ?? [];
+    const list = Array.isArray(payload)
+        ? payload
+        : payload.content ?? payload.items ?? [];
+
+    return Array.isArray(list) ? list : [];
+};
+
+/**
+ * Teacher nhắc tất cả HS chưa nộp bài
+ */
+export const remindNotSubmittedStudents = async (assignmentId) => {
+    if (!assignmentId) throw new Error("assignmentId is required");
+    const url = AppUrls.teacherRemindStudent(assignmentId);
+    await axiosClient.post(url);
+    return true;
+};
+
+export const publishTeacherAssignment = async (assignmentId) => {
+    if (!assignmentId) throw new Error("assignmentId is required");
+
+    const url = AppUrls.teacherPublishAssignment(assignmentId);
+    const res = await axiosClient.post(url);
+    const apiRes = res.data || {};
+    const dto = apiRes.result ?? apiRes.data ?? null;
+    return mapAssignmentDtoToUi(dto);
 };
 
 /**
@@ -131,7 +171,6 @@ export const updateTeacherAssignment = async (assignmentId, formPayload) => {
     const dto = apiRes.result ?? apiRes.data ?? null;
     return mapAssignmentDtoToUi(dto || body);
 };
-
 
 
 /**
@@ -247,5 +286,6 @@ function mapStatus(status) {
     const s = String(status).toUpperCase();
     if (s === "GRADED") return "graded";
     if (s === "SUBMITTED") return "submitted";
+    if (s === "MISSING") return "missing";
     return "not_submitted";
 }
