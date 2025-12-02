@@ -115,5 +115,11 @@ export default {
 
     // Academic Manager / AdminIT xác nhận đã học bù cho 1 request
     adminMarkMakeupAttended: (id) => `${rootAPI}/adminit/makeup-requests/${id}/mark-attended`,
+    // Lịch giảng viên & học viên
+    teacherSchedule: (from, to) =>
+        `${rootAPI}/teacher/schedule?from=${from}&to=${to}`,
+
+    studentSchedule: (from, to) =>
+        `${rootAPI}/student/schedule?from=${from}&to=${to}`,
 
 };

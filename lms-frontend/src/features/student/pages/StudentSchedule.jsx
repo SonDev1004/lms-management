@@ -1,7 +1,5 @@
-import Schedule from "@/features/schedule/pages/Schedule.jsx";
+import SchedulePage from "@/features/schedule/pages/Schedule.jsx";
 
-const StudentSchedule = () => {
-return <Schedule/>;
+export default function StudentSchedule() {
+    return <SchedulePage role="STUDENT"/>;
 }
-
-export default StudentSchedule;

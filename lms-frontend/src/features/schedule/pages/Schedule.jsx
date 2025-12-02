@@ -1,74 +1,121 @@
-import React, { useRef, useState } from 'react';
-import moment from 'moment-timezone';
-import { momentLocalizer } from 'react-big-calendar';
-import { Toolbar } from 'primereact/toolbar';
-import { Toast } from 'primereact/toast';
-import useSchedule from '../hooks/useSchedule';
-import CalendarView from '../components/CalendarView';
-import SidebarFilters from '../components/SidebarFilters';
-import EventOverlay from '../components/EventOverlay';
-import CreateEventDialog from '../components/dialogs/CreateEventDialog';
-import EventDetailDialog from '../components/dialogs/EventDetailDialog';
-import '../styles/Schedule.css';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
+import React, { useRef, useState } from "react";
+import moment from "moment-timezone";
+import { momentLocalizer } from "react-big-calendar";
+import { Toolbar } from "primereact/toolbar";
+import { Toast } from "primereact/toast";
 
-moment.tz.setDefault('Asia/Ho_Chi_Minh');
+import useSchedule from "../hooks/useSchedule";
+import CalendarView from "../components/CalendarView";
+import SidebarFilters from "../components/SidebarFilters";
+import EventOverlay from "../components/EventOverlay";
+import CreateEventDialog from "../components/dialogs/CreateEventDialog";
+import EventDetailDialog from "../components/dialogs/EventDetailDialog";
+
+import "../styles/Schedule.css";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import "primeflex/primeflex.css";
+
+moment.tz.setDefault("Asia/Ho_Chi_Minh");
 const localizer = momentLocalizer(moment);
 
-export default function SchedulePage() {
-    const { filteredEvents, filters, setFilters, teacherOptions, typeOptions, onlyMine, addEvent, removeEvent } = useSchedule();
-    const [view, setView] = useState('month');
+export default function SchedulePage({ role = "ACADEMY" }) {
+    const {
+        filteredEvents,
+        filters,
+        setFilters,
+        teacherOptions,
+        typeOptions,
+        onlyMine,
+        addEvent,
+        removeEvent,
+    } = useSchedule(role);
+
+    const [view, setView] = useState("month");
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
+
     const toastRef = useRef(null);
     const overlayRef = useRef(null);
 
-    const appliedCount = filters.types.length + filters.teachers.length + (filters.search ? 1 : 0) + (onlyMine ? 1 : 0);
+    const isAcademy =
+        role === "ACADEMY" || role === "ACADEMIC_MANAGER" || role === "ADMIN_IT";
+    const isTeacher = role === "TEACHER";
+    const isStudent = role === "STUDENT";
 
-    const handleApply = () => toastRef.current && toastRef.current.show({ severity: 'info', summary: 'Filter', detail: 'Filter applied.' });
-    const handleClear = () => setFilters({ types: [], teachers: [], search: '' });
+    const titleText = isStudent
+        ? "My Study Schedule"
+        : isTeacher
+            ? "My Teaching Schedule"
+            : "Schedule - Academy";
+
+    const appliedCount =
+        (filters?.types?.length || 0) +
+        (filters?.teachers?.length || 0) +
+        (filters?.search ? 1 : 0) +
+        (onlyMine ? 1 : 0);
+
+    const handleApply = () => {
+        if (!toastRef.current) return;
+        toastRef.current.show({
+            severity: "info",
+            summary: "Filter",
+            detail: "Filter applied.",
+        });
+    };
+
+    const handleClear = () =>
+        setFilters({ types: [], teachers: [], search: "" });
 
     const isPastEvent = (event) => {
         try {
             const end = new Date(event.end);
             const today = new Date();
-            const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const startOfToday = new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
+            );
             return end < startOfToday;
         } catch {
             return false;
         }
     };
 
-
     const eventStyleGetter = (event) => {
         const base = {
             style: {
-                borderRadius: '8px',
-                padding: '6px 8px',
-                border: 'none',
-                boxShadow: 'none',
+                borderRadius: "8px",
+                padding: "6px 8px",
+                border: "none",
+                boxShadow: "none",
                 opacity: 0.98,
-            }
+            },
         };
 
         switch (event.type) {
-            case 'Practice':
-                base.style.background = '#fffaf0'; base.style.color = '#7a4a00'; break;
-            case 'One-on-one':
-                base.style.background = '#e8f7ff'; base.style.color = '#063b4e'; break;
-            case 'Lecture':
-                base.style.background = '#eef2ff'; base.style.color = '#2a2a8f'; break;
+            case "Practice":
+                base.style.background = "#fffaf0";
+                base.style.color = "#7a4a00";
+                break;
+            case "One-on-one":
+                base.style.background = "#e8f7ff";
+                base.style.color = "#063b4e";
+                break;
+            case "Lecture":
+                base.style.background = "#eef2ff";
+                base.style.color = "#2a2a8f";
+                break;
             default:
-                base.style.background = '#e6fffa'; base.style.color = '#065f46';
+                base.style.background = "#e6fffa";
+                base.style.color = "#065f46";
         }
 
         if (isPastEvent(event)) {
             base.style.opacity = 0.45;
-            base.style.filter = 'grayscale(60%)';
-            return { ...base, className: 'rbc-event-past' };
+            base.style.filter = "grayscale(60%)";
+            return { ...base, className: "rbc-event-past" };
         }
 
         return base;
@@ -82,6 +129,7 @@ export default function SchedulePage() {
     };
 
     const handleCreate = async (payload) => {
+        if (!isAcademy) return; // student/teacher không tạo event
         try {
             const normalized = {
                 ...payload,
@@ -90,54 +138,113 @@ export default function SchedulePage() {
             };
             await addEvent(normalized);
             setShowCreate(false);
-            toastRef.current && toastRef.current.show({
-                severity: 'success', summary: 'Success', detail: 'Event added.'
+            toastRef.current?.show({
+                severity: "success",
+                summary: "Success",
+                detail: "Event added.",
             });
         } catch (err) {
             console.error(err);
-            toastRef.current && toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Could not add event.' });
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Could not add event.",
+            });
         }
     };
 
     const handleDelete = async (event) => {
-        if (!event) return;
+        if (!isAcademy || !event) return; // chỉ Academy được xoá
         try {
             await removeEvent(event.id);
             setSelectedEvent(null);
-            toastRef.current && toastRef.current.show({ severity: 'success', summary: 'Deleted', detail: 'Event has been deleted' });
+            toastRef.current?.show({
+                severity: "success",
+                summary: "Deleted",
+                detail: "Event has been deleted",
+            });
         } catch (err) {
             console.error(err);
-            toastRef.current && toastRef.current.show({ severity: 'error', summary: 'Error', detail: 'Could not delete event' });
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Could not delete event",
+            });
         }
     };
 
     return (
         <div className="p-m-4 schedule-page">
             <Toast ref={toastRef} />
-            <Toolbar className="p-mb-3" left={() => <h2 className="p-m-0 title">Schedule - Academy</h2>} right={() => (
-                <div className="p-d-flex p-ai-center p-gap-2">
-                </div>
-            )} />
+
+            <Toolbar
+                className="p-mb-3"
+                left={() => <h2 className="p-m-0 title">{titleText}</h2>}
+                right={() => (
+                    <div className="p-d-flex p-ai-center p-gap-2">
+                        {/* Có thể thêm nút tạo event cho ACADEMY nếu muốn */}
+                        {/* {isAcademy && (
+                            <Button
+                                label="New event"
+                                icon="pi pi-plus"
+                                onClick={() => setShowCreate(true)}
+                            />
+                        )} */}
+                    </div>
+                )}
+            />
 
             <div className="p-grid">
-                <div className="p-col-12 p-md-3">
-                    <SidebarFilters filters={filters} setFilters={setFilters} teacherOptions={teacherOptions} typeOptions={typeOptions}
-                        onApply={handleApply} onClear={handleClear} appliedCount={appliedCount} />
-                </div>
+                {/* Sidebar filter: chỉ dành cho Academy */}
+                {isAcademy && (
+                    <div className="p-col-12 p-md-3">
+                        <SidebarFilters
+                            filters={filters}
+                            setFilters={setFilters}
+                            teacherOptions={teacherOptions}
+                            typeOptions={typeOptions}
+                            onApply={handleApply}
+                            onClear={handleClear}
+                            appliedCount={appliedCount}
+                        />
+                    </div>
+                )}
 
-                <div className="p-col-12 p-md-9">
+                <div className={isAcademy ? "p-col-12 p-md-9" : "p-col-12"}>
                     <div className="calendar-card p-shadow-3 p-p-3">
-                        <CalendarView localizer={localizer} events={filteredEvents} view={view} setView={setView}
-                            onEventClick={handleEventClick} eventPropGetter={eventStyleGetter} />
+                        <CalendarView
+                            localizer={localizer}
+                            events={filteredEvents}
+                            view={view}
+                            setView={setView}
+                            onEventClick={handleEventClick}
+                            eventPropGetter={eventStyleGetter}
+                        />
                     </div>
                 </div>
             </div>
 
+            {/* Overlay: info nhanh – dùng cho mọi role */}
             <EventOverlay overlayRef={overlayRef} selectedEvent={selectedEvent} />
 
-            <EventDetailDialog event={selectedEvent} visible={!!selectedEvent} onHide={() => setSelectedEvent(null)} onDelete={handleDelete} />
+            {/* Dialog chi tiết + xoá / tạo event: chỉ Academy dùng */}
+            {isAcademy && (
+                <>
+                    <EventDetailDialog
+                        event={selectedEvent}
+                        visible={!!selectedEvent}
+                        onHide={() => setSelectedEvent(null)}
+                        onDelete={handleDelete}
+                    />
 
-            <CreateEventDialog visible={showCreate} onHide={() => setShowCreate(false)} onCreate={handleCreate} typeOptions={typeOptions} />
+                    <CreateEventDialog
+                        visible={showCreate}
+                        onHide={() => setShowCreate(false)}
+                        onCreate={handleCreate}
+                        typeOptions={typeOptions}
+                    />
+                </>
+            )}
         </div>
     );
 }
