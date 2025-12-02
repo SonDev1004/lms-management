@@ -2,10 +2,16 @@ package com.lmsservice.service.impl;
 
 import static lombok.AccessLevel.PRIVATE;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.lmsservice.entity.NotificationType;
+import com.lmsservice.repository.NotificationTypeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lmsservice.dto.response.NotificationResponse;
@@ -27,6 +33,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     NotificationRepository notificationRepo;
     UserRepository userRepo;
+    NotificationTypeRepository notificationTypeRepository;
+    private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
 
     private String extractTitle(String html) {
         if (html == null) return "(Thông báo)";
@@ -85,13 +93,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void markAsSeen(Long notificationId) {
-        User user = getCurrentUser();
-        int updated = notificationRepo.markSeenByIdAndUser(notificationId, user.getId());
+    public void markAsSeen(Long id) {
+        User current = getCurrentUser();
+
+        int updated = notificationRepo.markSeenByIdAndUser(id, current.getId());
         if (updated == 0) {
             throw new AppException(ErrorCode.NOTIFICATION_NOT_FOUND);
         }
     }
+
 
     @Override
     public NotificationResponse getById(Long id) {
@@ -139,4 +149,43 @@ public class NotificationServiceImpl implements NotificationService {
         }
         notificationRepo.delete(n);
     }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = Exception.class)
+    public NotificationResponse createForUser(Long userId, String title, String content, String url) {
+        User user = userRepo.findById(userId).orElse(null);
+        if (user == null) {
+            log.warn("Skip notification: user {} not found", userId);
+            return null;
+        }
+
+        NotificationType type = notificationTypeRepository
+                .findFirstByOrderByIdAsc()
+                .orElseThrow(() -> new IllegalStateException("No NotificationType defined in database"));
+
+        Notification notification = Notification.builder()
+                .user(user)
+                .content(content != null ? content : title)
+                .severity((short) 1)
+                .url(url)
+                .isSeen(false)
+                .postedDate(LocalDateTime.now())
+                .scheduledDate(null)
+                .notificationType(type)
+                .build();
+
+        notification = notificationRepo.save(notification);
+
+        return NotificationResponse.builder()
+                .id(notification.getId())
+                .title(title != null ? title : extractTitle(notification.getContent()))
+                .content(notification.getContent())
+                .severity(notification.getSeverity())
+                .url(notification.getUrl())
+                .isSeen(notification.isSeen())
+                .type(notification.getNotificationType().getTitle())
+                .postedDate(notification.getPostedDate())
+                .build();
+    }
+
 }

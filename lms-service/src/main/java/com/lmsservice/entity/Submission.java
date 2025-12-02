@@ -1,5 +1,6 @@
 package com.lmsservice.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -21,7 +22,7 @@ public class Submission extends EntityAbstract {
     String fileName;
 
     @Column(columnDefinition = "float default 0.00", nullable = false)
-    Float score;
+    BigDecimal score;
 
     LocalDateTime submittedDate;
 
@@ -34,4 +35,20 @@ public class Submission extends EntityAbstract {
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     Student student;
+
+    @Column(name = "answers_json", columnDefinition = "nvarchar(max)")
+    String answersJson;
+
+    @Column(name = "auto_score", precision = 5, scale = 2)
+    BigDecimal autoScore;
+
+    // 0=chưa chấm, 1=auto_done, 2=teacher_reviewed
+    @Column(name = "graded_status")
+    Integer gradedStatus;
+
+    @Column(name = "started_at")
+    LocalDateTime startedAt;
+
+    @Column(name = "finished_at")
+    LocalDateTime finishedAt;
 }

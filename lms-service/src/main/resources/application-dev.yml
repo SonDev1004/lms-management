@@ -58,13 +58,13 @@ minio:
   region: ${MINIO_REGION:us-east-1}
 
 vnpay:
-  tmnCode: ${VNPAY_TMN_CODE:0GK43HDP}
-  hashSecret: ${VNPAY_HASH_SECRET:OLBPY32TY1VB9MAG2UGSPHGGI7F4HPEM}
+  tmnCode: ${VNPAY_TMN_CODE:9BROJPI3}
+  hashSecret: ${VNPAY_HASH_SECRET:IBYWWPOR14UEOCF4WQX7YXD2S8689RKF}
   payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-  returnUrl: ${RETURN_URL:http://localhost:8081/api/v1/payments/vnpay-return}
-  ipnUrl: ${IPN_URL:http://localhost:8081/api/v1/payments/vnpay-ipn}
+  returnUrl: http://localhost:8081/api/v1/payments/vnpay-return
+  ipnUrl: http://localhost:8081/api/v1/payments/vnpay-ipn
 
 client:
-  domain: ${DOMAIN:http://localhost:5173}
+  domain: http://localhost:5173
 
 
