@@ -127,3 +127,107 @@ body {
     .header-row{ flex-direction:column; align-items:stretch; }
     .p-input-icon-left .p-inputtext{ width:100%; }
 }
+/* ===== Course filters bar ===== */
+.course-toolbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #eef3f7;
+    box-shadow: 0 1px 0 rgba(16,24,40,.04);
+    margin-bottom: 8px;
+}
+
+.course-toolbar-left{
+    display: flex;
+    align-items: center;
+    gap: 8px;                /* dropdown nằm gần nhau hơn */
+    flex-wrap: wrap;
+}
+
+/* Search input giữ nguyên chiều cao 44px */
+.course-toolbar-left .p-input-icon-left .p-inputtext{
+    height: 44px;
+}
+
+/* Dropdown cùng chiều cao với ô search + canh giữa text */
+.course-toolbar-left .p-dropdown{
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.course-toolbar-left .p-dropdown .p-dropdown-label{
+    display: flex;
+    align-items: center;
+}
+/* ===== Course toolbar (filter bar) ===== */
+.course-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #eef3f7;
+    box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+    margin-bottom: 8px;
+}
+
+.course-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+
+.course-search .p-inputtext {
+    width: 260px;
+    height: 44px;
+    border-radius: 10px;
+}
+
+/* Nhóm 3 dropdown nằm cùng 1 dòng, sát nhau */
+.course-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.course-filter-group .p-dropdown {
+    height: 44px;
+    min-width: 150px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.course-filter-group .p-dropdown-label {
+    display: flex;
+    align-items: center;
+}
+
+/* Buttons bên phải */
+.course-toolbar-right {
+    display: flex;
+    gap: 8px;
+}
+
+/* Responsive: màn nhỏ thì cho toolbar xuống 2 dòng */
+@media (max-width: 1024px) {
+    .course-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .course-toolbar-left {
+        flex-wrap: wrap;
+    }
+    .course-search .p-inputtext {
+        width: 100%;
+    }
+}

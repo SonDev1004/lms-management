@@ -15,7 +15,6 @@ export default function ProgramList() {
     const [page, setPage] = useState(1);
     const [rows, setRows] = useState(9);
 
-    // ===== API =====
     const fetchAll = async () => {
         try {
             setLoading(true);
@@ -30,7 +29,6 @@ export default function ProgramList() {
 
     useEffect(() => { fetchAll(); }, []);
 
-    // ===== Search debounce =====
     useEffect(() => {
         const t = setTimeout(() => {
             setQuery(pendingQ.trim());
@@ -39,7 +37,6 @@ export default function ProgramList() {
         return () => clearTimeout(t);
     }, [pendingQ]);
 
-    // ===== Filters + Paging =====
     const filtered = useMemo(() => {
         if (!query) return allItems;
         const kw = query.toLowerCase();
@@ -63,7 +60,6 @@ export default function ProgramList() {
         setRows(e.rows);
     };
 
-    // ===== Render =====
     return (
         <div className="ourp-wrap">
             <div className="ourp-head">
@@ -123,7 +119,6 @@ export default function ProgramList() {
                 rows={rows}
                 totalRecords={total}
                 onPageChange={onPageChange}
-                rowsPerPageOptions={[9, 12, 18, 24]}
             />
         </div>
     );

@@ -7,10 +7,12 @@ import { Button } from 'primereact/button';
 import TeacherFilters from '../components/TeacherFilters.jsx';
 import TeachersTable from '../components/TeachersTable.jsx';
 import EditTeacherDialog from '../components/EditTeacherDialog.jsx';
-import AddTeacherDialog from '../components/AddTeacherDialog.jsx'; // ⬅️ NEW
+import AddTeacherDialog from '../components/AddTeacherDialog.jsx';
 import { confirmDelete } from '../components/ConfirmDelete.js';
 
 import { useTeachers } from '../hooks/useTeachers.js';
+
+import '../styles/TeacherManagement.css';
 import '../styles/TeacherEditDialog.css';
 
 import {
@@ -24,39 +26,37 @@ import {
 export default function TeacherManagement({
                                               role = 'ACADEMIC_MANAGER',
                                               subjects = [],
-                                              currentUserId, // nếu cần giới hạn teacher chỉ sửa chính mình
+                                              currentUserId,
                                           }) {
     const toast = useRef(null);
     const navigate = useNavigate();
     const { data, filters, setFilters, exportCSV } = useTeachers();
 
-    // Dialog states
     const [editOpen, setEditOpen] = useState(false);
     const [addOpen, setAddOpen] = useState(false);
     const [editing, setEditing] = useState(null);
 
-    // Quyền
     const canDelete = role === 'ACADEMIC_MANAGER';
     const canEdit = useMemo(() => {
         if (role === 'ACADEMIC_MANAGER') return true;
         if (role === 'TEACHER' && editing) {
-            return editing.id === currentUserId; // teacher chỉ sửa hồ sơ của mình
+            return editing.id === currentUserId;
         }
-        return role !== 'TEACHER'; // fallback
+        return role !== 'TEACHER';
     }, [role, editing, currentUserId]);
 
-    // Kích hoạt re-run searchTeachers trong hook sau khi CRUD mock store
     const forceRefresh = () => {
         setFilters.setQ((prev) => prev + ' ');
         setTimeout(() => setFilters.setQ((prev) => prev.trim()), 0);
     };
 
-    // Table row actions
     const onView = (row) => navigate(`./${row.id}`);
+
     const onEdit = (row) => {
         setEditing(row || null);
         setEditOpen(true);
     };
+
     const onDelete = (row) =>
         confirmDelete({
             name: row.name,
@@ -72,7 +72,6 @@ export default function TeacherManagement({
             },
         });
 
-    // Save từ dialog SỬA
     const onSaveEdit = (t) => {
         if (!t?.name) {
             toast.current?.show({
@@ -82,7 +81,6 @@ export default function TeacherManagement({
             });
             return;
         }
-        // giữ nguyên id khi edit
         const payload = t.id?.trim() ? t : { ...t, id: editing?.id || '' };
         upsertTeacher(payload);
 
@@ -99,7 +97,6 @@ export default function TeacherManagement({
         forceRefresh();
     };
 
-    // Save từ dialog THÊM
     const onSaveAdd = (t) => {
         if (!t?.name) {
             toast.current?.show({
@@ -109,7 +106,7 @@ export default function TeacherManagement({
             });
             return;
         }
-        // Tạo id khi thêm mới
+
         const withId =
             t.id && t.id.trim()
                 ? t
@@ -135,10 +132,10 @@ export default function TeacherManagement({
 
             {/* Header */}
             <div className="header-row">
-                <div className="title-block" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                <div className="title-block">
                     <i className="pi pi-briefcase title-icon" />
                     <div>
-                        <h1 className="title" style={{ margin: 0 }}>Teacher Management</h1>
+                        <h1 className="title">Teacher Management</h1>
                         <div className="subtitle">Manage profiles, subjects & workloads</div>
                     </div>
                 </div>
@@ -149,8 +146,8 @@ export default function TeacherManagement({
                         icon="pi pi-plus"
                         className="p-button-lg"
                         onClick={() => {
-                            setEditing(null);  // clear any stale edit
-                            setAddOpen(true);  // ⬅️ mở dialog ADD RIÊNG
+                            setEditing(null);
+                            setAddOpen(true);
                         }}
                     />
                 )}
@@ -175,12 +172,12 @@ export default function TeacherManagement({
                     onView={onView}
                     onEdit={onEdit}
                     onDelete={onDelete}
-                    canEdit={canEdit}          // ⬅️ truyền đúng quyền
+                    canEdit={canEdit}
                     canDelete={canDelete}
                 />
             </div>
 
-            {/* Dialog SỬA */}
+            {/* Edit dialog */}
             {editOpen && (
                 <EditTeacherDialog
                     open={editOpen}
@@ -188,8 +185,8 @@ export default function TeacherManagement({
                         setEditOpen(false);
                         setEditing(null);
                     }}
-                    teacher={editing}                 // object cần sửa
-                    onSaved={onSaveEdit}             // flow save riêng cho edit
+                    teacher={editing}
+                    onSaved={onSaveEdit}
                     departments={departments}
                     statusOptions={teacherStatusOptions}
                     empTypes={employmentTypes}
@@ -198,17 +195,17 @@ export default function TeacherManagement({
                 />
             )}
 
-            {/* Dialog THÊM (riêng) */}
+            {/* Add dialog */}
             {addOpen && (
                 <AddTeacherDialog
                     open={addOpen}
                     onClose={() => setAddOpen(false)}
-                    onSaved={onSaveAdd}              // flow save riêng cho add
+                    onSaved={onSaveAdd}
                     departments={departments}
                     statusOptions={teacherStatusOptions}
                     empTypes={employmentTypes}
                     subjects={subjects}
-                    dialogClassName="teacher-edit-dialog"  // tái dùng CSS đẹp đã có
+                    dialogClassName="teacher-edit-dialog"
                 />
             )}
         </div>

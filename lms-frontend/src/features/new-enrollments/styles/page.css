@@ -161,7 +161,7 @@
 @media (max-width: 1100px){
     .ne-actions-right .ne-search .p-inputtext{ width:360px; max-width:56vw; }
 }
-@media (max-width: 720px){
+@media (max-width: 920px){
     .ne-actions-bar{ flex-direction:column; align-items:stretch; }
     .ne-actions-right .ne-search .p-inputtext{ width:100%; max-width:100%; }
 }
@@ -184,8 +184,8 @@
 }
 .ne-th-wrap small { font-size: 12px; font-weight: 700; opacity: .8 }
 
-@media (min-width: 1280px){
-    .ne-col-student { min-width: 320px; }
+@media (min-width: 1080px){
+    .ne-col-student { min-width: 220px; }
     .ne-col-contact { min-width: 360px; }
     .ne-col-program { min-width: 320px; }
     .ne-col-payment { width: 170px; min-width: 150px; }
@@ -233,3 +233,6 @@
     .ne-hide-md { display:none !important; }
 }
 
+.ne-wrap {
+    zoom: 0.8;
+}

@@ -172,7 +172,7 @@
     .ne-col-payment { width: 140px; min-width: 130px; }
     .ne-col-status  { width: 120px; min-width: 110px; }
     .ne-col-applied { width: 140px; min-width: 130px; }
-    .ne-col-actions { width: 180px; min-width: 170px; }
+    .ne-col-actions { width: 200px; min-width: 170px; }
 }
 
 .ne-chip{

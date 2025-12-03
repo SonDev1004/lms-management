@@ -148,6 +148,18 @@ body {
     border: 1px solid #e5ebf4;
     border-radius: 999px;
 }
+/* ==== Center text inside dropdown + number fields ==== */
+
+/* Center text trong Dropdown */
+.program-detail-dialog .p-dropdown .p-dropdown-label {
+    text-align: center;
+    width: 100%;
+}
+
+/* Center số trong InputNumber (Duration, Tuition, Courses...) */
+.program-detail-dialog .p-inputnumber .p-inputtext {
+    text-align: center;
+}
 
 /* ================ Bulk action ================= */
 .action-container {
@@ -577,4 +589,226 @@ body {
 }
 .add-program-dialog .p-dialog-footer .p-button:not(.p-button-text):hover {
     filter: brightness(1.02);
+}
+/* ===== Toolbar dropdown align with search input (44px) ===== */
+.header-row .p-dropdown {
+    height: 44px;
+    min-width: 140px;
+    border-radius: 12px;
+    border: 1px solid #e6e9ef;
+    display: inline-flex;          /* giữ layout flex */
+    align-items: center;           /* canh giữa nội dung theo chiều dọc */
+}
+
+/* Canh chữ ở giữa ô */
+.header-row .p-dropdown .p-dropdown-label {
+    height: 100%;
+    display: flex;
+    align-items: center;           /* giữa theo chiều dọc */
+    line-height: 1;
+    padding: 0 2.2rem 0 0.9rem;    /* chỉ padding trái/phải */
+}
+
+/* Icon mũi tên cũng phải giữa */
+.header-row .p-dropdown .p-dropdown-trigger {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+}
+
+/* Màu placeholder giống search */
+.header-row .p-dropdown .p-dropdown-label.p-placeholder {
+    color: var(--muted);
+}
+/* ================= Sticky toolbar ================== */
+.header-row {
+    display: flex;
+    flex-direction: column;       /* luôn 2 hàng: trên + dưới */
+    align-items: stretch;
+    gap: 10px;                    /* khoảng cách giữa 2 hàng */
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #eef3f7;
+    border-radius: 12px;
+    box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+}
+
+.header-row.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Hàng trên: search + 2 dropdown */
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: nowrap;
+}
+
+/* Hàng dưới: nút hành động, căn về bên phải */
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Ô search */
+.header-row .p-input-icon-left .p-inputtext {
+    width: 360px;
+    height: 44px;
+    padding: 12px 14px 12px 36px;
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+}
+
+/* ===== Dropdown trong toolbar: cao 44px + canh giữa ===== */
+.header-row .p-dropdown {
+    height: 44px;
+    min-width: 140px;
+    border-radius: 12px;
+    border: 1px solid #e6e9ef;
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+}
+
+/* label bên trong dropdown */
+.header-row .p-dropdown .p-dropdown-label {
+    height: 100%;
+    display: flex;
+    align-items: center;          /* canh giữa theo chiều dọc */
+    line-height: 1;
+    padding: 0 2.2rem 0 0.9rem;   /* chỉ padding trái/phải */
+}
+
+/* màu chữ placeholder */
+.header-row .p-dropdown .p-dropdown-label.p-placeholder {
+    color: var(--muted);
+}
+
+/* icon mũi tên */
+.header-row .p-dropdown .p-dropdown-trigger {
+    height: 100%;
+    width: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== Buttons look ===== */
+.header-row .p-button {
+    border-radius: 12px;
+    height: 44px;
+}
+
+/* mobile: cho phép wrap bớt nếu màn hình nhỏ */
+@media (max-width: 768px) {
+    .toolbar-left {
+        flex-wrap: wrap;
+    }
+
+    .header-row .p-input-icon-left .p-inputtext {
+        width: 100%;
+    }
+}
+/* ===== Toolbar 2 hàng gọn gàng ===== */
+.header-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #eef3f7;
+    border-radius: 12px;
+    box-shadow: 0 1px 0 rgba(16, 24, 40, 0.04);
+}
+
+.header-row.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* HÀNG 1: search + 2 dropdown, chia cột đều */
+.toolbar-left {
+    display: grid;
+    grid-template-columns: minmax(260px, 1.6fr) 1fr 1fr; /* search rộng hơn 2 filter */
+    column-gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+/* HÀNG 2: buttons căn phải */
+.toolbar-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+/* Ô search */
+.header-row .p-input-icon-left {
+    width: 100%;
+}
+.header-row .p-input-icon-left .p-inputtext {
+    width: 100%;
+    height: 44px;
+    padding: 12px 14px 12px 36px;
+    border: 1px solid #e6e9ef;
+    border-radius: 12px;
+}
+
+/* Dropdowns: cao 44px, canh giữa */
+.header-row .p-dropdown {
+    height: 44px;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #e6e9ef;
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+}
+
+.header-row .p-dropdown .p-dropdown-label {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 2.2rem 0 0.9rem;
+    line-height: 1;
+}
+
+.header-row .p-dropdown .p-dropdown-label.p-placeholder {
+    color: var(--muted);
+}
+
+.header-row .p-dropdown .p-dropdown-trigger {
+    height: 100%;
+    width: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Buttons */
+.header-row .p-button {
+    height: 44px;
+    border-radius: 12px;
+}
+
+/* Mobile: cho phép wrap lại */
+@media (max-width: 768px) {
+    .toolbar-left {
+        grid-template-columns: 1fr;  /* xuống 1 cột trên mobile */
+        row-gap: 8px;
+    }
 }

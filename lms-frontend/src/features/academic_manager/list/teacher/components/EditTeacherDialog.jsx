@@ -27,11 +27,12 @@ export default function EditTeacherDialog({
                                               open,
                                               onClose,
                                               teacher,
-                                              onSaved,               // (payload) => void  — cha sẽ gọi upsertTeacher rồi toast
+                                              onSaved,
                                               departments = [],
                                               statusOptions = [],
                                               empTypes = [],
-                                              subjects = []          // mảng subject options, ví dụ ['MATH101','PHYS201'] hoặc [{label, value}]
+                                              subjects = [],
+                                              dialogClassName = "teacher-edit-dialog",   // ⚠️ dùng chung CSS với Add
                                           }) {
     const [form, setForm] = useState(empty);
     const [preview, setPreview] = useState("");
@@ -63,11 +64,10 @@ export default function EditTeacherDialog({
         if (!f) return;
         const url = URL.createObjectURL(f);
         setPreview(url);
-        set("avatar", url); // mock lưu tạm objectURL
+        set("avatar", url);
     };
 
     const normalizeOptions = (opts) => {
-        // chấp nhận ['MATH101'] hoặc [{label, value}]
         if (!opts?.length) return [];
         return typeof opts[0] === "string"
             ? opts.map((x) => ({ label: x, value: x }))
@@ -111,57 +111,72 @@ export default function EditTeacherDialog({
             style={{ width: "720px", maxWidth: "95vw" }}
             modal
             onHide={onClose}
+            className={dialogClassName}
         >
-            <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: 16 }}>
+            <div className="form-grid">
                 {/* Avatar */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+                <aside className="avatar-card" aria-label="avatar uploader">
                     <img
                         src={preview || `https://i.pravatar.cc/160?u=${form.id || "x"}`}
                         alt="avatar"
-                        style={{ width: 140, height: 140, borderRadius: "50%", objectFit: "cover", border: "1px solid #e8ecf2" }}
+                        className="avatar"
                     />
                     <label className="p-button p-button-text" style={{ cursor: "pointer" }}>
                         <i className="pi pi-upload" style={{ marginRight: 8 }} /> Change photo
                         <input type="file" accept="image/*" onChange={onPickImage} hidden />
                     </label>
-                </div>
+                </aside>
 
                 {/* Fields */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <div className="field">
+                <section className="form-fields">
+                    <div className="form-group">
                         <label>Code</label>
-                        <InputText value={form.id} onChange={(e) => set("id", e.target.value.toUpperCase())} />
-                        {errors.id && <small className="p-error">{errors.id}</small>}
+                        <InputText
+                            value={form.id}
+                            onChange={(e) => set("id", e.target.value.toUpperCase())}
+                        />
+                        {errors.id && <div className="field-error">{errors.id}</div>}
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Teaching Load (periods/week)</label>
                         <InputNumber
                             value={form.teachingLoad}
                             onValueChange={(e) => set("teachingLoad", e.value ?? 0)}
                             min={0}
                         />
-                        {errors.teachingLoad && <small className="p-error">{errors.teachingLoad}</small>}
+                        {errors.teachingLoad && (
+                            <div className="field-error">{errors.teachingLoad}</div>
+                        )}
                     </div>
 
-                    <div className="field" style={{ gridColumn: "1 / span 2" }}>
+                    <div className="form-group" style={{ gridColumn: "1 / span 2" }}>
                         <label>Name</label>
-                        <InputText value={form.name} onChange={(e) => set("name", e.target.value)} />
-                        {errors.name && <small className="p-error">{errors.name}</small>}
+                        <InputText
+                            value={form.name}
+                            onChange={(e) => set("name", e.target.value)}
+                        />
+                        {errors.name && <div className="field-error">{errors.name}</div>}
                     </div>
 
-                    <div className="field" style={{ gridColumn: "1 / span 2" }}>
+                    <div className="form-group" style={{ gridColumn: "1 / span 2" }}>
                         <label>Email</label>
-                        <InputText value={form.email} onChange={(e) => set("email", e.target.value)} />
-                        {errors.email && <small className="p-error">{errors.email}</small>}
+                        <InputText
+                            value={form.email}
+                            onChange={(e) => set("email", e.target.value)}
+                        />
+                        {errors.email && <div className="field-error">{errors.email}</div>}
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Phone</label>
-                        <InputText value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+                        <InputText
+                            value={form.phone}
+                            onChange={(e) => set("phone", e.target.value)}
+                        />
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Department</label>
                         <Dropdown
                             options={departments}
@@ -172,10 +187,12 @@ export default function EditTeacherDialog({
                             placeholder="Select department"
                             showClear
                         />
-                        {errors.department && <small className="p-error">{errors.department}</small>}
+                        {errors.department && (
+                            <div className="field-error">{errors.department}</div>
+                        )}
                     </div>
 
-                    <div className="field" style={{ gridColumn: "1 / span 2" }}>
+                    <div className="form-group" style={{ gridColumn: "1 / span 2" }}>
                         <label>Subjects</label>
                         <MultiSelect
                             value={form.subjects}
@@ -189,7 +206,7 @@ export default function EditTeacherDialog({
                         />
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Employment</label>
                         <Dropdown
                             options={empTypes}
@@ -201,7 +218,7 @@ export default function EditTeacherDialog({
                         />
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Status</label>
                         <Dropdown
                             options={statusOptions}
@@ -209,12 +226,14 @@ export default function EditTeacherDialog({
                             optionValue="value"
                             value={form.status}
                             onChange={(e) => set("status", e.value)}
-                            placeholder="Active/On leave/Resigned"
+                            placeholder="Active / On leave / Resigned"
                         />
-                        {errors.status && <small className="p-error">{errors.status}</small>}
+                        {errors.status && (
+                            <div className="field-error">{errors.status}</div>
+                        )}
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Hired On</label>
                         <Calendar
                             value={form.hiredOn}
@@ -224,22 +243,31 @@ export default function EditTeacherDialog({
                         />
                     </div>
 
-                    <div className="field">
+                    <div className="form-group">
                         <label>Homeroom Of</label>
-                        <InputText value={form.homeroomOf} onChange={(e) => set("homeroomOf", e.target.value)} />
+                        <InputText
+                            value={form.homeroomOf}
+                            onChange={(e) => set("homeroomOf", e.target.value)}
+                        />
                     </div>
 
-                    <div className="field" style={{ gridColumn: "1 / span 2" }}>
+                    <div className="form-group" style={{ gridColumn: "1 / span 2" }}>
                         <label>Certifications (comma separated)</label>
                         <InputText
                             value={(form.certifications || []).join(", ")}
-                            onChange={(e) => set("certifications",
-                                e.target.value.split(",").map(x => x.trim()).filter(Boolean)
-                            )}
+                            onChange={(e) =>
+                                set(
+                                    "certifications",
+                                    e.target.value
+                                        .split(",")
+                                        .map((x) => x.trim())
+                                        .filter(Boolean)
+                                )
+                            }
                             placeholder="PGCE, TESOL, ..."
                         />
                     </div>
-                </div>
+                </section>
             </div>
 
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 18 }}>

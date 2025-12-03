@@ -75,7 +75,6 @@ export default function CoursesTable({
             value={courses}
             header={header}
             paginator rows={10}
-            rowsPerPageOptions={[10, 20, 50]}
             responsiveLayout="scroll"
             loading={loading}
             dataKey="id"

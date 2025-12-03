@@ -9,15 +9,16 @@
     padding: 0 0 10px;
 }
 
-/* Header container (we inject custom header) */
+/* Header container (custom header) */
 .course-detail-dialog .p-dialog-header {
-    padding: 0;                 /* để header custom full-bleed */
+    padding: 0;                 /* header full-bleed */
     border-bottom: 1px solid #eef3f7;
 }
+
 .course-detail-dialog .cd-header {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 12px;
     padding: 16px 18px 12px;
 }
@@ -38,12 +39,8 @@
 .course-detail-dialog .cd-title .sub .sep {
     opacity: 0.6;
 }
-.course-detail-dialog .cd-actions {
-    display: flex;
-    gap: 8px;
-}
 
-/* Tối ưu Tag nhỏ gọn như ảnh */
+/* Tag nhỏ gọn */
 .course-detail-dialog .p-tag {
     padding: 0 10px;
     height: 22px;
@@ -91,6 +88,7 @@
 .course-detail-dialog .cd-form .col-span-2 {
     grid-column: span 2;
 }
+
 @media (max-width: 720px) {
     .course-detail-dialog .cd-stats {
         grid-template-columns: 1fr 1fr;
@@ -136,14 +134,63 @@
     box-shadow: none;
 }
 
-.course-detail-dialog .p-dropdown .p-dropdown-trigger,
-.course-detail-dialog .p-calendar .p-datepicker-trigger {
+/* Căn text trong dropdown thẳng với input */
+.course-detail-dialog .p-dropdown .p-dropdown-label {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+}
+
+/* Trigger của dropdown căn giữa icon */
+.course-detail-dialog .p-dropdown .p-dropdown-trigger {
     width: 42px;
+    border-left: 1px solid #e6e9ef;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Calendar trigger */
+.course-detail-dialog .p-calendar .p-inputtext {
+    padding-inline: 12px;
+}
+.course-detail-dialog .p-calendar .p-datepicker-trigger {
+    width: 44px;
     border-left: 1px solid #e6e9ef;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
+/* InputNumber: căn text & nút */
+.course-detail-dialog .p-inputnumber .p-inputtext {
+    padding-inline: 12px;
+    line-height: 1.2;
+}
+.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-button {
+    background: #f8fafc !important;
+    border: 1px solid #e6e9ef !important;
+    border-left-width: 1px !important;
+    color: #334155 !important;
+    width: 42px;
+    height: 22px;                /* 22 + 22 = 44 */
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-inputnumber-button-up {
+    border-top-right-radius: 10px;
+}
+.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-inputnumber-button-down {
+    border-bottom-right-radius: 10px;
+}
+.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-button:hover {
+    background: #f1f5f9 !important;
+}
+
+/* Focus ring */
 .course-detail-dialog .p-inputtext:focus,
 .course-detail-dialog .p-dropdown.p-focus,
 .course-detail-dialog .p-inputnumber .p-inputtext:focus,
@@ -159,26 +206,7 @@
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
 }
 
-/* InputNumber buttons (khử “ô xanh” to) */
-.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-button {
-    background: #f8fafc !important;
-    border: 1px solid #e6e9ef !important;
-    border-left-width: 1px !important;
-    color: #334155 !important;
-    width: 42px;
-    height: 22px;
-}
-.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-inputnumber-button-up {
-    border-top-right-radius: 10px;
-}
-.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-inputnumber-button-down {
-    border-bottom-right-radius: 10px;
-}
-.course-detail-dialog .p-inputnumber .p-inputnumber-button.p-button:hover {
-    background: #f1f5f9 !important;
-}
-
-/* Calendar trigger (khử nút xanh lớn) */
+/* Calendar full style (để không override ở nơi khác) */
 .course-detail-dialog .p-calendar-w-btn .p-inputtext {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
@@ -195,4 +223,14 @@
 }
 .course-detail-dialog .p-calendar-w-btn .p-datepicker-trigger.p-button:hover {
     background: #f1f5f9 !important;
+}
+
+/* Actions row – sau form, tách bằng border-top */
+.course-detail-dialog .cd-actions-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #eef3f7;
 }

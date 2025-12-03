@@ -28,7 +28,7 @@ body { background: var(--bg); color: var(--ink); }
 }
 
 .kpi-grid{ grid-column: 1 / -1; display:grid; gap:20px; grid-template-columns: repeat(12,1fr);}
-.kpi{ grid-column: span 3; padding:18px; display:flex; align-items:center; justify-content:space-between; }
+.kpi{ grid-column: span 1; padding:18px; display:flex; align-items:center; justify-content:space-between; }
 .kpi .meta{display:flex; flex-direction:column; gap:6px}
 .kpi .title{font-weight:600}
 .kpi .value{font-size:28px; font-weight:800}

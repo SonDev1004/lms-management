@@ -1,7 +1,7 @@
 import React from 'react';
-import '../styles/student-management.css';
+import '../styles/subjectchip.css';
 
-export default function CourseChips({ list = [] }) {
+export default function SubjectChips({ list = [] }) {
     const shown = list.slice(0, 2);
     const extra = list.length - shown.length;
 

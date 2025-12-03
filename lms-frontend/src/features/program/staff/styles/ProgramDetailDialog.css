@@ -1,130 +1,301 @@
-/* ===== Program Detail Dialog — same look as Course ===== */
+.program-detail-dialog.p-dialog {
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.18);
+}
 
 .program-detail-dialog .p-dialog-header {
-    padding-bottom: 10px;
-}
-.program-detail-dialog .p-dialog-content {
-    padding-top: 6px;
+    padding: 18px 24px 14px;
+    border-bottom: none;
+    background: radial-gradient(circle at top left, #e0f2fe 0, #eef2ff 35%, #f8fafc 100%);
 }
 
-/* Header: title + actions */
-.pd-header {
+.program-detail-dialog .p-dialog-content {
+    padding: 0 24px 20px;
+    background: #f8fafc;
+}
+
+.program-detail-dialog .pd-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
-}
-.pd-header .pd-title .title {
-    font-size: 28px;
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.2px;
-}
-.pd-header .pd-title .sub {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 6px;
-    color: var(--muted);
-    font-size: 13px;
-}
-.pd-header .pd-title .sub .sep {
-    opacity: 0.5;
-}
-.pd-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Content wrapper */
-.pd-content {
-    display: grid;
     gap: 16px;
 }
 
-/* Top stats like badges */
-.pd-stats {
+.program-detail-dialog .pd-title .title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.program-detail-dialog .pd-title .sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.program-detail-dialog .pd-title .sep {
+    opacity: .6;
+}
+
+.program-detail-dialog .p-tag {
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.20);
+}
+
+.program-detail-dialog .p-tag-success {
+    background: #dcfce7;
+    color: #15803d;
+    border: none;
+}
+
+.program-detail-dialog .p-tag-warning {
+    background: #fef9c3;
+    color: #92400e;
+    border: none;
+}
+
+.program-detail-dialog .pd-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 6px;
+}
+
+.program-detail-dialog .pd-stats {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
 }
-.pd-stats .stat {
-    background: #fff;
-    border: 1px solid var(--table-border);
-    border-radius: 10px;
-    padding: 12px;
+
+.program-detail-dialog .pd-stats .stat {
+    position: relative;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px 14px 11px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
 }
-.pd-stats .sm-muted {
-    font-size: 12.5px;
-    color: var(--muted);
-    margin-bottom: 6px;
+
+.program-detail-dialog .pd-stats .stat::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+    opacity: .9;
 }
-.pd-stats .big {
-    font-weight: 700;
+
+.program-detail-dialog .pd-stats .stat:nth-child(1)::before {
+    background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.program-detail-dialog .pd-stats .stat:nth-child(2)::before {
+    background: linear-gradient(90deg, #6366f1, #4f46e5);
+}
+
+.program-detail-dialog .pd-stats .stat:nth-child(3)::before {
+    background: linear-gradient(90deg, #14b8a6, #22c55e);
+}
+
+.program-detail-dialog .pd-stats .stat:nth-child(4)::before {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+}
+
+.program-detail-dialog .pd-stats .stat:nth-child(5)::before {
+    background: linear-gradient(90deg, #ec4899, #8b5cf6);
+}
+
+.program-detail-dialog .pd-stats .sm-muted {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #94a3b8;
+    margin-top: 4px;
+    margin-bottom: 3px;
+}
+
+.program-detail-dialog .pd-stats .big {
     font-size: 16px;
+    font-weight: 700;
     color: #0f172a;
 }
 
-/* Form: 2 cols -> 1 col on mobile */
-.pd-form {
-    display: grid;
-    gap: 12px 16px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.pd-form.is-view .p-inputtext,
-.pd-form.is-view .p-dropdown,
-.pd-form.is-view .p-inputnumber .p-inputtext {
-    background: #fafafa;
-}
-@media (max-width: 640px) {
-    .pd-stats { grid-template-columns: 1fr 1fr; }
-    .pd-form { grid-template-columns: 1fr; }
+.program-detail-dialog .pd-stats .stat:nth-child(4) .big {
+    color: #2563eb;
 }
 
-/* Field */
-.pd-form .field {
+.program-detail-dialog .pd-stats .stat:nth-child(5) .big {
+    color: #7c3aed;
+}
+
+.program-detail-dialog .pd-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 14px 18px;
+    margin-top: 4px;
+    padding: 16px 18px 12px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+.program-detail-dialog .pd-form .field {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-.pd-form .field.col-span-2 {
-    grid-column: span 2;
-}
-@media (max-width: 640px) {
-    .pd-form .field.col-span-2 { grid-column: auto; }
-}
-.pd-form .field label {
-    color: #111827;
-    font-weight: 600;
-}
-.req { margin-left: 4px; color: #ef4444; }
-.field-error { margin-top: 2px; }
 
-/* Controls (44px, same curvature) */
+.program-detail-dialog .pd-form .field.col-span-2 {
+    grid-column: 1 / -1;
+}
+
+.program-detail-dialog .field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.req {
+    margin-left: 4px;
+    color: #ef4444;
+}
+
+.field-error {
+    margin-top: 2px;
+    font-size: 12px;
+}
+
+.pd-form.is-view .p-inputtext,
+.pd-form.is-view .p-dropdown,
+.pd-form.is-view .p-inputnumber .p-inputtext {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
 .program-detail-dialog .p-inputtext,
 .program-detail-dialog .p-dropdown,
 .program-detail-dialog .p-inputnumber .p-inputtext {
     height: 44px;
-    border: 1px solid #e6e9ef;
-    border-radius: 10px;
-    box-shadow: none;
-}
-.program-detail-dialog .p-dropdown,
-.program-detail-dialog .p-inputnumber { width: 100%; }
-.program-detail-dialog .p-inputnumber .p-inputnumber-button { width: 40px; }
-
-/* Footer actions (re-use global .dialog-actions if có) */
-.program-detail-dialog .dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 8px;
-    padding-top: 10px;
-    border-top: 1px solid #eef3f7;
-}
-.program-detail-dialog .dialog-actions .p-button-primary {
-    min-width: 160px;
-    height: 44px;
     border-radius: 12px;
+    border: 1px solid #d4d7e2;
+    box-shadow: none;
+    font-size: 13px;
+}
+
+.program-detail-dialog .p-inputtext:enabled:focus,
+.program-detail-dialog .p-dropdown:not(.p-disabled).p-focus,
+.program-detail-dialog .p-inputnumber .p-inputtext:enabled:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.20);
+}
+
+.program-detail-dialog .p-dropdown,
+.program-detail-dialog .p-inputnumber {
+    width: 100%;
+}
+
+.program-detail-dialog .p-inputnumber .p-inputnumber-button {
+    width: 40px;
+    border-radius: 0 12px 12px 0;
+}
+
+.program-detail-dialog .pd-footer-actions {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.program-detail-dialog .pd-footer-actions .grow {
+    flex: 1;
+}
+
+.program-detail-dialog .pd-footer-actions .p-button {
+    height: 44px;
+    border-radius: 999px;
+    padding: 0 20px;
+    font-weight: 600;
+}
+
+.program-detail-dialog .pd-footer-actions .p-button:not(.p-button-text):not(.p-button-danger) {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
+}
+
+.program-detail-dialog .pd-footer-actions .p-button:not(.p-button-text):not(.p-button-danger):hover {
+    filter: brightness(1.05);
+}
+
+.program-detail-dialog .pd-footer-actions .p-button-text {
+    color: #64748b;
+}
+
+.program-detail-dialog .pd-footer-actions .p-button-danger {
+    background: #ef4444;
+    border-color: #ef4444;
+    box-shadow: 0 12px 30px rgba(239, 68, 68, 0.4);
+}
+
+@media (max-width: 900px) {
+    .program-detail-dialog .pd-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .program-detail-dialog .p-dialog-header {
+        padding: 14px 16px 10px;
+    }
+
+    .program-detail-dialog .p-dialog-content {
+        padding: 0 16px 18px;
+    }
+
+    .program-detail-dialog .pd-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .program-detail-dialog .pd-form {
+        grid-template-columns: 1fr;
+        padding: 14px 14px 10px;
+    }
+}
+
+.program-detail-dialog .p-dropdown {
+    display: flex;
+    align-items: center;
+}
+
+.program-detail-dialog .p-dropdown .p-dropdown-label {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 0 32px;
+    margin: 0;
+}
+
+.program-detail-dialog .p-dropdown .p-dropdown-trigger {
+    flex: 0 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.program-detail-dialog .p-inputnumber-input,
+.program-detail-dialog .p-inputnumber .p-inputtext {
+    text-align: center;
 }

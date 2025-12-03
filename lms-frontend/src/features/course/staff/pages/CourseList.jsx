@@ -113,35 +113,65 @@ export default function CourseList() {
                 <SummaryPills stats={stats} />
 
                 {/* Filter Bar */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: 12, alignItems: 'center' }}>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                        <span className="p-input-icon-left">
-                            <i className="pi pi-search" />
-                            <InputText
-                                placeholder="Search by course, ID, or teacher…"
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                style={{ width: 260 }}
+                <div className="course-toolbar">
+                    <div className="course-toolbar-left">
+        <span className="p-input-icon-left course-search">
+            <i className="pi pi-search" />
+            <InputText
+                placeholder="Search by course, ID, or teacher…"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+            />
+        </span>
+
+                        <div className="course-filter-group">
+                            <Dropdown
+                                value={classFilter}
+                                onChange={(e) => setClassFilter(e.value)}
+                                options={classOptions}
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="All Classes"
+                                showClear
                             />
-                        </span>
 
-                        <Dropdown value={classFilter} onChange={(e) => setClassFilter(e.value)}
-                                  options={classOptions} optionLabel="label" optionValue="value" placeholder="All Classes" style={{ width: 150 }} showClear />
+                            <Dropdown
+                                value={teacherFilter}
+                                onChange={(e) => setTeacherFilter(e.value)}
+                                options={teacherOptions}
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="All Teachers"
+                                showClear
+                            />
 
-                        <Dropdown value={teacherFilter} onChange={(e) => setTeacherFilter(e.value)}
-                                  options={teacherOptions} optionLabel="label" optionValue="value" placeholder="All Teachers" style={{ width: 170 }} showClear />
-
-                        <Dropdown value={statusFilter} onChange={(e) => setStatusFilter(e.value)}
-                                  options={statusOptions} optionLabel="label" optionValue="value" placeholder="All Status" style={{ width: 140 }} showClear />
+                            <Dropdown
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.value)}
+                                options={statusOptions}
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="All Status"
+                                showClear
+                            />
+                        </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: 8 }}>
+                    <div className="course-toolbar-right">
                         <Button label="Import" icon="pi pi-upload" className="p-button-outlined" />
-                        <Button label="Export" icon="pi pi-download" className="p-button-outlined"
-                                onClick={() => toast.current.show({ severity: 'info', summary: 'Export', detail: 'Export is mocked' })} />
+                        <Button
+                            label="Export"
+                            icon="pi pi-download"
+                            className="p-button-outlined"
+                            onClick={() =>
+                                toast.current.show({ severity: 'info', summary: 'Export', detail: 'Export is mocked' })
+                            }
+                        />
                         <Button label="+ Add Course" icon="pi pi-plus" className="p-button-success" onClick={handleAddOpen} />
                     </div>
                 </div>
+
+
 
                 {(classFilter || statusFilter || teacherFilter) && (
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', padding: 8 }}>

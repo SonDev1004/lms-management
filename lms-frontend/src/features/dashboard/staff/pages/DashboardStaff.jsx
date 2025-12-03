@@ -48,7 +48,6 @@ export default function DashboardStaff() {
 
     return (
         <div className="dashboard-root">
-            <Sidebar />
             <main className="dashboard-main">
                 <header className="top-row">
                     <div>

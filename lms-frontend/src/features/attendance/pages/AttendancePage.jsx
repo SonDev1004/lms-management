@@ -7,12 +7,21 @@ const AttendancePage = ({ sessionId }) => {
 
     useEffect(() => {
         let mounted = true;
+
         if (sessionId) {
-            AttendanceService.getAttendanceBySession(sessionId).then((res) => {
-                if (!mounted) return;
-                setAttendanceHistory(res);
-            });
+            AttendanceService.getAttendanceBySession(sessionId)
+                .then((res) => {
+                    if (!mounted) return;
+                    setAttendanceHistory(Array.isArray(res) ? res : []);
+                })
+                .catch(() => {
+                    if (!mounted) return;
+                    setAttendanceHistory([]);
+                });
+        } else {
+            setAttendanceHistory([]);
         }
+
         return () => {
             mounted = false;
         };
@@ -29,10 +38,12 @@ const AttendancePage = ({ sessionId }) => {
     };
 
     return (
-        <AttendanceTable
-            attendanceList={attendanceHistory}
-            formatDate={formatDate}
-        />
+        <div className="attendance-page">
+            <AttendanceTable
+                attendanceHistory={attendanceHistory}
+                formatDate={formatDate}
+            />
+        </div>
     );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {  useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';

@@ -105,3 +105,37 @@
     .dlg .dlg-sec-title{ color:#9fb4d6; }
     .dlg .hint{ color:#8ca0c1; }
 }
+/* ===== ALIGN TEXT INSIDE INPUTS / DROPDOWN / NUMBER ===== */
+
+/* tất cả input text & number trong 2 dialog này cao 44px -> cho line-height = 44px */
+.add-program-dialog :is(.p-inputtext, .p-inputnumber-input),
+.program-detail-dialog :is(.p-inputtext, .p-inputnumber-input) {
+    padding-block: 0;          /* bỏ padding trên/dưới */
+    padding-inline: 12px;      /* đều với dropdown */
+    line-height: 44px;         /* chữ nằm giữa ô 44px */
+}
+
+/* dropdown: cho label chiếm full chiều cao và căn giữa */
+.add-program-dialog .p-dropdown,
+.program-detail-dialog .p-dropdown {
+    display: flex;
+    align-items: stretch;
+}
+
+.add-program-dialog .p-dropdown .p-dropdown-label,
+.program-detail-dialog .p-dropdown .p-dropdown-label {
+    display: flex;
+    align-items: center;       /* dọc giữa */
+    padding-inline: 12px;      /* giống input */
+}
+
+/* giữ chỗ cho nút step của InputNumber */
+.add-program-dialog .p-inputnumber .p-inputtext,
+.program-detail-dialog .p-inputnumber .p-inputtext {
+    padding-right: 40px;
+}
+
+/* giữ chỗ cho nút step của InputNumber */
+.add-program-dialog .p-inputnumber .p-inputtext {
+    padding-right: 40px;
+}

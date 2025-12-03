@@ -98,7 +98,7 @@ export default function EnrollmentsTable({
                         header="ACTIONS"
                         body={actionsTmpl}
                         className="ne-col ne-col-actions ne-actions-col"
-                        style={{ width: 200, minWidth: 180 }}
+                        style={{ width: 200, minWidth: 140 }}
                     />
                 </DataTable>
             </div>

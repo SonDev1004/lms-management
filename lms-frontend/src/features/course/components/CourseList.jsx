@@ -1,36 +1,53 @@
 import React from "react";
 import { TabMenu } from "primereact/tabmenu";
-import CourseCardOverall from "./CourseCardOverall.jsx";
 import { ProgressSpinner } from "primereact/progressspinner";
+import CourseCardOverall from "./CourseCardOverall.jsx";
 import { statusLabelMap } from "../lib/courseStatus.js";
+
+import "../styles/CourseList.css";
 
 const courseStatus = [
     { label: "All", value: "all" },
     ...Object.entries(statusLabelMap).map(([key, label]) => ({
-        label, value: key
+        label,
+        value: key
     }))
 ];
 
 export default function CourseList({ courses, loading, status, setStatus, role, onAction }) {
+    const activeIndex = courseStatus.findIndex(tab => tab.value === status);
+
     return (
-        <div className="p-4">
+        <div className="course-list-root">
+            {/* Tabs filter */}
             <TabMenu
+                className="cl-tabmenu"
                 model={courseStatus}
-                activeIndex={courseStatus.findIndex(tab => tab.value === status)}
+                activeIndex={activeIndex === -1 ? 0 : activeIndex}
                 onTabChange={e => setStatus(courseStatus[e.index].value)}
             />
 
-            <div className="grid mt-4 h-auto">
+            {/* Grid courses */}
+            <div className="grid course-grid">
                 {loading ? (
-                    <ProgressSpinner />
+                    <div className="course-loading">
+                        <ProgressSpinner />
+                    </div>
+                ) : courses.length === 0 ? (
+                    <div className="course-empty">No class available</div>
                 ) : (
-                    courses.length === 0
-                        ? <div className="w-full text-center text-gray-500">No class available</div>
-                        : courses.map(course => (
-                            <div key={course.id} className="col-12 md:col-6 lg:col-4">
-                                <CourseCardOverall course={course} role={role} onAction={onAction} />
-                            </div>
-                        ))
+                    courses.map(course => (
+                        <div
+                            key={course.id}
+                            className="col-2 md:col-12 course-card-col"
+                        >
+                            <CourseCardOverall
+                                course={course}
+                                role={role}
+                                onAction={onAction}
+                            />
+                        </div>
+                    ))
                 )}
             </div>
         </div>
