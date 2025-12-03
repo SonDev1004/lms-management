@@ -15,4 +15,5 @@ public class StudentAttendanceOverviewResponse {
     int late;
     int absent;
     int excused;
+    double rate;
 }

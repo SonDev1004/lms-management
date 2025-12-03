@@ -11,6 +11,8 @@ import LeaveRequestForm from "@/features/leave/components/LeaveRequestForm.jsx";
 import axiosClient from "@/shared/api/axiosClient.js";
 import { AppUrls } from "@/shared/constants/index.js";
 import "./CourseDetailStudent.css";
+import StudentAttendance from "@/features/student/pages/StudentAttendance.jsx";
+import StudentMakeupRequestForm from "@/features/attendance/student/pages/StudentMakeupRequestForm.jsx";
 
 export default function CourseDetailStudent() {
     // URL: /student/courses/:slug?id=6&subjectId=12
@@ -239,7 +241,7 @@ export default function CourseDetailStudent() {
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
-                                        <AttendancePage
+                                        <StudentAttendance
                                             course={course}
                                             student={student}
                                         />
@@ -249,24 +251,21 @@ export default function CourseDetailStudent() {
                             </div>
                         </TabPanel>
 
+                        import StudentMakeupRequestForm from '@/features/attendance/student/StudentMakeupRequestForm.jsx';
+                        // ...
+
                         <TabPanel
                             header={
                                 <span className="tab-header">
-                                    🗒️{" "}
-                                    <span className="tab-title">Absent</span>
-                                </span>
+            🗒️ <span className="tab-title">Absent</span>
+        </span>
                             }
                         >
                             <div className="cd-panel-inner">
                                 <div className="p-grid cd-layout">
                                     <main className="p-col-12 p-md-8 cd-main">
-                                        <LeaveRequestForm
-                                            inline
-                                            course={course}
-                                            student={student}
-                                            sessions={[]}
-                                            onSubmitted={handleSubmitted}
-                                        />
+                                        {/* CHỈ còn form xin học bù */}
+                                        <StudentMakeupRequestForm course={course} />
                                     </main>
                                     <aside className="p-col-12 p-md-4 cd-sidebar" />
                                 </div>

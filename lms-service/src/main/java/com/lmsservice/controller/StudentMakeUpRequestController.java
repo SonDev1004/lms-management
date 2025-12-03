@@ -16,7 +16,7 @@ public class StudentMakeUpRequestController {
 
     private final MakeUpRequestService makeUpRequestService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ApiResponse<MakeUpRequestResponse> create(@RequestBody CreateMakeUpRequestRequest request) {
         MakeUpRequestResponse result = makeUpRequestService.createForCurrentStudent(request);
 

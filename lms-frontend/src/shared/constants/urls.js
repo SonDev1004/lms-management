@@ -105,16 +105,24 @@ export default {
         `${rootAPI}/teacher/assignments/${assignmentId}`,
     deleteTeacherAssignment: (assignmentId) =>
         `${rootAPI}/teacher/assignments/${assignmentId}`,
-    // Student gửi yêu cầu học bù
-    studentCreateMakeupRequest: `${rootAPI}/student/makeup-requests`,
-    // Student attendance overview
+    // Student attendance
     studentAttendanceOverview: `${rootAPI}/student/attendance/overview`,
+    studentAttendanceDetails: `${rootAPI}/student/attendance/details`,
 
-    // Academic Manager / AdminIT xem danh sách yêu cầu học bù (phân trang)
-    adminMakeupRequests: `${rootAPI}/adminit/makeup-requests`,
+    // Student – sessions của 1 course (dùng cho Make-up + session details)
+    studentCourseSessions: (courseId) =>
+        `${rootAPI}/student/courses/${courseId}/sessions`,
 
-    // Academic Manager / AdminIT xác nhận đã học bù cho 1 request
-    adminMarkMakeupAttended: (id) => `${rootAPI}/adminit/makeup-requests/${id}/mark-attended`,
+    // Student – danh sách yêu cầu học bù của chính mình
+    studentMakeupRequests: `${rootAPI}/student/makeup-requests/create`,
+
+    // Academic Manager / AdminIT – danh sách yêu cầu học bù (phân trang)
+    adminMakeupRequests: `${rootAPI}/admin/makeup-requests`,
+
+    // Academic Manager / AdminIT – xác nhận đã học bù
+    adminMarkMakeupAttended: (id) =>
+        `${rootAPI}/admin/makeup-requests/${id}/mark-attended`,
+
     // Lịch giảng viên & học viên
     teacherSchedule: (from, to) =>
         `${rootAPI}/teacher/schedule?from=${from}&to=${to}`,

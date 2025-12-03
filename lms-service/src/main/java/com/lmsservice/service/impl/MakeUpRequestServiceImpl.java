@@ -10,15 +10,16 @@ import com.lmsservice.dto.response.MakeUpRequestResponse;
 import com.lmsservice.entity.*;
 import com.lmsservice.exception.AppException;
 import com.lmsservice.exception.ErrorCode;
+import com.lmsservice.exception.UnAuthorizeException;
 import com.lmsservice.repository.CourseStudentRepository;
 import com.lmsservice.repository.MakeUpRequestRepository;
 import com.lmsservice.repository.SessionRepository;
-import com.lmsservice.repository.UserRepository;
+import com.lmsservice.repository.StudentRepository;
 import com.lmsservice.security.CurrentUserService;
 import com.lmsservice.service.MakeUpRequestService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.AccessLevel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,13 +39,21 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
     CourseStudentRepository courseStudentRepository;
     CurrentUserService currentUserService;
     ObjectMapper objectMapper;
-    UserRepository userRepository;
+     StudentRepository studentRepository;
 
     private MakeUpRequestResponse toResponse(MakeUpRequest entity) {
         User stu = entity.getStudent();
         Course c = entity.getCourse();
         Session s = entity.getSession();
+
         String fullName = stu.getFirstName() + " " + stu.getLastName();
+
+        String sessionTitle = "Buổi " + s.getOrderSession();
+
+        LocalDateTime sessionDateTime = null;
+        if (s.getDate() != null && s.getStartTime() != null) {
+            sessionDateTime = LocalDateTime.of(s.getDate(), s.getStartTime());
+        }
 
         return MakeUpRequestResponse.builder()
                 .id(entity.getId())
@@ -53,8 +62,8 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
                 .courseId(c.getId())
                 .courseName(c.getTitle())
                 .sessionId(s.getId())
-                .sessionTitle(s.getClass().getName())
-                .sessionDateTime(LocalDateTime.from(s.getStartTime()))
+                .sessionTitle(sessionTitle)
+                .sessionDateTime(sessionDateTime)
                 .reason(entity.getReason())
                 .status(entity.getStatus())
                 .adminNote(entity.getAdminNote())
@@ -63,20 +72,30 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
                 .build();
     }
 
+
     @Override
     @Transactional
     public MakeUpRequestResponse createForCurrentStudent(CreateMakeUpRequestRequest request) {
-        User student = currentUserService.getCurrentUser();
+        // 1. Lấy studentId (id bảng student) từ user đang login
+        Long studentId = currentUserService.requireStudentId();
 
+        // 2. Lấy entity Student + User tương ứng
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_COURSE));
+        User user = student.getUser();
+
+        // 3. Lấy session
         Session session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new AppException(ErrorCode.SESSION_NOT_FOUND));
 
-        CourseStudent cs = courseStudentRepository
-                .findByCourseIdAndStudentId(session.getCourse().getId(), student.getId())
+        // 4. Check học sinh này có thuộc course của buổi đó không
+        courseStudentRepository
+                .findByCourseIdAndStudentId(session.getCourse().getId(), studentId)
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_COURSE));
 
+        // 5. Tạo request
         MakeUpRequest entity = MakeUpRequest.builder()
-                .student(student)
+                .student(user)
                 .session(session)
                 .course(session.getCourse())
                 .reason(request.getReason())
@@ -87,7 +106,6 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
         entity = makeUpRequestRepository.save(entity);
         return toResponse(entity);
     }
-
     @Override
     public Page<MakeUpRequestResponse> getForAdmin(String status, Long courseId, Pageable pageable) {
         MakeUpRequestStatus st = null;
@@ -119,7 +137,9 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
 
         Session session = entity.getSession();
         Course course = entity.getCourse();
-        User student = entity.getStudent();
+        User studentUser = entity.getStudent();   // user của học sinh
+        Student student = studentRepository.findByUserId(studentUser.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_IN_COURSE));
 
         CourseStudent cs = courseStudentRepository
                 .findByCourseIdAndStudentId(course.getId(), student.getId())
@@ -134,19 +154,22 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
             } else {
                 attendanceItems = objectMapper.readValue(
                         cs.getAttendanceList(),
-                        new TypeReference<List<AttendanceItemDTO>>() {});
+                        new TypeReference<List<AttendanceItemDTO>>() {}
+                );
             }
         } catch (Exception e) {
             throw new AppException(ErrorCode.ATTENDANCE_JSON_INVALID);
         }
 
+        // đảm bảo list đủ length
         while (attendanceItems.size() < order) {
             attendanceItems.add(new AttendanceItemDTO());
         }
 
         AttendanceItemDTO item = attendanceItems.get(order - 1);
         if (item == null) item = new AttendanceItemDTO();
-        item.setAttendance(0);
+
+        item.setAttendance(1);  // 1 = Present, tùy enum bạn quy ước
         String note = request.getNote();
         if (note == null || note.isBlank()) note = "Đã học bù";
         item.setNote(note);
@@ -158,16 +181,20 @@ public class MakeUpRequestServiceImpl implements MakeUpRequestService {
         } catch (Exception e) {
             throw new AppException(ErrorCode.ATTENDANCE_JSON_INVALID);
         }
-
         courseStudentRepository.save(cs);
+        User handler = null;
+        try {
+            handler = currentUserService.getCurrentUser();
+        } catch (UnAuthorizeException ex){
+        }
 
-        User admin = currentUserService.getCurrentUser();
         entity.setStatus(MakeUpRequestStatus.DONE);
-        entity.setProcessedBy(admin);
+        entity.setProcessedBy(handler);           // có thể null nếu lỗi security
         entity.setProcessedAt(LocalDateTime.now());
-        entity.setAdminNote(note);
+        entity.setAdminNote(note);                // có thể đổi tên field nếu muốn
 
         entity = makeUpRequestRepository.save(entity);
         return toResponse(entity);
     }
+
 }
