@@ -29,21 +29,22 @@ export default function AMMakeupRequestsPage() {
     const loadData = async (page = 0, size = 20) => {
         setLoading(true);
         try {
-            const res = await fetchAdminMakeupRequests({
-                status: statusFilter, page, size,
+            const data = await fetchAdminMakeupRequests({
+                status: statusFilter,
+                page,
+                size,
             });
-
-            const data = res.data?.result || res.data;
-            // Page<MakeUpRequestResponse> từ BE: content, totalElements
             const items = data.content ?? data.items ?? [];
             const total = data.totalElements ?? data.total ?? items.length;
 
             setRequests(items);
             setTotalRecords(total);
-            // eslint-disable-next-line no-unused-vars
         } catch (err) {
+            console.error(err);
             toast.current?.show({
-                severity: "error", summary: "Lỗi", detail: "Không tải được danh sách yêu cầu học bù.",
+                severity: "error",
+                summary: "Lỗi",
+                detail: "Không tải được danh sách yêu cầu học bù.",
             });
         } finally {
             setLoading(false);
@@ -142,7 +143,11 @@ export default function AMMakeupRequestsPage() {
                 <Column field="id" header="ID" style={{width: 70}}/>
                 <Column field="studentName" header="Học sinh"/>
                 <Column field="courseName" header="Khóa học"/>
-                <Column field="sessionTitle" header="Buổi học"/>
+                <Column
+                    field="sessionTitle"
+                    header="Buổi học"
+                    body={(row) => row.sessionTitle || `Buổi ${row.sessionId}`}
+                />
                 <Column
                     field="sessionDateTime"
                     header="Ngày học"
@@ -191,3 +196,4 @@ export default function AMMakeupRequestsPage() {
             </Dialog>
         </div>);
 }
+

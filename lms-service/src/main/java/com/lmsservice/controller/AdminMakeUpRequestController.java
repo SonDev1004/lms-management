@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @PreAuthorize("hasAnyRole('ACADEMIC_MANAGER','ADMIN_IT')")
 @RestController
-@RequestMapping("/api/adminit/makeup-requests")
+@RequestMapping("/api/admin/makeup-requests")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminMakeUpRequestController {
@@ -36,16 +36,16 @@ public class AdminMakeUpRequestController {
                 .build();
     }
 
-    @PostMapping("/{id}/mark-attended")
-    public ApiResponse<MakeUpRequestResponse> markAttended(
-            @PathVariable Long id,
-            @RequestBody MarkMakeUpAttendedRequest request
-    ) {
-        MakeUpRequestResponse result = makeUpRequestService.markAttended(id, request);
+        @PostMapping("/{id}/mark-attended")
+        public ApiResponse<MakeUpRequestResponse> markAttended(
+                @PathVariable Long id,
+                @RequestBody MarkMakeUpAttendedRequest request
+        ) {
+            MakeUpRequestResponse result = makeUpRequestService.markAttended(id, request);
 
-        return ApiResponse.<MakeUpRequestResponse>builder()
-                .result(result)
-                .message("Đã xác nhận học bù và cập nhật điểm danh")
-                .build();
-    }
+            return ApiResponse.<MakeUpRequestResponse>builder()
+                    .result(result)
+                    .message("Đã xác nhận học bù và cập nhật điểm danh")
+                    .build();
+        }
 }

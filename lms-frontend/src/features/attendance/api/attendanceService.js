@@ -15,8 +15,10 @@ async function getAttendanceBySession(sessionId) {
     return res.data?.result ?? [];
 }
 
-export function fetchStudentAttendanceOverview() {
-    return axiosClient.get(urls.studentAttendanceOverview);
+export async function fetchStudentAttendanceOverview() {
+    const res = await axiosClient.get(AppUrls.studentAttendanceOverview);
+    const api = res.data || {};
+    return api.result ?? api.data ?? null;
 }
 // lưu điểm danh
 async function markAttendance(sessionId, students, courseId, date) {
@@ -29,6 +31,14 @@ async function markAttendance(sessionId, students, courseId, date) {
     return res.data?.result;
 }
 
+export async function getStudentAttendanceDetails(courseId) {
+    const params = {};
+    if (courseId) params.courseId = courseId;
+
+    const res = await axiosClient.get(AppUrls.studentAttendanceDetails, { params });
+    const api = res.data || {};
+    return api.result ?? api.data ?? [];
+}
 
 // tổng hợp điểm danh
 async function getAttendanceSummary(courseId) {

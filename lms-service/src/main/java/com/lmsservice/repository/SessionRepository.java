@@ -19,6 +19,7 @@ public interface SessionRepository extends JpaRepository<Session, Long>, JpaSpec
 
     List<Session> findByCourseIdOrderByOrderSessionAsc(Long courseId);
 
+    List<Session> findByCourse_IdOrderByDateAscStartTimeAsc(Long courseId);
     @Query("""
         select s from Session s
         join s.course c

@@ -98,6 +98,12 @@ export default function LayoutNavbar({role, children}) {
             command: () => navigate(`/${roleToRoute(role)}/attendance`)
         },
         {
+            label: 'Make-up Requests',
+            icon: 'pi pi-calendar-plus',
+            roles: ['ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/attendance/makeup-requests`)
+        },
+        {
             label: 'Assginments',
             icon: 'pi pi-briefcase',
             roles: ['TEACHER'],
