@@ -197,15 +197,15 @@ const App = () => {
                         <Route path="student-manager/:id" element={<MStudentProfile/>}/>
                         <Route path='schedule' element={<AMSchedule/>}/>
                         <Route path='report' element={<AMReport/>}/>
-                        <Route  path='create-account' element={<EmailAccountFormPage />} />
                         <Route path='notification' element={<AMNotification/>}/>
-
+                        <Route  path='create-account' element={<EmailAccountFormPage />} />
                         {/* Question Bank */}
                         <Route path='question-bank' element={<AcademicManagerQuestionBankPage/>}/>
 
                         {/* Quiz Builder */}
                         <Route path='assignments/:assignmentId/quiz-builder' element={<TeacherQuizBuilderPage/>}/>
                     </Route>
+
                 </Route>
 
 
@@ -216,6 +216,7 @@ const App = () => {
                         <Route path='systems' element={<AdminSystems/>}/>
                         <Route path='upload' element={<AdminUpload/>}/>
                         <Route path='security' element={<AdminSecurity/>}/>
+                        <Route path='create-account' element={<EmailAccountFormPage />} />
                         {/* Notifications */}
                         <Route path='notifications'>
                             <Route index element={<NotificationForm/>}/>
@@ -227,6 +228,7 @@ const App = () => {
                         <Route path='new-enrollment' element={<NewEnrollmentsPage/>}/>
                         <Route path='recentactivity' element={<RecentActivity/>}/>
                     </Route>
+
                 </Route>
 
                 <Route path='/unauthorized' element={<Unauthorized/>}/>
