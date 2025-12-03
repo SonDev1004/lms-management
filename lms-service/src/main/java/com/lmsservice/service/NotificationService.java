@@ -18,4 +18,6 @@ public interface NotificationService {
     long countUnseen();
 
     void deleteNotification(Long id);
+
+    NotificationResponse createForUser(Long userId, String title, String content, String url);
 }

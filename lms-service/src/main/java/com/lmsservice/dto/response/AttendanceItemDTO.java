@@ -10,13 +10,16 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttendanceItemDTO {
-    Long id; // student.id
-    String code; // student.code
+    Long id;          // student.id - nếu có
+    String code;
     String firstname;
     String lastname;
     Boolean gender;
     String dateofbirth;
     String avatar;
-    Integer attendance; // 0: Vắng, 1: Có mặt, 2: Đi trễ
+
+    Integer attendance;
+    Integer status;
+
     String note;
 }

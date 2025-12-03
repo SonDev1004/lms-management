@@ -56,7 +56,6 @@ function setLocalSeen(id, seen) {
     );
     emit();
 }
-
 export function useNotifications({onPopup, enableSocket = false} = {}) {
     const [state, setState] = useState({
         notifications: store.notifications,

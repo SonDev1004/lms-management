@@ -14,7 +14,7 @@ export default function useNotificationSocket(
     { debug = false, enabled = true, getToken } = {}
 ) {
     useEffect(() => {
-        if (!enabled) return;                   // <— BẬT/TẮT hook an toàn
+        if (!enabled) return;
         const token = getToken ? getToken() : localStorage.getItem("accessToken");
         if (!token) return;
 

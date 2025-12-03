@@ -20,6 +20,7 @@ import lombok.experimental.FieldDefaults;
 @Setter // ❖ Lombok sinh setter cho tất cả field => DTO này MUTABLE (cho phép chỉnh sửa sau khi tạo).
 @NoArgsConstructor // ❖ Lombok sinh constructor rỗng: PageResponse() — hữu ích khi (de)serialize hoặc set từng field.
 @AllArgsConstructor // ❖ Lombok sinh constructor đầy đủ tham số theo đúng thứ tự các field bên dưới.
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 // ❖ Tất cả field bên trong class sẽ mặc định là private (giấu thông tin, truy cập qua getter/setter).
 public class PageResponse<T> {

@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { PanelMenu } from 'primereact/panelmenu';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {PanelMenu} from 'primereact/panelmenu';
 import roleToRoute from '../app/router/roleToRoute.js';
 import '../styles/LayoutNavbar.css';
 
-export default function LayoutNavbar({ role, children }) {
+export default function LayoutNavbar({role, children}) {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(true);
     const [hoverOpen, setHoverOpen] = useState(false);
@@ -95,7 +95,19 @@ export default function LayoutNavbar({ role, children }) {
             label: 'Attendance',
             icon: 'pi pi-check-square',
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
-            command: () => navigate(`/${roleToRoute(role)}/attendance`) // <- sửa route đúng
+            command: () => navigate(`/${roleToRoute(role)}/attendance`)
+        },
+        {
+            label: 'Make-up Requests',
+            icon: 'pi pi-calendar-plus',
+            roles: ['ACADEMIC_MANAGER'],
+            command: () => navigate(`/${roleToRoute(role)}/attendance/makeup-requests`)
+        },
+        {
+            label: 'Assginments',
+            icon: 'pi pi-briefcase',
+            roles: ['TEACHER'],
+            command: () => navigate(`/${roleToRoute(role)}/assignments`)
         },
 
         {
@@ -141,7 +153,7 @@ export default function LayoutNavbar({ role, children }) {
     const filterByRole = (list, role) =>
         list
             .map((item) => {
-                const newItem = { ...item };
+                const newItem = {...item};
                 if (item.items) newItem.items = filterByRole(item.items, role);
                 return newItem;
             })
@@ -184,9 +196,9 @@ export default function LayoutNavbar({ role, children }) {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <PanelMenu model={visibleItems} multiple className="layout-panelmenu p-panelmenu" />
+                <PanelMenu model={visibleItems} multiple className="layout-panelmenu p-panelmenu"/>
             </aside>
-            <main className="layout-main" style={{ flex: 1 }}>
+            <main className="layout-main" style={{flex: 1}}>
                 {children}
             </main>
         </div>
