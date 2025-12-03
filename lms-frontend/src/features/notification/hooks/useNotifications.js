@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {
     getMyNotifications,
     getUnseenNotifications,
@@ -6,50 +6,150 @@ import {
 } from "../api/notificationService";
 import useNotificationSocket from "./useNotificationSocket";
 
-export function useNotifications({ userId }) {
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
+const listeners = new Set();
 
-    const load = useCallback(async () => {
-        setLoading(true);
-        try {
-            const data = await getMyNotifications();
-            const sorted = (data || []).sort(
-                (a, b) => new Date(b.postedDate) - new Date(a.postedDate)
-            );
-            setNotifications(sorted);
-        } finally {
-            setLoading(false);
+const toId = (v) => (v === null || v === undefined ? null : String(v));
+const eqId = (a, b) => a != null && b != null && String(a) === String(b);
+
+const normalize = (m = {}) => ({
+    id: toId(m.id),
+    title: m.title ?? "",
+    content: m.content ?? m.message ?? "",
+    isSeen: !!(m.isSeen ?? m.read),
+    type: m.type ?? m.notificationType ?? "system",
+    postedDate: m.postedDate ?? m.date ?? m.createdAt ?? null,
+    sender: m.sender ?? "System",
+    url: m.url || "",
+    course: m.course || "",
+});
+
+const store = {
+    notifications: [],
+    loading: true,
+};
+
+const emit = () => {
+    const snapshot = {
+        notifications: store.notifications,
+        loading: store.loading,
+    };
+    listeners.forEach((cb) => cb(snapshot));
+};
+
+async function loadAll() {
+    store.loading = true;
+    emit();
+    try {
+        const data = await getMyNotifications();
+        store.notifications = (data || []).map(normalize);
+    } finally {
+        store.loading = false;
+        emit();
+    }
+}
+
+function setLocalSeen(id, seen) {
+    const normId = toId(id);
+    if (!normId) return;
+    store.notifications = store.notifications.map((n) =>
+        eqId(n.id, normId) ? {...n, isSeen: seen} : n
+    );
+    emit();
+}
+export function useNotifications({onPopup, enableSocket = false} = {}) {
+    const [state, setState] = useState({
+        notifications: store.notifications,
+        loading: store.loading,
+    });
+
+    // subscribe store
+    useEffect(() => {
+        const cb = (s) => setState(s);
+        listeners.add(cb);
+
+        if (store.notifications.length === 0) {
+            loadAll();
+        } else {
+            cb({
+                notifications: store.notifications,
+                loading: store.loading,
+            });
         }
+
+        return () => listeners.delete(cb);
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    // socket
+    useNotificationSocket(
+        (raw) => {
+            const safe = normalize(raw);
+            const idx = store.notifications.findIndex((n) => eqId(n.id, safe.id));
+            if (idx >= 0) {
+                store.notifications[idx] = {...store.notifications[idx], ...safe};
+            } else {
+                store.notifications = [safe, ...store.notifications];
+            }
+            emit();
+            onPopup?.(safe);
+        },
+        {
+            enabled: enableSocket,
+            debug: import.meta.env.DEV,
+            getToken: () => localStorage.getItem("accessToken"),
+        }
+    );
+
+    // actions
+    const load = () => loadAll();
 
     const markRead = async (id) => {
-        await markAsSeen(id);
-        setNotifications((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, isSeen: true } : n))
-        );
+        const normId = toId(id);
+        if (!normId) return false;
+
+        setLocalSeen(normId, true); // optimistic
+        try {
+            await markAsSeen(normId);
+            return true;
+        } catch (e) {
+            console.warn("markRead failed", e);
+            setLocalSeen(normId, false); // rollback nếu BE lỗi
+            return false;
+        }
     };
 
     const markAllRead = async () => {
+        const prev = store.notifications;
+        store.notifications = prev.map((n) => ({...n, isSeen: true}));
+        emit();
+
         try {
             const unseen = await getUnseenNotifications();
-            await Promise.all((unseen || []).map((n) => markAsSeen(n.id)));
-        } finally {
-            setNotifications((prev) => prev.map((n) => ({ ...n, isSeen: true })));
+            await Promise.allSettled(
+                (unseen || []).map((n) => markAsSeen(toId(n.id)))
+            );
+        } catch (e) {
+            console.warn("markAllRead failed", e);
+            store.notifications = prev;
+            emit();
         }
     };
 
-    const remove = async (id) => {
-        // Nếu chưa có API delete, tạm thời xóa local để UI gọn
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
+    const remove = (idOrObj) => {
+        const normId =
+            typeof idOrObj === "object" ? toId(idOrObj?.id) : toId(idOrObj);
+        if (!normId) return;
+        store.notifications = store.notifications.filter(
+            (n) => !eqId(n.id, normId)
+        );
+        emit();
     };
 
-    // 🔔 realtime
-    useNotificationSocket(userId, (newNoti) => {
-        setNotifications((prev) => [newNoti, ...prev]);
-    });
-
-    return { notifications, loading, load, markRead, markAllRead, remove, setNotifications };
+    return {
+        notifications: state.notifications,
+        loading: state.loading,
+        load,
+        markRead,
+        markAllRead,
+        remove,
+    };
 }

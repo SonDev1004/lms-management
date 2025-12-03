@@ -32,8 +32,7 @@ public class NotificationScheduler {
 
         pending.forEach(n -> {
             try {
-                // Gửi realtime qua socket
-                socketController.sendToUser(
+                socketController.sendToUserId(
                         n.getUser().getId(),
                         NotificationResponse.builder()
                                 .id(n.getId())
@@ -46,7 +45,6 @@ public class NotificationScheduler {
                                 .postedDate(now)
                                 .build());
 
-                // Cập nhật postedDate
                 n.setPostedDate(now);
                 notificationRepo.save(n);
 

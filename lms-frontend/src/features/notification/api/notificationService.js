@@ -1,107 +1,127 @@
 import axiosClient from "@/shared/api/axiosClient";
 import AppUrls from "@/shared/constants/urls";
 
-/** Chuẩn hoá object notification trả về (nếu bạn đang dùng trong list) */
-const normalize = (m = {}) => ({
-    id: m.id,
-    title: m.title,
-    content: m.content ?? "",
-    isSeen: !!m.isSeen,
-    type: m.type ?? m.notificationType ?? null,
-    postedDate: m.postedDate ?? m.createdAt ?? null,
-    sender: m.sender ?? null,
-    url: m.url || "",
-    course: m.course || "",
-});
+/* (Optional) chuẩn hoá notification nếu bạn dùng list */
+const normalize = (m = {}) => {
+    const rawType =
+        (m.type ?? m.notificationType ?? "SYSTEM").toString().toLowerCase();
+    const url = m.url || "";
 
-/* ========= USER APIs ========= */
+    // ---- Map sang "loại UI" để filter trong NotificationsPage ----
+    let uiType = rawType;
+
+    // 1) Assignment: mọi noti dẫn tới trang assignments
+    if (url.includes("/assignments")) {
+        uiType = "assignment";
+    }
+    // 2) Event: bạn có thể map PROGRAM / COURSE thành event
+    else if (rawType === "program" || rawType === "course") {
+        uiType = "event";
+    }
+    // 3) Feedback: nếu sau này có type FEEDBACK
+    else if (rawType === "feedback") {
+        uiType = "feedback";
+    }
+    // 4) Còn lại gom về system
+    else if (!["system", "assignment", "event", "feedback"].includes(uiType)) {
+        uiType = "system";
+    }
+    const rawSeen = m.isSeen ?? m.read ?? m.seen;
+    return {
+        id: m.id,
+        title: m.title ?? "",
+        content: m.content ?? m.message ?? "",
+        isSeen: !!rawSeen,
+        type: uiType,
+        rawType,
+        postedDate: m.postedDate ?? m.date ?? m.createdAt ?? null,
+        sender: m.sender ?? "System",
+        url,
+        course: m.course || "",
+    };
+};
+
+/* ===== USER ===== */
 export const getMyNotifications = async () => {
-    const { data } = await axiosClient.get(AppUrls.getMyNotifications);
+    const {data} = await axiosClient.get(AppUrls.getMyNotifications);
     return (data?.result || []).map(normalize);
 };
 
 export const getUnseenNotifications = async () => {
-    const { data } = await axiosClient.get(AppUrls.getUnseenNotifications);
+    const {data} = await axiosClient.get(AppUrls.getUnseenNotifications);
     return (data?.result || []).map(normalize);
 };
 
 export const markAsSeen = async (id) => {
-    const { data } = await axiosClient.post(AppUrls.markAsSeen(id));
+    const {data} = await axiosClient.put(AppUrls.markAsSeen(id));
     return data?.result ?? true;
 };
 
-/* ========= ADMINIT: SEND ========= */
+/* ===== ADMINIT: SEND ===== */
 export const sendNotification = async (payload) => {
-    const safe = { ...payload };
+    const safe = {...payload};
 
     if (safe.severity != null) safe.severity = Number(safe.severity);
     if (safe.notificationTypeId != null) safe.notificationTypeId = Number(safe.notificationTypeId);
 
-    ["url"].forEach((k) => {
-        if (!safe[k]) delete safe[k];
-    });
+    if (!safe.url) delete safe.url;
     ["targetRoles", "targetUserIds", "targetCourseIds", "targetProgramIds"].forEach((k) => {
         if (!Array.isArray(safe[k]) || safe[k].length === 0) delete safe[k];
     });
     if (!safe.scheduledDate) delete safe.scheduledDate;
 
     try {
-        const { data } = await axiosClient.post(AppUrls.sendNotification, safe);
+        const {data} = await axiosClient.post(AppUrls.sendNotification, safe);
         return data?.result ?? true;
     } catch (err) {
         const status = err?.response?.status;
         const detail =
-            err?.response?.data?.message ||
-            err?.response?.data?.error ||
-            err?.message ||
-            "Unknown error";
-        throw { status, detail, raw: err?.response?.data, err };
+            err?.response?.data?.message || err?.response?.data?.error || err?.message || "Unknown error";
+        throw {status, detail, raw: err?.response?.data, err};
     }
 };
 
-/* ========= Options & Search (chuẩn hoá về {label, value} / {id,...}) ========= */
+/* ===== Options & Autocomplete ===== */
 
-// 1) Notification types: backend trả về danh sách type; map -> {label, value}
+// Notification types -> [{label, value}]
 export const getNotificationTypes = async () => {
-    // EXPECTED: GET AppUrls.notificationTypes -> [{id, name}] hoặc [{value,label}]
-    const { data } = await axiosClient.get(AppUrls.notificationTypes);
+    const {data} = await axiosClient.get(AppUrls.notificationTypes);
     const list = data?.result || data || [];
-    return list.map((x) => ({
-        label: x.label || x.name || x.displayName || `Type #${x.id}`,
-        value: x.value ?? x.id,
+    return list.map((t) => ({
+        label: t.label || t.name || t.displayName || `Type #${t.id}`,
+        value: t.value ?? t.id,
     }));
 };
 
-// 2) Roles: map -> {label, value} (value gửi lên BE)
+// Roles -> [{label, value}]; nếu BE yêu cầu ID role, đổi value: r.id
 export const getRoleOptions = async () => {
-    // EXPECTED: GET AppUrls.roleOptions -> [{code:'STUDENT', name:'Student'}] hoặc [{id:1,name:'Student'}]
-    const { data } = await axiosClient.get(AppUrls.roleOptions);
+    const {data} = await axiosClient.get(AppUrls.roleOptions);
     const list = data?.result || data || [];
     return list.map((r) => ({
-        label: r.name || r.displayName || r.code || `Role #${r.id}`,
-        value: r.code ?? r.id, // LƯU Ý: nếu BE yêu cầu ID, đổi thành r.id
+        label: r.label || r.name || r.displayName || r.code || `Role #${r.id}`,
+        value: r.value ?? r.code ?? r.id,
     }));
 };
 
-// 3) Autocomplete Users: trả về [{id,name,email}]
-export const searchUsers = async (query = "", page = 1, size = 10) => {
-    const { data } = await axiosClient.get(
-        `${AppUrls.searchUsers}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`
+export const searchUsers = async (query = "", page = 1, size = 50, signal) => {
+    const {data} = await axiosClient.get(
+        `${AppUrls.searchUsers}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
+        {signal}
     );
-    const list = data?.result?.items || data?.result || data || [];
+    const list = data?.result || [];
     return list.map((u) => ({
         id: u.id,
-        name: u.name || u.fullName || u.username,
+        name: u.name || u.userName || u.fullName || u.username,
         email: u.email,
     }));
 };
 
-// 4) Autocomplete Courses: trả về [{id,code,title}]
-export const searchCourses = async (query = "", page = 1, size = 10) => {
-    const { data } = await axiosClient.get(
-        `${AppUrls.searchCourses}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`
+export const searchCourses = async (query = "", page = 1, size = 50, signal) => {
+    const {data} = await axiosClient.get(
+        `${AppUrls.searchCourses}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
+        {signal}
     );
-    const list = data?.result?.items || data?.result || data || [];
+    const list = data?.result || [];
     return list.map((c) => ({
         id: c.id,
         code: c.code || c.courseCode,
@@ -109,19 +129,19 @@ export const searchCourses = async (query = "", page = 1, size = 10) => {
     }));
 };
 
-// 5) Autocomplete Programs: trả về [{id,name}]
-export const searchPrograms = async (query = "", page = 1, size = 10) => {
-    const { data } = await axiosClient.get(
-        `${AppUrls.searchPrograms}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`
+export const searchPrograms = async (query = "", page = 1, size = 50, signal) => {
+    const {data} = await axiosClient.get(
+        `${AppUrls.searchPrograms}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
+        {signal}
     );
-    const list = data?.result?.items || data?.result || data || [];
+    const list = data?.result || [];
     return list.map((p) => ({
         id: p.id,
-        name: p.name || p.programName,
+        name: p.name || p.title || p.programName,
     }));
 };
 
 export const getScheduledNotifications = async () => {
-    const { data } = await axiosClient.get(AppUrls.getScheduledNotifications);
+    const {data} = await axiosClient.get(AppUrls.getScheduledNotifications);
     return (data?.result || []).map(normalize);
 };

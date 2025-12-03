@@ -1,7 +1,5 @@
-import Schedule from "@/features/schedule/pages/Schedule.jsx";
+import SchedulePage from "@/features/schedule/pages/Schedule.jsx";
 
-const TeacherSchedule = () => {
-    return <Schedule/>;
+export default function TeacherSchedule() {
+    return <SchedulePage role="TEACHER"/>;
 }
-
-export default TeacherSchedule;

@@ -3,9 +3,7 @@ package com.lmsservice.service;
 import java.util.List;
 
 import com.lmsservice.dto.request.MarkAttendanceRequest;
-import com.lmsservice.dto.response.AttendanceItemDTO;
-import com.lmsservice.dto.response.AttendanceSummaryDTO;
-import com.lmsservice.dto.response.SessionInfoDTO;
+import com.lmsservice.dto.response.*;
 
 public interface AttendanceService {
 
@@ -28,4 +26,8 @@ public interface AttendanceService {
      * Lưu kết quả điểm danh cho session
      */
     void markAttendance(MarkAttendanceRequest request);
+
+    StudentAttendanceOverviewResponse getStudentAttendanceOverview();
+
+    List<StudentAttendanceDetailDTO> getStudentAttendanceDetails(Long courseId);
 }

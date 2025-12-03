@@ -104,4 +104,9 @@ public class CurrentUserServiceImpl implements CurrentUserService {
         if (!reloadFromDb) return snap;
         return userRepository.findById(snap.getId()).orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    @Override
+    public User getCurrentUser() {
+        return requireUserEntity(false);
+    }
 }

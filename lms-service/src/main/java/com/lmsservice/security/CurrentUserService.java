@@ -24,4 +24,6 @@ public interface CurrentUserService {
     CustomUserDetails requireUserDetails();
 
     User requireUserEntity(boolean reloadFromDb);
+
+    User getCurrentUser();
 }

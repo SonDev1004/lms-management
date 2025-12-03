@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -8,7 +8,7 @@ import { AutoComplete } from "primereact/autocomplete";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
-
+import "../css/NotificationForm.css";
 import {
     sendNotification,
     getNotificationTypes,
@@ -18,29 +18,25 @@ import {
     searchPrograms,
 } from "@/features/notification/api/notificationService";
 
+
 /* ===== Helpers ===== */
+const pad2 = (n) => String(n).padStart(2, "0");
 function toIsoLocal(date) {
-    const pad = (n) => String(n).padStart(2, "0");
     const d = new Date(date);
-    return (
-        [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join("-") +
-        "T" +
-        [pad(d.getHours()), pad(d.getMinutes()), pad(d.getSeconds())].join(":")
-    );
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(
+        d.getMinutes()
+    )}:${pad2(d.getSeconds())}`;
 }
 
 function cleanPayload(raw) {
     const out = { ...raw };
 
-    // numbers
     out.severity = Number(out.severity);
     out.notificationTypeId = Number(out.notificationTypeId);
 
-    // scheduled date
     if (out.scheduledDate) out.scheduledDate = toIsoLocal(out.scheduledDate);
     else delete out.scheduledDate;
 
-    // convert selected objects -> ids
     if (Array.isArray(out.targetUsers)) {
         out.targetUserIds = out.targetUsers.map((u) => u.id);
         delete out.targetUsers;
@@ -54,19 +50,27 @@ function cleanPayload(raw) {
         delete out.targetPrograms;
     }
 
-    // drop empty arrays
     ["targetRoles", "targetUserIds", "targetCourseIds", "targetProgramIds"].forEach((k) => {
         if (!Array.isArray(out[k]) || out[k].length === 0) delete out[k];
     });
 
-    // optional url
     if (!out.url?.trim()) delete out.url;
 
     return out;
 }
 
-// simple debounce
-function useDebouncedCallback(cb, delay = 400) {
+// Abort helper
+function useAbortable() {
+    const ctrl = useRef(null);
+    return () => {
+        if (ctrl.current) ctrl.current.abort();
+        ctrl.current = new AbortController();
+        return ctrl.current.signal;
+    };
+}
+
+// Debounce helper
+function useDebounced(cb, delay = 300) {
     const t = useRef();
     return (...args) => {
         clearTimeout(t.current);
@@ -77,67 +81,116 @@ function useDebouncedCallback(cb, delay = 400) {
 export default function NotificationForm() {
     const toast = useRef(null);
 
-    // form
     const [form, setForm] = useState({
         title: "",
         content: "",
         severity: 1,
         url: "",
-        notificationTypeId: null, // sẽ load từ API
+        notificationTypeId: null,
         broadcast: false,
 
         targetRoles: [],
-        targetUsers: [], // array of {id, name, email}
-        targetCourses: [], // array of {id, code, title}
-        targetPrograms: [], // array of {id, name}
+        targetUsers: [],
+        targetCourses: [],
+        targetPrograms: [],
 
         scheduledDate: null,
     });
 
     // options
-    const [typeOptions, setTypeOptions] = useState([]);    // [{label, value}]
-    const [roleOptions, setRoleOptions] = useState([]);    // [{label, value}]
+    const [typeOptions, setTypeOptions] = useState([]);
+    const [roleOptions, setRoleOptions] = useState([]);
 
-    // suggestions (autocomplete)
+    // suggestions
     const [userSug, setUserSug] = useState([]);
     const [courseSug, setCourseSug] = useState([]);
     const [programSug, setProgramSug] = useState([]);
 
-    // ======= load dropdown options from API =======
+    const [loadingUser, setLoadingUser] = useState(false);
+    const [loadingCourse, setLoadingCourse] = useState(false);
+    const [loadingProgram, setLoadingProgram] = useState(false);
+
+    // lightweight caches for opening dropdown again
+    const cacheRef = useRef({ users: null, courses: null, programs: null });
+
+    // abort signals per resource
+    const userSignal = useAbortable();
+    const courseSignal = useAbortable();
+    const programSignal = useAbortable();
+
+    /* ===== Load dropdown options ===== */
     useEffect(() => {
         (async () => {
             try {
                 const [types, roles] = await Promise.all([getNotificationTypes(), getRoleOptions()]);
-                setTypeOptions(types); // [{label, value}]
-                setRoleOptions(roles); // [{label, value}]
-                // nếu backend có "default type", set vào form:
+                setTypeOptions(types);
+                setRoleOptions(roles);
                 if (!form.notificationTypeId && types?.length) {
                     setForm((s) => ({ ...s, notificationTypeId: types[0].value }));
                 }
             } catch (e) {
-                toast.current?.show({ severity: "error", summary: "Không tải được options", detail: e?.detail || e?.message });
+                toast.current?.show({
+                    severity: "error",
+                    summary: "Không tải được options",
+                    detail: e?.detail || e?.message || "Lỗi không xác định",
+                });
             }
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // ======= search handlers (debounced) =======
-    const searchUserDebounced = useDebouncedCallback(async (q) => {
-        const items = await searchUsers(q);
-        setUserSug(items);
-    });
+    /* ===== Fetchers (q="" -> first page) ===== */
+    const fetchUsers = async (q = "") => {
+        setLoadingUser(true);
+        try {
+            const res = await searchUsers(q, 1, 50, userSignal());
+            if (!q) cacheRef.current.users = res;
+            setUserSug(res);
+        } finally {
+            setLoadingUser(false);
+        }
+    };
+    const fetchCourses = async (q = "") => {
+        setLoadingCourse(true);
+        try {
+            const res = await searchCourses(q, 1, 50, courseSignal());
+            if (!q) cacheRef.current.courses = res;
+            setCourseSug(res);
+        } finally {
+            setLoadingCourse(false);
+        }
+    };
+    const fetchPrograms = async (q = "") => {
+        setLoadingProgram(true);
+        try {
+            const res = await searchPrograms(q, 1, 50, programSignal());
+            if (!q) cacheRef.current.programs = res;
+            setProgramSug(res);
+        } finally {
+            setLoadingProgram(false);
+        }
+    };
 
-    const searchCourseDebounced = useDebouncedCallback(async (q) => {
-        const items = await searchCourses(q);
-        setCourseSug(items);
-    });
+    // debounced autocomplete handlers
+    const onCompleteUsers = useDebounced((e) => fetchUsers(e.query || ""), 250);
+    const onCompleteCourses = useDebounced((e) => fetchCourses(e.query || ""), 250);
+    const onCompletePrograms = useDebounced((e) => fetchPrograms(e.query || ""), 250);
 
-    const searchProgramDebounced = useDebouncedCallback(async (q) => {
-        const items = await searchPrograms(q);
-        setProgramSug(items);
-    });
+    // prefetch on open/focus
+    const preopenUsers = () => {
+        if (cacheRef.current.users) setUserSug(cacheRef.current.users);
+        else fetchUsers("");
+    };
+    const preopenCourses = () => {
+        if (cacheRef.current.courses) setCourseSug(cacheRef.current.courses);
+        else fetchCourses("");
+    };
+    const preopenPrograms = () => {
+        if (cacheRef.current.programs) setProgramSug(cacheRef.current.programs);
+        else fetchPrograms("");
+    };
 
-    // ======= submit =======
+    /* ===== Submit ===== */
     const onSubmit = async () => {
         try {
             if (!form.title.trim()) {
@@ -189,20 +242,16 @@ export default function NotificationForm() {
         } catch (e) {
             const status = e?.status || e?.response?.status;
             const msg =
-                e?.detail ||
-                e?.response?.data?.message ||
-                e?.response?.data?.error ||
-                e?.message ||
-                "Không thể gửi thông báo";
+                e?.detail || e?.response?.data?.message || e?.response?.data?.error || e?.message || "Không thể gửi thông báo";
             toast.current?.show({ severity: "error", summary: `Lỗi${status ? ` ${status}` : ""}`, detail: msg, life: 6500 });
             if (import.meta.env.DEV) console.error(e);
         }
     };
 
-    // ======= item templates (autocomplete chips & suggestions) =======
+    /* ===== Item templates for suggestions ===== */
     const userItemTpl = (u) => (
         <div className="flex flex-column">
-            <span className="font-semibold">{u.name || u.fullName || `User #${u.id}`}</span>
+            <span className="font-semibold">{u.name || `User #${u.id}`}</span>
             <small className="text-500">{u.email}</small>
         </div>
     );
@@ -220,15 +269,16 @@ export default function NotificationForm() {
     );
 
     return (
-        <div className="p-4">
+        <div className="nf-root">
             <Toast ref={toast} />
-            <div className="grid gap-3" style={{ maxWidth: 920 }}>
-                <div className="field">
+            <div className="nf-card">
+
+                <div className="nf-field">
                     <label>Title</label>
                     <InputText value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 </div>
 
-                <div className="field">
+                <div className="nf-field">
                     <label>Content</label>
                     <InputTextarea
                         value={form.content}
@@ -238,8 +288,9 @@ export default function NotificationForm() {
                     />
                 </div>
 
-                <div className="grid" style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr 1fr" }}>
-                    <div className="field">
+                {/* Row: Severity / Type / Broadcast */}
+                <div className="nf-grid nf-row-3">
+                    <div className="nf-field">
                         <label>Severity</label>
                         <Dropdown
                             value={form.severity}
@@ -253,7 +304,7 @@ export default function NotificationForm() {
                         />
                     </div>
 
-                    <div className="field">
+                    <div className="nf-field">
                         <label>Type</label>
                         <Dropdown
                             value={form.notificationTypeId}
@@ -261,12 +312,13 @@ export default function NotificationForm() {
                             onChange={(e) => setForm({ ...form, notificationTypeId: e.value })}
                             placeholder="Chọn loại"
                             loading={typeOptions.length === 0}
+                            showClear
                         />
                     </div>
 
-                    <div className="field">
+                    <div className="nf-field">
                         <label>Broadcast</label>
-                        <div className="flex align-items-center gap-2" style={{ height: 40 }}>
+                        <div className="nf-checkbox-row">
                             <Checkbox
                                 inputId="broadcast"
                                 onChange={(e) => setForm({ ...form, broadcast: e.checked })}
@@ -277,8 +329,9 @@ export default function NotificationForm() {
                     </div>
                 </div>
 
-                <div className="grid" style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
-                    <div className="field">
+                {/* Row: Roles / URL */}
+                <div className="nf-grid nf-row-2">
+                    <div className="nf-field">
                         <label>Target roles</label>
                         <MultiSelect
                             value={form.targetRoles}
@@ -290,59 +343,99 @@ export default function NotificationForm() {
                             showClear
                         />
                     </div>
-                    <div className="field">
+                    <div className="nf-field">
                         <label>URL (tuỳ chọn)</label>
                         <InputText value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} />
                     </div>
                 </div>
 
-                <div className="grid" style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
-                    <div className="field">
+                {/* Row: Users / Courses */}
+                <div className="nf-grid nf-row-2">
+                    <div className="nf-field">
                         <label>Users</label>
                         <AutoComplete
                             multiple
                             value={form.targetUsers}
                             suggestions={userSug}
-                            completeMethod={(e) => searchUserDebounced(e.query || "")}
+                            completeMethod={onCompleteUsers}
+                            onFocus={preopenUsers}
+                            onDropdownClick={preopenUsers}
                             onChange={(e) => setForm({ ...form, targetUsers: e.value })}
                             field="name"
                             itemTemplate={userItemTpl}
-                            placeholder="Tìm theo tên/email…"
+                            placeholder="Gõ để lọc hoặc bấm ▼ để xem tất cả"
                             dropdown
+                            minLength={0}
+                            forceSelection={false}
+                            virtualScrollerOptions={{ itemSize: 50 }}
+                            loading={!!loadingUser}
+                            appendTo="self"
+                            panelClassName="ac-panel"
+                            panelStyle={{ width: "100%", maxHeight: 280, overflow: "auto" }}
+                            className="ac-control"
+                            emptyMessage="Không có dữ liệu"
+                            emptyFilterMessage="Không tìm thấy"
                         />
                     </div>
-                    <div className="field">
+
+                    <div className="nf-field">
                         <label>Courses</label>
                         <AutoComplete
                             multiple
                             value={form.targetCourses}
                             suggestions={courseSug}
-                            completeMethod={(e) => searchCourseDebounced(e.query || "")}
+                            completeMethod={onCompleteCourses}
+                            onFocus={preopenCourses}
+                            onDropdownClick={preopenCourses}
                             onChange={(e) => setForm({ ...form, targetCourses: e.value })}
                             field="code"
                             itemTemplate={courseItemTpl}
-                            placeholder="Tìm theo mã/tên khoá…"
+                            placeholder="Gõ để lọc hoặc bấm ▼ để xem tất cả"
                             dropdown
+                            minLength={0}
+                            forceSelection={false}
+                            virtualScrollerOptions={{ itemSize: 50 }}
+                            loading={!!loadingCourse}
+                            appendTo="self"
+                            panelClassName="ac-panel"
+                            panelStyle={{ width: "100%", maxHeight: 280, overflow: "auto" }}
+                            className="ac-control"
+                            emptyMessage="Không có dữ liệu"
+                            emptyFilterMessage="Không tìm thấy"
                         />
                     </div>
                 </div>
 
-                <div className="field">
+                {/* Programs */}
+                <div className="nf-field">
                     <label>Programs</label>
                     <AutoComplete
                         multiple
                         value={form.targetPrograms}
                         suggestions={programSug}
-                        completeMethod={(e) => searchProgramDebounced(e.query || "")}
+                        completeMethod={onCompletePrograms}
+                        onFocus={preopenPrograms}
+                        onDropdownClick={preopenPrograms}
                         onChange={(e) => setForm({ ...form, targetPrograms: e.value })}
                         field="name"
                         itemTemplate={programItemTpl}
-                        placeholder="Tìm chương trình…"
+                        placeholder="Gõ để lọc hoặc bấm ▼ để xem tất cả"
                         dropdown
+                        minLength={0}
+                        forceSelection={false}
+                        virtualScrollerOptions={{ itemSize: 50 }}
+                        loading={!!loadingProgram}
+                        appendTo="self"
+                        panelClassName="ac-panel"
+                        panelStyle={{ width: "100%", maxHeight: 280, overflow: "auto" }}
+                        className="ac-control"
+                        emptyMessage="Không có dữ liệu"
+                        emptyFilterMessage="Không tìm thấy"
                     />
                 </div>
 
-                <div className="field">
+                {/* Schedule */}
+                <div className="nf-field">
                     <label>Scheduled date (tuỳ chọn)</label>
                     <Calendar
                         value={form.scheduledDate}
@@ -353,7 +446,7 @@ export default function NotificationForm() {
                     />
                 </div>
 
-                <div className="flex gap-2 mt-2">
+                <div className="nf-actions">
                     <Button label="Gửi ngay / Hẹn giờ" icon="pi pi-send" onClick={onSubmit} />
                     <Button
                         label="Reset"
@@ -376,6 +469,7 @@ export default function NotificationForm() {
                         }
                     />
                 </div>
+
             </div>
         </div>
     );
