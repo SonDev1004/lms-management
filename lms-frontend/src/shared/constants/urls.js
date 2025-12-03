@@ -129,5 +129,7 @@ export default {
 
     studentSchedule: (from, to) =>
         `${rootAPI}/student/schedule?from=${from}&to=${to}`,
+    createUser: `${rootAPI}/admin-it/users/create`,
+    getAllRoles: `${rootAPI}/admin-it/roles`,
 
 };

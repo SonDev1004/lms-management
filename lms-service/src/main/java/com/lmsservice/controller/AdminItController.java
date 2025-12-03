@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.lmsservice.dto.request.CreateUserRequest;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 @RestController
-@RequestMapping("/api/adminit")
+@RequestMapping("/api/admin-it")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminItController {
@@ -45,7 +46,8 @@ public class AdminItController {
     }
 
     // Tạo tài khoản mới
-    @PostMapping("/users")
+    @PostMapping("/users/create")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<UserResponse> createUser(@Valid @RequestBody CreateUserRequest req) {
         return ApiResponse.<UserResponse>builder()
                 .message("Tạo tài khoản thành công")
@@ -75,6 +77,7 @@ public class AdminItController {
 
     // Lấy danh sách role
     @GetMapping("/roles")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<Role>> getRoles() {
         return ApiResponse.<List<Role>>builder()
                 .message("Lấy danh sách vai trò thành công")

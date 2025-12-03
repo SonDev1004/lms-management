@@ -17,7 +17,12 @@ export default function LayoutNavbar({role, children}) {
             roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}`)
         },
-
+        {
+            label: 'Create User Account',
+            icon: 'pi pi-user-plus',
+            roles: ['ACADEMIC_MANAGER', 'ADMIN_IT'],
+            command: () => navigate(`/${roleToRoute(role)}/create-account`)
+        },
         {
             label: 'Courses',
             icon: 'pi pi-book',
