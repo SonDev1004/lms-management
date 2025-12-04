@@ -218,7 +218,7 @@ const App = () => {
                         <Route path='security' element={<AdminSecurity/>}/>
                         <Route path='create-account' element={<EmailAccountFormPage />} />
                         {/* Notifications */}
-                        <Route path='notifications'>
+                        <Route path='notification'>
                             <Route index element={<NotificationForm/>}/>
                             <Route path='send' element={<NotificationForm/>}/>
                             <Route path='scheduled' element={<ScheduledNotifications/>}/>
