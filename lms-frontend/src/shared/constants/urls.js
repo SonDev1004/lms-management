@@ -42,15 +42,15 @@ export default {
     markAsSeen: (id) => `${rootAPI}/notifications/${id}/seen`,
 
     // AdminIT notifications
-    sendNotification: `${rootAPI}/adminit/notifications/send`,
-    getScheduledNotifications: `${rootAPI}/adminit/notifications/scheduled`,
+    sendNotification: `${rootAPI}/admin-it/notifications/send`,
+    getScheduledNotifications: `${rootAPI}/admin-it/notifications/scheduled`,
     // ===== Options & Search cho form gửi thông báo =====
-    notificationTypes: `${rootAPI}/adminit/notifications/types`,
-    roleOptions: `${rootAPI}/adminit/roles/options`,
+    notificationTypes: `${rootAPI}/admin-it/notifications/types`,
+    roleOptions: `${rootAPI}/admin-it/roles/options`,
     // Autocomplete (GET ?q=&page=&size=)
-    searchUsers: `${rootAPI}/adminit/search/users`,
-    searchCourses: `${rootAPI}/adminit/search/courses`,
-    searchPrograms: `${rootAPI}/adminit/search/programs`,
+    searchUsers: `${rootAPI}/admin-it/search/users`,
+    searchCourses: `${rootAPI}/admin-it/search/courses`,
+    searchPrograms: `${rootAPI}/admin-it/search/programs`,
     //Assignment - Student side
     // Danh sách bài tập/quiz của học sinh theo khóa học
     // BE dự kiến: GET /student/courses/{courseId}/assignments
