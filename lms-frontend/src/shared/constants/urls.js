@@ -11,7 +11,7 @@ export default {
     profile: `${rootAPI}/user/profile`,
 
     //Endpoint Student
-    getStudentCourses: `${rootAPI}/student/me/courses`,
+    getStudentCourses: `${rootAPI}/student/me/courses` ,
 
     //Lesson
     lessonBySubject: (id) => `${rootAPI}/lesson/by-subject/${id}`,
@@ -38,19 +38,23 @@ export default {
 
     // User notifications
     getMyNotifications: `${rootAPI}/notifications`,
+
     getUnseenNotifications: `${rootAPI}/notifications/unseen`,
+
     markAsSeen: (id) => `${rootAPI}/notifications/${id}/seen`,
 
     // AdminIT notifications
-    sendNotification: `${rootAPI}/adminit/notifications/send`,
-    getScheduledNotifications: `${rootAPI}/adminit/notifications/scheduled`,
+    sendNotification: `${rootAPI}/admin-it/notifications/send`,
+    getScheduledNotifications: `${rootAPI}/admin-it/notifications/scheduled`,
+
     // ===== Options & Search cho form gửi thông báo =====
-    notificationTypes: `${rootAPI}/adminit/notifications/types`,
-    roleOptions: `${rootAPI}/adminit/roles/options`,
+    notificationTypes: `${rootAPI}/admin-it/notifications/types`,
+    roleOptions: `${rootAPI}/admin-it/roles/options`,
+
     // Autocomplete (GET ?q=&page=&size=)
-    searchUsers: `${rootAPI}/adminit/search/users`,
-    searchCourses: `${rootAPI}/adminit/search/courses`,
-    searchPrograms: `${rootAPI}/adminit/search/programs`,
+    searchUsers: `${rootAPI}/admin-it/search/users`,
+    searchCourses: `${rootAPI}/admin-it/search/courses`,
+    searchPrograms: `${rootAPI}/admin-it/search/programs`,
     //Assignment - Student side
     // Danh sách bài tập/quiz của học sinh theo khóa học
     // BE dự kiến: GET /student/courses/{courseId}/assignments
@@ -59,6 +63,7 @@ export default {
     //Assignment - Teacher / Academic Manager side
     // Danh sách assignment theo khóa học
     getTeacherAssignments: (courseId) => `${rootAPI}/teacher/courses/${courseId}/assignments`,
+
     // CRUD assignment (nếu dùng)
     createAssignment: `${rootAPI}/teacher/assignments`,
     updateAssignment: (id) => `${rootAPI}/teacher/assignments/${id}`,
@@ -81,11 +86,13 @@ export default {
         `${rootAPI}/student/assignments/${assignmentId}/quiz`,
     studentSubmitQuiz: (assignmentId, submissionId) =>
         `${rootAPI}/student/assignments/${assignmentId}/submissions/${submissionId}/submit-quiz`,
+
     //Assignment - STUDENT
     studentAssignmentsByCourse: (courseId) =>
         `${rootAPI}/student/courses/${courseId}/assignments`,
     studentSubmissionSummary: (assignmentId) =>
         `${rootAPI}/student/assignments/${assignmentId}/submission-summary`,
+
     //Assignment - TEACHER
     teacherAssignmentsByCourse: (courseId) =>
         `${rootAPI}/teacher/courses/${courseId}/assignments`,
@@ -95,7 +102,6 @@ export default {
         `${rootAPI}/teacher/assignments/${assignmentId}/remind-not-submitted`,
     teacherPublishAssignment: (assignmentId) =>
         `${rootAPI}/teacher/assignments/${assignmentId}/publish`,
-
     createTeacherAssignment: (courseId) =>
         `${rootAPI}/teacher/courses/${courseId}/assignments`,
 
@@ -105,21 +111,27 @@ export default {
         `${rootAPI}/teacher/assignments/${assignmentId}`,
     deleteTeacherAssignment: (assignmentId) =>
         `${rootAPI}/teacher/assignments/${assignmentId}`,
+    teacherRetakeRequests: (assignmentId) =>
+        `${AppConfig.rootAPI}/teacher/assignments/${assignmentId}/retake-requests`,
+    teacherHandleRetakeRequest: (requestId) =>
+        `${AppConfig.rootAPI}/teacher/assignments/retake-requests/${requestId}/handle`,
     // Student attendance
     studentAttendanceOverview: `${rootAPI}/student/attendance/overview`,
     studentAttendanceDetails: `${rootAPI}/student/attendance/details`,
 
-    // Student – sessions của 1 course (dùng cho Make-up + session details)
+    // Student–sessions của 1 course (dùng cho Make-up + session details)
     studentCourseSessions: (courseId) =>
         `${rootAPI}/student/courses/${courseId}/sessions`,
 
     // Student – danh sách yêu cầu học bù của chính mình
     studentMakeupRequests: `${rootAPI}/student/makeup-requests/create`,
+    requestAssignmentRetake: (assignmentId) =>
+        `${rootAPI}/student/makeup-requests/assignments/${assignmentId}/retake-request`,
 
-    // Academic Manager / AdminIT – danh sách yêu cầu học bù (phân trang)
+    // Academic Manager/AdminIT – danh sách yêu cầu học bù (phân trang)
     adminMakeupRequests: `${rootAPI}/admin/makeup-requests`,
 
-    // Academic Manager / AdminIT – xác nhận đã học bù
+    // Academic Manager/AdminIT – xác nhận đã học bù
     adminMarkMakeupAttended: (id) =>
         `${rootAPI}/admin/makeup-requests/${id}/mark-attended`,
 

@@ -135,14 +135,24 @@ export default function TeacherAssignmentPage() {
 
     const handleSubmitForm = async (payload) => {
         if (!selectedCourseId) return;
+        if (!payload.assignmentType || payload.assignmentType.length === 0) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Missing type",
+                detail: "Please select at least one assignment type.",
+            });
+            return;
+        }
+
         try {
             setFormLoading(true);
 
+            const toSend = {
+                ...payload,
+                courseId: selectedCourseId,
+            };
+
             if (editing) {
-                const toSend = {
-                    ...payload,
-                    courseId: selectedCourseId,
-                };
                 await updateTeacherAssignment(editing.id, toSend);
 
                 toastRef.current?.show({
@@ -150,34 +160,27 @@ export default function TeacherAssignmentPage() {
                     summary: "Updated",
                     detail: "Assignment updated",
                 });
+
+                setFormVisible(false);
+                setEditing(null);
+                await loadAssignments(selectedCourseId);
             } else {
-                const toSend = {
-                    ...payload,
-                    courseId: selectedCourseId,
-                };
                 const created = await createTeacherAssignment(
                     selectedCourseId,
                     toSend
                 );
+
                 toastRef.current?.show({
                     severity: "success",
                     summary: "Created",
                     detail: "Assignment created",
                 });
 
-                if ((toSend.assignmentType || []).includes("QUIZ_PHASE")) {
-                    setFormVisible(false);
-                    setEditing(null);
-                    navigate(
-                        `/teacher/assignments/${created.id}/quiz-builder`
-                    );
-                    return;
-                }
-            }
+                setFormVisible(false);
+                setEditing(null);
 
-            setFormVisible(false);
-            setEditing(null);
-            await loadAssignments(selectedCourseId);
+                navigate(`/teacher/assignments/${created.id}/quiz-builder`);
+            }
         } catch (e) {
             console.error(e);
             toastRef.current?.show({
@@ -334,13 +337,16 @@ export default function TeacherAssignmentPage() {
                     stripedRows
                     size="small"
                     responsiveLayout="scroll"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[10, 20, 50]}
                     emptyMessage={
                         selectedCourseId
                             ? "Chưa có assignment nào cho khóa học này."
                             : "Hãy chọn một khóa học."
                     }
                 >
-                    <Column field="title" header="Title" sortable />
+                <Column field="title" header="Title" sortable />
                     <Column
                         field="dueDate"
                         header="Due"

@@ -1,11 +1,15 @@
 package com.lmsservice.controller;
 
+import com.lmsservice.dto.request.HandleAssignmentRetakeRequest;
 import com.lmsservice.dto.response.ApiResponse;
 import com.lmsservice.dto.response.AssignmentQuestionConfig;
 import com.lmsservice.dto.response.AssignmentQuizConfigResponse;
+import com.lmsservice.dto.response.AssignmentRetakeRequestResponse;
 import com.lmsservice.security.CurrentUserService;
 import com.lmsservice.service.AssignmentQuizService;
+import com.lmsservice.service.AssignmentRetakeService;
 import com.lmsservice.service.AssignmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +31,7 @@ public class TeacherAssignmentQuizController {
     private final AssignmentQuizService assignmentQuizService;
     private final CurrentUserService currentUserService;
     private final AssignmentService assignmentService;
-
+    private final AssignmentRetakeService assignmentRetakeService;
     /**
      * Lưu cấu hình quiz cho 1 assignment
      */
@@ -67,4 +71,33 @@ public class TeacherAssignmentQuizController {
         return ResponseEntity.ok(resp);
     }
 
+    @GetMapping("/{assignmentId}/retake-requests")
+    public ApiResponse<List<AssignmentRetakeRequestResponse>> getRetakeRequests(
+            @PathVariable Long assignmentId
+    ) {
+        var list = assignmentRetakeService
+                .getRequestsForAssignment(assignmentId, null)
+                .stream()
+                .map(AssignmentRetakeRequestResponse::fromEntity) // DTO nhỏ
+                .toList();
+
+        return ApiResponse.<List<AssignmentRetakeRequestResponse>>builder()
+                .result(list)
+                .build();
+    }
+
+
+    @PostMapping("/retake-requests/{requestId}/handle")
+    public ApiResponse<Void> handleRetake(
+            @PathVariable Long requestId,
+            @Valid @RequestBody HandleAssignmentRetakeRequest body
+    ) {
+        Long approverId = currentUserService.requireUserId();
+        assignmentRetakeService.handleRetake(requestId, approverId, body);
+
+        return ApiResponse.<Void>builder()
+                .message("Xử lý yêu cầu thi lại thành công")
+                .result(null)
+                .build();
+    }
 }

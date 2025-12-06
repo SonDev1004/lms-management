@@ -1,5 +1,5 @@
 import {useEffect, useState, useRef} from "react";
-import {useParams} from "react-router-dom";
+import {useParams,useNavigate} from "react-router-dom";
 
 import {Card} from "primereact/card";
 import {DataTable} from "primereact/datatable";
@@ -21,8 +21,8 @@ import {
 
 export default function TeacherQuizBuilderPage() {
     const {assignmentId} = useParams();
-
-    const [config, setConfig] = useState(null);
+    const navigate = useNavigate();
+    const [ setConfig] = useState(null);
     const [items, setItems] = useState([]);
     const [loadingConfig, setLoadingConfig] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -240,8 +240,14 @@ export default function TeacherQuizBuilderPage() {
                         </p>
                     </div>
                 </div>
-
                 <div className="flex align-items-center gap-2">
+                    <Button
+                        label="Back"
+                        icon="pi pi-arrow-left"
+                        outlined
+                        severity="secondary"
+                        onClick={() => navigate(-1)}
+                    />
                     <Button
                         label={saving ? "Saving..." : "Save config"}
                         icon="pi pi-save"
@@ -250,7 +256,6 @@ export default function TeacherQuizBuilderPage() {
                     />
                 </div>
             </div>
-
             <Card>
                 <div className="flex justify-content-between align-items-center mb-3">
                     <div>
@@ -267,14 +272,19 @@ export default function TeacherQuizBuilderPage() {
                 </div>
 
                 <DataTable
-                    value={items}
-                    loading={loadingConfig}
-                    dataKey="questionId"
+                    value={bankList}
+                    loading={bankLoading}
+                    selection={bankSelection}
+                    onSelectionChange={(e) => setBankSelection(e.value)}
+                    dataKey="id"
                     size="small"
-                    stripedRows
                     responsiveLayout="scroll"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[10, 20, 50]}
                 >
-                    <Column
+
+                <Column
                         field="orderNumber"
                         header="#"
                         body={(row) => (
@@ -424,3 +434,4 @@ export default function TeacherQuizBuilderPage() {
         </div>
     );
 }
+

@@ -20,7 +20,6 @@ public interface CurrentUserService {
 
     String getUsername();
 
-    // ✨ mới:
     CustomUserDetails requireUserDetails();
 
     User requireUserEntity(boolean reloadFromDb);
