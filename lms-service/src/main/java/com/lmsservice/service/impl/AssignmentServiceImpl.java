@@ -14,6 +14,7 @@ import com.lmsservice.mapper.AssignmentMapper;
 import com.lmsservice.repository.*;
 import com.lmsservice.service.AssignmentService;
 import com.lmsservice.service.NotificationService;
+import com.lmsservice.util.AssignmentRetakeStatus;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -43,6 +44,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     CourseStudentRepository courseStudentRepository;
     CourseRepository courseRepository;
     SubmissionRepository submissionRepository;
+    AssignmentRetakeRequestRepository assignmentRetakeRequestRepository;
     /* ======================== HELPER ======================== */
     private static final Logger log = LoggerFactory.getLogger(AssignmentServiceImpl.class);
 
@@ -313,15 +315,45 @@ public class AssignmentServiceImpl implements AssignmentService {
                     status = "SUBMITTED";
                 }
             } else {
-                LocalDateTime due = a.getDueDate();
-                if (due != null && due.isBefore(now)) {
-                    status = "MISSING";
-                } else {
-                    status = "NOT_SUBMITTED";
-                }
-            }
+            LocalDateTime due = a.getDueDate();
+            if (due != null && due.isBefore(now)) {
+                // Quá hạn + chưa nộp → kiểm tra retake
+                Optional<AssignmentRetakeRequest> retakeOpt =
+                        assignmentRetakeRequestRepository
+                                .findFirstByStudent_IdAndAssignment_IdAndStatusIn(
+                                        studentId,
+                                        a.getId(),
+                                        java.util.List.of(
+                                                AssignmentRetakeStatus.PENDING,
+                                                AssignmentRetakeStatus.APPROVED
+                                        )
+                                );
 
-            dto.setStudentStatus(status);
+                if (retakeOpt.isPresent()) {
+                    AssignmentRetakeRequest r = retakeOpt.get();
+
+                    if (r.getStatus() == AssignmentRetakeStatus.PENDING) {
+                        status = "RETAKE_PENDING";
+                    } else if (r.getStatus() == AssignmentRetakeStatus.APPROVED) {
+                        LocalDateTime dl = r.getRetakeDeadline();
+                        if (dl == null || dl.isAfter(now)) {
+                            status = "RETAKE_APPROVED";
+                        } else {
+                            // hết hạn thi lại
+                            status = "MISSING";
+                        }
+                    } else {
+                        status = "MISSING";
+                    }
+                } else {
+                    status = "MISSING";
+                }
+            } else {
+                status = "NOT_SUBMITTED";
+            }
+        }
+
+        dto.setStudentStatus(status);
             dto.setStudentScore(studentScore);
 
             result.add(dto);

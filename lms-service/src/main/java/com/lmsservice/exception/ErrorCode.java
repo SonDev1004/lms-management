@@ -85,7 +85,12 @@ public enum ErrorCode {
     UNAUTHORIZED_ACCESS(1060, "Unauthorized access to the resource", HttpStatus.FORBIDDEN),
     MAKEUP_REQUEST_NOT_FOUND(1061, "Make-up request not found", HttpStatus.NOT_FOUND),
     MAKEUP_REQUEST_ALREADY_DONE(1062, "Make-up request has already been processed", HttpStatus.BAD_REQUEST),
-    ATTENDANCE_JSON_INVALID(1063, "Attendance JSON is invalid", HttpStatus.BAD_REQUEST);
+    ATTENDANCE_JSON_INVALID(1063, "Attendance JSON is invalid", HttpStatus.BAD_REQUEST),
+    RETAKE_ALREADY_REQUESTED(1064,"Retake already requested", HttpStatus.BAD_REQUEST),
+    RETAKE_NOT_ALLOWED_ALREADY_SUBMITTED(1065, "Retake not allowed already submitted", HttpStatus.BAD_REQUEST),
+    RETAKE_NOT_ALLOWED_NOT_OVERDUE(1066, "Retake not allowed not overdue", HttpStatus.BAD_REQUEST),
+    RETAKE_ALREADY_HANDLED(1067, "Retake already handled", HttpStatus.BAD_REQUEST),
+    RETAKE_REQUEST_NOT_FOUND(1068, "Retake request not found", HttpStatus.NOT_FOUND);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

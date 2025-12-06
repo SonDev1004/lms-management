@@ -1,4 +1,3 @@
-// features/assignment/api/assignmentService.js
 import axiosClient from "@/shared/api/axiosClient.js";
 import {AppUrls} from "@/shared/constants/index.js";
 
@@ -172,6 +171,18 @@ export const updateTeacherAssignment = async (assignmentId, formPayload) => {
     return mapAssignmentDtoToUi(dto || body);
 };
 
+/**
+ * Student gửi yêu cầu thi lại assignment
+ */
+export const requestAssignmentRetake = async (assignmentId, reason) => {
+    if (!assignmentId) throw new Error("assignmentId is required");
+
+    const url = AppUrls.requestAssignmentRetake(assignmentId);
+    const body = { reason };
+
+    const res = await axiosClient.post(url, body);
+    return res.data || {};
+};
 
 /**
  * Delete assignment
@@ -280,12 +291,38 @@ function mapAssignmentDtoToUi(dto) {
     };
 }
 
+// ==== TEACHER – Retake requests ====
+export const fetchRetakeRequestsForAssignment = async (assignmentId) => {
+    if (!assignmentId) return [];
+    const url = AppUrls.teacherRetakeRequests(assignmentId);
+    const res = await axiosClient.get(url);
+    const payload = res.data?.result ?? res.data ?? [];
+    return Array.isArray(payload) ? payload : [];
+};
+
+export const handleRetakeRequest = async (requestId, { approve, adminNote, retakeDeadline }) => {
+    const url = AppUrls.teacherHandleRetakeRequest(requestId);
+    const body = {
+        approve,
+        adminNote: adminNote || null,
+        retakeDeadline: retakeDeadline || null, // BE parse ISO
+    };
+    const res = await axiosClient.post(url, body);
+    return res.data;
+};
+
 
 function mapStatus(status) {
     if (!status) return "not_submitted";
     const s = String(status).toUpperCase();
+
     if (s === "GRADED") return "graded";
     if (s === "SUBMITTED") return "submitted";
     if (s === "MISSING") return "missing";
+
+    if (s === "RETAKE_PENDING") return "retake_pending";
+    if (s === "RETAKE_APPROVED") return "retake_approved";
+
     return "not_submitted";
 }
+

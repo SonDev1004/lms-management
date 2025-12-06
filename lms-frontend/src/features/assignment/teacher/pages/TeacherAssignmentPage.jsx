@@ -337,13 +337,16 @@ export default function TeacherAssignmentPage() {
                     stripedRows
                     size="small"
                     responsiveLayout="scroll"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[10, 20, 50]}
                     emptyMessage={
                         selectedCourseId
                             ? "Chưa có assignment nào cho khóa học này."
                             : "Hãy chọn một khóa học."
                     }
                 >
-                    <Column field="title" header="Title" sortable />
+                <Column field="title" header="Title" sortable />
                     <Column
                         field="dueDate"
                         header="Due"

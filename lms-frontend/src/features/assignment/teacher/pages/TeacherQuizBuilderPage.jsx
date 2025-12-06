@@ -272,14 +272,19 @@ export default function TeacherQuizBuilderPage() {
                 </div>
 
                 <DataTable
-                    value={items}
-                    loading={loadingConfig}
-                    dataKey="questionId"
+                    value={bankList}
+                    loading={bankLoading}
+                    selection={bankSelection}
+                    onSelectionChange={(e) => setBankSelection(e.value)}
+                    dataKey="id"
                     size="small"
-                    stripedRows
                     responsiveLayout="scroll"
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[10, 20, 50]}
                 >
-                    <Column
+
+                <Column
                         field="orderNumber"
                         header="#"
                         body={(row) => (
