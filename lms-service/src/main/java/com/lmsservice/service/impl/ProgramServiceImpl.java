@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.lmsservice.dto.response.OptionDto;
 import jakarta.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -53,7 +54,7 @@ public class ProgramServiceImpl implements ProgramService {
     CurriculumRepository curriculumRepository;
     SubjectRepository subjectRepository;
     ProgramPolicy programPolicy;
-    private final CourseRepository courseRepository;
+    CourseRepository courseRepository;
 
     public ProgramResponse createProgram(ProgramRequest programRequest) {
 
@@ -164,7 +165,7 @@ public class ProgramServiceImpl implements ProgramService {
                 canViewAll,
                 auth != null ? auth.getAuthorities() : "null");
 
-        // ✅ chỉ cần gọi 1 hàm from(f, canViewAll)
+        //chỉ cần gọi 1 hàm from(f, canViewAll)
         Specification<Program> spec = ProgramSpecifications.from(f, canViewAll);
 
         // Cho phép sort theo các field ROOT của Program
@@ -294,10 +295,92 @@ public class ProgramServiceImpl implements ProgramService {
                 .build();
     }
 
+    @Override
+    public void updateProgram(Long id, ProgramRequest request) {
+        Program program = programRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
+
+        // Validate giống create
+        if (request.getMinStudent() != null && request.getMinStudent() < 1) {
+            throw new AppException(ErrorCode.INVALID_MIN_STUDENT);
+        }
+        if (request.getMaxStudent() != null && request.getMaxStudent() < 1) {
+            throw new AppException(ErrorCode.INVALID_MAX_STUDENT);
+        }
+        if (request.getMinStudent() != null
+                && request.getMaxStudent() != null
+                && request.getMinStudent() > request.getMaxStudent()) {
+            throw new AppException(ErrorCode.INVALID_PROGRAM_RANGE);
+        }
+
+        // Check duplicate title nếu đổi title
+        String newTitle = request.getTitle();
+        if (newTitle != null) {
+            String normalized = newTitle.trim().replaceAll("\\s+", " ");
+            if (!normalized.equalsIgnoreCase(program.getTitle())
+                    && programRepository.existsByTitle(normalized)) {
+                throw new AppException(ErrorCode.DUPLICATE_PROGRAM_TITLE);
+            }
+            program.setTitle(normalized);
+        }
+
+        if (request.getMinStudent() != null) {
+            program.setMinStudent(request.getMinStudent());
+        }
+        if (request.getMaxStudent() != null) {
+            program.setMaxStudent(request.getMaxStudent());
+        }
+        if (request.getFee() != null) {
+            program.setFee(request.getFee());
+        }
+        if (request.getDescription() != null) {
+            program.setDescription(request.getDescription());
+        }
+        if (request.getImageUrl() != null) {
+            program.setImageUrl(request.getImageUrl());
+        }
+        if (request.getIsActive() != null) {
+            program.setIsActive(request.getIsActive());
+        }
+
+        programRepository.save(program);
+    }
+
+    @Override
+    public void deleteProgram(Long id) {
+        Program program = programRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
+        programRepository.delete(program);
+    }
     // Generate a unique code for the program
     private String generatePrettyUUID() {
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String shortUUID = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         return "PROG-" + date + "-" + shortUUID;
+    }
+
+    @Override
+    public List<OptionDto> getSubjectsByProgram(Long programId) {
+
+        if (programId == null) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+
+        if (!programRepository.existsById(programId)) {
+            throw new AppException(ErrorCode.PROGRAM_NOT_FOUND);
+        }
+
+        var list = curriculumRepository.findByProgram_IdOrderByOrderNumberAsc(programId);
+
+        if (list == null || list.isEmpty()) {
+            throw new AppException(ErrorCode.PROGRAM_NO_SUBJECTS);
+        }
+
+        return list.stream()
+                .map(c -> new OptionDto(
+                        c.getSubject().getId().intValue(),
+                        c.getSubject().getTitle()
+                ))
+                .toList();
     }
 }

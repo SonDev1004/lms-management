@@ -3,6 +3,7 @@ package com.lmsservice.dto.request;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
@@ -12,6 +13,8 @@ public class SendNotificationRequest {
     private int severity;
     private String url;
     private Long notificationTypeId;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime scheduledDate;
 
     private List<String> targetRoles;

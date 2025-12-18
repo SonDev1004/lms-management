@@ -27,8 +27,9 @@ public class Session extends EntityAbstract {
 
     LocalTime endTime;
 
-    @Column(name = "timeslot_id")
-    Long timeslotId; // sau này có thể đổi sang @ManyToOne CourseTimeslot
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "timeslot_id")
+    private CourseTimeslot timeslot;
 
     @Column(name = "status")
     Integer status; // 1=Planned, 2=Completed, 5=Cancelled
@@ -53,6 +54,6 @@ public class Session extends EntityAbstract {
 
     // Room
     @ManyToOne()
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_id")
     Room room;
 }

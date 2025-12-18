@@ -131,19 +131,34 @@ export default function PaymentPage() {
 
     const submit = async (e) => {
         e.preventDefault();
+
         if (!form.fullName || !form.email || !form.phone) {
             toast.current?.show({
-                severity: 'warn',
-                summary: 'Missing information',
-                detail: 'Please fill in Full Name, Email, and Phone.'
+                severity: "warn",
+                summary: "Missing information",
+                detail: "Please fill in Full Name, Email, and Phone.",
             });
             return;
         }
+
         if (!agree) {
             toast.current?.show({
-                severity: 'warn',
-                summary: 'Agreement required',
-                detail: 'You need to accept the terms of use.'
+                severity: "warn",
+                summary: "Agreement required",
+                detail: "You need to accept the terms of use.",
+            });
+            return;
+        }
+
+        // ===== Guard trackCode when buying program-by-track =====
+        const isProgram = selectedItem?.type === "program";
+        const trackCode = (selectedItem?.trackCode || "").trim();
+
+        if (isProgram && !trackCode) {
+            toast.current?.show({
+                severity: "error",
+                summary: "Enrollment Failed",
+                detail: "Track code is required for courses in a track",
             });
             return;
         }
@@ -151,39 +166,58 @@ export default function PaymentPage() {
         const payload = {
             programId: selectedItem.type === 'program' ? selectedItem.programId : null,
             subjectId: selectedItem.type === 'subject' ? selectedItem.subjectId : null,
+
+            trackCode: selectedItem.type === 'program' ? (selectedItem.trackCode || null) : null,
+            courseId: selectedItem.type === 'subject' ? (selectedItem.meta?.class?.id || null) : null,
+
             totalFee: totalPay,
-            txnRef: generateTxnRef(),
-            customer: {...form},
-            voucher: voucherApplied ? {
-                code: voucherApplied.code,
-                type: voucherApplied.type,
-                value: voucherApplied.value
-            } : null,
+            customer: { ...form },
+            voucher: voucherApplied
+                ? { code: voucherApplied.code, type: voucherApplied.type, value: voucherApplied.value }
+                : null,
             paymentMethod,
         };
+
+        console.log("[create-payment] selectedItem =", selectedItem);
+        console.log("[create-payment] payload =", payload);
+
 
         try {
             setLoading(true);
             const res = await axiosClient.post(urls.payment, payload);
             const data = res.data?.result || res.data?.data || res.data;
+
+            console.log("[PAYMENT] response =", data);
+
             if (data?.paymentUrl) {
                 window.location.href = data.paymentUrl;
                 return;
             }
+
             toast.current?.show({
-                severity: 'success',
-                summary: 'Enrollment Successful',
-                detail: data?.message || 'You have successfully enrolled.'
+                severity: "success",
+                summary: "Enrollment Successful",
+                detail: data?.message || "You have successfully enrolled.",
             });
-            setTimeout(() => navigate('/my-enrollments'), 1000);
+            setTimeout(() => navigate("/my-enrollments"), 1000);
         } catch (e) {
-            const msg = e.response?.data?.message || e.message || 'An error occurred during registration.';
-            toast.current?.show({severity: 'error', summary: 'Enrollment Failed', detail: msg});
-            if (e.response?.status === 401) setTimeout(() => navigate('/login'), 1200);
+            console.error("[PAYMENT] error =", e?.response?.data || e);
+
+            const msg =
+                e.response?.data?.message ||
+                e.message ||
+                "An error occurred during registration.";
+            toast.current?.show({
+                severity: "error",
+                summary: "Enrollment Failed",
+                detail: msg,
+            });
+            if (e.response?.status === 401) setTimeout(() => navigate("/login"), 1200);
         } finally {
             setLoading(false);
         }
     };
+
 
     if (!selectedItem) return null;
 

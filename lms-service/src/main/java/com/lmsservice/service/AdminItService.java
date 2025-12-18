@@ -18,13 +18,13 @@ public interface AdminItService {
 
     UserResponse createUser(CreateUserRequest req);
 
-    void deleteUser(Long id);
-
-    User updateUserRole(Long userId, Long roleId);
+    void sendAccountProvisionMail(User user, String tempPassword);
 
     String generateRandomPassword(int len);
 
-    void sendAccountProvisionMail(User user, String tempPassword);
+    void deleteUser(Long id);
+
+    User updateUserRole(Long userId, Long roleId);
 
     /**
      * ------------------- ROLE -------------------
@@ -55,4 +55,6 @@ public interface AdminItService {
     void sendNotification(SendNotificationRequest req);
 
     List<NotificationResponse> getScheduledNotifications();
+
+    List<NotificationResponse> getNotificationHistory();
 }

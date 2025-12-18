@@ -1,16 +1,9 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import com.lmsservice.dto.request.GenerateSessionsRequest;
 
-import com.lmsservice.repository.SessionRepository;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SessionService {
-    SessionRepository sessionRepository;
+public interface SessionService {
+    void generateSessionsForCourse(Long courseId, GenerateSessionsRequest request);
 }

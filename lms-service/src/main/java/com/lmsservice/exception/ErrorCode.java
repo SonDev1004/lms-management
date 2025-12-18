@@ -90,7 +90,32 @@ public enum ErrorCode {
     RETAKE_NOT_ALLOWED_ALREADY_SUBMITTED(1065, "Retake not allowed already submitted", HttpStatus.BAD_REQUEST),
     RETAKE_NOT_ALLOWED_NOT_OVERDUE(1066, "Retake not allowed not overdue", HttpStatus.BAD_REQUEST),
     RETAKE_ALREADY_HANDLED(1067, "Retake already handled", HttpStatus.BAD_REQUEST),
-    RETAKE_REQUEST_NOT_FOUND(1068, "Retake request not found", HttpStatus.NOT_FOUND);
+    RETAKE_REQUEST_NOT_FOUND(1068, "Retake request not found", HttpStatus.NOT_FOUND),
+    ROOM_NOT_FOUND(1069, "Room not found", HttpStatus.NOT_FOUND),
+    COURSE_NO_SESSIONS(1070, "Course has no sessions", HttpStatus.BAD_REQUEST),
+    TEACHER_NOT_FOUND(1071, "Teacher not found", HttpStatus.NOT_FOUND),
+    STAFF_NOT_FOUND(1072, "Staff not found", HttpStatus.NOT_FOUND),
+    COURSE_NO_TIMESLOT(1073, "Course has no timeslot", HttpStatus.BAD_REQUEST),
+    COURSE_START_DATE_REQUIRED(1074, "Course start date is required", HttpStatus.BAD_REQUEST),
+    TEACHER_BUSY(1075, "Teacher is busy during the selected timeslot", HttpStatus.BAD_REQUEST),
+    ROOM_BUSY(1076, "Room is busy during the selected timeslot", HttpStatus.BAD_REQUEST),
+    COURSE_NOT_OPEN(1077, "Course is not open for enrollment", HttpStatus.BAD_REQUEST),
+    COURSE_FULL(1078, "Course is full", HttpStatus.BAD_REQUEST),
+    COURSE_ALREADY_STARTED(1079, "Course has already started", HttpStatus.BAD_REQUEST),
+    PROGRAM_NO_SUBJECTS(1080, "Program has no subjects assigned", HttpStatus.BAD_REQUEST),
+    INVALID_COURSE_FEE(1081, "Course fee must be greater than or equal to 0", HttpStatus.BAD_REQUEST),
+    TRACK_CODE_DUPLICATED(1082, "Track code already exists", HttpStatus.BAD_REQUEST),
+    COURSE_HAS_SESSIONS_CANNOT_CHANGE_TEACHER(1083, "Course has sessions and cannot change teacher", HttpStatus.BAD_REQUEST),
+    COURSE_BASE_TITLE_REQUIRED(1084, "Course base title is required", HttpStatus.BAD_REQUEST),
+    COURSE_CAPACITY_INVALID(1085, "Course capacity must be at least 1", HttpStatus.BAD_REQUEST),
+    COURSE_SUBJECT_NOT_IN_PROGRAM(1086, "Course subject is not part of the program", HttpStatus.BAD_REQUEST),
+    COURSE_TEACHER_REQUIRED(1087, "Course teacher is required", HttpStatus.BAD_REQUEST),
+    PREVIOUS_COURSE_NOT_FOUND(1088, "Previous course not found in track", HttpStatus.NOT_FOUND),
+    PREVIOUS_COURSE_NO_SESSIONS(1089, "Previous course has no sessions", HttpStatus.NOT_FOUND),
+    TRACK_CODE_REQUIRED(1090, "Track code is required for courses in a track", HttpStatus.BAD_REQUEST),
+    TRACK_NOT_FOUND(1091, "Track not found", HttpStatus.NOT_FOUND),
+    COURSE_ID_REQUIRED(1092, "Course ID is required", HttpStatus.BAD_REQUEST),
+    COURSE_SUBJECT_NOT_MATCH(1093, "Course does not belong to the specified subject", HttpStatus.BAD_REQUEST);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

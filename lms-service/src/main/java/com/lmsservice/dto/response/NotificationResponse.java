@@ -17,5 +17,12 @@ public class NotificationResponse {
     private boolean isSeen;
     private String url;
     private String type;
+
     private LocalDateTime postedDate;
+
+    private LocalDateTime scheduledDate;
+
+    private Long receiverUserId;
+    private String receiverName;
+    private String receiverRole;
 }

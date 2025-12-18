@@ -16,4 +16,7 @@ public interface SubjectService {
     PageResponse<SubjectResponse> getAllSubjects(SubjectFilterRequest f, Pageable pageable);
 
     SubjectDetailResponse getDetail(Long id, boolean onlyUpcoming);
+    SubjectResponse updateSubject(Long id, CreateSubjectRequest requestDTO);
+
+    void deleteSubject(Long id);
 }

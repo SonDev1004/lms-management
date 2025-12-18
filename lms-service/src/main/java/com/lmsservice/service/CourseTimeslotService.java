@@ -1,12 +1,11 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import com.lmsservice.dto.request.course.CourseTimeslotRequest;
+import com.lmsservice.dto.response.CourseTimeslotResponse;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CourseTimeslotService {}
+public interface CourseTimeslotService {
+    void replaceTimeslots(Long courseId, List<CourseTimeslotRequest> reqs);
+    List<CourseTimeslotResponse> getTimeslots(Long courseId);
+}

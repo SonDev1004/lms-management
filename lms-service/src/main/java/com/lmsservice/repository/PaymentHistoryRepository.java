@@ -1,5 +1,7 @@
 package com.lmsservice.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +12,5 @@ import com.lmsservice.entity.PaymentHistory;
 @Repository
 public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long> {
     Optional<PaymentHistory> findByReferenceNumber(String referenceNumber);
+    List<PaymentHistory> findByPaymentDateBetween(LocalDateTime start, LocalDateTime end);
 }

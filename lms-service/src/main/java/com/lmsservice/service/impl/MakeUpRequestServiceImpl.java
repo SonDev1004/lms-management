@@ -3,7 +3,7 @@ package com.lmsservice.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lmsservice.dto.request.CreateMakeUpRequestRequest;
-import com.lmsservice.dto.request.MakeUpRequestStatus;
+import com.lmsservice.util.MakeUpRequestStatus;
 import com.lmsservice.dto.request.MarkMakeUpAttendedRequest;
 import com.lmsservice.dto.response.AttendanceItemDTO;
 import com.lmsservice.dto.response.MakeUpRequestResponse;

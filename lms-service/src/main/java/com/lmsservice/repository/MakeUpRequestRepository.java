@@ -1,6 +1,6 @@
 package com.lmsservice.repository;
 
-import com.lmsservice.dto.request.MakeUpRequestStatus;
+import com.lmsservice.util.MakeUpRequestStatus;
 import com.lmsservice.entity.MakeUpRequest;
 
 import org.springframework.data.domain.Page;

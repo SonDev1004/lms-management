@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
-import {fetchStudentSchedule, fetchTeacherSchedule} from "../api/scheduleService.js";
+import {fetchStudentSchedule, fetchTeacherSchedule, fetchAcademySchedule} from "../api/scheduleService.js";
 
 // role: "STUDENT" | "TEACHER" | "ACADEMY"
 export default function useSchedule(role = "ACADEMY") {
@@ -34,16 +34,12 @@ export default function useSchedule(role = "ACADEMY") {
                 ? fetchStudentSchedule(from, to)
                 : role === "TEACHER"
                     ? fetchTeacherSchedule(from, to)
-                    // tạm dùng cùng API teacher cho ACADEMY
-                    : fetchTeacherSchedule(from, to);
+
+                    : fetchAcademySchedule(from, to);
 
         loader
             .then((res) => {
-                if (!mounted) return;
                 const data = res.data?.result || res.data || [];
-                console.log("Schedule data", role, data);
-
-                // map từ ScheduleItemDTO của BE sang event cho big-calendar
                 const mapped = data.map((item) => ({
                     id: item.sessionId,
                     title: item.courseTitle || "Session",

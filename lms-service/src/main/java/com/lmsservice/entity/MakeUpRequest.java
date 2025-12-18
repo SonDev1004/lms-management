@@ -1,6 +1,6 @@
 package com.lmsservice.entity;
 
-import com.lmsservice.dto.request.MakeUpRequestStatus;
+import com.lmsservice.util.MakeUpRequestStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

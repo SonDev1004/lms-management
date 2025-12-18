@@ -2,6 +2,8 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
+import com.lmsservice.entity.Teacher;
+import com.lmsservice.repository.TeacherRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,16 +19,16 @@ import com.lmsservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/adminit/search")
+@RequestMapping("/api/admin-it/search")
 @RequiredArgsConstructor
 public class AdminItSearchController {
 
     private final UserRepository userRepo;
     private final CourseRepository courseRepo;
     private final ProgramRepository programRepo;
-
+    private final TeacherRepository teacherRepo;
     @GetMapping("/users")
-    @PreAuthorize("hasRole('ADMIN_IT')")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<SimpleUserDto>> searchUsers(@RequestParam(required = false) String q) {
         List<User> list = (q == null || q.isBlank()) ? userRepo.findAll() : userRepo.searchUsers(q);
 
@@ -44,8 +46,35 @@ public class AdminItSearchController {
                 .build();
     }
 
+    @GetMapping("/teachers")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
+    public ApiResponse<List<OptionDto>> searchTeachers(@RequestParam(required = false) String q) {
+        List<Teacher> list = (q == null || q.isBlank())
+                ? teacherRepo.findAll()
+                : teacherRepo.searchByName(q);
+
+        var result = list.stream()
+                .limit(50)
+                .map(t -> {
+                    User u = t.getUser();
+                    String name = (u.getFirstName() + " " + u.getLastName()).trim();
+                    long courseCount = courseRepo.countByTeacherId(t.getId());
+                    String label = name + " (" + courseCount + " lớp)";
+                    OptionDto dto = new OptionDto();
+                    dto.setValue(t.getId().intValue());
+                    dto.setLabel(label);
+                    return dto;
+                })
+                .toList();
+
+        return ApiResponse.<List<OptionDto>>builder()
+                .message("Danh sách giáo viên")
+                .result(result)
+                .build();
+    }
+
     @GetMapping("/courses")
-    @PreAuthorize("hasRole('ADMIN_IT')")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<SimpleCourseDto>> searchCourses(@RequestParam(required = false) String q) {
         List<Course> list = (q == null || q.isBlank()) ? courseRepo.findAll() : courseRepo.searchCourses(q);
         var result = list.stream()
@@ -59,7 +88,7 @@ public class AdminItSearchController {
     }
 
     @GetMapping("/programs")
-    @PreAuthorize("hasRole('ADMIN_IT')")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<SimpleProgramDto>> searchPrograms(@RequestParam(required = false) String q) {
         List<Program> list = (q == null || q.isBlank()) ? programRepo.findAll() : programRepo.searchPrograms(q);
         var result = list.stream()

@@ -1,4 +1,4 @@
-package com.lmsservice.dto.request;
+package com.lmsservice.util;
 
 public enum MakeUpRequestStatus {
     PENDING,    // Học sinh đã gửi, chờ QLĐT xử lý

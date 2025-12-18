@@ -53,19 +53,25 @@ export default function LayoutNavbar({role, children}) {
         {
             label: 'Academic Management',
             icon: 'pi pi-users',
-            roles: ['ACADEMIC_MANAGER'],
+            roles:['ACADEMIC_MANAGER','ADMIN_IT'],
             items: [
                 {
                     label: 'Student list',
                     icon: 'pi pi-list',
-                    roles: ['ACADEMIC_MANAGER'],
+                    roles:['ACADEMIC_MANAGER','ADMIN_IT'],
                     command: () => navigate(`/${roleToRoute(role)}/student-manager`)
                 },
                 {
                     label: 'Teacher list',
                     icon: 'pi pi-id-card',
-                    roles: ['ACADEMIC_MANAGER'],
+                    roles: ['ACADEMIC_MANAGER','ADMIN_IT'],
                     command: () => navigate(`/${roleToRoute(role)}/teacher-list`)
+                },
+                {
+                    label: 'Course Management',
+                    icon: 'pi pi-book',
+                    roles: ['ADMIN_IT'],
+                    command: () => navigate(`/${roleToRoute(role)}/courses-list`)
                 },
                 {
                     label: 'Monitoring & Feedback',
@@ -76,16 +82,21 @@ export default function LayoutNavbar({role, children}) {
                 {
                     label: 'Master Timetable',
                     icon: 'pi pi-table',
-                    roles: ['ACADEMIC_MANAGER'],
+                    roles: ['ACADEMIC_MANAGER','ADMIN_IT'],
                     command: () => navigate(`/${roleToRoute(role)}/schedule-overview`)
+                },
+                {
+                    label: 'Notification List',
+                    icon: 'pi pi-list',
+                    roles: ['ACADEMIC_MANAGER','ADMIN_IT'],
+                    command: () => navigate(`/${roleToRoute(role)}/notification/scheduled`)
                 }
             ]
         },
-
         {
             label: 'Schedule',
             icon: 'pi pi-calendar',
-            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER'],
+            roles: ['STUDENT', 'TEACHER', 'ACADEMIC_MANAGER', 'ADMIN_IT'],
             command: () => navigate(`/${roleToRoute(role)}/schedule`)
         },
 
@@ -139,7 +150,7 @@ export default function LayoutNavbar({role, children}) {
                     command: () => navigate('/admin/tuitionrevenue')
                 },
                 {
-                    label: 'New Enrollment', // <- THÊM dấu { mở phần tử
+                    label: 'New Enrollment',
                     icon: 'pi pi-user-plus',
                     roles: ['ADMIN_IT'],
                     command: () => navigate('/admin/new-enrollment')

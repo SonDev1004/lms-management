@@ -1,16 +1,9 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
 
-import com.lmsservice.repository.CourseStudentRepository;
+import com.lmsservice.util.EnrollmentSource;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+public interface CourseStudentService {
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CourseStudentService {
-    CourseStudentRepository courseStudentRepository;
+    void addStudentToCourse(Long courseId, Long studentId, EnrollmentSource source);
 }
