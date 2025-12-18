@@ -44,6 +44,13 @@ public class PendingEnrollment {
 
     LocalDateTime updatedAt;
 
+    @Column(name = "track_code", length = 50)
+    String trackCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    Course course;
+
     @PrePersist
     void prePersist() {
         this.createdAt = LocalDateTime.now();

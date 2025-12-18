@@ -6,3 +6,5 @@ export const fetchTeacherSchedule = (from, to) =>
 
 export const fetchStudentSchedule = (from, to) =>
     axiosClient.get(urls.studentSchedule(from, to));
+export const fetchAcademySchedule = (from, to) =>
+    axiosClient.get(urls.academySchedule(from, to));

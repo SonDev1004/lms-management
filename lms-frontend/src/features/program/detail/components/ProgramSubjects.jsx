@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { sessionsText, shortDate } from "../utils/format";
 import CourseClassesDialog from "@/features/program/detail/components/CourseClassesDialog.jsx";
 import "../styles/subjects-section.css";
-import {parseCurrency} from "@/features/payment/utils/money.js";
+import { parseCurrency } from "@/features/payment/utils/money.js";
 
 export default function ProgramSubjects({ program }) {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function ProgramSubjects({ program }) {
             title: x.title || course.title,
             code: x.code || course.code,
             startDate: x.startDate ? shortDate(x.startDate) : "",
-            scheduleText: x.scheduleText || course.scheduleText || "",
+            scheduleText: x.scheduleText || course.scheduleText || course.schedule || "",
             sessions: x.sessions ?? course.sessions ?? "",
             capacity: typeof x.capacity === "number" ? x.capacity : course.capacity,
             status: (x.status || course.status || "upcoming").toLowerCase(),
@@ -32,10 +32,10 @@ export default function ProgramSubjects({ program }) {
                 title: course.title,
                 code: course.code,
                 startDate: course.startDate ? shortDate(course.startDate) : "",
-                scheduleText: course.scheduleText || "",
+                scheduleText: course.scheduleText || course.schedule || "",
                 sessions: course.sessions ?? "",
                 capacity: course.capacity ?? "",
-                status: (course.status || "upcoming").toLowerCase(),
+                status: (course.statusName || course.status || "upcoming").toLowerCase(),
             });
         }
 
@@ -44,39 +44,44 @@ export default function ProgramSubjects({ program }) {
         setDlgOpen(true);
     };
 
-    // ---- navigate to payment
+    /**
+     * ĐĂNG KÝ = MUA PROGRAM THEO TRACK
+     * - Bắt buộc có trackCode (lấy từ course.trackCode).
+     * - PaymentPage sẽ gọi /create-payment với programId + trackCode
+     * - BE callback SUCCESS sẽ auto insert course_student cho toàn bộ courses thuộc track
+     */
     const handleRegister = (subject, course) => {
-        const rawPrice =
-            course?.price ?? course?.fee ?? course?.tuition ??
-            subject?.price ?? subject?.fee ??
-            program?.fee ?? program?.price ?? 0;
+        const trackCode = (course?.trackCode || "").trim();
 
-        const price = parseCurrency(rawPrice);
+        if (!program?.id) {
+            alert("ProgramId bị thiếu, không thể thanh toán.");
+            return;
+        }
+
+        if (!trackCode) {
+            alert("Lịch học này chưa có trackCode. Vui lòng chọn lịch khác hoặc liên hệ admin.");
+            return;
+        }
+
+        // Mua chương trình => giá phải là program.fee
+        const price = parseCurrency(program?.fee ?? program?.price ?? 0);
 
         const selectedItem = {
-            type: 'subject',
-            programId: program?.id ?? null,
-            subjectId: subject?.id ?? null,
-            title: course?.displayName || course?.name || course?.title || subject?.title || 'Course',
-            price,                                   // 👈 số thô
+            type: "program",
+            programId: program.id,
+            subjectId: null,
+            trackCode: trackCode,
+            title: program?.title || "Program",
+            price,
             meta: {
-                subject: {
-                    id: subject?.id,
-                    code: subject?.code || course?.subjectCode,
-                    sessionNumber: course?.sessions ?? subject?.sessions ?? null,
-                    title: subject?.title,
-                },
-                class: {
-                    id: course?.id,
-                    schedule: course?.scheduleText || '',
-                    startDate: course?.startDate || null,
-                    capacity: typeof course?.capacity === 'number' ? course.capacity : null,
-                    statusName: course?.statusName || course?.status || 'Upcoming',
-                },
+                selectedCourseId: course?.id ?? null,
+                selectedCourseCode: course?.code ?? null,
+                selectedSubjectId: subject?.id ?? null,
+                selectedSubjectTitle: subject?.title ?? null,
             },
         };
 
-        navigate('/payment', { state: { selectedItem } });
+        navigate("/payment", { state: { selectedItem } });
     };
 
     return (
@@ -90,9 +95,7 @@ export default function ProgramSubjects({ program }) {
                             <div className="subject-index">{idx + 1}</div>
                             <div className="subject-title">
                                 <span>{s.title}</span>
-                                {!!s.courses?.length && (
-                                    <span className="pill">{s.courses.length} lịch</span>
-                                )}
+                                {!!s.courses?.length && <span className="pill">{s.courses.length} lịch</span>}
                             </div>
                             <div className="chevbox">
                                 <i className="pi pi-chevron-down chev" />
@@ -127,9 +130,9 @@ export default function ProgramSubjects({ program }) {
                                             <i className="pi pi-calendar" /> {shortDate(c.startDate)}
                                         </span>
                                     )}
-                                    {c.scheduleText && (
+                                    {(c.scheduleText || c.schedule) && (
                                         <span>
-                                            <i className="pi pi-clock" /> {c.scheduleText}
+                                            <i className="pi pi-clock" /> {c.scheduleText || c.schedule}
                                         </span>
                                     )}
                                     {typeof c.capacity === "number" && (
@@ -148,12 +151,9 @@ export default function ProgramSubjects({ program }) {
                     </details>
                 ))}
 
-                {!subjects.length && (
-                    <div style={{ color: "var(--pg-muted)" }}>Chưa có lịch học.</div>
-                )}
+                {!subjects.length && <div style={{ color: "var(--pg-muted)" }}>Chưa có lịch học.</div>}
             </div>
 
-            {/* Dialog */}
             <CourseClassesDialog
                 visible={dlgOpen}
                 onHide={() => setDlgOpen(false)}

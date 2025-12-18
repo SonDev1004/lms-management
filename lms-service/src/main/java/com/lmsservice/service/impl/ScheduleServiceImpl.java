@@ -45,6 +45,38 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .toList();
     }
 
+    @Override
+    public List<ScheduleItemDTO> getAcademySchedule(LocalDate from, LocalDate to) {
+        List<Session> sessions = sessionRepository.findAllBetween(from, to);
+
+        return sessions.stream()
+                .map(this::toScheduleItem)
+                .toList();
+    }
+    private ScheduleItemDTO toScheduleItem(Session s) {
+        Course c = s.getCourse();
+        Subject subj = c.getSubject();
+        Room r = s.getRoom();
+        Teacher t = c.getTeacher();
+        User tu = t != null ? t.getUser() : null;
+
+        String teacherName = (tu != null)
+                ? (tu.getFirstName() + " " + tu.getLastName()).trim()
+                : null;
+
+        return ScheduleItemDTO.builder()
+                .sessionId(s.getId())
+                .date(s.getDate())
+                .startTime(s.getStartTime())
+                .endTime(s.getEndTime())
+                .courseId(c.getId())
+                .courseTitle(c.getTitle())
+                .subjectTitle(subj != null ? subj.getTitle() : null)
+                .roomName(r != null ? r.getName() : null)
+                .roomLocation(r != null ? r.getLocation() : null)
+                .teacherName(teacherName)
+                .build();
+    }
 
     private ScheduleItemDTO toDtoForTeacher(Session s) {
         Course c = s.getCourse();

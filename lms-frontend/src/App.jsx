@@ -91,6 +91,7 @@ import TeacherAssignmentStudentsPage from "@/features/assignment/teacher/pages/T
 import AMMakeupRequestsPage from "@/features/attendance/manager/pages/AMMakeupRequestsPage.jsx";
 
 import EmailAccountFormPage from "@/features/account-mail/pages/EmailAccountFormPage.jsx";
+import CourseList from "@/features/admin/pages/CourseList.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -197,7 +198,8 @@ const App = () => {
                         <Route path="student-manager/:id" element={<MStudentProfile/>}/>
                         <Route path='schedule' element={<AMSchedule/>}/>
                         <Route path='report' element={<AMReport/>}/>
-                        <Route path='notification' element={<AMNotification/>}/>
+                        <Route path='notification' element={<NotificationForm/>}/>
+                        <Route path='notification/scheduled' element={<ScheduledNotifications/>}/>
                         <Route  path='create-account' element={<EmailAccountFormPage />} />
                         {/* Question Bank */}
                         <Route path='question-bank' element={<AcademicManagerQuestionBankPage/>}/>
@@ -217,6 +219,15 @@ const App = () => {
                         <Route path='upload' element={<AdminUpload/>}/>
                         <Route path='security' element={<AdminSecurity/>}/>
                         <Route path='create-account' element={<EmailAccountFormPage />} />
+                        <Route path='teacher' element={<AMTeacher/>}/>
+                        <Route path='teacher-list' element={<TeacherManagement/>}/>
+                        <Route path='teacher-list/:id' element={<AMTeacherProfile/>}/>
+                        <Route path='student' element={<AMStudent/>}/>
+                        <Route path='student-manager' element={<StudentManagement/>}/>
+                        <Route path="student-manager/:id" element={<MStudentProfile/>}/>
+                        <Route path="courses-list" element={<CourseList />} />
+                        <Route path='schedule' element={<AMSchedule/>}/>
+                        <Route path='report' element={<AMReport/>}/>
                         {/* Notifications */}
                         <Route path='notification'>
                             <Route index element={<NotificationForm/>}/>

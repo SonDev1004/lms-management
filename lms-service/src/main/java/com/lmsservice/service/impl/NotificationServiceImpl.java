@@ -67,6 +67,12 @@ public class NotificationServiceImpl implements NotificationService {
                                         ? n.getNotificationType().getTitle()
                                         : "General")
                         .postedDate(n.getPostedDate())
+                        .scheduledDate(n.getScheduledDate())
+                        .receiverRole(
+                                n.getUser() != null && n.getUser().getRole() != null
+                                        ? n.getUser().getRole().getName()
+                                        : null
+                        )
                         .build())
                 .toList();
     }

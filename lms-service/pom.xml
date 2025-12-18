@@ -321,8 +321,6 @@
                         </path>
                     </annotationProcessorPaths>
                     <compilerArgs>--enable-preview
-                        <arg>-Amapstruct.suppressGeneratorTimestamp=true</arg>
-                        <!--Chỉ định rằng các mapper sẽ được quản lý bởi Spring. Điều này có nghĩa là bạn có thể sử dụng @Autowired để tiêm các mapper vào trong các class khác.-->
                         <arg>-Amapstruct.defaultComponentModel=spring</arg>
                         <!--Chỉ định rằng các mapper sẽ được quản lý bởi Spring. Điều này có nghĩa là bạn có thể sử dụng @Autowired để tiêm các mapper vào trong các class khác.-->
                         <arg>-Amapstruct.verbose=true</arg>

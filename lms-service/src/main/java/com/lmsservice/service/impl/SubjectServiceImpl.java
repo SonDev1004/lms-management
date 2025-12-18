@@ -223,4 +223,57 @@ public class SubjectServiceImpl implements SubjectService {
         String shortUUID = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         return "SUB-" + date + "-" + shortUUID;
     }
+
+    @Override
+    public SubjectResponse updateSubject(Long id, CreateSubjectRequest requestDTO) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+
+        String normalizedTitle = requestDTO.getTitle().trim().replaceAll("\\s+", " ");
+        requestDTO.setTitle(normalizedTitle);
+
+        if (normalizedTitle.isEmpty()) {
+            throw new AppException(ErrorCode.INVALID_SUBJECT_TITLE);
+        }
+        if (normalizedTitle.length() > 100) {
+            throw new AppException(ErrorCode.INVALID_SUBJECT_TITLE_LENGTH);
+        }
+
+        // check trùng title nếu đổi
+        if (!normalizedTitle.equalsIgnoreCase(subject.getTitle())
+                && subjectRepository.existsByTitle(normalizedTitle)) {
+            throw new AppException(ErrorCode.SUBJECT_ALREADY_EXISTS);
+        }
+
+        subject.setTitle(normalizedTitle);
+        subject.setSessionNumber(requestDTO.getSessionNumber());
+        subject.setFee(requestDTO.getFee());
+        subject.setImage(requestDTO.getImage());
+        subject.setMinStudent(requestDTO.getMinStudent());
+        subject.setMaxStudent(requestDTO.getMaxStudent());
+        subject.setDescription(requestDTO.getDescription());
+        subject.setIsActive(requestDTO.getIsActive() != null ? requestDTO.getIsActive() : true);
+
+        Subject saved = subjectRepository.save(subject);
+        return SubjectResponse.builder()
+                .id(saved.getId())
+                .title(saved.getTitle())
+                .code(saved.getCode())
+                .sessionNumber(saved.getSessionNumber())
+                .minStudent(saved.getMinStudent())
+                .maxStudent(saved.getMaxStudent())
+                .fee(saved.getFee())
+                .image(saved.getImage())
+                .description(saved.getDescription())
+                .isActive(saved.getIsActive())
+                .build();
+    }
+
+    @Override
+    public void deleteSubject(Long id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+        subjectRepository.delete(subject);
+    }
+
 }

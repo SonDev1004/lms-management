@@ -2,6 +2,8 @@ package com.lmsservice.controller;
 
 import java.util.List;
 
+import com.lmsservice.dto.response.OptionDto;
+import com.lmsservice.exception.AppException;
 import jakarta.validation.Valid;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -92,5 +94,17 @@ public class ProgramController {
                 .message("Get program detail successfully")
                 .result(result)
                 .build());
+    }
+
+    @GetMapping("/{programId}/subjects")
+    @PreAuthorize("hasAnyRole('ADMIN_IT','ACADEMIC_MANAGER')")
+    public ApiResponse<List<OptionDto>> getSubjectsByProgram(@PathVariable Long programId) {
+
+        var result = programService.getSubjectsByProgram(programId);
+
+        return ApiResponse.<List<OptionDto>>builder()
+                .message("Danh sách môn theo chương trình")
+                .result(result)
+                .build();
     }
 }

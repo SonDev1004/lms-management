@@ -1,16 +1,22 @@
 package com.lmsservice.service;
 
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
-import com.lmsservice.repository.FeedbackRepository;
+import com.lmsservice.common.paging.PageResponse;
+import com.lmsservice.dto.request.CreateFeedbackRequest;
+import com.lmsservice.dto.request.FeedbackFilterRequest;
+import com.lmsservice.dto.response.FeedbackResponse;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+public interface FeedbackService {
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class FeedbackService {
-    FeedbackRepository feedbackRepository;
+    // Academic/Admin xem list + detail
+    PageResponse<FeedbackResponse> getFeedbacks(FeedbackFilterRequest filter, Pageable pageable);
+
+    FeedbackResponse getFeedbackDetail(Long id);
+
+    // STUDENT gửi feedback
+    FeedbackResponse createFeedback(Long studentId, CreateFeedbackRequest request);
+
+    // STUDENT xem list feedback của chính mình
+    PageResponse<FeedbackResponse> getFeedbacksOfStudent(Long studentId, Pageable pageable);
 }

@@ -1,6 +1,7 @@
 package com.lmsservice.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,10 +20,33 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
 
     @Query(
             """
-				SELECT c FROM Course c
-				WHERE (:kw IS NULL OR LOWER(c.code) LIKE LOWER(CONCAT('%',:kw,'%'))
-					OR LOWER(c.title) LIKE LOWER(CONCAT('%',:kw,'%')))
-				ORDER BY c.id DESC
-			""")
+                    	SELECT c FROM Course c
+                    	WHERE (:kw IS NULL OR LOWER(c.code) LIKE LOWER(CONCAT('%',:kw,'%'))
+                    		OR LOWER(c.title) LIKE LOWER(CONCAT('%',:kw,'%')))
+                    	ORDER BY c.id DESC
+                    """)
     List<Course> searchCourses(@Param("kw") String kw);
+
+    @Query("""
+            SELECT COUNT(c) 
+            FROM Course c 
+            WHERE c.teacher.id = :teacherId
+            """)
+    long countByTeacherId(@Param("teacherId") Long teacherId);
+
+    @Query("""
+               select c.trackCode from Course c 
+               where c.program.id = :programId 
+                 and c.trackCode like concat(:prefix, '%')
+            """)
+    List<String> findTrackCodesByProgramAndPrefix(@Param("programId") Long programId,
+                                                  @Param("prefix") String prefix);
+
+    boolean existsByCode(String code);
+
+    Optional<Course> findByTrackCodeAndCurriculumOrder(String trackCode, Integer curriculumOrder);
+
+    List<Course> findByTrackCodeOrderByCurriculumOrderAsc(String trackCode);
+
+    boolean existsByTrackCode(String trackCode);
 }

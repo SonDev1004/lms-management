@@ -1,12 +1,5 @@
 package com.lmsservice.controller;
 
-import java.util.List;
-
-import jakarta.validation.Valid;
-
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
 import com.lmsservice.dto.request.CreateUserRequest;
 import com.lmsservice.dto.request.SendNotificationRequest;
 import com.lmsservice.dto.response.*;
@@ -16,10 +9,14 @@ import com.lmsservice.entity.User;
 import com.lmsservice.repository.RoleRepository;
 import com.lmsservice.service.AdminItService;
 import com.lmsservice.service.NotificationTypeService;
-
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin-it")
@@ -144,13 +141,14 @@ public class AdminItController {
      **/
     // gưi thông báo cho người dùng
     @PostMapping("/notifications/send")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<Void> sendNotification(@RequestBody SendNotificationRequest req) {
         service.sendNotification(req);
         return ApiResponse.<Void>builder().message("Gửi thông báo thành công").build();
     }
 
-    // ✅ Lấy danh sách thông báo hẹn giờ (chưa gửi)
     @GetMapping("/notifications/scheduled")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<NotificationResponse>> getScheduledNotifications() {
         List<NotificationResponse> result = service.getScheduledNotifications();
         return ApiResponse.<List<NotificationResponse>>builder()
@@ -159,7 +157,18 @@ public class AdminItController {
                 .build();
     }
 
+    @GetMapping("/notifications/history")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
+    public ApiResponse<List<NotificationResponse>> getNotificationHistory() {
+        List<NotificationResponse> result = service.getNotificationHistory();
+        return ApiResponse.<List<NotificationResponse>>builder()
+                .message("Lấy lịch sử thông báo thành công")
+                .result(result)
+                .build();
+    }
+
     @GetMapping("/notifications/types")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<OptionDto>> getNotificationTypes() {
         var types = notificationTypeService.getTypeOptions();
         return ApiResponse.<List<OptionDto>>builder()

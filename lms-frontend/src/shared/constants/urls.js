@@ -46,7 +46,7 @@ export default {
     // AdminIT notifications
     sendNotification: `${rootAPI}/admin-it/notifications/send`,
     getScheduledNotifications: `${rootAPI}/admin-it/notifications/scheduled`,
-
+    getAdminNotificationHistory: `${rootAPI}/admin-it/notifications/history`,
     // ===== Options & Search cho form gửi thông báo =====
     notificationTypes: `${rootAPI}/admin-it/notifications/types`,
     roleOptions: `${rootAPI}/admin-it/roles/options`,
@@ -138,10 +138,30 @@ export default {
     // Lịch giảng viên & học viên
     teacherSchedule: (from, to) =>
         `${rootAPI}/teacher/schedule?from=${from}&to=${to}`,
-
+    academySchedule: (from, to) =>
+        `${rootAPI}/academic/schedule?from=${from}&to=${to}`,
     studentSchedule: (from, to) =>
         `${rootAPI}/student/schedule?from=${from}&to=${to}`,
     createUser: `${rootAPI}/admin-it/users/create`,
     getAllRoles: `${rootAPI}/admin-it/roles`,
 
+    // Latest enrollments (Admin IT) – list có filter + paging
+    adminLatestEnrollments: `${rootAPI}/admin/enrollments/latest`,
+    // Tuition Revenue – summary theo năm/tháng/chương trình/môn
+    tuitionRevenueSummary: `${rootAPI}/admin/tuition-revenue/summary`,
+    // Tuition Revenue – danh sách giao dịch chi tiết
+    tuitionRevenueTransactions: `${rootAPI}/admin/tuition-revenue/transactions`,
+    // Course Admin
+    getAllCourses: `${rootAPI}/admin/courses/list-courses`,
+    adminCourseSessions: (courseId) => `${rootAPI}/admin/courses/${courseId}/sessions`,
+    adminCourseGenerateSessions: (courseId) => `${rootAPI}/admin/courses/${courseId}/sessions/generate`,
+    adminCoursePublish: (courseId) => `${rootAPI}/admin/courses/${courseId}/publish`,
+    adminCourseTimeslots: (courseId) => `${rootAPI}/admin/courses/${courseId}/timeslots`,
+    adminCourseAddStudent: (courseId) => `${rootAPI}/admin/courses/${courseId}/students`,
+    adminCourseAssignTeachers: (courseId) => `${rootAPI}/admin/courses/${courseId}/teacher`,
+    createCourse: `${rootAPI}/admin/courses/create-courses-by-program`,
+    searchTeachers: `${rootAPI}/admin-it/search/teachers`,
+    programSubjectsOptions: (programId) => `${rootAPI}/program/${programId}/subjects`,
+    roomOptions:`${rootAPI}/admin/courses/rooms-options`,
+    adminCourseListTimeslots:(courseId)=> `${rootAPI}/admin/courses/${courseId}/list-timeslots`,
 };

@@ -200,8 +200,6 @@ public class AdminItServiceImpl implements AdminItService {
         NotificationType type = notificationTypeRepo
                 .findById(req.getNotificationTypeId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_TYPE_NOT_FOUND));
-
-        // Resolve receivers (dedupe)
         Set<User> receivers = new HashSet<>();
         if (Boolean.TRUE.equals(req.getBroadcast())) {
             receivers.addAll(userRepo.findAll());
@@ -279,8 +277,7 @@ public class AdminItServiceImpl implements AdminItService {
         // 2) Gửi từng user (private)
         for (Notification noti : saved) {
             User u = noti.getUser();
-            // PHẢI trùng với Authentication#getName() đã set trong WebSocketConfig khi CONNECT
-            String principalName = u.getUserName(); // hoặc u.getEmail() nếu bạn dùng email làm principal
+            String principalName = u.getUserName();
 
             NotificationResponse payload = NotificationResponse.builder()
                     .id(noti.getId())
@@ -296,7 +293,7 @@ public class AdminItServiceImpl implements AdminItService {
             try {
                 simpMessagingTemplate.convertAndSendToUser(
                         principalName, // dùng principalName
-                        "/queue/notifications", // FE sub: /user/queue/notifications
+                        "/queue/notifications",
                         payload);
             } catch (Exception e) {
                 System.out.println("[WS] send to user failed (" + principalName + "): " + e.getMessage());
@@ -307,6 +304,7 @@ public class AdminItServiceImpl implements AdminItService {
     @Override
     public List<NotificationResponse> getScheduledNotifications() {
         List<Notification> list = notificationRepo.findScheduledNotifications();
+
         return list.stream()
                 .map(n -> NotificationResponse.builder()
                         .id(n.getId())
@@ -317,9 +315,41 @@ public class AdminItServiceImpl implements AdminItService {
                         .url(n.getUrl())
                         .type(n.getNotificationType().getTitle())
                         .postedDate(n.getScheduledDate())
+                        .scheduledDate(n.getScheduledDate())
+                        .receiverRole(
+                                n.getUser() != null && n.getUser().getRole() != null
+                                        ? n.getUser().getRole().getName()
+                                        : null
+                        )
                         .build())
                 .toList();
     }
+
+    @Override
+    public List<NotificationResponse> getNotificationHistory() {
+        List<Notification> list = notificationRepo.findSentNotifications();
+
+        return list.stream()
+                .map(n -> NotificationResponse.builder()
+                        .id(n.getId())
+                        .title(extractTitle(n.getContent()))
+                        .content(n.getContent())
+                        .severity(n.getSeverity())
+                        .isSeen(n.isSeen())
+                        .url(n.getUrl())
+                        .type(n.getNotificationType().getTitle())
+                        .postedDate(n.getPostedDate())
+                        .scheduledDate(n.getScheduledDate())
+                        .receiverRole(
+                                n.getUser() != null && n.getUser().getRole() != null
+                                        ? n.getUser().getRole().getName()
+                                        : null
+                        )
+                        .build())
+                .toList();
+    }
+
+
 
     private String extractTitle(String html) {
         if (html == null) return "(Thông báo)";

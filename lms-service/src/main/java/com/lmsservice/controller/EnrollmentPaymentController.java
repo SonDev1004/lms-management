@@ -3,6 +3,8 @@ package com.lmsservice.controller;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import com.lmsservice.entity.Course;
+import com.lmsservice.repository.CourseRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.Authentication;
@@ -40,6 +42,7 @@ public class EnrollmentPaymentController {
     private final SubjectRepository subjectRepo;
     private final PendingEnrollmentRepository pendingRepo;
     private final VnpayProps vnpayProps;
+    private final CourseRepository courseRepo;
 
     // ----------------------------
     // 1. Tạo link thanh toán
@@ -47,7 +50,9 @@ public class EnrollmentPaymentController {
     @PostMapping("/create-payment")
     @Operation(summary = "Tạo link thanh toán cho đăng ký học phần hoặc chương trình")
     public ApiResponse<CreatePaymentResponse> createPayment(
-            @RequestBody CreatePaymentRequest req, HttpServletRequest servletRequest) {
+            @RequestBody CreatePaymentRequest req,
+            HttpServletRequest servletRequest
+    ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Long userId = userDetails.getUser().getId();
@@ -57,20 +62,42 @@ public class EnrollmentPaymentController {
             throw new AppException(ErrorCode.INVALID_REQUEST);
         }
 
+        String trackCode = req.getTrackCode();
+        Long courseId = req.getCourseId();
+
+        if (req.getProgramId() != null) {
+            if (trackCode == null || trackCode.trim().isBlank()) {
+                throw new AppException(ErrorCode.TRACK_CODE_REQUIRED);
+            }
+            trackCode = trackCode.trim();
+            // program: courseId optional
+        } else {
+            // subject: must choose a course
+            trackCode = null;
+            if (courseId == null) {
+                throw new AppException(ErrorCode.INVALID_REQUEST);
+            }
+        }
+
         BigDecimal totalFee = (req.getProgramId() != null)
-                ? programRepo
-                        .findById(req.getProgramId())
-                        .orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND))
-                        .getFee()
-                : subjectRepo
-                        .findById(req.getSubjectId())
-                        .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND))
-                        .getFee();
+                ? programRepo.findById(req.getProgramId())
+                .orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND))
+                .getFee()
+                : subjectRepo.findById(req.getSubjectId())
+                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND))
+                .getFee();
 
         String txnRef = "PE-" + userId + "-" + System.currentTimeMillis();
 
         PendingEnrollment pending = enrollmentPaymentService.createPending(
-                userId, req.getProgramId(), req.getSubjectId(), totalFee, txnRef);
+                userId,
+                req.getProgramId(),
+                req.getSubjectId(),
+                trackCode,
+                courseId,
+                totalFee,
+                txnRef
+        );
 
         String orderInfo = "Enroll " + txnRef;
         String ipAddr = servletRequest.getHeader("X-Forwarded-For");
@@ -91,18 +118,14 @@ public class EnrollmentPaymentController {
                 .userId(userId)
                 .programName(
                         req.getProgramId() != null
-                                ? programRepo
-                                        .findById(req.getProgramId())
-                                        .map(Program::getTitle)
-                                        .orElse(null)
-                                : null)
+                                ? programRepo.findById(req.getProgramId()).map(Program::getTitle).orElse(null)
+                                : null
+                )
                 .subjectName(
                         req.getSubjectId() != null
-                                ? subjectRepo
-                                        .findById(req.getSubjectId())
-                                        .map(Subject::getTitle)
-                                        .orElse(null)
-                                : null)
+                                ? subjectRepo.findById(req.getSubjectId()).map(Subject::getTitle).orElse(null)
+                                : null
+                )
                 .orderInfo(orderInfo)
                 .locale("vn")
                 .build();
@@ -112,6 +135,8 @@ public class EnrollmentPaymentController {
                 .result(response)
                 .build();
     }
+
+
 
     // ----------------------------
     // 2. Check trạng thái PendingEnrollment

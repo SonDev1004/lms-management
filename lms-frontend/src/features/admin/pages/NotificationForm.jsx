@@ -18,47 +18,6 @@ import {
     searchPrograms,
 } from "@/features/notification/api/notificationService";
 
-
-/* ===== Helpers ===== */
-const pad2 = (n) => String(n).padStart(2, "0");
-function toIsoLocal(date) {
-    const d = new Date(date);
-    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(
-        d.getMinutes()
-    )}:${pad2(d.getSeconds())}`;
-}
-
-function cleanPayload(raw) {
-    const out = { ...raw };
-
-    out.severity = Number(out.severity);
-    out.notificationTypeId = Number(out.notificationTypeId);
-
-    if (out.scheduledDate) out.scheduledDate = toIsoLocal(out.scheduledDate);
-    else delete out.scheduledDate;
-
-    if (Array.isArray(out.targetUsers)) {
-        out.targetUserIds = out.targetUsers.map((u) => u.id);
-        delete out.targetUsers;
-    }
-    if (Array.isArray(out.targetCourses)) {
-        out.targetCourseIds = out.targetCourses.map((c) => c.id);
-        delete out.targetCourses;
-    }
-    if (Array.isArray(out.targetPrograms)) {
-        out.targetProgramIds = out.targetPrograms.map((p) => p.id);
-        delete out.targetPrograms;
-    }
-
-    ["targetRoles", "targetUserIds", "targetCourseIds", "targetProgramIds"].forEach((k) => {
-        if (!Array.isArray(out[k]) || out[k].length === 0) delete out[k];
-    });
-
-    if (!out.url?.trim()) delete out.url;
-
-    return out;
-}
-
 // Abort helper
 function useAbortable() {
     const ctrl = useRef(null);
@@ -219,13 +178,15 @@ export default function NotificationForm() {
                 });
                 return;
             }
+            if (import.meta.env.DEV) console.log("[NOTI] raw form", form);
+            await sendNotification(form);
 
-            const payload = cleanPayload(form);
-            if (import.meta.env.DEV) console.log("[NOTI] payload", payload);
+            toast.current?.show({
+                severity: "success",
+                summary: "Đã gửi",
+                detail: "Thông báo đã gửi / hẹn giờ.",
+            });
 
-            await sendNotification(payload);
-
-            toast.current?.show({ severity: "success", summary: "Đã gửi", detail: "Thông báo đã gửi / hẹn giờ." });
             setForm({
                 title: "",
                 content: "",
@@ -242,11 +203,21 @@ export default function NotificationForm() {
         } catch (e) {
             const status = e?.status || e?.response?.status;
             const msg =
-                e?.detail || e?.response?.data?.message || e?.response?.data?.error || e?.message || "Không thể gửi thông báo";
-            toast.current?.show({ severity: "error", summary: `Lỗi${status ? ` ${status}` : ""}`, detail: msg, life: 6500 });
+                e?.detail ||
+                e?.response?.data?.message ||
+                e?.response?.data?.error ||
+                e?.message ||
+                "Không thể gửi thông báo";
+            toast.current?.show({
+                severity: "error",
+                summary: `Lỗi${status ? ` ${status}` : ""}`,
+                detail: msg,
+                life: 6500,
+            });
             if (import.meta.env.DEV) console.error(e);
         }
     };
+
 
     /* ===== Item templates for suggestions ===== */
     const userItemTpl = (u) => (

@@ -1,0 +1,267 @@
+/* ============================
+   MonthPicker Styles (Custom)
+   ============================ */
+
+/* Button hiển thị tháng */
+.mp-input {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #111827;
+    cursor: pointer;
+    width: 150px;
+    justify-content: space-between;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+/* icon */
+.mp-ico {
+    font-size: 16px;
+}
+
+/* text hiển thị tháng (MM/YYYY) */
+.mp-text {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #111827 !important;
+}
+
+/* khi hover */
+.mp-input:hover {
+    border-color: #cbd5e1;
+}
+
+/* khi focus mở popup */
+.mp-input[aria-expanded="true"] {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* popup chọn tháng */
+.mp-pop.card {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    z-index: 50;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 12px 24px rgba(15,23,42,0.14);
+    width: 220px;
+}
+
+/* header năm */
+.mp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* grid tháng */
+.mp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.mp-cell {
+    padding: 6px 0;
+    background: #f9fafb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: center;
+    transition: 0.12s ease;
+}
+
+.mp-cell:hover {
+    background: #e5e7eb;
+}
+
+.mp-cell.is-active {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Layout */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Individual filter item */
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 150px;
+    max-width: 280px;
+}
+
+.filter-item label {
+    font-size: 12px;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Inputs */
+.filter-item input[type="month"],
+.filter-item select {
+    height: 36px;
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.filter-item input[type="month"]:focus,
+.filter-item select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+    transition: background-color 0.2s ease;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    top: 3px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12);
+    transition: transform 0.2s ease;
+}
+
+.switch input:checked + .slider {
+    background-color: #10b981;
+}
+
+.switch input:checked + .slider::before {
+    transform: translateX(18px);
+}
+
+/* View mode buttons */
+.view-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.view-buttons button {
+    height: 36px;
+    padding: 6px 12px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #374151;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.view-buttons button:hover {
+    border-color: #cbd5e1;
+}
+
+.view-buttons button.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+/* Export button */
+.filter-item.export {
+    margin-left: auto;
+}
+
+.filter-item.export button {
+    height: 36px;
+    padding: 6px 14px;
+    background: linear-gradient(90deg, #ef4444, #f97316);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(249, 115, 22, 0.12);
+}
+
+.filter-item.export button:hover {
+    opacity: 0.95;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+    .filter-item {
+        min-width: 120px;
+        max-width: 100%;
+        flex: 1 1 45%;
+    }
+
+    .filter-item.export {
+        order: 99;
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 520px) {
+    .filter-bar {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .filter-item {
+        flex: 1 1 100%;
+    }
+
+    .filter-item.export {
+        justify-content: center;
+    }
+}

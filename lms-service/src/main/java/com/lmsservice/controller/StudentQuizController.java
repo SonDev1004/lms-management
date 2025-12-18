@@ -81,7 +81,6 @@ public class StudentQuizController {
 
 
     // -------- Helper: build câu hỏi từ snapshot --------
-    @SuppressWarnings("unchecked")
     private QuizQuestionViewDto buildQuestionViewFromSnapshot(AssignmentDetail detail) {
         QuizQuestionViewDto dto = new QuizQuestionViewDto();
         dto.setQuestionId(detail.getId());

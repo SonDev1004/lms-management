@@ -1,12 +1,11 @@
 package com.lmsservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -29,4 +28,14 @@ public class Feedback extends EntityAbstract {
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     Student student;
+
+    @Column(name = "created_at")
+    LocalDateTime createdAt;
+
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package com.lmsservice.dto.response;
 
-import com.lmsservice.dto.request.MakeUpRequestStatus;
+import com.lmsservice.util.MakeUpRequestStatus;
 import lombok.Builder;
 import lombok.Data;
 

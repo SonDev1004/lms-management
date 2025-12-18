@@ -2,6 +2,7 @@ package com.lmsservice.service;
 
 import java.util.List;
 
+import com.lmsservice.dto.response.OptionDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,4 +23,10 @@ public interface ProgramService {
     PageResponse<ProgramResponse> getAllPrograms(ProgramFilterRequest f, Pageable pageable);
 
     ProgramDetailResponse getProgramDetail(Long programId, boolean onlyUpcoming);
+
+    List<OptionDto> getSubjectsByProgram(Long programId);
+
+    void updateProgram(Long id, ProgramRequest request);
+
+    void deleteProgram(Long id);
 }

@@ -14,7 +14,7 @@ import QuickActionsBar from '../components/QuickActionsBar';
 import EnrollmentsTable from '../components/EnrollmentsTable';
 import StudentProfileDialog from '../components/StudentProfileDialog';
 import ActionNoteDialog from '../components/ActionNoteDialog';
-import { fetchEnrollments } from '../mocks/enrollments';
+import { fetchLatestEnrollments  } from '@/features/new-enrollments/api/enrollmentSerivce.js';
 
 const dayStart = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
 const dayEnd   = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
@@ -39,49 +39,70 @@ export default function NewEnrollmentsPage() {
 
     React.useEffect(() => {
         let alive = true;
+
         (async () => {
             try {
                 setLoading(true);
-                const data = await fetchEnrollments();
+                const pageData = await fetchLatestEnrollments({ page: 0, size: 200 });
+
                 if (!alive) return;
-                setRows(Array.isArray(data) ? data : []);
+                setRows(Array.isArray(pageData.content) ? pageData.content : []);
             } catch (err) {
                 if (alive) {
                     setRows([]);
-                    toast.current?.show({ severity:'error', summary:'Load failed', detail:'Could not fetch enrollments.', life:3000 });
-                    console.error('[NewEnrollments] fetchEnrollments failed:', err);
+                    toast.current?.show({
+                        severity: "error",
+                        summary: "Load failed",
+                        detail: err?.message || "Could not fetch enrollments.",
+                        life: 3000,
+                    });
+                    console.error("[NewEnrollments] fetchLatestEnrollments failed:", err);
                 }
             } finally {
-                if (alive) setLoading(false);
+                if (alive) {
+                    setLoading(false);
+                }
             }
         })();
-        return () => { alive = false; };
+
+        return () => {
+            alive = false;
+        };
     }, []);
+
 
     const filteredRows = React.useMemo(() => {
         const q = (filters.query || '').trim().toLowerCase();
         return rows.filter((r) => {
-            const status  = r?.enrollStatus ?? r?.status ?? 'Pending';
-            const program = String(r?.program ?? '');
-            const course  = String(r?.course ?? '');
+
+            const status = r?.enrollStatus ?? r?.status ?? 'Pending';
+            const program = r?.programTitle || '';
+            const course  = r?.subjectTitle || '';
 
             const matchQ =
-                !q || [r?.name, r?.email, r?.phone, String(r?.id), program, course]
-                    .some(x => String(x || '').toLowerCase().includes(q));
+                !q || [
+                    r?.studentName,
+                    r?.email,
+                    r?.phone,
+                    String(r?.id),
+                    program,
+                    course
+                ].some(x => String(x || '').toLowerCase().includes(q));
 
             const matchStatus = !filters.status || filters.status === status;
             const matchPay    = !filters.payStatus || filters.payStatus === r?.payStatus;
 
-            const dt = safeDate(r?.applied);
+            const dt = safeDate(r?.lastPaymentAt);
             const matchFrom = !filters.from || (dt && dt >= dayStart(filters.from));
             const matchTo   = !filters.to   || (dt && dt <= dayEnd(filters.to));
 
-            const matchProgram = !filters.program || String(filters.program) === program;
-            const matchCourse  = !filters.course  || String(filters.course)  === course;
+            const matchProgram = !filters.program || String(filters.program) === String(r.programId);
+            const matchCourse  = !filters.course  || String(filters.course)  === String(r.subjectId);
 
             return matchQ && matchStatus && matchPay && matchFrom && matchTo && matchProgram && matchCourse;
         });
     }, [rows, filters]);
+
 
     React.useEffect(() => {
         setSelected(prev => prev.filter(sel => filteredRows.some(r => r.id === sel.id)));
@@ -124,9 +145,17 @@ export default function NewEnrollmentsPage() {
             const header = ['ID','Name','Email','Phone','Program','Course','Payment Status','Enrollment Status','Applied']
                 .map(csvEscape).join(',');
             const body = filteredRows.map(r => ([
-                r?.id, r?.name, r?.email, r?.phone, r?.program, r?.course,
-                r?.payStatus, (r?.enrollStatus ?? r?.status ?? 'Pending'), r?.applied
+                r?.id,
+                r?.studentName,
+                r?.email,
+                r?.phone,
+                r?.programTitle,
+                r?.subjectTitle,
+                r?.payStatus,
+                (r?.enrollStatus ?? r?.status ?? 'Pending'),
+                r?.lastPaymentAt
             ].map(csvEscape).join(','))).join('\n');
+
             const csv = [header, body].join('\n');
             const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);

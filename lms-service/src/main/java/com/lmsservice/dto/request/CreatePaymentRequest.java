@@ -16,4 +16,8 @@ public class CreatePaymentRequest {
 
     @NotNull(message = "Subject ID is required")
     Long subjectId;
+
+    Long courseId;
+
+    String trackCode;
 }
