@@ -23,7 +23,7 @@ export default function NotificationBell() {
             <OverlayPanel ref={opRef} className="w-96">
                 <div className="p-2">
                     {unseen.length === 0 ? (
-                        <div className="text-sm text-gray-500">Không có thông báo mới</div>
+                        <div className="text-sm text-gray-500">There are no new notifications</div>
                     ) : (
                         unseen.map((n) => (
                             <div key={n.id ?? `${n.title}-${n.postedDate}`} className="border-b border-gray-100 py-2">
@@ -33,7 +33,7 @@ export default function NotificationBell() {
                   <span className="text-xs text-gray-400">
                     {n.postedDate ? format(new Date(n.postedDate), "dd/MM HH:mm") : ""}
                   </span>
-                                    <Button text label="Đã xem" size="small" onClick={() => markRead(n.id, n)} />
+                                    <Button text label="Viewed" size="small" onClick={() => markRead(n.id, n)} />
                                 </div>
                             </div>
                         ))

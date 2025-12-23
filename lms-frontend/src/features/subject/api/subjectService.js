@@ -1,6 +1,7 @@
 import axiosClient from "@/shared/api/axiosClient.js";
 import {AppUrls} from "@/shared/constants/index.js";
 
+
 export async function getListSubject({page = 1, size = 10} = {}) {
     const url = AppUrls.listSubject;
     try {
@@ -25,15 +26,8 @@ export async function getListSubject({page = 1, size = 10} = {}) {
 }
 
 function mapSubject(item = {}) {
-
     const image = item.imgUrl ?? item.image ?? "/noimg.png";
-
     const fee = Number(item.fee) || 0;
-
-    const tuitionMin =
-        Number(item.tuitionMin ?? item.minFee ?? item.feeMin ?? fee) || 0;
-    const tuitionMax =
-        Number(item.tuitionMax ?? item.maxFee ?? item.feeMax ?? fee) || 0;
 
     return {
         id: item.id,
@@ -41,8 +35,6 @@ function mapSubject(item = {}) {
         code: item.code?.trim?.() ?? "",
         sessionNumber: Number(item.sessionNumber) || 0,
         fee,
-        tuitionMin,
-        tuitionMax,
         image,
         minStudent: Number(item.minStudent) || 0,
         maxStudent: Number(item.maxStudent) || 0,
@@ -51,7 +43,6 @@ function mapSubject(item = {}) {
         isActive: Boolean(item.isActive),
     };
 }
-
 
 export async function getSubjectDetail(subjectId) {
     const url = AppUrls.getDetailSubject(subjectId);
@@ -80,13 +71,12 @@ export function mapSubjectDetail(data) {
         minStudent: Number(data.minStudents ?? data.minStudent) || 0,
         isActive: Boolean(data.isActive),
 
+        // legacy fields – giữ nguyên
         audience: data.audience ?? "Teens & Adults",
         level: data.level ?? "Intermediate (B1–B2)",
-        summary: data.summary ?? "Boost your listening accuracy with exam-style drills.",
-        rating: Number(data.rating ?? 4.7),
+        summary: data.summary ?? "",
+        rating: Number(data.rating ?? 0),
         reviewCount: Number(data.reviewCount ?? 0),
-
-        syllabus: Array.isArray(data.syllabus) ? data.syllabus : [],
 
         classes: Array.isArray(data.classes)
             ? data.classes.map((cls) => ({
@@ -99,8 +89,140 @@ export function mapSubjectDetail(data) {
                 schedule: cls.schedule,
                 status: cls.status,
                 statusName: cls.statusName,
-                place: cls.place || cls.room,
             }))
             : [],
     };
+}
+
+/**
+ * =========================
+ * NEW APIs FOR STAFF (SAFE ADD)
+ * =========================
+ */
+
+function unwrap(res) {
+    return res?.data?.result ?? res?.data ?? res;
+}
+
+/**
+ * Mapper: SubjectResponse (STAFF)
+ */
+export function mapSubjectP(s = {}) {
+    return {
+        id: s.id,
+        title: s.title ?? "",
+        code: (s.code ?? "").trim(),
+        sessionNumber: s.sessionNumber ?? 0,
+        fee: typeof s.fee === "string" ? Number(s.fee) || 0 : (s.fee ?? 0),
+        minStudent: s.minStudent ?? 0,
+        maxStudent: s.maxStudent ?? 0,
+        isActive: !!s.isActive,
+    };
+}
+
+/**
+ * GET /api/subject/all-subject
+ * Paging + filter – dùng cho Staff Subjects tab
+ */
+export async function getSubjectsPage({
+                                          page0 = 0,
+                                          size = 10,
+                                          pageBase = 1,
+                                          keyword,
+                                          title,
+                                          code,
+                                          isActive,
+                                          feeMin,
+                                          feeMax,
+                                          sort,
+                                      } = {}) {
+    const page = pageBase === 1 ? page0 + 1 : page0;
+
+    const res = await axiosClient.get(AppUrls.listSubject, {
+        params: {
+            page,
+            size,
+            ...(keyword ? {keyword} : null),
+            ...(title ? {title} : null),
+            ...(code ? {code} : null),
+            ...(isActive != null ? {isActive} : null),
+            ...(feeMin != null ? {feeMin} : null),
+            ...(feeMax != null ? {feeMax} : null),
+            ...(sort ? {sort} : null),
+        },
+    });
+
+    const result = unwrap(res) ?? {};
+    const itemsRaw = result.items ?? result.content ?? [];
+
+    const apiPage = result.page ?? result.number ?? page;
+    const apiSize = result.size ?? result.pageSize ?? size;
+    const page0FromApi =
+        pageBase === 1 ? Math.max(0, (apiPage ?? 1) - 1) : (apiPage ?? 0);
+
+    return {
+        items: itemsRaw.map(mapSubjectP),
+        paging: {
+            page: apiPage,
+            page0: page0FromApi,
+            size: apiSize,
+            totalItems: result.totalItems ?? result.totalElements ?? 0,
+            totalPages: result.totalPages ?? 0,
+            hasNext: !!result.hasNext,
+            hasPrevious: !!result.hasPrevious,
+            pageBase,
+        },
+    };
+}
+
+/**
+ * Mapper: SubjectDetailResponse (STAFF)
+ * KHỚP 100% DTO BE
+ */
+export function mapSubjectDetailP(data) {
+    if (!data) return null;
+
+    return {
+        id: data.id,
+        code: (data.codeSubject ?? "").trim(),
+        title: data.subjectTitle ?? "",
+        description: data.subjectDescription ?? "",
+        sessionNumber: data.sessionNumber ?? 0,
+        fee: Number(data.fee) || 0,
+        image: data.imgUrl ?? "/noimg.png",
+        minStudents: data.minStudents ?? 0,
+        maxStudents: data.maxStudents ?? 0,
+        isActive: !!data.isActive,
+
+        classes: Array.isArray(data.classes)
+            ? data.classes.map((c) => ({
+                id: c.courseId,
+                title: c.courseTitle ?? "",
+                code: (c.courseCode ?? "").trim(),
+                plannedSessions: c.plannedSessions ?? 0,
+                capacity: c.capacity ?? 0,
+                startDate: c.startDate ?? null,
+                schedule: c.schedule ?? "",
+                statusName: c.statusName ?? "",
+            }))
+            : [],
+    };
+}
+
+/**
+ * GET subject detail (STAFF)
+ */
+export async function getSubjectDetailP(id, {onlyUpcoming = true} = {}) {
+    const res = await axiosClient.get(AppUrls.getDetailSubject(id), {
+        params: {onlyUpcoming},
+    });
+    return mapSubjectDetailP(unwrap(res));
+}
+
+/**
+ * CREATE subject
+ */
+export async function createSubject(payload) {
+    const res = await axiosClient.post(AppUrls.createSubject, payload);
+    return unwrap(res);
 }

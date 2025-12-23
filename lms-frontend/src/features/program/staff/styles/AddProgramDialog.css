@@ -180,9 +180,9 @@
 }
 
 /* dark mode */
-@media (prefers-color-scheme: dark){
+@media (prefers-color-scheme: light){
     .p-dialog-mask.p-component-overlay.p-component-overlay-enter{
-        background: color-mix(in oklab, #010615 60%, transparent);
+        background: color-mix(in oklab, #ffffff 60%, transparent);
         backdrop-filter: blur(8px) saturate(120%);
     }
     .dlg .p-dialog-header,

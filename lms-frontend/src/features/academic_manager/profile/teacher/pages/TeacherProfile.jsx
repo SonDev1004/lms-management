@@ -1,182 +1,145 @@
-import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
-import { TabView, TabPanel } from 'primereact/tabview';
-import { Toast } from 'primereact/toast';
-import { Skeleton } from 'primereact/skeleton';
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
-import useTeacher from '../hooks/useTeacher';
-import TeacherHeaderBar from '../components/TeacherHeaderBar';
-import OverviewTab from '../components/OverviewTab';
-import SubjectsTable from '../components/SubjectsTable';
-import Timetable from '../components/Timetable';
-import AttendanceTable from '../components/AttendanceTable';
-import GradingTable from '../components/GradingTable';
-import FeedbackList from '../components/FeedbackList';
-import DocumentsTable from '../components/DocumentsTable';
-import EditTeacherDialog from '../components/EditTeacherDialog';
-import AssignClassDialog from '../components/AssignClassDialog';
-import '../styles/teacher-profile.css';
-import '../styles/TeacherHeaderBar.css';
-const TAB_KEY = 'tp:lastTab';
+import { Card } from "primereact/card";
+import { Tag } from "primereact/tag";
+import { Button } from "primereact/button";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+
+import userAdminService from "@/features/admin/api/userAdminService.js";
+import "../styles/teacher-profile.css";
+
+function statusSeverity(isActive) {
+    return isActive ? "success" : "danger";
+}
 
 export default function TeacherProfile() {
-    const toast = useRef(null);
-    const { id } = useParams();
-    const { teacher, loading } = useTeacher(id);
+    const { id } = useParams(); // userId
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const [data, setData] = useState();
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [err, setErr] = useState(null);
 
-    const [editOpen, setEditOpen] = useState(false);
-    const [assignOpen, setAssignOpen] = useState(false);
+    const [profile, setProfile] = useState(null);
+    const [courses, setCourses] = useState([]);
 
-    const [activeIndex, setActiveIndex] = useState(() => {
-        const saved = Number(localStorage.getItem(TAB_KEY));
-        return Number.isFinite(saved) ? saved : 0;
-    });
+    const goBack = () => {
+        if (location.key !== "default") navigate(-1);
+        else navigate("/admin/teacher-list");
+    };
 
     useEffect(() => {
-        setData(teacher);
-    }, [teacher]);
+        let alive = true;
+        (async () => {
+            setLoading(true);
+            setErr(null);
+            try {
+                const [p, cs] = await Promise.all([
+                    userAdminService.getStaffTeacherProfile(id),
+                    userAdminService.getStaffTeacherCourses(id),
+                ]);
+                if (!alive) return;
 
-    const campuses = useMemo(() => {
-        const set = new Set((teacher?.classes || []).map(c => c.campus).filter(Boolean));
-        return Array.from(set);
-    }, [teacher]);
+                setProfile({
+                    id: p?.id ?? id,
+                    userName: p?.userName ?? "",
+                    email: p?.email ?? "",
+                    firstName: p?.firstName ?? "",
+                    lastName: p?.lastName ?? "",
+                    roleName: p?.roleName ?? "",
+                    isActive: typeof p?.isActive === "boolean" ? p.isActive : true,
+                });
 
-    const handleSaveProfile = useCallback((form) => {
-        try {
-            setData(prev => ({ ...prev, ...form }));
-            setEditOpen(false);
-            toast.current?.show({ severity: 'success', summary: 'Saved', detail: 'Profile updated (mock).' });
-        } catch (e) {
-            setError('Failed to save profile.');
-        }
-    }, []);
+                setCourses(Array.isArray(cs) ? cs : []);
+            } catch (e) {
+                if (!alive) return;
+                setErr(e?.message || "Cannot load teacher profile.");
+            } finally {
+                if (alive) setLoading(false);
+            }
+        })();
 
-    const handleAssign = useCallback((cls) => {
-        try {
-            const newClass = {
-                id: `C-${Math.floor(Math.random() * 900 + 100)}`,
-                ...cls
-            };
-            setData(prev => ({ ...prev, classes: [...(prev?.classes || []), newClass] }));
-            setAssignOpen(false);
-            toast.current?.show({ severity: 'success', summary: 'Assigned', detail: 'Class added (mock).' });
-        } catch (e) {
-            setError('Failed to assign class.');
-        }
-    }, []);
+        return () => {
+            alive = false;
+        };
+    }, [id]);
 
-    const onTabChange = (e) => {
-        setActiveIndex(e.index);
-        localStorage.setItem(TAB_KEY, String(e.index));
-    };
+    const fullName = useMemo(() => {
+        const fn = profile?.firstName?.trim() || "";
+        const ln = profile?.lastName?.trim() || "";
+        const name = `${fn} ${ln}`.trim();
+        return name || profile?.userName || `Teacher #${id}`;
+    }, [profile, id]);
 
-    if (loading) {
+    if (loading) return <div style={{ padding: 24 }}>Loading...</div>;
+
+    if (err) {
         return (
-            <div className="tp-container">
-                <div className="p-card p-4 mb-3">
-                    <div className="flex gap-3">
-                        <Skeleton shape="circle" size="4rem" />
-                        <div className="flex-1">
-                            <Skeleton width="40%" height="1.8rem" className="mb-2" />
-                            <Skeleton width="25%" />
-                        </div>
-                    </div>
-                </div>
-                <Skeleton width="100%" height="2.75rem" className="mb-3" />
-                <div className="grid" style={{ gap: '1rem' }}>
-                    <Skeleton height="18rem" />
-                    <Skeleton height="18rem" />
-                </div>
+            <div style={{ padding: 24 }}>
+                <Button label="Back" icon="pi pi-arrow-left" outlined onClick={goBack} />
+                <div style={{ marginTop: 12, color: "crimson" }}>{err}</div>
             </div>
         );
     }
 
-    if (error) {
+    if (!profile) {
         return (
-            <div className="tp-container">
-                <div className="p-card p-4">
-                    <h3>Something went wrong</h3>
-                    <p className="muted">{error}</p>
-                </div>
+            <div style={{ padding: 24 }}>
+                <Button label="Back" icon="pi pi-arrow-left" outlined onClick={goBack} />
+                <div style={{ marginTop: 12 }}>Teacher not found.</div>
             </div>
         );
     }
-
-    if (!data) {
-        return <div className="tp-container">No data.</div>;
-    }
-
-    const counts = {
-        classes: data.classes?.length || 0,
-        sessions: data.sessions?.length || 0,
-        grading: data.grading?.length || 0,
-        feedback: data.feedback?.length || 0,
-        documents: data.documents?.length || 0
-    };
-
-    const TabLabel = ({ text, count }) => (
-        <span>
-      {text}
-            {!!count && <span className="ml-2 chip">{count}</span>}
-    </span>
-    );
 
     return (
-        <div className="tp-container">
-            <Toast ref={toast} position="top-right" />
-            <TeacherHeaderBar teacher={data} onEdit={() => setEditOpen(true)} />
+        <div style={{ padding: 24, maxWidth: 1150, margin: "0 auto", display: "grid", gap: 16 }}>
+            <div className="flex align-items-center justify-content-between flex-wrap gap-2">
+                <Button label="Back" icon="pi pi-arrow-left" outlined onClick={goBack} />
+                <div className="flex align-items-center gap-2">
+                    <Tag value={profile.isActive ? "Active" : "Inactive"} severity={statusSeverity(profile.isActive)} />
+                    <Tag value={profile.roleName || "TEACHER"} severity="info" />
+                </div>
+            </div>
 
-            <TabView className="tp-tabs" activeIndex={activeIndex} onTabChange={onTabChange}>
-                <TabPanel header="Overview">
-                    <OverviewTab teacher={data} />
-                </TabPanel>
+            <Card>
+                <div className="grid">
+                    <div className="col-12 md:col-8">
+                        <div style={{ fontSize: 22, fontWeight: 800 }}>{fullName}</div>
+                        <div className="text-500" style={{ marginTop: 6 }}>
+                            <div><b>Email:</b> {profile.email || "--"}</div>
+                            <div><b>Username:</b> {profile.userName || "--"}</div>
+                        </div>
+                    </div>
 
-                <TabPanel header={<TabLabel text="Subjects & Classes" count={counts.classes} />}>
-                    <SubjectsTable classes={data.classes} onAssign={() => setAssignOpen(true)} />
-                </TabPanel>
+                    <div className="col-12 md:col-4">
+                        <div className="text-500">Teacher ID</div>
+                        <div style={{ fontSize: 18, fontWeight: 800 }}>{profile.id}</div>
+                    </div>
+                </div>
+            </Card>
 
-                <TabPanel header="Timetable">
-                    <Timetable classes={data.classes} />
-                </TabPanel>
+            <Card>
+                <div className="flex align-items-center justify-content-between mb-3">
+                    <div style={{ fontSize: 18, fontWeight: 800 }}>Courses</div>
+                    <div className="text-500">{courses.length} course(s)</div>
+                </div>
 
-                <TabPanel header={<TabLabel text="Attendance" count={counts.sessions} />}>
-                    <AttendanceTable sessions={data.sessions} />
-                </TabPanel>
-
-                <TabPanel header={<TabLabel text="Grading" count={counts.grading} />}>
-                    <GradingTable items={data.grading} />
-                </TabPanel>
-
-                <TabPanel header={<TabLabel text="Feedback" count={counts.feedback} />}>
-                    <FeedbackList items={data.feedback} />
-                </TabPanel>
-
-                <TabPanel header={<TabLabel text="Documents" count={counts.documents} />}>
-                    <DocumentsTable items={data.documents} />
-                </TabPanel>
-            </TabView>
-
-            {editOpen && (
-                <EditTeacherDialog
-                    open={editOpen}
-                    onClose={() => setEditOpen(false)}
-                    value={data}
-                    onSave={handleSaveProfile}
-                />
-            )}
-
-            {assignOpen && (
-                <AssignClassDialog
-                    open={assignOpen}
-                    onClose={() => setAssignOpen(false)}
-                    onSave={handleAssign}
-                    subjects={data.subjectsDetail || []}
-                    campuses={campuses}
-                />
-            )}
+                <DataTable
+                    value={courses}
+                    paginator
+                    rows={10}
+                    rowsPerPageOptions={[10, 20, 50]}
+                    emptyMessage="No courses"
+                    responsiveLayout="scroll"
+                >
+                    <Column field="code" header="Code" sortable style={{ width: 160 }} />
+                    <Column field="title" header="Course" sortable />
+                    <Column field="startDate" header="Start date" sortable style={{ width: 180 }} />
+                    <Column field="status" header="Status" sortable style={{ width: 160 }} />
+                </DataTable>
+            </Card>
         </div>
     );
 }

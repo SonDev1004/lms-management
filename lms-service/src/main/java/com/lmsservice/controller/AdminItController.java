@@ -2,6 +2,7 @@ package com.lmsservice.controller;
 
 import com.lmsservice.dto.request.CreateUserRequest;
 import com.lmsservice.dto.request.SendNotificationRequest;
+import com.lmsservice.dto.request.program.UpdateUserRequest;
 import com.lmsservice.dto.response.*;
 import com.lmsservice.entity.Permission;
 import com.lmsservice.entity.Role;
@@ -13,6 +14,8 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,14 +35,48 @@ public class AdminItController {
      * ------------------- USER -------------------
      **/
 
-    // Lấy danh sách user (lọc theo role hoặc keyword)
+// Lấy danh sách user (lọc theo role hoặc keyword)
     @GetMapping("/users")
-    public ApiResponse<List<User>> getUsers(
-            @RequestParam(required = false) String role, @RequestParam(required = false) String keyword) {
-        return ApiResponse.<List<User>>builder()
+    public ApiResponse<Page<UserResponse>> getUsers(
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false, name="keyword") String q,
+            Pageable pageable
+    ) {
+        var page = service.getUsers(role, q, pageable);
+        return ApiResponse.<Page<UserResponse>>builder()
+                .code(1000)
                 .message("Lấy danh sách người dùng thành công")
-                .result(service.getUsers(role, keyword))
+                .result(page)
                 .build();
+    }
+
+    // Lấy thông tin user theo ID
+    @GetMapping("/users/{id}")
+    public ApiResponse<UserResponse> getUserById(@PathVariable Long id) {
+        return ApiResponse.<UserResponse>builder()
+                .message("Get user successfully")
+                .result(service.getUserById(id))
+                .build();
+    }
+    // Update user
+    @PutMapping("/users/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
+    public ApiResponse<UserResponse> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserRequest req
+    ) {
+        return ApiResponse.<UserResponse>builder()
+                .message("Cập nhật tài khoản thành công")
+                .result(service.updateUser(id, req))
+                .build();
+    }
+
+    // Xoá user
+    @DeleteMapping("/users/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
+    public ApiResponse<Void> deleteUser(@PathVariable Long id) {
+        service.deleteUser(id);
+        return ApiResponse.<Void>builder().message("Xoá tài khoản thành công").build();
     }
 
     // Tạo tài khoản mới
@@ -52,21 +89,15 @@ public class AdminItController {
                 .build();
     }
 
-    // Xoá user
-    @DeleteMapping("/users/{id}")
-    public ApiResponse<Void> deleteUser(@PathVariable Long id) {
-        service.deleteUser(id);
-        return ApiResponse.<Void>builder().message("Xoá tài khoản thành công").build();
-    }
-
     // Gán role cho user
     @PutMapping("/users/{userId}/role/{roleId}")
-    public ApiResponse<User> assignRole(@PathVariable Long userId, @PathVariable Long roleId) {
-        return ApiResponse.<User>builder()
+    public ApiResponse<UserResponse> assignRole(@PathVariable Long userId, @PathVariable Long roleId) {
+        return ApiResponse.<UserResponse>builder()
                 .message("Cập nhật vai trò cho tài khoản thành công")
                 .result(service.updateUserRole(userId, roleId))
                 .build();
     }
+
 
     /**
      * ------------------- ROLE -------------------
@@ -75,12 +106,17 @@ public class AdminItController {
     // Lấy danh sách role
     @GetMapping("/roles")
     @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
-    public ApiResponse<List<Role>> getRoles() {
-        return ApiResponse.<List<Role>>builder()
+    public ApiResponse<List<OptionDto>> getRoles() {
+        var result = service.getAllRoles().stream()
+                .map(r -> new OptionDto(r.getId().intValue(), r.getName()))
+                .toList();
+
+        return ApiResponse.<List<OptionDto>>builder()
                 .message("Lấy danh sách vai trò thành công")
-                .result(service.getAllRoles())
+                .result(result)
                 .build();
     }
+
 
     // Tạo role mới
     @PostMapping("/roles")

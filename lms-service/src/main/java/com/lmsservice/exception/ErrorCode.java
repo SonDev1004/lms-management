@@ -115,7 +115,8 @@ public enum ErrorCode {
     TRACK_CODE_REQUIRED(1090, "Track code is required for courses in a track", HttpStatus.BAD_REQUEST),
     TRACK_NOT_FOUND(1091, "Track not found", HttpStatus.NOT_FOUND),
     COURSE_ID_REQUIRED(1092, "Course ID is required", HttpStatus.BAD_REQUEST),
-    COURSE_SUBJECT_NOT_MATCH(1093, "Course does not belong to the specified subject", HttpStatus.BAD_REQUEST);
+    COURSE_SUBJECT_NOT_MATCH(1093, "Course does not belong to the specified subject", HttpStatus.BAD_REQUEST),
+    STUDENT_NOT_FOUND(1094, "Student not found", HttpStatus.NOT_FOUND);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

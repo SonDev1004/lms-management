@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.lmsservice.dto.request.program.UpdateUserRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,20 +40,43 @@ public class AdminItServiceImpl implements AdminItService {
     MailService mailService;
     NotificationRepository notificationRepo;
     NotificationTypeRepository notificationTypeRepo;
-    NotificationSocketController socketController; // giữ lại nếu nơi khác dùng
+    NotificationSocketController socketController;
     SimpMessagingTemplate simpMessagingTemplate;
 
     // ------------------- USER -------------------
     @Override
-    public List<User> getUsers(String role, String keyword) {
-        if (keyword != null && !keyword.isBlank()) {
-            return userRepo.searchUsers(keyword);
-        } else if (role != null && !role.isBlank()) {
-            return userRepo.findByRole_NameIgnoreCase(role);
-        } else {
-            return userRepo.findAll();
-        }
+    public Page<UserResponse> getUsers(String role, String keyword, Pageable pageable) {
+        Page<User> page = userRepo.searchUsersPage(role, keyword, pageable);
+
+        return page.map(u -> UserResponse.builder()
+                .id(u.getId())
+                .userName(u.getUserName())
+                .email(u.getEmail())
+                .firstName(u.getFirstName())
+                .lastName(u.getLastName())
+                .isActive(u.getIsActive())
+                .role(u.getRole() == null ? null :
+                        new UserResponse.RoleInfo(u.getRole().getId(), u.getRole().getName()))
+                .build());
     }
+
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        User u = userRepo.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        return UserResponse.builder()
+                .id(u.getId())
+                .userName(u.getUserName())
+                .email(u.getEmail())
+                .firstName(u.getFirstName())
+                .lastName(u.getLastName())
+                .roleName(u.getRole() != null ? u.getRole().getName() : null)
+                .isActive(u.getIsActive())
+                .build();
+    }
+
 
     @Override
     public UserResponse createUser(CreateUserRequest req) {
@@ -77,6 +103,48 @@ public class AdminItServiceImpl implements AdminItService {
                 .firstName(saved.getFirstName())
                 .lastName(saved.getLastName())
                 .roleName(saved.getRole().getName())
+                .build();
+    }
+
+    @Override
+    public UserResponse updateUser(Long id, UpdateUserRequest req) {
+        User u = userRepo.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        if (req.getUserName() != null && !req.getUserName().isBlank()) {
+            String newUserName = req.getUserName().trim();
+            if (!newUserName.equalsIgnoreCase(u.getUserName())
+                    && userRepo.existsByUserName(newUserName)) {
+                throw new AppException(ErrorCode.DUPLICATE_USER);
+            }
+            u.setUserName(newUserName);
+        }
+
+        if (req.getEmail() != null && !req.getEmail().isBlank()) {
+            u.setEmail(req.getEmail().trim());
+        }
+
+        if (req.getFirstName() != null) u.setFirstName(req.getFirstName().trim());
+        if (req.getLastName() != null) u.setLastName(req.getLastName().trim());
+
+        if (req.getIsActive() != null) u.setIsActive(req.getIsActive());
+
+        if (req.getRoleId() != null) {
+            Role r = roleRepo.findById(req.getRoleId())
+                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+            u.setRole(r);
+        }
+
+        User saved = userRepo.save(u);
+
+        return UserResponse.builder()
+                .id(saved.getId())
+                .userName(saved.getUserName())
+                .email(saved.getEmail())
+                .firstName(saved.getFirstName())
+                .lastName(saved.getLastName())
+                .roleName(saved.getRole() != null ? saved.getRole().getName() : null)
+                .isActive(saved.getIsActive())
                 .build();
     }
 
@@ -140,12 +208,23 @@ public class AdminItServiceImpl implements AdminItService {
     }
 
     @Override
-    public User updateUserRole(Long userId, Long roleId) {
+    public UserResponse updateUserRole(Long userId, Long roleId) {
         User u = userRepo.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         Role r = roleRepo.findById(roleId).orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED_ACCESS_ROLE));
         u.setRole(r);
-        return userRepo.save(u);
+        User saved = userRepo.save(u);
+
+        return UserResponse.builder()
+                .id(saved.getId())
+                .userName(saved.getUserName())
+                .email(saved.getEmail())
+                .firstName(saved.getFirstName())
+                .lastName(saved.getLastName())
+                .isActive(saved.getIsActive())
+                .role(saved.getRole() == null ? null : new UserResponse.RoleInfo(saved.getRole().getId(), saved.getRole().getName()))
+                .build();
     }
+
 
     // ------------------- ROLE -------------------
     @Override

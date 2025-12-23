@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import com.lmsservice.util.CourseStatus;
@@ -65,6 +66,7 @@ public class Course extends EntityAbstract {
     // Teacher
     @ManyToOne
     @JoinColumn(name = "teacher_id")
+    @JsonIgnore
     Teacher teacher;
 
     // Staff
@@ -73,6 +75,7 @@ public class Course extends EntityAbstract {
     Staff staff;
     // CourseStudents
     @OneToMany(mappedBy = "course")
+    @JsonIgnore
     List<CourseStudent> courseStudents;
 
     /**

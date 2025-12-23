@@ -19,4 +19,6 @@ public class SessionInfoDTO {
     String description;
     boolean isabsent;
     Integer status;
+
+    Long studentCount;
 }

@@ -46,6 +46,8 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.findById(courseId)
                 .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
+        long studentCount = courseStudentRepository.countByCourseId(courseId);
+
         List<Session> sessions = sessionRepository.findByCourseIdOrderByOrderSessionAsc(courseId);
 
         return sessions.stream()
@@ -57,9 +59,11 @@ public class CourseServiceImpl implements CourseService {
                         .endtime(s.getEndTime() != null ? s.getEndTime().format(TIME_FMT) : null)
                         .room(s.getRoom() != null ? s.getRoom().getName() : null)
                         .status(s.getStatus())
+                        .studentCount(studentCount) // NEW
                         .build())
                 .toList();
     }
+
 
     @Override
     @Transactional

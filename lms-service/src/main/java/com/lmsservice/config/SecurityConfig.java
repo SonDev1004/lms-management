@@ -42,17 +42,19 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
 
     public static final String[] PUBLIC_URLS = {
-        "/api/auth/login**",
-        "/api/auth/register**",
-        "/api/auth/refresh**",
-        "/api/auth/logout**",
-        "/api/files/**",
-        "/api/program/**",
-        "/api/v1/payments/**",
-        "/api/subject/**",
-        "/api/v1/enrollments/result/**",
-        "/api/v1/enrollments/status/**",
-        "/ws-notifications/**"
+            "/api/auth/login**",
+            "/api/auth/register**",
+            "/api/auth/forgot-password",
+            "/api/auth/reset-password",
+            "/api/auth/refresh**",
+            "/api/auth/logout**",
+            "/api/files/**",
+            "/api/program/**",
+            "/api/v1/payments/**",
+            "/api/subject/**",
+            "/api/v1/enrollments/result/**",
+            "/api/v1/enrollments/status/**",
+            "/ws-notifications/**"
     };
 
     /**

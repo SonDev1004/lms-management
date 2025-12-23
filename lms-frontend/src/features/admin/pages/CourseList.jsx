@@ -706,7 +706,7 @@ export default function CourseList() {
                 <div>
                     <div className="text-2xl font-bold">Course Management</div>
                     <div className="text-sm text-gray-500">
-                        Tạo lớp theo chương trình (Program). Mỗi môn (Subject) trong curriculum sẽ tạo ra 1 lớp (Course).
+                        Create a class programmatically (Program). Each subject in the curriculum will create a class.
                     </div>
                 </div>
 
@@ -1078,7 +1078,7 @@ export default function CourseList() {
                             appendTo={document.body}
                         />
                         <div className="text-xs text-gray-500 mt-1">
-                            Mỗi môn bạn chọn sẽ tạo ra 1 lớp riêng. Học viên đăng ký theo Track/Lịch sẽ được gán vào các lớp tương ứng.
+                            Each subject you choose will create a separate class. Students registered according to Track/Calendar will be assigned to corresponding classes.
                         </div>
                     </div>
 
@@ -1110,7 +1110,7 @@ export default function CourseList() {
                             placeholder="Để trống nếu muốn hệ thống tự tạo"
                         />
                         <div className="text-xs text-gray-500 mt-1">
-                            Nếu để trống, hệ thống sẽ tự tạo Track code theo chương trình và năm học.
+                            If left blank, the system will automatically generate Track code according to program and school year.
                         </div>
                     </div>
                 </div>

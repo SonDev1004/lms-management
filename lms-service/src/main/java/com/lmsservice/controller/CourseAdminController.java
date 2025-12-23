@@ -13,6 +13,7 @@ import com.lmsservice.service.SessionService;
 import com.lmsservice.util.EnrollmentSource;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RestController
 @RequestMapping("/api/admin/courses")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ACADEMIC_MANAGER', 'ADMIN_IT')")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class CourseAdminController {
 

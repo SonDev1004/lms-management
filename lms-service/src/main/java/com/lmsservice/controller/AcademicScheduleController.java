@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/academic")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ACADEMIC_MANAGER')")
+@PreAuthorize("hasAnyRole('ACADEMIC_MANAGER', 'ADMIN_IT')")
 public class AcademicScheduleController {
 
     private final ScheduleService scheduleService;

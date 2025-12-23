@@ -39,7 +39,7 @@ export default function LayoutNavbar({role, children}) {
                     label: 'Class list',
                     icon: 'pi pi-list',
                     roles: ['TEACHER', 'ACADEMIC_MANAGER'],
-                    command: () => navigate(`/${roleToRoute(role)}/courses`)
+                    command: () => navigate(`/${roleToRoute(role)}/courses-list`)
                 },
                 {
                     label: 'Programs / Subjects',
@@ -70,7 +70,7 @@ export default function LayoutNavbar({role, children}) {
                 {
                     label: 'Course Management',
                     icon: 'pi pi-book',
-                    roles: ['ADMIN_IT'],
+                    roles:['ACADEMIC_MANAGER','ADMIN_IT'],
                     command: () => navigate(`/${roleToRoute(role)}/courses-list`)
                 },
                 {

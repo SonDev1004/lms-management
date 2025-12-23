@@ -1,5 +1,5 @@
 :root{
-    --pg-ink:#0f172a;           /* text */
+    --pg-ink: #ffffff;           /* text */
     --pg-muted:#616b7a;         /* secondary text */
     --pg-surface:#ffffff;       /* cards */
     --pg-bg:#f7f9fc;            /* page background */

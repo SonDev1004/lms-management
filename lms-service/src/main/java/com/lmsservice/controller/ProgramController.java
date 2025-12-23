@@ -32,11 +32,12 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/program")
+@PreAuthorize("hasAnyRole('ACADEMIC_MANAGER', 'ADMIN_IT')")
 public class ProgramController {
     ProgramService programService;
 
     // API create program
-    @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
+
     @PostMapping("/create")
     @Operation(
             summary = "Tạo chương trình học",
@@ -54,7 +55,6 @@ public class ProgramController {
     }
 
     // API add subject to program
-    @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
     @PostMapping("/{programId}/curriculum")
     @Operation(
             summary = "Gán danh sách môn học vào chương trình",
