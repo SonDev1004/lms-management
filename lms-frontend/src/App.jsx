@@ -150,7 +150,7 @@ const App = () => {
                 <Route element={<ProtectedRoute allowedRoles={['TEACHER']}/>}>
                     <Route path="teacher" element={<LayoutTeacher/>}>
                         <Route index element={<TeacherDashboard/>}/>
-                        <Route path="courses" element={<TeacherCourses/>}/>
+                        <Route path="courses-list" element={<TeacherCourses/>}/>
                         <Route path="courses/:courseId" element={<CourseDetailTeacher/>}>
                             <Route index element={<SessionList/>}/>
                             <Route path="student-list" element={<StudentList/>}/>
