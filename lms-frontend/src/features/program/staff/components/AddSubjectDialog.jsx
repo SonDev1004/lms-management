@@ -1,161 +1,181 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
-import '../styles/dialog-forms.css';
+import { Checkbox } from "primereact/checkbox";
+import "../styles/dialog-forms.css";
+
+import { getSubjectsPSPage } from "@/features/program/api/programService.js";
 
 export default function AddSubjectDialog({
-                                             visible, onClose, programs = [], defaultProgramId = null, onSave,
+                                             visible,
+                                             onClose,
+                                             programs = [],
+                                             defaultProgramId = null,
+                                             onSave,
                                          }) {
-    const levelOptions = useMemo(() => ([
-        { label: "Pre A1–A1", value: "Pre A1–A1" },
-        { label: "A1–A2", value: "A1–A2" },
-        { label: "A2–B1", value: "A2–B1" },
-        { label: "B1–B2", value: "B1–B2" },
-        { label: "B2–C1", value: "B2–C1" },
-    ]), []);
-    const statusOptions = useMemo(() => ([
-        { label: "active", value: "active" },
-        { label: "inactive", value: "inactive" },
-    ]), []);
-    const programOptions = useMemo(
-        () => programs.map(p => ({ label: `${p.name} (${p.id})`, value: p.id })), [programs]
-    );
+    const firstRef = useRef(null);
 
-    const [form, setForm] = useState({
-        programId: defaultProgramId,
-        name: "", level: "A2–B1", sessions: 16, fee: 0, status: "active",
-    });
+    const programOptions = useMemo(() => {
+        return (programs || []).map((p) => ({
+            label: `${p.title ?? p.name ?? "(no title)"} (${p.code ?? p.id})`,
+            value: p.id,
+        }));
+    }, [programs]);
 
-    const firstInputRef = useRef(null);
+    const [programId, setProgramId] = useState(defaultProgramId ?? null);
+    const [keyword, setKeyword] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const [subjects, setSubjects] = useState([]);
+    const [picked, setPicked] = useState({}); // { [id]: true }
 
     useEffect(() => {
         if (!visible) return;
-        setForm(s => ({
-            ...s,
-            programId: defaultProgramId ?? programOptions[0]?.value ?? null,
-        }));
-        const t = setTimeout(() => firstInputRef.current?.focus(), 0);
+        setProgramId(defaultProgramId ?? programOptions[0]?.value ?? null);
+        setKeyword("");
+        setPicked({});
+        const t = setTimeout(() => firstRef.current?.focus(), 0);
         return () => clearTimeout(t);
     }, [visible, defaultProgramId, programOptions]);
 
-    const canSave =
-        !!form.programId &&
-        form.name.trim().length >= 3 &&
-        (form.sessions ?? 0) >= 0 &&
-        (form.fee ?? 0) >= 0;
+    useEffect(() => {
+        let alive = true;
+        if (!visible) return;
 
-    function handleSave() {
+        (async () => {
+            setLoading(true);
+            try {
+                // load nhiều một chút để chọn
+                const res = await getSubjectsPSPage({ page0: 0, size: 200, keyword: keyword?.trim() || undefined, pageBase: 1 });
+                if (!alive) return;
+                setSubjects(res.items || []);
+            } finally {
+                alive && setLoading(false);
+            }
+        })();
+
+        return () => {
+            alive = false;
+        };
+    }, [visible, keyword]);
+
+    const canSave = !!programId && Object.values(picked).some(Boolean);
+
+    const toggle = (id) => {
+        setPicked((m) => ({ ...m, [id]: !m[id] }));
+    };
+
+    const selectedIds = useMemo(() => {
+        return Object.entries(picked)
+            .filter(([, v]) => v)
+            .map(([k]) => Number(k));
+    }, [picked]);
+
+    const handleSave = () => {
         if (!canSave) return;
-        onSave?.({
-            programId: form.programId,
-            name: form.name.trim(),
-            level: form.level,
-            sessions: form.sessions ?? 0,
-            fee: form.fee ?? 0,
-            status: form.status,
-        });
-    }
-
-    function handleKeyDown(e) {
-        if (e.key === "Enter" && canSave) { e.preventDefault(); handleSave(); }
-        if (e.key === "Escape") onClose?.();
-    }
+        onSave?.({ programId, subjectIds: selectedIds });
+    };
 
     return (
         <Dialog
-            header="Add Subject to Program"
+            header="Assign Subjects to Program"
             visible={visible}
             modal
             className="dlg"
-            style={{ width: 640, maxWidth: "94vw" }}
-            breakpoints={{ "1200px": "640px", "768px": "92vw" }}
+            style={{ width: 760, maxWidth: "96vw" }}
+            breakpoints={{ "1200px": "760px", "768px": "96vw" }}
             onHide={onClose}
             blockScroll
         >
-            <div className="dlg-scroll" onKeyDown={handleKeyDown} tabIndex={-1}>
+            <div className="dlg-scroll">
                 <section className="dlg-sec">
-                    <h4 className="dlg-sec-title">Basics</h4>
+                    <h4 className="dlg-sec-title">Target</h4>
                     <div className="frm-grid">
-                        <div className="frm-field">
-                            <label htmlFor="sj-program">Program</label>
+                        <div className="frm-field" style={{ gridColumn: "1 / -1" }}>
+                            <label>Program <span className="req">*</span></label>
                             <Dropdown
-                                inputId="sj-program"
-                                value={form.programId}
+                                value={programId}
                                 options={programOptions}
-                                onChange={(e) => setForm(s => ({ ...s, programId: e.value }))}
+                                onChange={(e) => setProgramId(e.value)}
                                 placeholder="Select program"
                                 showClear
-                                className={!form.programId ? "p-invalid" : ""}
+                                className={!programId ? "p-invalid" : ""}
                             />
-                            {!form.programId && <div className="error">Chọn một chương trình.</div>}
-                        </div>
-
-                        <div className="frm-field">
-                            <label htmlFor="sj-name">Subject name <span className="req">*</span></label>
-                            <InputText
-                                id="sj-name"
-                                ref={firstInputRef}
-                                value={form.name}
-                                onChange={(e) => setForm(s => ({ ...s, name: e.target.value }))}
-                                placeholder="e.g. IELTS Writing Booster"
-                                className={!form.name?.trim() ? "p-invalid" : ""}
-                            />
-                            {!form.name?.trim() && <div className="hint">Tên tối thiểu 3 ký tự.</div>}
+                            {!programId && <div className="error">Chọn một chương trình.</div>}
                         </div>
                     </div>
                 </section>
 
                 <section className="dlg-sec">
-                    <h4 className="dlg-sec-title">Details</h4>
+                    <h4 className="dlg-sec-title">Pick subjects</h4>
+
                     <div className="frm-grid">
-                        <div className="frm-field">
-                            <label htmlFor="sj-level">Level (CEFR)</label>
-                            <Dropdown inputId="sj-level" value={form.level} options={levelOptions}
-                                      onChange={(e) => setForm(s => ({ ...s, level: e.value }))}/>
-                        </div>
-
-                        <div className="frm-field">
-                            <label htmlFor="sj-sessions">Sessions</label>
-                            <InputNumber
-                                inputId="sj-sessions"
-                                value={form.sessions}
-                                onValueChange={(e) => setForm(s => ({ ...s, sessions: e.value ?? 0 }))}
-                                showButtons
-                                buttonLayout="vertical"
-                                incrementButtonIcon="pi pi-chevron-up"
-                                decrementButtonIcon="pi pi-chevron-down"
-                                incrementButtonClassName="apd-step"
-                                decrementButtonClassName="apd-step"
-                                min={0}
+                        <div className="frm-field" style={{ gridColumn: "1 / -1" }}>
+                            <label>Search</label>
+                            <InputText
+                                ref={firstRef}
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
+                                placeholder="Search subject by title/code..."
                             />
+                            <div className="hint">
+                                Tick subjects you want to assign to the selected program.
+                            </div>
                         </div>
+                    </div>
 
-                        <div className="frm-field">
-                            <label htmlFor="sj-fee">Tuition (VND)</label>
-                            <InputNumber
-                                inputId="sj-fee"
-                                value={form.fee}
-                                onValueChange={(e) => setForm(s => ({ ...s, fee: e.value ?? 0 }))}
-                                mode="currency" currency="VND" locale="vi-VN"
-                            />
-                            <div className="hint">Học phí cho môn học.</div>
-                        </div>
-
-                        <div className="frm-field">
-                            <label htmlFor="sj-status">Status</label>
-                            <Dropdown inputId="sj-status" value={form.status} options={statusOptions}
-                                      onChange={(e) => setForm(s => ({ ...s, status: e.value }))}/>
-                        </div>
+                    <div style={{
+                        border: "1px solid #e5e7eb",
+                        borderRadius: 12,
+                        padding: 12,
+                        maxHeight: 360,
+                        overflow: "auto",
+                        opacity: loading ? 0.7 : 1,
+                    }}>
+                        {subjects?.length ? (
+                            subjects.map((s) => (
+                                <div
+                                    key={s.id}
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 10,
+                                        padding: "8px 6px",
+                                        borderBottom: "1px solid #f1f5f9",
+                                    }}
+                                >
+                                    <Checkbox
+                                        inputId={`sj-${s.id}`}
+                                        checked={!!picked[s.id]}
+                                        onChange={() => toggle(s.id)}
+                                    />
+                                    <label htmlFor={`sj-${s.id}`} style={{ cursor: "pointer", flex: 1 }}>
+                                        <div style={{ fontWeight: 600 }}>
+                                            {s.title} <span style={{ fontWeight: 400, opacity: 0.7 }}>({s.code || s.id})</span>
+                                        </div>
+                                        <div style={{ fontSize: 12, opacity: 0.7 }}>
+                                            Sessions: {s.sessionNumber ?? 0} • Fee: {(s.fee ?? 0).toLocaleString("vi-VN")}₫ • {s.isActive ? "active" : "inactive"}
+                                        </div>
+                                    </label>
+                                </div>
+                            ))
+                        ) : (
+                            <div style={{ padding: 10, opacity: 0.7 }}>
+                                {loading ? "Loading..." : "No subjects found."}
+                            </div>
+                        )}
                     </div>
                 </section>
             </div>
 
             <div className="dlg-footer">
-                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onClose}/>
-                <Button label="Save" icon="pi pi-check" onClick={handleSave} disabled={!canSave}/>
+                <div style={{ marginRight: "auto", opacity: 0.8 }}>
+                    Selected: {selectedIds.length}
+                </div>
+                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={onClose} />
+                <Button label="Assign" icon="pi pi-check" onClick={handleSave} disabled={!canSave} />
             </div>
         </Dialog>
     );

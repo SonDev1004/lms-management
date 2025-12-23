@@ -19,7 +19,7 @@ import { sessionsText, shortDate } from "@/features/program/detail/utils/format"
 const tabs = [
     { label: "Overview", icon: "pi pi-home" },
     { label: "Syllabus", icon: "pi pi-list-check" },
-    { label: "Courses", icon: "pi pi-calendar" }, // đổi “Sessions” -> “Courses”
+    { label: "Courses", icon: "pi pi-calendar" },
     { label: "Resources", icon: "pi pi-download" },
     { label: "Reviews", icon: "pi pi-star" },
     { label: "Q&A", icon: "pi pi-comments" },

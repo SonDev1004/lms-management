@@ -193,7 +193,6 @@ public class AssignmentServiceImpl implements AssignmentService {
 
                 String title = "Bài tập mới: " + assignmentTitle;
                 String content = "<b>Bài tập mới: " + assignmentTitle + "</b><br/>Khoá: " + courseTitle;
-                // URL để FE bấm vào sẽ mở màn Assignment list / Quiz list của học sinh
                 String url = "/student/courses/" + courseId + "/assignments";
 
                 NotificationResponse noti =

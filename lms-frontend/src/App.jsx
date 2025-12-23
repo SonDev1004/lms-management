@@ -92,6 +92,8 @@ import AMMakeupRequestsPage from "@/features/attendance/manager/pages/AMMakeupRe
 
 import EmailAccountFormPage from "@/features/account-mail/pages/EmailAccountFormPage.jsx";
 import CourseList from "@/features/admin/pages/CourseList.jsx";
+import ResetPassword from "@/features/auth/pages/ResetPassword.jsx";
+import ForgotPassword from "@/features/auth/pages/ForgotPassword.jsx";
 const App = () => {
     return (
         <BrowserRouter>
@@ -101,6 +103,8 @@ const App = () => {
                     <Route index element={<Home/>}/>
                     <Route path="login" element={<Login/>}/>
                     <Route path="register" element={<Register/>}/>
+                    <Route path="forgot-password" element={<ForgotPassword />} />
+                    <Route path="reset-password" element={<ResetPassword />} />
                     <Route path="programs" element={<ProgramList/>}/>
                     <Route path="programs/:id" element={<ProgramDetailPage/>}/>
                     <Route path="userprofile" element={<UserProfile/>}/>
@@ -180,6 +184,7 @@ const App = () => {
                         <Route index element={<AMDashboard/>}/>
                         <Route path='program' element={<AMProgram/>}/>
                         <Route path='detail/:id' element={<AMProgramDetail/>}/>
+                        <Route path="courses-list" element={<CourseList />} />
                         <Route path='courses' element={<AMCourse/>}>
                             <Route path='detail/:id' element={<AMCourseDetail/>}/>
                         </Route>

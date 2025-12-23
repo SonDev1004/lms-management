@@ -27,6 +27,7 @@ public class AdminItSearchController {
     private final CourseRepository courseRepo;
     private final ProgramRepository programRepo;
     private final TeacherRepository teacherRepo;
+
     @GetMapping("/users")
     @PreAuthorize("hasAnyRole('ADMIN_IT', 'ACADEMIC_MANAGER')")
     public ApiResponse<List<SimpleUserDto>> searchUsers(@RequestParam(required = false) String q) {

@@ -16,4 +16,14 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String roleName;
+    private Boolean isActive;
+    private RoleInfo role;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoleInfo {
+        private Long id;
+        private String name;
+    }
 }

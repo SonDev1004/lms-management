@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -56,6 +57,7 @@ public class User extends EntityAbstract {
     // Role
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
+    @JsonIgnore
     Role role;
 
     // Notification

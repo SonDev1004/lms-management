@@ -23,6 +23,8 @@ export default {
     //Subject
     listSubject: `${rootAPI}/subject/all-subject`,
     getDetailSubject: (id) => `${rootAPI}/subject/${id}/detail`,
+    createSubject: `${rootAPI}/subject/create`,
+
 
     //Payment
     payment: `${rootAPI}/v1/enrollments/create-payment`,
@@ -55,20 +57,10 @@ export default {
     searchUsers: `${rootAPI}/admin-it/search/users`,
     searchCourses: `${rootAPI}/admin-it/search/courses`,
     searchPrograms: `${rootAPI}/admin-it/search/programs`,
-    //Assignment - Student side
-    // Danh sách bài tập/quiz của học sinh theo khóa học
-    // BE dự kiến: GET /student/courses/{courseId}/assignments
-    getStudentAssignments: (courseId) => `${rootAPI}/student/courses/${courseId}/assignments`,
 
-    //Assignment - Teacher / Academic Manager side
-    // Danh sách assignment theo khóa học
-    getTeacherAssignments: (courseId) => `${rootAPI}/teacher/courses/${courseId}/assignments`,
 
     // CRUD assignment (nếu dùng)
     createAssignment: `${rootAPI}/teacher/assignments`,
-    updateAssignment: (id) => `${rootAPI}/teacher/assignments/${id}`,
-    deleteAssignment: (id) => `${rootAPI}/teacher/assignments/${id}`,
-
     // Question Bank (ngân hàng đề)
     questionBankList: `${rootAPI}/teacher/question-bank`,
     questionBankListBySubject: `${rootAPI}/teacher/question-bank/list-questions-by-subject`,
@@ -142,8 +134,7 @@ export default {
         `${rootAPI}/academic/schedule?from=${from}&to=${to}`,
     studentSchedule: (from, to) =>
         `${rootAPI}/student/schedule?from=${from}&to=${to}`,
-    createUser: `${rootAPI}/admin-it/users/create`,
-    getAllRoles: `${rootAPI}/admin-it/roles`,
+
 
     // Latest enrollments (Admin IT) – list có filter + paging
     adminLatestEnrollments: `${rootAPI}/admin/enrollments/latest`,
@@ -164,4 +155,34 @@ export default {
     programSubjectsOptions: (programId) => `${rootAPI}/program/${programId}/subjects`,
     roomOptions:`${rootAPI}/admin/courses/rooms-options`,
     adminCourseListTimeslots:(courseId)=> `${rootAPI}/admin/courses/${courseId}/list-timeslots`,
+    // ===== Admin IT - User Management =====
+    adminItUsers: `${rootAPI}/admin-it/users`,
+    adminItUserById: (id) => `${rootAPI}/admin-it/users/${id}`,
+    adminItAssignRole: (userId, roleId) => `${rootAPI}/admin-it/users/${userId}/role/${roleId}`,
+    createUser: `${rootAPI}/admin-it/users/create`,
+    getAllRoles: `${rootAPI}/admin-it/roles`,
+
+// ===== Staff - Students (list + profile) =====
+    staffStudents: `${rootAPI}/staff/students`, // GET ?q=&page=&size=&active=&sort=
+    staffStudentProfile: (userId) => `${rootAPI}/staff/students/${userId}/profile`,
+    staffStudentCourses: (userId) => `${rootAPI}/staff/students/${userId}/courses`,
+    staffStudentAttendanceOverview: (userId, courseId) =>
+        `${rootAPI}/staff/students/${userId}/attendance/overview?courseId=${courseId}`,
+    staffStudentAttendanceDetails: (userId, courseId) =>
+        `${rootAPI}/staff/students/${userId}/attendance/details?courseId=${courseId}`,
+    staffStudentSchedule: (userId, from, to) =>
+        `${rootAPI}/staff/students/${userId}/schedule?from=${from}&to=${to}`, // nếu BE có
+
+// ===== Staff - Teachers (list + profile) =====
+    staffTeachers: `${rootAPI}/staff/teachers`, // GET ?q=&page=&size=&active=&sort=
+    staffTeacherProfile: (userId) => `${rootAPI}/staff/teachers/${userId}/profile`,
+    staffTeacherCourses: (userId) => `${rootAPI}/staff/teachers/${userId}/courses`,
+    staffTeacherSchedule: (userId, from, to) =>
+        `${rootAPI}/staff/teachers/${userId}/schedule?from=${from}&to=${to}`, // để làm Teacher sau
+
+
+
+    forgotPassword: `${rootAPI}/auth/forgot-password`,
+    resetPassword: `${rootAPI}/auth/reset-password`,
+    changePassword: `${rootAPI}/auth/change-password`,
 };

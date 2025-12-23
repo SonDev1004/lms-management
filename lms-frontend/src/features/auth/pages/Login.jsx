@@ -19,6 +19,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const toast = useRef(null);
+    const [showPassword, setShowPassword] = useState(false);
 
 
     // Functions
@@ -59,7 +60,23 @@ const Login = () => {
                         </div>
                         <div className='flex flex-column gap-2 mb-3'>
                             <label htmlFor='password'>Password</label>
-                            <InputText id='password' className='max-w-full' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <div className="p-inputgroup max-w-full">
+                                <InputText
+                                    id="password"
+                                    className="max-w-full"
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                <Button
+                                    type="button"
+                                    icon={showPassword ? "pi pi-eye-slash" : "pi pi-eye"}
+                                    severity="secondary"
+                                    outlined
+                                    onClick={() => setShowPassword((v) => !v)}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                />
+                            </div>
                         </div>
                         <div className='flex flex-column gap-2 mb-3'>
                             <Button label='Login' onClick={handleLogin} />

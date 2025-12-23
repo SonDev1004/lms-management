@@ -27,10 +27,11 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/subject")
+@PreAuthorize("hasAnyRole('ACADEMIC_MANAGER', 'ADMIN_IT')")
 public class SubjectController {
     SubjectService subjectService;
 
-    @PreAuthorize("hasRole('ACADEMIC_MANAGER')")
+
     @PostMapping("/create")
     @Operation(
             summary = "Tạo môn học mới",

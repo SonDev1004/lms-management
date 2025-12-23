@@ -78,6 +78,155 @@ export async function getDetailProgram(programId) {
         return null;
     }
 }
+// =========================
+// V2 APIs for Programs & Subjects page (DO NOT break getListProgram)
+// =========================
+
+function unwrap(res) {
+    const data = res?.data ?? res;
+    return data?.result ?? data;
+}
+
+// =========================
+// V2 APIs for Programs & Subjects page
+// (DO NOT break existing getListProgram / getDetailProgram)
+// =========================
+
+/**
+ * getProgramsPSPage
+ * - Dùng cho ProgramList page mới (Programs & Subjects).
+ * - ProgramFilterRequest BE: title, code, feeMin, feeMax, isActive, keyword
+ * - Paging: mặc định pageBase=1 vì code cũ của bạn đang gọi page=1.
+ */
+export async function getProgramsPSPage({
+                                            page0 = 0,
+                                            size = 10,
+                                            keyword,
+                                            title,
+                                            code,
+                                            feeMin,
+                                            feeMax,
+                                            isActive,
+                                            sort,
+                                            pageBase = 1,
+                                        } = {}) {
+    const url = AppUrls.listProgram;
+    const page = pageBase === 1 ? page0 + 1 : page0;
+
+    const res = await axiosClient.get(url, {
+        params: {
+            page,
+            size,
+            ...(keyword ? { keyword } : null),
+            ...(title ? { title } : null),
+            ...(code ? { code } : null),
+            ...(feeMin != null ? { feeMin } : null),
+            ...(feeMax != null ? { feeMax } : null),
+            ...(isActive != null ? { isActive } : null),
+            ...(sort ? { sort } : null),
+        },
+    });
+
+    const result = unwrap(res) ?? {};
+    const itemsRaw = result.items ?? result.content ?? [];
+    const totalItems = result.totalItems ?? result.totalElements ?? 0;
+
+    const apiPage = result.page ?? result.number ?? page;
+    const apiSize = result.size ?? result.pageSize ?? size;
+
+    const page0FromApi = pageBase === 1 ? Math.max(0, (apiPage ?? 1) - 1) : (apiPage ?? 0);
+
+    return {
+        items: (itemsRaw ?? []).map(mapProgram),
+        paging: {
+            page: apiPage ?? page,
+            page0: page0FromApi,
+            size: apiSize,
+            totalItems,
+            totalPages: result.totalPages ?? 0,
+            hasNext: !!result.hasNext,
+            hasPrevious: !!result.hasPrevious,
+            pageBase,
+        },
+    };
+}
+
+/**
+ * Đếm tổng theo isActive mà không cần fetch full list:
+ * - gọi /all-program?isActive=true size=1 -> totalItems
+ */
+export async function countProgramsByActivePS(isActive, pageBase = 1) {
+    const { paging } = await getProgramsPSPage({ page0: 0, size: 1, isActive, pageBase });
+    return paging?.totalItems ?? 0;
+}
+
+/**
+ * Create program (ACADEMIC_MANAGER)
+ * ProgramRequest: title, minStudent, maxStudent, fee, description, imageUrl, isActive
+ */
+export async function createProgramPS(payload) {
+    const url = `${AppUrls.rootAPI}/program/create`;
+    const res = await axiosClient.post(url, payload);
+    return unwrap(res);
+}
+
+/**
+ * Assign subjects to program (ACADEMIC_MANAGER)
+ * CurriculumRequest: [{subjectId:1},{subjectId:2}]
+ */
+export async function assignSubjectsToProgramPS(programId, subjectIds = []) {
+    const url = `${AppUrls.rootAPI}/program/${programId}/curriculum`;
+    const body = (subjectIds ?? []).map((id) => ({ subjectId: id }));
+    const res = await axiosClient.post(url, body);
+    return unwrap(res);
+}
+
+/**
+ * List subjects (for selecting in AddSubjectDialog)
+ * Endpoint: /api/subject/all-subject (PageResponse<SubjectResponse>)
+ */
+export async function getSubjectsPSPage({ page0 = 0, size = 50, keyword, pageBase = 1 } = {}) {
+    const url = AppUrls.listSubject;
+    const page = pageBase === 1 ? page0 + 1 : page0;
+
+    const res = await axiosClient.get(url, {
+        params: {
+            page,
+            size,
+            ...(keyword ? { keyword } : null),
+        },
+    });
+
+    const result = unwrap(res) ?? {};
+    const itemsRaw = result.items ?? result.content ?? [];
+    const totalItems = result.totalItems ?? result.totalElements ?? 0;
+
+    const apiPage = result.page ?? result.number ?? page;
+    const apiSize = result.size ?? result.pageSize ?? size;
+    const page0FromApi = pageBase === 1 ? Math.max(0, (apiPage ?? 1) - 1) : (apiPage ?? 0);
+
+    return {
+        items: (itemsRaw ?? []).map((s) => ({
+            id: s.id,
+            title: s.title ?? "",
+            code: (s.code ?? "").trim(),
+            sessionNumber: s.sessionNumber ?? 0,
+            fee: s.fee ?? 0,
+            isActive: !!s.isActive,
+        })),
+        paging: {
+            page: apiPage ?? page,
+            page0: page0FromApi,
+            size: apiSize,
+            totalItems,
+            totalPages: result.totalPages ?? 0,
+            hasNext: !!result.hasNext,
+            hasPrevious: !!result.hasPrevious,
+            pageBase,
+        },
+    };
+}
+
 
 function mapProgramDetail(data) {
     if (!data) return null;

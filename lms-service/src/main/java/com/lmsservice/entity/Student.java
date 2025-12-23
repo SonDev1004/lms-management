@@ -2,6 +2,7 @@ package com.lmsservice.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -32,6 +33,7 @@ public class Student extends EntityAbstract {
 
     // CourseStudents
     @OneToMany(mappedBy = "student")
+    @JsonIgnore
     List<CourseStudent> courseStudents;
 
     // StudentResults
@@ -45,5 +47,6 @@ public class Student extends EntityAbstract {
     // User
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JsonIgnore
     User user;
 }

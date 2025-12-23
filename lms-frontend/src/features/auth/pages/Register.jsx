@@ -37,6 +37,7 @@ const Register = () => {
     const [errors, setErrors] = useState({});
     const [acceptTerms, setAcceptTerms] = useState(false);
     const navigate = useNavigate();
+    const [showRePassword, setShowRePassword] = useState(false);
 
     const userNameRef = useRef(null);
     const emailRef = useRef(null);
@@ -261,28 +262,35 @@ const Register = () => {
                                             setErrors({});
                                             setUser((prev) => ({ ...prev, password: e.target.value }));
                                         }}
+                                        toggleMask
                                         promptLabel='Input password'
                                         weakLabel='Weak password'
                                         mediumLabel='Medium password'
                                         strongLabel='Strong password'
                                     />
+
                                     {errors.password && <small className='p-error'>{errors.password}</small>}
                                 </div>
-                                <div className='field col-6'>
-                                    <label htmlFor='repassword' className='required'>
-                                        Confirm Password
-                                    </label>
+                                <div className="p-inputgroup">
                                     <InputText
-                                        type='password'
-                                        id='repassword'
-                                        name='repassword'
-                                        className={errors.repassword ? 'p-invalid' : ''}
+                                        id="repassword"
+                                        name="repassword"
+                                        className={errors.repassword ? "p-invalid" : ""}
                                         ref={repasswordRef}
                                         value={user.repassword}
                                         onChange={handleChange}
+                                        type={showRePassword ? "text" : "password"}
                                     />
-                                    {errors.repassword && <small className='p-error'>{errors.repassword}</small>}
+                                    <Button
+                                        type="button"
+                                        icon={showRePassword ? "pi pi-eye-slash" : "pi pi-eye"}
+                                        severity="secondary"
+                                        outlined
+                                        onClick={() => setShowRePassword((v) => !v)}
+                                        aria-label={showRePassword ? "Hide confirm password" : "Show confirm password"}
+                                    />
                                 </div>
+
                             </div>
                             <div className='flex pt-4 justify-content-end'>
                                 <Button label='Next' icon='pi pi-arrow-right' iconPos='right' onClick={toStep2} />

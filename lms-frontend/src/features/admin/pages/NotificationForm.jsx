@@ -8,7 +8,9 @@ import { AutoComplete } from "primereact/autocomplete";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
-import "../css/NotificationForm.css";
+import { Card } from "primereact/card";
+import { Divider } from "primereact/divider";
+import { Panel } from "primereact/panel";
 import {
     sendNotification,
     getNotificationTypes,
@@ -47,37 +49,27 @@ export default function NotificationForm() {
         url: "",
         notificationTypeId: null,
         broadcast: false,
-
         targetRoles: [],
         targetUsers: [],
         targetCourses: [],
         targetPrograms: [],
-
         scheduledDate: null,
     });
 
-    // options
     const [typeOptions, setTypeOptions] = useState([]);
     const [roleOptions, setRoleOptions] = useState([]);
-
-    // suggestions
     const [userSug, setUserSug] = useState([]);
     const [courseSug, setCourseSug] = useState([]);
     const [programSug, setProgramSug] = useState([]);
-
     const [loadingUser, setLoadingUser] = useState(false);
     const [loadingCourse, setLoadingCourse] = useState(false);
     const [loadingProgram, setLoadingProgram] = useState(false);
 
-    // lightweight caches for opening dropdown again
     const cacheRef = useRef({ users: null, courses: null, programs: null });
-
-    // abort signals per resource
     const userSignal = useAbortable();
     const courseSignal = useAbortable();
     const programSignal = useAbortable();
 
-    /* ===== Load dropdown options ===== */
     useEffect(() => {
         (async () => {
             try {
@@ -90,15 +82,14 @@ export default function NotificationForm() {
             } catch (e) {
                 toast.current?.show({
                     severity: "error",
-                    summary: "Không tải được options",
-                    detail: e?.detail || e?.message || "Lỗi không xác định",
+                    summary: "Failed to load options",
+                    detail: e?.detail || e?.message || "Unknown error",
                 });
             }
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    /* ===== Fetchers (q="" -> first page) ===== */
     const fetchUsers = async (q = "") => {
         setLoadingUser(true);
         try {
@@ -130,12 +121,10 @@ export default function NotificationForm() {
         }
     };
 
-    // debounced autocomplete handlers
     const onCompleteUsers = useDebounced((e) => fetchUsers(e.query || ""), 250);
     const onCompleteCourses = useDebounced((e) => fetchCourses(e.query || ""), 250);
     const onCompletePrograms = useDebounced((e) => fetchPrograms(e.query || ""), 250);
 
-    // prefetch on open/focus
     const preopenUsers = () => {
         if (cacheRef.current.users) setUserSug(cacheRef.current.users);
         else fetchUsers("");
@@ -149,19 +138,18 @@ export default function NotificationForm() {
         else fetchPrograms("");
     };
 
-    /* ===== Submit ===== */
     const onSubmit = async () => {
         try {
             if (!form.title.trim()) {
-                toast.current?.show({ severity: "warn", summary: "Thiếu Title", detail: "Nhập tiêu đề thông báo." });
+                toast.current?.show({ severity: "warn", summary: "Missing Title", detail: "Enter the notification title." });
                 return;
             }
             if (!form.content.trim()) {
-                toast.current?.show({ severity: "warn", summary: "Thiếu Content", detail: "Nhập nội dung thông báo." });
+                toast.current?.show({ severity: "warn", summary: "Missing Content", detail: "Enter notification content." });
                 return;
             }
             if (!form.notificationTypeId) {
-                toast.current?.show({ severity: "warn", summary: "Thiếu Type", detail: "Chọn loại thông báo." });
+                toast.current?.show({ severity: "warn", summary: "Missing Type", detail: "Select notification type." });
                 return;
             }
             if (
@@ -173,18 +161,18 @@ export default function NotificationForm() {
             ) {
                 toast.current?.show({
                     severity: "warn",
-                    summary: "Chưa có người nhận",
-                    detail: "Bật Broadcast hoặc chọn ít nhất một Roles/Users/Courses/Programs.",
+                    summary: "No Recipients",
+                    detail: "Enable Broadcast or select at least one role/user/course/program.",
                 });
                 return;
             }
-            if (import.meta.env.DEV) console.log("[NOTI] raw form", form);
+
             await sendNotification(form);
 
             toast.current?.show({
                 severity: "success",
-                summary: "Đã gửi",
-                detail: "Thông báo đã gửi / hẹn giờ.",
+                summary: "Sent Successfully",
+                detail: "Notification has been sent or scheduled.",
             });
 
             setForm({
@@ -202,227 +190,317 @@ export default function NotificationForm() {
             });
         } catch (e) {
             const status = e?.status || e?.response?.status;
-            const msg =
-                e?.detail ||
-                e?.response?.data?.message ||
-                e?.response?.data?.error ||
-                e?.message ||
-                "Không thể gửi thông báo";
+            const msg = e?.detail || e?.response?.data?.message || e?.response?.data?.error || e?.message || "Unable to send notification";
             toast.current?.show({
                 severity: "error",
-                summary: `Lỗi${status ? ` ${status}` : ""}`,
+                summary: `Error${status ? ` ${status}` : ""}`,
                 detail: msg,
                 life: 6500,
             });
-            if (import.meta.env.DEV) console.error(e);
         }
     };
 
-
-    /* ===== Item templates for suggestions ===== */
     const userItemTpl = (u) => (
-        <div className="flex flex-column">
-            <span className="font-semibold">{u.name || `User #${u.id}`}</span>
-            <small className="text-500">{u.email}</small>
+        <div className="flex flex-column py-2">
+            <span className="font-semibold text-900">{u.name || `User #${u.id}`}</span>
+            <small className="text-600">{u.email}</small>
         </div>
     );
     const courseItemTpl = (c) => (
-        <div className="flex flex-column">
-            <span className="font-semibold">{c.code || `Course #${c.id}`}</span>
-            <small className="text-500">{c.title}</small>
+        <div className="flex flex-column py-2">
+            <span className="font-semibold text-900">{c.code || `Course #${c.id}`}</span>
+            <small className="text-600">{c.title}</small>
         </div>
     );
     const programItemTpl = (p) => (
-        <div className="flex flex-column">
-            <span className="font-semibold">{p.name || `Program #${p.id}`}</span>
-            <small className="text-500">ID: {p.id}</small>
+        <div className="flex flex-column py-2">
+            <span className="font-semibold text-900">{p.name || `Program #${p.id}`}</span>
+            <small className="text-600">ID: {p.id}</small>
         </div>
     );
 
     return (
-        <div className="nf-root">
+        <div className="p-4" style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Toast ref={toast} />
-            <div className="nf-card">
 
-                <div className="nf-field">
-                    <label>Title</label>
-                    <InputText value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-                </div>
+            {/* Header */}
+            <div className="mb-4 p-4 bg-white border-round-lg shadow-3">
+                <h1 className="m-0 text-3xl font-bold text-900">
+                    <i className="pi pi-send mr-3 text-blue-500"></i>
+                    Send Notification
+                </h1>
+                <p className="mt-2 mb-0 text-600">
+                    Create and send notifications to users, roles, courses, or programs
+                </p>
+            </div>
 
-                <div className="nf-field">
-                    <label>Content</label>
-                    <InputTextarea
-                        value={form.content}
-                        onChange={(e) => setForm({ ...form, content: e.target.value })}
-                        autoResize
-                        rows={5}
-                    />
-                </div>
-
-                {/* Row: Severity / Type / Broadcast */}
-                <div className="nf-grid nf-row-3">
-                    <div className="nf-field">
-                        <label>Severity</label>
-                        <Dropdown
-                            value={form.severity}
-                            options={[
-                                { label: "Info (0)", value: 0 },
-                                { label: "Normal (1)", value: 1 },
-                                { label: "Urgent (2)", value: 2 },
-                            ]}
-                            onChange={(e) => setForm({ ...form, severity: e.value })}
-                            placeholder="Select severity"
-                        />
+            <Card className="shadow-3">
+                {/* Basic Information */}
+                <Panel header={
+                    <div className="flex align-items-center gap-2">
+                        <i className="pi pi-info-circle text-blue-500"></i>
+                        <span className="font-semibold">Basic Information</span>
                     </div>
+                } toggleable>
+                    <div className="grid">
+                        <div className="col-12">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-tag mr-2 text-blue-500"></i>
+                                    Title *
+                                </label>
+                                <InputText
+                                    value={form.title}
+                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                    placeholder="Enter notification title..."
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
 
-                    <div className="nf-field">
-                        <label>Type</label>
-                        <Dropdown
-                            value={form.notificationTypeId}
-                            options={typeOptions}
-                            onChange={(e) => setForm({ ...form, notificationTypeId: e.value })}
-                            placeholder="Chọn loại"
-                            loading={typeOptions.length === 0}
-                            showClear
-                        />
+                        <div className="col-12">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-align-left mr-2 text-blue-500"></i>
+                                    Content *
+                                </label>
+                                <InputTextarea
+                                    value={form.content}
+                                    onChange={(e) => setForm({ ...form, content: e.target.value })}
+                                    autoResize
+                                    rows={5}
+                                    placeholder="Enter notification content..."
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-12 md:col-4">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-exclamation-triangle mr-2 text-orange-500"></i>
+                                    Severity
+                                </label>
+                                <Dropdown
+                                    value={form.severity}
+                                    options={[
+                                        { label: "Info (0)", value: 0 },
+                                        { label: "Normal (1)", value: 1 },
+                                        { label: "Urgent (2)", value: 2 },
+                                    ]}
+                                    onChange={(e) => setForm({ ...form, severity: e.value })}
+                                    placeholder="Select severity"
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-12 md:col-4">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-bookmark mr-2 text-purple-500"></i>
+                                    Type *
+                                </label>
+                                <Dropdown
+                                    value={form.notificationTypeId}
+                                    options={typeOptions}
+                                    onChange={(e) => setForm({ ...form, notificationTypeId: e.value })}
+                                    placeholder="Select type"
+                                    loading={typeOptions.length === 0}
+                                    showClear
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="col-12 md:col-4">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-link mr-2 text-green-500"></i>
+                                    URL (Optional)
+                                </label>
+                                <InputText
+                                    value={form.url}
+                                    onChange={(e) => setForm({ ...form, url: e.target.value })}
+                                    placeholder="https://..."
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
                     </div>
+                </Panel>
 
-                    <div className="nf-field">
-                        <label>Broadcast</label>
-                        <div className="nf-checkbox-row">
+                <Divider />
+
+                {/* Recipients */}
+                <Panel header={
+                    <div className="flex align-items-center gap-2">
+                        <i className="pi pi-users text-green-500"></i>
+                        <span className="font-semibold">Recipients</span>
+                    </div>
+                } toggleable>
+                    {/* Broadcast Checkbox */}
+                    <div className="mb-4 p-3 border-round-lg" style={{ background: '#f0fdf4', border: '1px solid #86efac' }}>
+                        <div className="flex align-items-center gap-3">
                             <Checkbox
                                 inputId="broadcast"
                                 onChange={(e) => setForm({ ...form, broadcast: e.checked })}
                                 checked={form.broadcast}
                             />
-                            <label htmlFor="broadcast" className="m-0">Gửi cho tất cả</label>
+                            <label htmlFor="broadcast" className="m-0 cursor-pointer">
+                                <div className="font-semibold text-900">
+                                    <i className="pi pi-megaphone mr-2 text-green-600"></i>
+                                    Broadcast to Everyone
+                                </div>
+                                <small className="text-600">Send this notification to all users in the system</small>
+                            </label>
                         </div>
                     </div>
-                </div>
 
-                {/* Row: Roles / URL */}
-                <div className="nf-grid nf-row-2">
-                    <div className="nf-field">
-                        <label>Target roles</label>
-                        <MultiSelect
-                            value={form.targetRoles}
-                            options={roleOptions}
-                            onChange={(e) => setForm({ ...form, targetRoles: e.value })}
-                            placeholder="Chọn vai trò"
-                            display="chip"
-                            filter
-                            showClear
-                        />
-                    </div>
-                    <div className="nf-field">
-                        <label>URL (tuỳ chọn)</label>
-                        <InputText value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} />
-                    </div>
-                </div>
+                    <div className="grid">
+                        <div className="col-12 md:col-6">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-shield mr-2 text-blue-500"></i>
+                                    Target Roles
+                                </label>
+                                <MultiSelect
+                                    value={form.targetRoles}
+                                    options={roleOptions}
+                                    onChange={(e) => setForm({ ...form, targetRoles: e.value })}
+                                    placeholder="Select roles"
+                                    display="chip"
+                                    filter
+                                    showClear
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
 
-                {/* Row: Users / Courses */}
-                <div className="nf-grid nf-row-2">
-                    <div className="nf-field">
-                        <label>Users</label>
-                        <AutoComplete
-                            multiple
-                            value={form.targetUsers}
-                            suggestions={userSug}
-                            completeMethod={onCompleteUsers}
-                            onFocus={preopenUsers}
-                            onDropdownClick={preopenUsers}
-                            onChange={(e) => setForm({ ...form, targetUsers: e.value })}
-                            field="name"
-                            itemTemplate={userItemTpl}
-                            placeholder="Gõ để lọc hoặc bấm ▼ để xem tất cả"
-                            dropdown
-                            minLength={0}
-                            forceSelection={false}
-                            virtualScrollerOptions={{ itemSize: 50 }}
-                            loading={!!loadingUser}
-                            appendTo="self"
-                            panelClassName="ac-panel"
-                            panelStyle={{ width: "100%", maxHeight: 280, overflow: "auto" }}
-                            className="ac-control"
-                            emptyMessage="Không có dữ liệu"
-                            emptyFilterMessage="Không tìm thấy"
-                        />
-                    </div>
+                        <div className="col-12 md:col-6">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-user mr-2 text-purple-500"></i>
+                                    Target Users
+                                </label>
+                                <AutoComplete
+                                    multiple
+                                    value={form.targetUsers}
+                                    suggestions={userSug}
+                                    completeMethod={onCompleteUsers}
+                                    onFocus={preopenUsers}
+                                    onDropdownClick={preopenUsers}
+                                    onChange={(e) => setForm({ ...form, targetUsers: e.value })}
+                                    field="name"
+                                    itemTemplate={userItemTpl}
+                                    placeholder="Search users..."
+                                    dropdown
+                                    minLength={0}
+                                    forceSelection={false}
+                                    virtualScrollerOptions={{ itemSize: 50 }}
+                                    loading={loadingUser}
+                                    className="w-full"
+                                    emptyMessage="No users found"
+                                />
+                            </div>
+                        </div>
 
-                    <div className="nf-field">
-                        <label>Courses</label>
-                        <AutoComplete
-                            multiple
-                            value={form.targetCourses}
-                            suggestions={courseSug}
-                            completeMethod={onCompleteCourses}
-                            onFocus={preopenCourses}
-                            onDropdownClick={preopenCourses}
-                            onChange={(e) => setForm({ ...form, targetCourses: e.value })}
-                            field="code"
-                            itemTemplate={courseItemTpl}
-                            placeholder="Gõ để lọc hoặc bấm ▼ để xem tất cả"
-                            dropdown
-                            minLength={0}
-                            forceSelection={false}
-                            virtualScrollerOptions={{ itemSize: 50 }}
-                            loading={!!loadingCourse}
-                            appendTo="self"
-                            panelClassName="ac-panel"
-                            panelStyle={{ width: "100%", maxHeight: 280, overflow: "auto" }}
-                            className="ac-control"
-                            emptyMessage="Không có dữ liệu"
-                            emptyFilterMessage="Không tìm thấy"
-                        />
-                    </div>
-                </div>
+                        <div className="col-12 md:col-6">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-book mr-2 text-orange-500"></i>
+                                    Target Courses
+                                </label>
+                                <AutoComplete
+                                    multiple
+                                    value={form.targetCourses}
+                                    suggestions={courseSug}
+                                    completeMethod={onCompleteCourses}
+                                    onFocus={preopenCourses}
+                                    onDropdownClick={preopenCourses}
+                                    onChange={(e) => setForm({ ...form, targetCourses: e.value })}
+                                    field="code"
+                                    itemTemplate={courseItemTpl}
+                                    placeholder="Search courses..."
+                                    dropdown
+                                    minLength={0}
+                                    forceSelection={false}
+                                    virtualScrollerOptions={{ itemSize: 50 }}
+                                    loading={loadingCourse}
+                                    className="w-full"
+                                    emptyMessage="No courses found"
+                                />
+                            </div>
+                        </div>
 
-                {/* Programs */}
-                <div className="nf-field">
-                    <label>Programs</label>
-                    <AutoComplete
-                        multiple
-                        value={form.targetPrograms}
-                        suggestions={programSug}
-                        completeMethod={onCompletePrograms}
-                        onFocus={preopenPrograms}
-                        onDropdownClick={preopenPrograms}
-                        onChange={(e) => setForm({ ...form, targetPrograms: e.value })}
-                        field="name"
-                        itemTemplate={programItemTpl}
-                        placeholder="Gõ để lọc hoặc bấm ▼ để xem tất cả"
-                        dropdown
-                        minLength={0}
-                        forceSelection={false}
-                        virtualScrollerOptions={{ itemSize: 50 }}
-                        loading={!!loadingProgram}
-                        appendTo="self"
-                        panelClassName="ac-panel"
-                        panelStyle={{ width: "100%", maxHeight: 280, overflow: "auto" }}
-                        className="ac-control"
-                        emptyMessage="Không có dữ liệu"
-                        emptyFilterMessage="Không tìm thấy"
-                    />
-                </div>
+                        <div className="col-12 md:col-6">
+                            <div className="flex flex-column gap-2">
+                                <label className="font-semibold text-900">
+                                    <i className="pi pi-graduation-cap mr-2 text-cyan-500"></i>
+                                    Target Programs
+                                </label>
+                                <AutoComplete
+                                    multiple
+                                    value={form.targetPrograms}
+                                    suggestions={programSug}
+                                    completeMethod={onCompletePrograms}
+                                    onFocus={preopenPrograms}
+                                    onDropdownClick={preopenPrograms}
+                                    onChange={(e) => setForm({ ...form, targetPrograms: e.value })}
+                                    field="name"
+                                    itemTemplate={programItemTpl}
+                                    placeholder="Search programs..."
+                                    dropdown
+                                    minLength={0}
+                                    forceSelection={false}
+                                    virtualScrollerOptions={{ itemSize: 50 }}
+                                    loading={loadingProgram}
+                                    className="w-full"
+                                    emptyMessage="No programs found"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </Panel>
+
+                <Divider />
 
                 {/* Schedule */}
-                <div className="nf-field">
-                    <label>Scheduled date (tuỳ chọn)</label>
-                    <Calendar
-                        value={form.scheduledDate}
-                        showTime
-                        hourFormat="24"
-                        onChange={(e) => setForm({ ...form, scheduledDate: e.value })}
-                        placeholder="Chọn thời điểm gửi (để trống = gửi ngay)"
-                    />
-                </div>
+                <Panel header={
+                    <div className="flex align-items-center gap-2">
+                        <i className="pi pi-clock text-orange-500"></i>
+                        <span className="font-semibold">Schedule (Optional)</span>
+                    </div>
+                } toggleable collapsed>
+                    <div className="flex flex-column gap-2">
+                        <label className="font-semibold text-900">
+                            <i className="pi pi-calendar mr-2 text-orange-500"></i>
+                            Scheduled Date & Time
+                        </label>
+                        <Calendar
+                            value={form.scheduledDate}
+                            showTime
+                            hourFormat="24"
+                            onChange={(e) => setForm({ ...form, scheduledDate: e.value })}
+                            placeholder="Leave blank to send immediately"
+                            className="w-full"
+                            showIcon
+                        />
+                        <small className="text-600">
+                            <i className="pi pi-info-circle mr-1"></i>
+                            If no date is selected, the notification will be sent immediately
+                        </small>
+                    </div>
+                </Panel>
 
-                <div className="nf-actions">
-                    <Button label="Gửi ngay / Hẹn giờ" icon="pi pi-send" onClick={onSubmit} />
+                <Divider />
+
+                {/* Actions */}
+                <div className="flex justify-content-between gap-2">
                     <Button
-                        label="Reset"
+                        label="Reset Form"
                         icon="pi pi-refresh"
-                        className="p-button-outlined"
+                        className="p-button-outlined p-button-secondary"
                         onClick={() =>
                             setForm({
                                 title: "",
@@ -439,9 +517,17 @@ export default function NotificationForm() {
                             })
                         }
                     />
+                    <Button
+                        label={form.scheduledDate ? "Schedule Notification" : "Send Now"}
+                        icon="pi pi-send"
+                        onClick={onSubmit}
+                        style={{
+                            background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                            border: 'none'
+                        }}
+                    />
                 </div>
-
-            </div>
+            </Card>
         </div>
     );
 }

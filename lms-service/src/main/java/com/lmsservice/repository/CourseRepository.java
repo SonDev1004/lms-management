@@ -49,4 +49,6 @@ public interface CourseRepository extends JpaRepository<Course, Long>, JpaSpecif
     List<Course> findByTrackCodeOrderByCurriculumOrderAsc(String trackCode);
 
     boolean existsByTrackCode(String trackCode);
+
+    List<Course> findByTeacher_Id(Long teacherId);
 }

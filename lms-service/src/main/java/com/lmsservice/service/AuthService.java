@@ -1,9 +1,6 @@
 package com.lmsservice.service;
 
-import com.lmsservice.dto.request.AuthRequest;
-import com.lmsservice.dto.request.ChangePasswordRequest;
-import com.lmsservice.dto.request.RefreshRequest;
-import com.lmsservice.dto.request.RegisterRequest;
+import com.lmsservice.dto.request.*;
 import com.lmsservice.dto.response.*;
 
 public interface AuthService {
@@ -16,4 +13,8 @@ public interface AuthService {
     void register(RegisterRequest request);
 
     void changePassword(ChangePasswordRequest request, String username);
+
+    void forgotPassword(ForgotPasswordRequest request);
+
+    void resetPassword(ResetPasswordRequest request);
 }
