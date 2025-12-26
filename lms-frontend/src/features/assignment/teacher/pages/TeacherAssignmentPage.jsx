@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Card } from "primereact/card";
@@ -23,6 +23,49 @@ import {
 
 import TeacherAssignmentForm from "@/features/assignment/teacher/components/TeacherAssignmentForm.jsx";
 
+/* ==========================
+ * FE validate / error mapping
+ * ========================== */
+
+const LIMITS = { QUIZ_PHASE: 4, MID_TEST: 1, FINAL_TEST: 1 };
+
+const ERROR_MESSAGES = {
+    ASSIGNMENT_LIMIT_EXCEEDED:
+        "Course chỉ được tạo đúng: 4 Quiz phase, 1 Mid test, 1 Final test.",
+    INVALID_FACTOR:
+        "Factor không đúng theo loại bài (Quiz=1, Mid=3, Final=5).",
+    INVALID_TOTAL_SCORE: "Max score bắt buộc là 10.",
+    FINAL_REQUIRES_MID: "Phải tạo Mid test trước khi tạo Final test.",
+    ASSIGNMENT_LOCKED:
+        "Assignment đã có bài nộp nên không thể sửa/xóa các thông tin chấm điểm.",
+};
+
+function getApiErrorCode(e) {
+    return (
+        e?.response?.data?.code ||
+        e?.response?.data?.errorCode ||
+        e?.response?.data?.result?.code ||
+        null
+    );
+}
+
+function showApiError(toastRef, e, fallback = "Thao tác thất bại.") {
+    const code = getApiErrorCode(e);
+    toastRef.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: ERROR_MESSAGES[code] || fallback,
+        life: 3500,
+    });
+}
+
+function normalizeType(row) {
+    const raw = row?.assignmentType;
+    if (!raw) return null;
+    if (Array.isArray(raw)) return raw[0] ?? null;
+    return raw;
+}
+
 export default function TeacherAssignmentPage() {
     const [courses, setCourses] = useState([]);
     const [selectedCourseId, setSelectedCourseId] = useState(null);
@@ -41,6 +84,7 @@ export default function TeacherAssignmentPage() {
 
     useEffect(() => {
         loadMyCourses();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -49,7 +93,17 @@ export default function TeacherAssignmentPage() {
         } else {
             setAssignments([]);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCourseId]);
+
+    const counts = useMemo(() => {
+        const c = { QUIZ_PHASE: 0, MID_TEST: 0, FINAL_TEST: 0 };
+        (assignments || []).forEach((a) => {
+            const t = normalizeType(a);
+            if (t && c[t] != null) c[t] += 1;
+        });
+        return c;
+    }, [assignments]);
 
     const loadMyCourses = async () => {
         try {
@@ -76,6 +130,7 @@ export default function TeacherAssignmentPage() {
             }
         } catch (e) {
             console.error("Failed to load teacher courses", e);
+            showApiError(toastRef, e, "Không tải được danh sách khóa học.");
         } finally {
             setLoadingCourses(false);
         }
@@ -85,9 +140,10 @@ export default function TeacherAssignmentPage() {
         try {
             setLoadingAssignments(true);
             const list = await fetchTeacherAssignmentsByCourse(courseId);
-            setAssignments(list);
+            setAssignments(list || []);
         } catch (e) {
             console.error("Failed to load assignments", e);
+            showApiError(toastRef, e, "Không tải được danh sách assignment.");
         } finally {
             setLoadingAssignments(false);
         }
@@ -123,11 +179,7 @@ export default function TeacherAssignmentPage() {
                     }
                 } catch (e) {
                     console.error(e);
-                    toastRef.current?.show({
-                        severity: "error",
-                        summary: "Error",
-                        detail: "Không xoá được assignment",
-                    });
+                    showApiError(toastRef, e, "Không xoá được assignment.");
                 }
             },
         });
@@ -135,13 +187,48 @@ export default function TeacherAssignmentPage() {
 
     const handleSubmitForm = async (payload) => {
         if (!selectedCourseId) return;
-        if (!payload.assignmentType || payload.assignmentType.length === 0) {
+
+        // NOTE: BE hiện lấy getFirst(), FE phải ép chỉ 1 type để đúng UI/logic
+        const rawType = payload?.assignmentType;
+        const type = Array.isArray(rawType) ? rawType[0] : rawType;
+
+        if (!type) {
             toastRef.current?.show({
                 severity: "warn",
                 summary: "Missing type",
-                detail: "Please select at least one assignment type.",
+                detail: "Please select assignment type.",
+                life: 2500,
             });
             return;
+        }
+
+        // ===== FE validate nghiệp vụ: limit 4/1/1 + FINAL requires MID (chặn sớm) =====
+        // chỉ chặn khi create mới; edit để BE quyết định (vì có thể là edit title/dueDate)
+        if (!editing) {
+            if ((counts[type] ?? 0) >= (LIMITS[type] ?? 0)) {
+                toastRef.current?.show({
+                    severity: "warn",
+                    summary: "Limit exceeded",
+                    detail:
+                        type === "QUIZ_PHASE"
+                            ? "Đã đủ 4 Quiz phase."
+                            : type === "MID_TEST"
+                                ? "Đã có Mid test."
+                                : "Đã có Final test.",
+                    life: 3000,
+                });
+                return;
+            }
+
+            if (type === "FINAL_TEST" && (counts.MID_TEST ?? 0) < 1) {
+                toastRef.current?.show({
+                    severity: "warn",
+                    summary: "Invalid flow",
+                    detail: "Phải tạo Mid test trước khi tạo Final test.",
+                    life: 3000,
+                });
+                return;
+            }
         }
 
         try {
@@ -149,6 +236,10 @@ export default function TeacherAssignmentPage() {
 
             const toSend = {
                 ...payload,
+                // ép lại assignmentType theo format cũ (array) để không phá service payload
+                assignmentType: Array.isArray(payload.assignmentType)
+                    ? [type]
+                    : [type],
                 courseId: selectedCourseId,
             };
 
@@ -179,22 +270,29 @@ export default function TeacherAssignmentPage() {
                 setFormVisible(false);
                 setEditing(null);
 
-                navigate(`/teacher/assignments/${created.id}/quiz-builder`);
+                // created có thể là object hoặc {result: {...}}
+                const createdId = created?.id ?? created?.result?.id;
+                if (createdId) {
+                    navigate(`/teacher/assignments/${createdId}/quiz-builder`);
+                } else {
+                    // fallback: reload list
+                    await loadAssignments(selectedCourseId);
+                }
             }
         } catch (e) {
             console.error(e);
-            toastRef.current?.show({
-                severity: "error",
-                summary: "Error",
-                detail: "Không lưu được assignment",
-            });
+            showApiError(toastRef, e, "Không lưu được assignment.");
         } finally {
             setFormLoading(false);
         }
     };
 
     const typeBodyTemplate = (row) => {
-        const types = row.assignmentType || [];
+        const raw = row.assignmentType;
+
+        // hỗ trợ cả string enum (BE) và array (FE cũ)
+        const types = Array.isArray(raw) ? raw : raw ? [raw] : [];
+
         if (!types.length) return <span>-</span>;
         return (
             <div className="flex gap-2 flex-wrap">
@@ -229,11 +327,7 @@ export default function TeacherAssignmentPage() {
             });
         } catch (e) {
             console.error(e);
-            toastRef.current?.show({
-                severity: "error",
-                summary: "Error",
-                detail: "Không gửi được bài tập.",
-            });
+            showApiError(toastRef, e, "Không gửi được bài tập.");
         } finally {
             setTableLoading(false);
         }
@@ -258,9 +352,7 @@ export default function TeacherAssignmentPage() {
                     size="small"
                     outlined
                     onClick={() =>
-                        navigate(
-                            `/teacher/assignments/${row.id}/students`
-                        )
+                        navigate(`/teacher/assignments/${row.id}/students`)
                     }
                 />
 
@@ -269,9 +361,7 @@ export default function TeacherAssignmentPage() {
                     size="small"
                     outlined
                     onClick={() =>
-                        navigate(
-                            `/teacher/assignments/${row.id}/quiz-builder`
-                        )
+                        navigate(`/teacher/assignments/${row.id}/quiz-builder`)
                     }
                 />
 
@@ -297,6 +387,7 @@ export default function TeacherAssignmentPage() {
         <div className="page-wrap">
             <Toast ref={toastRef} />
             <ConfirmDialog />
+
             <div className="header-row">
                 <div className="title-block">
                     <i className="pi pi-clipboard title-icon" />
@@ -325,12 +416,19 @@ export default function TeacherAssignmentPage() {
                         label="New Assignment"
                         icon="pi pi-plus"
                         onClick={openCreateForm}
-                        disabled={!selectedCourseId}
+                        disabled={!selectedCourseId || loadingCourses}
                     />
                 </div>
             </div>
 
             <Card>
+                <div className="flex justify-content-between align-items-center mb-2">
+                    <div className="text-sm text-muted-color">
+                        Limit: Quiz {counts.QUIZ_PHASE}/4 · Mid {counts.MID_TEST}/1 · Final{" "}
+                        {counts.FINAL_TEST}/1
+                    </div>
+                </div>
+
                 <DataTable
                     value={assignments}
                     loading={loadingAssignments || tableLoading}
@@ -346,7 +444,7 @@ export default function TeacherAssignmentPage() {
                             : "Hãy chọn một khóa học."
                     }
                 >
-                <Column field="title" header="Title" sortable />
+                    <Column field="title" header="Title" sortable />
                     <Column
                         field="dueDate"
                         header="Due"
@@ -392,6 +490,7 @@ export default function TeacherAssignmentPage() {
                         setFormVisible(false);
                         setEditing(null);
                     }}
+                    counts={counts}
                 />
             </Dialog>
         </div>

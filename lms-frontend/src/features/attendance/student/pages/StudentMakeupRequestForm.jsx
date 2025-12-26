@@ -1,152 +1,340 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "primereact/card";
-import { Dropdown } from "primereact/dropdown";
-import { InputTextarea } from "primereact/inputtextarea";
-import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
+import { InputTextarea } from "primereact/inputtextarea";
+import { Dialog } from "primereact/dialog";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Tag } from "primereact/tag";
+
 import {
-    getSessionsForCourse,
     createStudentMakeupRequest,
+    getAvailableMakeupSessionsForStudent,
+    getMyMakeupRequests,
+    selectPreferredMakeupSession,
 } from "@/features/attendance/api/makeupRequestService";
+
+import { getStudentAttendanceDetails } from "@/features/attendance/api/attendanceService";
+
+function fmtDT(dt) {
+    if (!dt) return "";
+    try { return new Date(dt).toLocaleString(); } catch { return String(dt); }
+}
 
 export default function StudentMakeupRequestForm({ course }) {
     const toastRef = useRef(null);
-    const [sessions, setSessions] = useState([]);
-    const [selectedSessionId, setSelectedSessionId] = useState(null);
+
+    const derivedCourseId =
+        course?.courseId ?? course?.id ?? course?.course_id ?? null;
+
+    // attendance details of this course
+    const [attDetails, setAttDetails] = useState([]);
+    const [loadingAtt, setLoadingAtt] = useState(false);
+
+    // form state
+    const [missedSessionId, setMissedSessionId] = useState(null);
     const [reason, setReason] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
+    const [creating, setCreating] = useState(false);
 
-    const courseId = course?.id || course?.courseId;
+    // after create
+    const [createdRequest, setCreatedRequest] = useState(null);
 
+    // available sessions dialog
+    const [availableOpen, setAvailableOpen] = useState(false);
+    const [availableLoading, setAvailableLoading] = useState(false);
+    const [availableSessions, setAvailableSessions] = useState([]);
+
+    // my requests table
+    const [myRows, setMyRows] = useState([]);
+    const [myTotal, setMyTotal] = useState(0);
+    const [myLoading, setMyLoading] = useState(false);
+    const [myPage, setMyPage] = useState(0);
+    const [mySize] = useState(10);
+    const [filterStatus, setFilterStatus] = useState("");
+
+    const statusOptions = useMemo(
+        () => [
+            { label: "All", value: "" },
+            { label: "PENDING", value: "PENDING" },
+            { label: "APPROVED", value: "APPROVED" },
+            { label: "REJECTED", value: "REJECTED" },
+            { label: "DONE", value: "DONE" },
+        ],
+        []
+    );
+
+    // 1) Load attendance details for THIS course, then filter absent rows
     useEffect(() => {
-        if (!courseId) return;
+        if (!derivedCourseId) return;
 
-        const loadSessions = async () => {
-            setLoading(true);
+        (async () => {
+            setLoadingAtt(true);
             try {
-                const data = await getSessionsForCourse(courseId);
-                console.log("Makeup sessions raw:", data);
+                const det = await getStudentAttendanceDetails(derivedCourseId);
 
-                // chỉ lấy các buổi đã vắng: attendance === 0 (Absent)
-                const options = (data || [])
-                    .filter((s) => s.attendance === 0)
-                    .map((s) => {
-                        const date = s.date;
-                        const start = s.startTime?.slice(0, 5) ?? "";
-                        const end = s.endTime?.slice(0, 5) ?? "";
-                        const status = s.statusText || "Absent";
-                        return {
-                            label: `${date} • ${start} - ${end} • ${status}`,
-                            value: s.sessionId,
-                        };
-                    });
-                setSessions(options);
-            } catch (err) {
-                console.error(err);
+                // det có thể là array hoặc {content:[]}
+                const list = Array.isArray(det) ? det : (det?.content ?? det?.items ?? []);
+                setAttDetails(list);
+
+                // reset selection when course changes
+                setMissedSessionId(null);
+            } catch (e) {
+                console.error(e);
                 toastRef.current?.show({
                     severity: "error",
-                    summary: "Error",
-                    detail: "Không tải được danh sách buổi học.",
+                    summary: "Load attendance failed",
+                    detail: e?.response?.data?.message || e?.message || "Không tải được attendance",
                 });
+                setAttDetails([]);
             } finally {
-                setLoading(false);
+                setLoadingAtt(false);
             }
-        };
+        })();
+    }, [derivedCourseId]);
 
-        void loadSessions();
-    }, [courseId]);
+    // 2) Absent sessions = attendance === 0
+    const absentRows = useMemo(() => {
+        return (attDetails || []).filter((r) => r?.attendance === 0);
+    }, [attDetails]);
 
-    const handleSubmit = async () => {
-        if (!selectedSessionId) {
-            toastRef.current?.show({
-                severity: "warn",
-                summary: "Thiếu thông tin",
-                detail: "Vui lòng chọn buổi cần xin học bù.",
-            });
-            return;
-        }
-        if (!reason || reason.trim().length < 5) {
-            toastRef.current?.show({
-                severity: "warn",
-                summary: "Thiếu lý do",
-                detail: "Vui lòng nhập lý do (ít nhất 5 ký tự).",
-            });
-            return;
-        }
+    // 3) Dropdown options from absentRows
+    const missedOptions = useMemo(() => {
+        return absentRows
+            .map((r) => {
+                const sessionId = r.sessionId ?? r.id; // <-- MUST exist
+                if (!sessionId) return null;
 
-        setSubmitting(true);
+                const date = r.date ?? "";
+                const start = r.startTime?.slice?.(0, 5) ?? "";
+                const end = r.endTime?.slice?.(0, 5) ?? "";
+
+                // nếu BE có orderSession thì hiển thị đẹp hơn
+                const title = r.orderSession ? `Buổi ${r.orderSession}` : `Session #${sessionId}`;
+
+                const time = start && end ? `${start}-${end}` : start || end;
+                const label = `${title}${date ? " - " + date : ""}${time ? " " + time : ""}`;
+
+                return { label, value: sessionId };
+            })
+            .filter(Boolean);
+    }, [absentRows]);
+
+    // load my requests (giữ như bạn đang có)
+    const loadMyRequests = async (page = myPage) => {
+        setMyLoading(true);
         try {
-            await createStudentMakeupRequest(selectedSessionId, reason.trim());
-            toastRef.current?.show({
-                severity: "success",
-                summary: "Đã gửi",
-                detail: "Yêu cầu học bù đã được gửi tới phòng đào tạo.",
+            const data = await getMyMakeupRequests({
+                status: filterStatus || undefined,
+                courseId: derivedCourseId || undefined, // optional: lọc luôn theo course hiện tại
+                page,
+                size: mySize,
             });
-            setSelectedSessionId(null);
-            setReason("");
-        } catch (err) {
-            console.error(err);
+            setMyRows(data?.content || []);
+            setMyTotal(data?.totalElements || 0);
+            setMyPage(data?.number ?? page);
+        } catch (e) {
             toastRef.current?.show({
                 severity: "error",
-                summary: "Lỗi",
-                detail: "Không gửi được yêu cầu học bù.",
+                summary: "Load my requests failed",
+                detail: e?.response?.data?.message || e?.message || "Không tải được danh sách",
             });
         } finally {
-            setSubmitting(false);
+            setMyLoading(false);
         }
     };
 
-    const disabled = loading || sessions.length === 0;
+    useEffect(() => {
+        void loadMyRequests(0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filterStatus, derivedCourseId]);
+
+    const canCreate = !!missedSessionId && reason.trim().length > 0 && !creating;
+
+    const openAvailable = async (missedId) => {
+        setAvailableOpen(true);
+        setAvailableLoading(true);
+        try {
+            const list = await getAvailableMakeupSessionsForStudent(missedId);
+            setAvailableSessions(list || []);
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Load available sessions failed",
+                detail: e?.response?.data?.message || e?.message || "Không tải được lịch bù",
+            });
+            setAvailableSessions([]);
+        } finally {
+            setAvailableLoading(false);
+        }
+    };
+
+    const onCreate = async () => {
+        if (!canCreate) return;
+        setCreating(true);
+        try {
+            const req = await createStudentMakeupRequest(missedSessionId, reason.trim());
+            setCreatedRequest(req);
+
+            toastRef.current?.show({
+                severity: "success",
+                summary: "Đã tạo yêu cầu",
+                detail: "Tạo thành công. Hãy chọn lịch học bù mong muốn (preferred).",
+            });
+
+            await openAvailable(missedSessionId);
+            await loadMyRequests(0);
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Tạo yêu cầu thất bại",
+                detail: e?.response?.data?.message || e?.message || "Không thể tạo yêu cầu",
+            });
+        } finally {
+            setCreating(false);
+        }
+    };
+
+    const onSelectPreferred = async (preferredSessionId) => {
+        const requestId = createdRequest?.id;
+        if (!requestId) return;
+
+        try {
+            const updated = await selectPreferredMakeupSession(requestId, preferredSessionId);
+            setCreatedRequest(updated);
+            toastRef.current?.show({
+                severity: "success",
+                summary: "Đã chọn preferred",
+                detail: "Yêu cầu đang chờ AM duyệt.",
+            });
+            setAvailableOpen(false);
+            await loadMyRequests(0);
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Chọn preferred thất bại",
+                detail: e?.response?.data?.message || e?.message || "Không thể chọn lịch",
+            });
+        }
+    };
+
+    const statusTag = (r) => <Tag value={r?.status || ""} />;
+
+    const courseTitle = course?.courseName ?? course?.title ?? course?.name ?? "Course";
 
     return (
-        <Card className="p-mt-3">
+        <div className="p-3">
             <Toast ref={toastRef} />
-            <h3 style={{ marginTop: 0 }}>Make-up Class Request</h3>
 
-            {sessions.length === 0 && !loading && (
-                <p style={{ marginBottom: "1rem", color: "#6b7280" }}>
-                    Bạn không có buổi nào vắng trong khóa học này,
-                    hoặc dữ liệu điểm danh chưa được cập nhật.
-                </p>
-            )}
+            <Card title="Student – Tạo yêu cầu học bù">
+                <div className="p-fluid grid">
+                    {/* Course: lấy từ CourseDetail */}
+                    <div className="col-12">
+                        <div className="mb-2"><b>Course:</b> {courseTitle} {derivedCourseId ? `( #${derivedCourseId} )` : ""}</div>
+                    </div>
 
-            <div className="p-fluid p-formgrid p-grid">
-                <div className="p-field p-col-12">
-                    <label htmlFor="mu-session">Select session</label>
-                    <Dropdown
-                        id="mu-session"
-                        value={selectedSessionId}
-                        options={sessions}
-                        placeholder={loading ? "Loading..." : "Chọn buổi đã vắng cần học bù"}
-                        onChange={(e) => setSelectedSessionId(e.value)}
-                        filter
-                        showClear
-                        disabled={disabled}
-                    />
+                    {/* Buổi vắng: chỉ lấy absentRows */}
+                    <div className="col-12 md:col-6">
+                        <label className="mb-2 block">Buổi vắng (missed session)</label>
+                        <Dropdown
+                            value={missedSessionId}
+                            options={missedOptions}
+                            onChange={(e) => setMissedSessionId(e.value)}
+                            placeholder={loadingAtt ? "Đang tải..." : "Chọn buổi vắng"}
+                            filter
+                            showClear
+                            disabled={!derivedCourseId || loadingAtt}
+                        />
+                        {!loadingAtt && derivedCourseId && missedOptions.length === 0 && (
+                            <small className="text-500">Không có buổi vắng để xin học bù.</small>
+                        )}
+                    </div>
+
+                    <div className="col-12">
+                        <label className="mb-2 block">Reason</label>
+                        <InputTextarea
+                            value={reason}
+                            onChange={(e) => setReason(e.target.value)}
+                            rows={4}
+                            autoResize
+                            placeholder="Nhập lý do xin học bù..."
+                        />
+                    </div>
+
+                    <div className="col-12 flex gap-2">
+                        <Button label="Create Request" icon="pi pi-send" onClick={onCreate} disabled={!canCreate} loading={creating} />
+                        <Button
+                            label="Available Sessions"
+                            icon="pi pi-calendar"
+                            severity="secondary"
+                            onClick={() => openAvailable(missedSessionId)}
+                            disabled={!missedSessionId}
+                        />
+                    </div>
                 </div>
 
-                <div className="p-field p-col-12">
-                    <label htmlFor="mu-reason">Reason</label>
-                    <InputTextarea
-                        id="mu-reason"
-                        rows={3}
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
-                        placeholder="Mô tả lý do vắng và mong muốn học bù..."
-                        disabled={disabled}
-                    />
+                {createdRequest?.id && (
+                    <div className="mt-3">
+                        <div className="flex align-items-center gap-2">
+                            <b>Request vừa tạo:</b> {statusTag(createdRequest)} <span>#{createdRequest.id}</span>
+                        </div>
+                    </div>
+                )}
+            </Card>
+
+            <Card title="My Make-up Requests" className="mt-3">
+                <div className="grid p-fluid align-items-end">
+                    <div className="col-12 md:col-3">
+                        <label className="mb-2 block">Filter Status</label>
+                        <Dropdown value={filterStatus} options={statusOptions} onChange={(e) => setFilterStatus(e.value)} />
+                    </div>
+                    <div className="col-12 md:col-3">
+                        <Button label="Refresh" icon="pi pi-refresh" onClick={() => loadMyRequests(0)} />
+                    </div>
                 </div>
 
-                <div className="p-field p-col-12" style={{ textAlign: "right" }}>
-                    <Button
-                        label="Submit make-up request"
-                        onClick={handleSubmit}
-                        loading={submitting}
-                        disabled={disabled || submitting}
+                <DataTable
+                    value={myRows}
+                    loading={myLoading}
+                    paginator
+                    rows={mySize}
+                    totalRecords={myTotal}
+                    first={myPage * mySize}
+                    onPage={(e) => loadMyRequests(Math.floor(e.first / e.rows))}
+                    emptyMessage="Chưa có yêu cầu"
+                    className="mt-3"
+                    rowHover
+                >
+                    <Column field="id" header="ID" style={{ width: 80 }} />
+                    <Column header="Course" body={(r) => `${r.courseName} (#${r.courseId})`} />
+                    <Column header="Missed" body={(r) => `${r.sessionTitle} - ${fmtDT(r.sessionDateTime)}`} />
+                    <Column header="Preferred" body={(r) => (r.preferredSessionId ? `#${r.preferredSessionId}` : "-")} />
+                    <Column header="Approved" body={(r) => (r.approvedSessionId ? `#${r.approvedSessionId} - ${fmtDT(r.approvedSessionDateTime)}` : "-")} />
+                    <Column header="Status" body={statusTag} style={{ width: 130 }} />
+                    <Column header="Admin Note" field="adminNote" />
+                </DataTable>
+            </Card>
+
+            <Dialog
+                header="Available Make-up Sessions"
+                visible={availableOpen}
+                onHide={() => setAvailableOpen(false)}
+                style={{ width: "900px", maxWidth: "95vw" }}
+            >
+                <DataTable value={availableSessions} loading={availableLoading} paginator rows={8} emptyMessage="Không có buổi phù hợp">
+                    <Column field="courseName" header="Course" />
+                    <Column field="teacherName" header="Teacher" />
+                    <Column field="roomName" header="Room" />
+                    <Column header="DateTime" body={(r) => fmtDT(r.sessionDateTime)} />
+                    <Column
+                        header=""
+                        body={(r) => (
+                            <Button label="Select" icon="pi pi-check" size="small" onClick={() => onSelectPreferred(r.sessionId)} />
+                        )}
                     />
-                </div>
-            </div>
-        </Card>
+                </DataTable>
+            </Dialog>
+        </div>
     );
 }

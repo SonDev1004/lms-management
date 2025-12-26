@@ -1,0 +1,29 @@
+/* program-detail-ads.css */
+.program-detail-shell {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr) 260px;
+    gap: 18px;
+    align-items: start;
+}
+
+/* Tablet: ẩn left ads, giữ right ads */
+@media (max-width: 1200px) {
+    .program-detail-shell {
+        grid-template-columns: minmax(0, 1fr) 260px;
+    }
+
+    .program-detail-ads--left {
+        display: none;
+    }
+}
+
+/* Mobile: chỉ hiển thị main content */
+@media (max-width: 768px) {
+    .program-detail-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .program-detail-ads {
+        display: none;
+    }
+}

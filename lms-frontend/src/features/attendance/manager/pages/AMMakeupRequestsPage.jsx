@@ -1,50 +1,84 @@
-import {useEffect, useState, useRef} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {Card} from "primereact/card";
+import {Toast} from "primereact/toast";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {Dropdown} from "primereact/dropdown";
+import {InputText} from "primereact/inputtext";
 import {Button} from "primereact/button";
-import {Tag} from "primereact/tag";
 import {Dialog} from "primereact/dialog";
+import {Tag} from "primereact/tag";
 import {InputTextarea} from "primereact/inputtextarea";
-import {Toast} from "primereact/toast";
 
 import {
-    fetchAdminMakeupRequests, markMakeupRequestAttended,
-} from "@/features/attendance/api/makeupRequestService.js";
+    approveMakeupRequest,
+    fetchAdminMakeupRequests,
+    getAvailableMakeupSessionsForAdminRequest,
+    markMakeupRequestAttended,
+    rejectMakeupRequest,
+} from "@/features/attendance/api/makeupRequestService";
+
+function fmtDT(dt) {
+    if (!dt) return "";
+    try {
+        return new Date(dt).toLocaleString();
+    } catch {
+        return String(dt);
+    }
+}
+
+const STATUS_OPTIONS = [
+    {label: "All", value: ""},
+    {label: "PENDING", value: "PENDING"},
+    {label: "APPROVED", value: "APPROVED"},
+    {label: "REJECTED", value: "REJECTED"},
+    {label: "DONE", value: "DONE"},
+];
 
 export default function AMMakeupRequestsPage() {
-    const [statusFilter, setStatusFilter] = useState("PENDING");
-    const [requests, setRequests] = useState([]);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [lazyParams, setLazyParams] = useState({first: 0, rows: 20});
+    const toastRef = useRef(null);
+
+    const [status, setStatus] = useState("PENDING");
+    const [courseId, setCourseId] = useState("");
+
+    const [page, setPage] = useState(0);
+    const [size] = useState(20);
+
+    const [rows, setRows] = useState([]);
+    const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const [selectedRequest, setSelectedRequest] = useState(null);
-    const [note, setNote] = useState("");
-    const [dialogVisible, setDialogVisible] = useState(false);
-    const [submitLoading, setSubmitLoading] = useState(false);
+    // dialogs
+    const [approveOpen, setApproveOpen] = useState(false);
+    const [rejectOpen, setRejectOpen] = useState(false);
+    const [attendOpen, setAttendOpen] = useState(false);
 
-    const toast = useRef(null);
+    const [selected, setSelected] = useState(null);
 
-    const loadData = async (page = 0, size = 20) => {
+    // approve form
+    const [availableLoading, setAvailableLoading] = useState(false);
+    const [availableSessions, setAvailableSessions] = useState([]);
+    const [selectedMakeupSessionId, setSelectedMakeupSessionId] = useState(null);
+    const [adminNote, setAdminNote] = useState("");
+
+    const load = async (nextPage = page) => {
         setLoading(true);
         try {
             const data = await fetchAdminMakeupRequests({
-                status: statusFilter,
-                page,
+                status: status || undefined,
+                courseId: courseId ? Number(courseId) : undefined,
+                page: nextPage,
                 size,
             });
-            const items = data.content ?? data.items ?? [];
-            const total = data.totalElements ?? data.total ?? items.length;
 
-            setRequests(items);
-            setTotalRecords(total);
-        } catch (err) {
-            console.error(err);
-            toast.current?.show({
+            setRows(data?.content || []);
+            setTotal(data?.totalElements || 0);
+            setPage(data?.number ?? nextPage);
+        } catch (e) {
+            toastRef.current?.show({
                 severity: "error",
-                summary: "Lỗi",
-                detail: "Không tải được danh sách yêu cầu học bù.",
+                summary: "Load requests failed",
+                detail: e?.response?.data?.message || e?.message || "Không tải được danh sách",
             });
         } finally {
             setLoading(false);
@@ -52,148 +86,259 @@ export default function AMMakeupRequestsPage() {
     };
 
     useEffect(() => {
-        const page = lazyParams.first / lazyParams.rows;
-        loadData(page, lazyParams.rows);
+        load(0);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [statusFilter, lazyParams]);
+    }, [status, courseId]);
 
-    const onPage = (event) => {
-        setLazyParams(event);
-    };
+    const statusTag = (row) => <Tag value={row?.status || ""}/>;
 
-    const openDialog = (row) => {
-        setSelectedRequest(row);
-        setNote(row.adminNote || "");
-        setDialogVisible(true);
-    };
+    const openApprove = async (row) => {
+        setSelected(row);
+        setAdminNote("");
+        setAvailableSessions([]);
+        setSelectedMakeupSessionId(row?.preferredSessionId ?? null);
+        setApproveOpen(true);
 
-    const handleMarkAttended = async () => {
-        if (!selectedRequest) return;
-        setSubmitLoading(true);
+        setAvailableLoading(true);
         try {
-            await markMakeupRequestAttended(selectedRequest.id, note);
-            toast.current?.show({
-                severity: "success", summary: "Thành công", detail: "Đã xác nhận học bù và cập nhật điểm danh.",
-            });
-            setDialogVisible(false);
-
-            const page = lazyParams.first / lazyParams.rows;
-            loadData(page, lazyParams.rows);
-        } catch (err) {
-            const detail = err?.response?.data?.message || "Không thể xác nhận học bù. Vui lòng thử lại.";
-            toast.current?.show({
-                severity: "error", summary: "Lỗi", detail,
+            const list = await getAvailableMakeupSessionsForAdminRequest(row.id);
+            setAvailableSessions(list || []);
+            // nếu preferred nằm trong list thì giữ; nếu không có preferred thì chọn item đầu tiên
+            if (!row?.preferredSessionId && list?.length) {
+                setSelectedMakeupSessionId(list[0].sessionId);
+            }
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Không load được available sessions",
+                detail: "Bạn vẫn có thể approve bằng cách nhập sessionId ở BE, nhưng FE dropdown sẽ thiếu.",
             });
         } finally {
-            setSubmitLoading(false);
+            setAvailableLoading(false);
         }
     };
 
-    const statusBody = (row) => {
-        const map = {
-            PENDING: {severity: "warning", label: "Chờ xử lý"},
-            DONE: {severity: "success", label: "Đã học bù"},
-            REJECTED: {severity: "danger", label: "Từ chối"},
-        };
-        const v = map[row.status] || {severity: "info", label: row.status};
-        return <Tag value={v.label} severity={v.severity}/>;
+    const openReject = (row) => {
+        setSelected(row);
+        setAdminNote("");
+        setRejectOpen(true);
     };
 
-    const actionBody = (row) => {
-        if (row.status !== "PENDING") return null;
-        return (<Button
-                label="Đã học bù"
-                size="small"
-                onClick={() => openDialog(row)}
-            />);
+    const openAttend = (row) => {
+        setSelected(row);
+        setAdminNote(""); // reuse as note
+        setAttendOpen(true);
     };
 
-    const statusOptions = [{label: "Chờ xử lý", value: "PENDING"}, {
-        label: "Đã học bù",
-        value: "DONE"
-    }, {label: "Từ chối", value: "REJECTED"}, {label: "Tất cả", value: ""},];
+    const makeupSessionOptions = useMemo(() => {
+        return (availableSessions || []).map((s) => ({
+            label: `${s.courseName} - ${fmtDT(s.sessionDateTime)} (Session #${s.sessionId})`,
+            value: s.sessionId,
+        }));
+    }, [availableSessions]);
 
-    const header = (<div className="p-d-flex p-jc-between p-ai-center p-mb-3">
-            <h2 style={{margin: 0}}>Yêu cầu học bù</h2>
-            <Dropdown
-                value={statusFilter}
-                options={statusOptions}
-                onChange={(e) => setStatusFilter(e.value)}
-                placeholder="Trạng thái"
-                style={{width: 180}}
-            />
-        </div>);
+    const doApprove = async () => {
+        if (!selected?.id) return;
+        if (!selectedMakeupSessionId) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Thiếu makeupSessionId",
+                detail: "Hãy chọn buổi học bù trong dropdown.",
+            });
+            return;
+        }
+        try {
+            await approveMakeupRequest(selected.id, {
+                makeupSessionId: Number(selectedMakeupSessionId),
+                adminNote,
+            });
+            toastRef.current?.show({severity: "success", summary: "Approved", detail: "Đã duyệt yêu cầu học bù"});
+            setApproveOpen(false);
+            await load(page);
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Approve failed",
+                detail: e?.response?.data?.message || e?.message || "Không thể duyệt",
+            });
+        }
+    };
 
-    return (<div className="p-card p-p-3">
-            <Toast ref={toast}/>
-            {header}
+    const doReject = async () => {
+        if (!selected?.id) return;
+        try {
+            await rejectMakeupRequest(selected.id, {adminNote});
+            toastRef.current?.show({severity: "success", summary: "Rejected", detail: "Đã từ chối yêu cầu học bù"});
+            setRejectOpen(false);
+            await load(page);
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Reject failed",
+                detail: e?.response?.data?.message || e?.message || "Không thể từ chối",
+            });
+        }
+    };
 
-            <DataTable
-                value={requests}
-                loading={loading}
-                lazy
-                paginator
-                first={lazyParams.first}
-                rows={lazyParams.rows}
-                totalRecords={totalRecords}
-                onPage={onPage}
-                rowsPerPageOptions={[10, 20, 50]}
-                responsiveLayout="scroll"
-            >
-                <Column field="id" header="ID" style={{width: 70}}/>
-                <Column field="studentName" header="Học sinh"/>
-                <Column field="courseName" header="Khóa học"/>
-                <Column
-                    field="sessionTitle"
-                    header="Buổi học"
-                    body={(row) => row.sessionTitle || `Buổi ${row.sessionId}`}
-                />
-                <Column
-                    field="sessionDateTime"
-                    header="Ngày học"
-                    body={(row) => row.sessionDateTime ? new Date(row.sessionDateTime).toLocaleString("vi-VN") : ""}
-                    style={{width: 200}}
-                />
-                <Column field="reason" header="Lý do" style={{minWidth: 220}}/>
-                <Column header="Trạng thái" body={statusBody} style={{width: 140}}/>
-                <Column header="Thao tác" body={actionBody} style={{width: 140}}/>
-            </DataTable>
+    const doMarkAttended = async () => {
+        if (!selected?.id) return;
+        try {
+            await markMakeupRequestAttended(selected.id, adminNote);
+            toastRef.current?.show({
+                severity: "success",
+                summary: "DONE",
+                detail: "Đã xác nhận học bù và cập nhật điểm danh"
+            });
+            setAttendOpen(false);
+            await load(page);
+        } catch (e) {
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Mark attended failed",
+                detail: e?.response?.data?.message || e?.message || "Không thể xác nhận",
+            });
+        }
+    };
 
+    const actionsBody = (row) => (
+        <div className="flex gap-2">
+            {row.status === "PENDING" && (
+                <>
+                    <Button label="Approve" icon="pi pi-check" size="small" onClick={() => openApprove(row)}/>
+                    <Button label="Reject" icon="pi pi-times" size="small" severity="danger"
+                            onClick={() => openReject(row)}/>
+                </>
+            )}
+            {row.status === "APPROVED" && (
+                <Button label="Mark Attended" icon="pi pi-verified" size="small" severity="success"
+                        onClick={() => openAttend(row)}/>
+            )}
+        </div>
+    );
+
+    return (
+        <div className="p-3">
+            <Toast ref={toastRef}/>
+
+            <Card title="AM/Admin – Make-up Requests">
+                <div className="grid p-fluid align-items-end">
+                    <div className="col-12 md:col-3">
+                        <label className="mb-2 block">Status</label>
+                        <Dropdown value={status} options={STATUS_OPTIONS} onChange={(e) => setStatus(e.value)}/>
+                    </div>
+                    <div className="col-12 md:col-3">
+                        <label className="mb-2 block">CourseId (optional)</label>
+                        <InputText value={courseId} onChange={(e) => setCourseId(e.target.value)}
+                                   placeholder="VD: 101"/>
+                    </div>
+                    <div className="col-12 md:col-2">
+                        <Button label="Refresh" icon="pi pi-refresh" onClick={() => load(0)}/>
+                    </div>
+                </div>
+
+                <DataTable
+                    value={rows}
+                    loading={loading}
+                    paginator
+                    rows={size}
+                    totalRecords={total}
+                    first={page * size}
+                    onPage={(e) => {
+                        const nextPage = Math.floor(e.first / e.rows);
+                        load(nextPage);
+                    }}
+                    className="mt-3"
+                    emptyMessage="Không có yêu cầu"
+                    rowHover
+                >
+                    <Column field="id" header="ID" style={{width: 80}}/>
+                    <Column header="Student" body={(r) => `${r.studentName} (#${r.studentId})`}/>
+                    <Column header="Course gốc" body={(r) => `${r.courseName} (#${r.courseId})`}/>
+                    <Column header="Buổi vắng" body={(r) => `${r.sessionTitle} - ${fmtDT(r.sessionDateTime)}`}/>
+                    <Column header="Preferred" body={(r) => (r.preferredSessionId ? `#${r.preferredSessionId}` : "-")}/>
+                    <Column header="Approved"
+                            body={(r) => (r.approvedSessionId ? `#${r.approvedSessionId} - ${fmtDT(r.approvedSessionDateTime)}` : "-")}/>
+                    <Column header="Status" body={statusTag} style={{width: 130}}/>
+                    <Column header="Actions" body={actionsBody} style={{width: 320}}/>
+                </DataTable>
+            </Card>
+
+            {/* Approve Dialog */}
             <Dialog
-                header="Xác nhận học bù"
-                visible={dialogVisible}
-                onHide={() => setDialogVisible(false)}
-                style={{width: 480}}
-                modal
+                header={`Approve Request #${selected?.id ?? ""}`}
+                visible={approveOpen}
+                onHide={() => setApproveOpen(false)}
+                style={{width: "750px", maxWidth: "95vw"}}
+                footer={
+                    <div className="flex justify-content-end gap-2">
+                        <Button label="Cancel" severity="secondary" onClick={() => setApproveOpen(false)}/>
+                        <Button label="Approve" icon="pi pi-check" onClick={doApprove} loading={availableLoading}/>
+                    </div>
+                }
             >
-                <p>
-                    Xác nhận học sinh{" "}
-                    <strong>{selectedRequest?.studentName}</strong> đã học bù cho buổi{" "}
-                    <strong>{selectedRequest?.sessionTitle}</strong>.
-                </p>
-                <p>Ghi chú (ngày học bù, lớp học bù,...):</p>
-                <InputTextarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    rows={4}
-                    style={{width: "100%"}}
-                />
+                <div className="p-fluid">
+                    <label className="mb-2 block">Chọn buổi học bù</label>
+                    <Dropdown
+                        value={selectedMakeupSessionId}
+                        options={makeupSessionOptions}
+                        onChange={(e) => setSelectedMakeupSessionId(e.value)}
+                        placeholder={availableLoading ? "Loading..." : "Chọn session"}
+                        disabled={availableLoading}
+                        filter
+                        showClear
+                    />
+                    {selected?.preferredSessionId && (
+                        <small className="block mt-2">
+                            PreferredSessionId: #{selected.preferredSessionId} (auto prefill nếu có)
+                        </small>
+                    )}
 
-                <div style={{marginTop: 16, textAlign: "right"}}>
-                    <Button
-                        label="Hủy"
-                        text
-                        className="p-mr-2"
-                        onClick={() => setDialogVisible(false)}
-                        disabled={submitLoading}
-                    />
-                    <Button
-                        label="Xác nhận đã học bù"
-                        onClick={handleMarkAttended}
-                        loading={submitLoading}
-                    />
+                    <label className="mb-2 mt-3 block">Admin note (optional)</label>
+                    <InputTextarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} rows={4}
+                                   autoResize/>
                 </div>
             </Dialog>
-        </div>);
-}
 
+            {/* Reject Dialog */}
+            <Dialog
+                header={`Reject Request #${selected?.id ?? ""}`}
+                visible={rejectOpen}
+                onHide={() => setRejectOpen(false)}
+                style={{width: "650px", maxWidth: "95vw"}}
+                footer={
+                    <div className="flex justify-content-end gap-2">
+                        <Button label="Cancel" severity="secondary" onClick={() => setRejectOpen(false)}/>
+                        <Button label="Reject" icon="pi pi-times" severity="danger" onClick={doReject}/>
+                    </div>
+                }
+            >
+                <div className="p-fluid">
+                    <label className="mb-2 block">Admin note</label>
+                    <InputTextarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} rows={4}
+                                   autoResize/>
+                </div>
+            </Dialog>
+
+            {/* Mark Attended Dialog */}
+            <Dialog
+                header={`Mark Attended #${selected?.id ?? ""}`}
+                visible={attendOpen}
+                onHide={() => setAttendOpen(false)}
+                style={{width: "650px", maxWidth: "95vw"}}
+                footer={
+                    <div className="flex justify-content-end gap-2">
+                        <Button label="Cancel" severity="secondary" onClick={() => setAttendOpen(false)}/>
+                        <Button label="Confirm" icon="pi pi-verified" severity="success" onClick={doMarkAttended}/>
+                    </div>
+                }
+            >
+                <div className="p-fluid">
+                    <label className="mb-2 block">Note (optional)</label>
+                    <InputTextarea value={adminNote} onChange={(e) => setAdminNote(e.target.value)} rows={4}
+                                   autoResize/>
+                    <small className="block mt-2">Nếu bỏ trống, BE tự note “Đã học bù (course - buổi …)”.</small>
+                </div>
+            </Dialog>
+        </div>
+    );
+}

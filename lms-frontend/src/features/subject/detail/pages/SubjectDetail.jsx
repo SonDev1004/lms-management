@@ -251,7 +251,7 @@ export default function SubjectDetail() {
 
             {!loading && subject && (
                 <>
-                    <SubjectHero subject={subject} onEnroll={handleEnrollScroll} />
+                    <SubjectHero subject={subject} onEnrollClick={handleEnrollScroll} />
 
                     <TabMenu
                         model={tabs}

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
+import { getSubjectCover } from "@/features/subject/utils/resolveSubjectImage";
 
 const formatPrice = (price) =>
     typeof price === "number"
@@ -12,15 +13,9 @@ const formatPrice = (price) =>
 const SubjectCard = ({ subject }) => {
     const navigate = useNavigate();
 
-    const {
-        id,
-        title = "Untitled Subject",
-        image,
-        fee,
-        isActive = true,
-    } = subject ?? {};
+    const { id, title = "Untitled Subject", fee, isActive = true } = subject ?? {};
 
-    const cover = image || "/noimg.png"; // ảnh fallback
+    const cover = useMemo(() => getSubjectCover(subject), [subject]);
     const canView = Boolean(id);
 
     const goDetail = () => {
@@ -35,7 +30,6 @@ const SubjectCard = ({ subject }) => {
             aria-label={`Subject: ${title}`}
             role="button"
         >
-            {/* Ảnh: giữ tỉ lệ 16:9, bo góc */}
             <div className="mb-3 border-round overflow-hidden" style={{ aspectRatio: "16/9" }}>
                 <img
                     src={cover}
@@ -50,18 +44,9 @@ const SubjectCard = ({ subject }) => {
                 {title}
             </h4>
 
-            {/* Hàng tag: trạng thái bên trái, học phí bên phải */}
             <div className="flex justify-content-between align-items-center mb-3">
-                <Tag
-                    value={isActive ? "Open" : "Paused"}
-                    severity={isActive ? "success" : "warning"}
-                    rounded
-                />
-                <Tag
-                    value={`Từ ${formatPrice(Number(fee))}`}
-                    severity="info"
-                    rounded
-                />
+                <Tag value={isActive ? "Open" : "Paused"} severity={isActive ? "success" : "warning"} rounded />
+                <Tag value={`From ${formatPrice(Number(fee))}`} severity="info" rounded />
             </div>
 
             <Button

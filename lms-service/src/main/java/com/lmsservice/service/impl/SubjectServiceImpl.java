@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
+import com.lmsservice.service.CourseService;
 import jakarta.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -39,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class SubjectServiceImpl implements SubjectService {
     private final SubjectRepository subjectRepository;
     private final CourseRepository courseRepository;
+    private final CourseService courseService;
 
     @Override
     @Transactional
@@ -86,18 +88,7 @@ public class SubjectServiceImpl implements SubjectService {
         subject.setDescription(requestDTO.getDescription());
         subject.setIsActive(requestDTO.getIsActive() != null ? requestDTO.getIsActive() : true);
         Subject savedSubject = subjectRepository.save(subject);
-        return SubjectResponse.builder()
-                .id(savedSubject.getId())
-                .title(savedSubject.getTitle())
-                .code(savedSubject.getCode())
-                .sessionNumber(savedSubject.getSessionNumber())
-                .minStudent(savedSubject.getMinStudent())
-                .maxStudent(savedSubject.getMaxStudent())
-                .fee(savedSubject.getFee())
-                .image(savedSubject.getImage())
-                .description(savedSubject.getDescription())
-                .isActive(savedSubject.getIsActive())
-                .build();
+        return SubjectResponse.builder().id(savedSubject.getId()).title(savedSubject.getTitle()).code(savedSubject.getCode()).sessionNumber(savedSubject.getSessionNumber()).minStudent(savedSubject.getMinStudent()).maxStudent(savedSubject.getMaxStudent()).fee(savedSubject.getFee()).image(savedSubject.getImage()).description(savedSubject.getDescription()).isActive(savedSubject.getIsActive()).build();
     }
 
     private final SubjectPolicy subjectPolicy;
@@ -116,24 +107,13 @@ public class SubjectServiceImpl implements SubjectService {
         var spec = SubjectSpecifications.from(f);
         var page = subjectRepository.findAll(spec, pageable);
 
-        Page<SubjectResponse> dtoPage = page.map(s -> SubjectResponse.builder()
-                .id(s.getId())
-                .title(s.getTitle())
-                .code(s.getCode())
-                .sessionNumber(s.getSessionNumber())
-                .fee(s.getFee())
-                .image(s.getImage())
-                .minStudent(s.getMinStudent())
-                .maxStudent(s.getMaxStudent())
-                .description(s.getDescription())
-                .isActive(s.getIsActive())
-                .build());
+        Page<SubjectResponse> dtoPage = page.map(s -> SubjectResponse.builder().id(s.getId()).title(s.getTitle()).code(s.getCode()).sessionNumber(s.getSessionNumber()).fee(s.getFee()).image(s.getImage()).minStudent(s.getMinStudent()).maxStudent(s.getMaxStudent()).description(s.getDescription()).isActive(s.getIsActive()).build());
         return PageResponse.from(dtoPage);
     }
 
     @Override
     public SubjectDetailResponse getDetail(Long id, boolean onlyUpcoming) {
-
+        courseService.refreshCourseStatusesMvp();
         var s = subjectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
 
         List<Course> courses = courseRepository.findBySubject_IdOrderByStatusDescStartDateAscIdAsc(s.getId());
@@ -141,68 +121,42 @@ public class SubjectServiceImpl implements SubjectService {
         if (onlyUpcoming) {
             LocalDate today = LocalDate.now();
             courses = courses.stream()
-                    .filter(c -> c.getStartDate() == null || !c.getStartDate().isBefore(today))
+                    .filter(c -> {
+                        if (c.getStatus() == CourseStatus.ENROLLING || c.getStatus() == CourseStatus.WAITLIST)
+                            return true;
+                        return c.getStartDate() == null || !c.getStartDate().isBefore(today);
+                    })
                     .toList();
         }
-        courses = courses.stream()
-                .filter(c -> VISIBLE.contains(c.getStatus()))
-                .sorted(Comparator.comparing((Course c) -> c.getStatus().getCode(), Comparator.reverseOrder())
-                        .thenComparing(Course::getStartDate, Comparator.nullsLast(Comparator.naturalOrder()))
-                        .thenComparing(Course::getId))
-                .toList();
+
+        courses = courses.stream().filter(c -> c.getStatus() != null && VISIBLE.contains(c.getStatus()))
+                .sorted(Comparator.comparing((Course c) -> c.getStatus().getCode(), Comparator.reverseOrder()).thenComparing(Course::getStartDate, Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Course::getId)).toList();
 
         // Map Course -> DTO
-        var classItems = courses.stream()
-                .map(c -> {
-                    var activeSlots = Optional.ofNullable(c.getTimeslots()).orElseGet(List::of).stream()
-                            .filter(ts -> Boolean.TRUE.equals(ts.getIsActive()))
-                            .toList();
-                    String schedule = ScheduleFormatter.format(activeSlots);
+        var classItems = courses.stream().map(c -> {
+            var activeSlots = Optional.ofNullable(c.getTimeslots()).orElseGet(List::of).stream().filter(ts -> Boolean.TRUE.equals(ts.getIsActive())).toList();
+            String schedule = ScheduleFormatter.format(activeSlots);
 
-                    CourseStatus statusEnum = c.getStatus();
-                    Integer status = (statusEnum != null ? statusEnum.getCode() : null);
-                    String statusName = (statusEnum == null)
-                            ? "Khác"
-                            : switch (statusEnum) {
-                                case DRAFT, SCHEDULED -> "Sắp khai giảng";
-                                case ENROLLING, WAITLIST -> "Đang tuyển sinh";
-                                case IN_PROGRESS -> "Đang học";
-                                case COMPLETED -> "Đã học";
-                            };
+            CourseStatus statusEnum = c.getStatus();
+            Integer status = (statusEnum != null ? statusEnum.getCode() : null);
+            String statusName = (statusEnum == null) ? "Other" : switch (statusEnum) {
+                case SCHEDULED, ENROLLING -> "Enrolling";
+                case WAITLIST -> "Waitlist";
+                case IN_PROGRESS -> "In progress";
+                case COMPLETED -> "Completed";
+                case DRAFT -> "Draft";
+            };
 
-                    return SubjectDetailResponse.CourseItem.builder()
-                            .courseId(c.getId())
-                            .courseTitle(c.getTitle())
-                            .courseCode(c.getCode())
-                            .plannedSessions(c.getPlannedSession())
-                            .capacity(c.getCapacity())
-                            .startDate(c.getStartDate())
-                            .status(status)
-                            .statusName(statusName)
-                            .schedule(schedule)
-                            .build();
-                })
-                .toList();
 
-        return SubjectDetailResponse.builder()
-                .id(s.getId())
-                .codeSubject(s.getCode())
-                .subjectTitle(s.getTitle())
-                .subjectDescription(s.getDescription())
-                .sessionNumber(s.getSessionNumber())
-                .fee(s.getFee())
-                .imgUrl(s.getImage()) // tùy entity
-                .maxStudents(s.getMaxStudent())
-                .minStudents(s.getMinStudent())
-                .isActive(Boolean.TRUE.equals(s.getIsActive()))
-                .classes(classItems)
-                .build();
+            return SubjectDetailResponse.CourseItem.builder().courseId(c.getId()).courseTitle(c.getTitle()).courseCode(c.getCode()).plannedSessions(c.getPlannedSession()).capacity(c.getCapacity()).startDate(c.getStartDate()).status(status).statusName(statusName).schedule(schedule).build();
+        }).toList();
+
+        return SubjectDetailResponse.builder().id(s.getId()).title(s.getTitle()).code(s.getCode()).description(s.getDescription()).imageUrl(s.getImage()).sessionNumber(s.getSessionNumber()).fee(s.getFee()).minStudent(s.getMinStudent()).maxStudent(s.getMaxStudent()).isActive(Boolean.TRUE.equals(s.getIsActive())).courses(classItems).build();
     }
 
-    private static final java.util.EnumSet<CourseStatus> VISIBLE =
-            java.util.EnumSet.of(CourseStatus.SCHEDULED, CourseStatus.ENROLLING, CourseStatus.WAITLIST);
-    private static final List<String> SUBJECT_SORTABLE =
-            List.of("title", "code", "fee", "sessionNumber", "status", "id");
+    private static final java.util.EnumSet<CourseStatus> VISIBLE = java.util.EnumSet.of(CourseStatus.SCHEDULED, CourseStatus.ENROLLING, CourseStatus.WAITLIST);
+    private static final List<String> SUBJECT_SORTABLE = List.of("title", "code", "fee", "sessionNumber", "isActive", "id");
+
 
     private Pageable sanitize(Pageable pageable) {
         Sort safeSort = Sort.unsorted();
@@ -226,8 +180,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public SubjectResponse updateSubject(Long id, CreateSubjectRequest requestDTO) {
-        Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
 
         String normalizedTitle = requestDTO.getTitle().trim().replaceAll("\\s+", " ");
         requestDTO.setTitle(normalizedTitle);
@@ -239,40 +192,42 @@ public class SubjectServiceImpl implements SubjectService {
             throw new AppException(ErrorCode.INVALID_SUBJECT_TITLE_LENGTH);
         }
 
-        // check trùng title nếu đổi
-        if (!normalizedTitle.equalsIgnoreCase(subject.getTitle())
-                && subjectRepository.existsByTitle(normalizedTitle)) {
+        if (!normalizedTitle.equalsIgnoreCase(subject.getTitle()) && subjectRepository.existsByTitle(normalizedTitle)) {
             throw new AppException(ErrorCode.SUBJECT_ALREADY_EXISTS);
         }
 
         subject.setTitle(normalizedTitle);
-        subject.setSessionNumber(requestDTO.getSessionNumber());
-        subject.setFee(requestDTO.getFee());
-        subject.setImage(requestDTO.getImage());
-        subject.setMinStudent(requestDTO.getMinStudent());
-        subject.setMaxStudent(requestDTO.getMaxStudent());
-        subject.setDescription(requestDTO.getDescription());
-        subject.setIsActive(requestDTO.getIsActive() != null ? requestDTO.getIsActive() : true);
+
+        if (requestDTO.getSessionNumber() != null)
+            subject.setSessionNumber(requestDTO.getSessionNumber());
+
+        if (requestDTO.getFee() != null)
+            subject.setFee(requestDTO.getFee());
+
+        if (requestDTO.getImage() != null)
+            subject.setImage(requestDTO.getImage());
+
+        if (requestDTO.getMinStudent() != null)
+            subject.setMinStudent(requestDTO.getMinStudent());
+
+        if (requestDTO.getMaxStudent() != null)
+            subject.setMaxStudent(requestDTO.getMaxStudent());
+
+        if (requestDTO.getDescription() != null)
+            subject.setDescription(requestDTO.getDescription());
+
+        subject.setIsActive(
+                requestDTO.getIsActive() != null ? requestDTO.getIsActive() : subject.getIsActive()
+        );
+
 
         Subject saved = subjectRepository.save(subject);
-        return SubjectResponse.builder()
-                .id(saved.getId())
-                .title(saved.getTitle())
-                .code(saved.getCode())
-                .sessionNumber(saved.getSessionNumber())
-                .minStudent(saved.getMinStudent())
-                .maxStudent(saved.getMaxStudent())
-                .fee(saved.getFee())
-                .image(saved.getImage())
-                .description(saved.getDescription())
-                .isActive(saved.getIsActive())
-                .build();
+        return SubjectResponse.builder().id(saved.getId()).title(saved.getTitle()).code(saved.getCode()).sessionNumber(saved.getSessionNumber()).minStudent(saved.getMinStudent()).maxStudent(saved.getMaxStudent()).fee(saved.getFee()).image(saved.getImage()).description(saved.getDescription()).isActive(saved.getIsActive()).build();
     }
 
     @Override
     public void deleteSubject(Long id) {
-        Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
+        Subject subject = subjectRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
         subjectRepository.delete(subject);
     }
 

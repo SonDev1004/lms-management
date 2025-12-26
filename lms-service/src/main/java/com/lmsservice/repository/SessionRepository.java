@@ -87,6 +87,19 @@ public interface SessionRepository extends JpaRepository<Session, Long>, JpaSpec
     default boolean existsTeacherConflict(Long teacherId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         return existsTeacherConflictRaw(teacherId, date, startTime, endTime) == 1;
     }
+
+    @Query("""
+    select s.date
+    from Session s
+    where s.course.id = :courseId
+      and s.orderSession = :order
+""")
+    Optional<LocalDate> findDateByCourseIdAndOrderSession(
+            @Param("courseId") Long courseId,
+            @Param("order") short order
+    );
+
+
     @Query("""
     select max(s.date)
     from Session s

@@ -1,4 +1,3 @@
-// src/features/program/components/TrackCoursesDialog.jsx
 import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
@@ -7,23 +6,33 @@ import { Button } from "primereact/button";
 import { Tag } from "primereact/tag";
 import { Skeleton } from "primereact/skeleton";
 
-const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("vi-VN") : "—");
+const fmtDate = (d) =>
+    d ? new Date(d).toLocaleDateString("en-GB") : "—";
 
-// Hàm render trạng thái với màu sắc
-const renderStatus = (c) => {
-    const status = (c.statusName || "").toLowerCase();
-    if (status.includes("đang")) return <Tag value={c.statusName} severity="info" rounded />;
-    if (status.includes("đã") || status.includes("hoàn")) return <Tag value={c.statusName} severity="success" rounded />;
-    if (status.includes("hủy")) return <Tag value={c.statusName} severity="danger" rounded />;
-    return <Tag value={c.statusName || `#${c.status}`} severity="secondary" rounded />;
+function mapCourseStatusToUi(statusName) {
+    const s = String(statusName || "").toLowerCase().trim();
+
+    if (s === "enrolling" || s === "waitlist") return "OPEN";
+    if (s === "draft" || s === "scheduled") return "PENDING";
+    if (s === "in_progress" || s === "completed" || s === "ended") return "CLOSED";
+
+    return "PENDING";
+}
+
+const StatusTag = ({ statusName }) => {
+    const ui = mapCourseStatusToUi(statusName);
+
+    if (ui === "OPEN") return <Tag value="Open" severity="success" rounded />;
+    if (ui === "CLOSED") return <Tag value="Closed" severity="secondary" rounded />;
+    return <Tag value="Pending" severity="warning" rounded />;
 };
 
 const TrackCoursesDialog = ({
                                 visible = false,
-                                track = null, // { code, label }
+                                track = null,
                                 onHide = () => {},
                                 onSelectCourse = () => {},
-                                loadCourses, // async (track) => Course[]
+                                loadCourses,
                             }) => {
     const [loading, setLoading] = useState(true);
     const [courses, setCourses] = useState([]);
@@ -50,8 +59,9 @@ const TrackCoursesDialog = ({
         <div className="flex align-items-center gap-2">
             <i className="pi pi-calendar text-primary text-lg" />
             <span className="font-semibold text-lg">
-        Danh sách lớp – {track?.label} ({track?.code})
-      </span>
+                Class list – {track?.trackLabel || track?.label} (
+                {track?.trackCode || track?.code})
+            </span>
         </div>
     );
 
@@ -64,7 +74,13 @@ const TrackCoursesDialog = ({
             onHide={onHide}
             className="p-fluid"
             footer={
-                <Button label="Đóng" icon="pi pi-times" onClick={onHide} outlined severity="secondary" />
+                <Button
+                    label="Close"
+                    icon="pi pi-times"
+                    onClick={onHide}
+                    outlined
+                    severity="secondary"
+                />
             }
         >
             {loading ? (
@@ -74,47 +90,48 @@ const TrackCoursesDialog = ({
                     ))}
                 </div>
             ) : courses.length === 0 ? (
-                <div className="p-4 text-center text-600">⏳ Chưa có lớp cho lịch này.</div>
+                <div className="p-4 text-center text-600">
+                    No classes available for this schedule.
+                </div>
             ) : (
                 <DataTable
                     value={courses}
                     size="small"
                     stripedRows
                     rowHover
-                    dataKey="id"
-                    className="shadow-1 border-round-lg"
-                    paginator rows={5}
+                    dataKey="courseId"
+                    paginator
+                    rows={10}
                 >
-                    <Column header="#" body={(_, { rowIndex }) => rowIndex + 1} style={{ width: 60 }} />
-                    <Column field="title" header="Tên lớp" sortable />
-                    <Column
-                        field="code"
-                        header="Mã lớp"
-                        sortable
-                        style={{ width: 140 }}
-                        body={(c) => c.code?.trim?.() || ""}
-                    />
+                    <Column header="#" body={(_, o) => o.rowIndex + 1} />
+                    <Column field="courseTitle" header="Class name" sortable />
+                    <Column field="courseCode" header="Class code" sortable />
                     <Column
                         field="startDate"
-                        header="Bắt đầu"
-                        sortable
-                        style={{ width: 130 }}
+                        header="Start date"
                         body={(c) => fmtDate(c.startDate)}
                     />
-                    <Column field="schedule" header="Lịch học" />
+                    <Column field="schedule" header="Schedule" />
+                    <Column field="plannedSessions" header="Sessions" />
+                    <Column field="capacity" header="Capacity" />
                     <Column
-                        field="sessions"
-                        header="Số buổi"
-                        style={{ width: 100 }}
-                        body={(c) => c.sessions ?? 0}
+                        header="Status"
+                        body={(row) => <StatusTag statusName={row.statusName} />}
                     />
                     <Column
-                        field="capacity"
-                        header="Sĩ số"
-                        style={{ width: 100 }}
-                        body={(c) => c.capacity ?? 0}
+                        header=""
+                        body={(row) => (
+                            <Button
+                                label="Register"
+                                icon="pi pi-shopping-cart"
+                                size="small"
+                                disabled={
+                                    mapCourseStatusToUi(row.statusName) !== "OPEN"
+                                }
+                                onClick={() => onSelectCourse?.(row)}
+                            />
+                        )}
                     />
-                    <Column header="Trạng thái" style={{ width: 160 }} body={renderStatus} />
                 </DataTable>
             )}
         </Dialog>

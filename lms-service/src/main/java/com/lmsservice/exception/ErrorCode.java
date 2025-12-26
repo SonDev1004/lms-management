@@ -116,7 +116,12 @@ public enum ErrorCode {
     TRACK_NOT_FOUND(1091, "Track not found", HttpStatus.NOT_FOUND),
     COURSE_ID_REQUIRED(1092, "Course ID is required", HttpStatus.BAD_REQUEST),
     COURSE_SUBJECT_NOT_MATCH(1093, "Course does not belong to the specified subject", HttpStatus.BAD_REQUEST),
-    STUDENT_NOT_FOUND(1094, "Student not found", HttpStatus.NOT_FOUND);
+    STUDENT_NOT_FOUND(1094, "Student not found", HttpStatus.NOT_FOUND),
+    ASSIGNMENT_LIMIT_EXCEEDED(1095, "Assignment limit exceeded for the course", HttpStatus.BAD_REQUEST),
+    INVALID_FACTOR(1096, "Invalid factor value", HttpStatus.BAD_REQUEST),
+    INVALID_TOTAL_SCORE(1097, "Total score must be greater than 0", HttpStatus.BAD_REQUEST),
+    FINAL_REQUIRES_MID(1098, "Final score cannot be set without a midterm score", HttpStatus.BAD_REQUEST),
+    ASSIGNMENT_LOCKED(1099, "Assignment is locked and cannot be modified", HttpStatus.BAD_REQUEST);
     private final int code;
     private final String message;
     private final HttpStatus httpStatus;

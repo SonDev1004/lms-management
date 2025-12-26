@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
@@ -13,6 +13,20 @@ const assignmentTypeOptions = [
     { label: "Final test", value: "FINAL_TEST" },
 ];
 
+const FACTOR_BY_TYPE = {
+    QUIZ_PHASE: 1,
+    MID_TEST: 3,
+    FINAL_TEST: 5,
+};
+
+const MAX_SCORE_FIXED = 10;
+
+function normalizeTypeToArray(raw) {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw.filter(Boolean);
+    return [raw];
+}
+
 export default function TeacherAssignmentForm({
                                                   defaultValues,
                                                   onSubmit,
@@ -21,22 +35,52 @@ export default function TeacherAssignmentForm({
                                               }) {
     const [title, setTitle] = useState("");
     const [dueDate, setDueDate] = useState(null);
-    const [maxScore, setMaxScore] = useState(10);
-    const [factor, setFactor] = useState(1);
+
+    // cố định theo rule
+    const [maxScore, setMaxScore] = useState(MAX_SCORE_FIXED);
+    const [factor, setFactor] = useState(FACTOR_BY_TYPE.QUIZ_PHASE);
+
+    // BE đang lấy getFirst() => FE ép 1 phần tử
     const [assignmentType, setAssignmentType] = useState([]);
     const [isActive, setIsActive] = useState(true);
 
+    const selectedType = useMemo(() => {
+        return assignmentType?.[0] || null;
+    }, [assignmentType]);
+
     useEffect(() => {
-        if (!defaultValues) return;
+        if (!defaultValues) {
+            // create mới: set default Quiz
+            setTitle("");
+            setDueDate(null);
+            setAssignmentType([]);
+            setMaxScore(MAX_SCORE_FIXED);
+            setFactor(FACTOR_BY_TYPE.QUIZ_PHASE);
+            setIsActive(true);
+            return;
+        }
+
         setTitle(defaultValues.title || "");
         setDueDate(defaultValues.dueDate ? new Date(defaultValues.dueDate) : null);
-        setMaxScore(
-            defaultValues.maxScore
-                ? Number(defaultValues.maxScore)
-                : 10
-        );
-        setFactor(defaultValues.factor || 1);
-        setAssignmentType(defaultValues.assignmentType || []);
+
+        // maxScore luôn = 10 theo rule
+        setMaxScore(MAX_SCORE_FIXED);
+
+        const types = normalizeTypeToArray(defaultValues.assignmentType);
+        const t0 = types[0] || null;
+
+        // ép 1 type
+        setAssignmentType(t0 ? [t0] : []);
+
+        // factor sync theo type (ưu tiên rule)
+        if (t0 && FACTOR_BY_TYPE[t0] != null) {
+            setFactor(FACTOR_BY_TYPE[t0]);
+        } else {
+            setFactor(
+                defaultValues.factor != null ? Number(defaultValues.factor) || 1 : 1
+            );
+        }
+
         setIsActive(
             typeof defaultValues.isActive === "boolean"
                 ? defaultValues.isActive
@@ -44,18 +88,37 @@ export default function TeacherAssignmentForm({
         );
     }, [defaultValues]);
 
+    const handleTypeChange = (e) => {
+        const nextArr = Array.isArray(e.value) ? e.value : [];
+        // lấy cái mới nhất user vừa chọn, và ép chỉ 1 type
+        const picked = nextArr.length ? [nextArr[nextArr.length - 1]] : [];
+        const t0 = picked[0] || null;
+
+        setAssignmentType(picked);
+
+        if (t0 && FACTOR_BY_TYPE[t0] != null) {
+            setFactor(FACTOR_BY_TYPE[t0]);
+        }
+
+        // luôn fix 10 theo rule
+        setMaxScore(MAX_SCORE_FIXED);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const payload = {
             id: defaultValues?.id ?? null,
             title: title?.trim(),
-            maxScore: Number(maxScore) || 10,
-            factor: Number(factor) || 1,
+            maxScore: MAX_SCORE_FIXED, // fix
+            factor: selectedType ? FACTOR_BY_TYPE[selectedType] : Number(factor) || 1,
             dueDate: dueDate ? dueDate.toISOString() : null,
+            // giữ format array để tương thích code hiện tại
             assignmentType: assignmentType,
             isActive: isActive,
             sessionId: defaultValues?.sessionId ?? null,
         };
+
         onSubmit && onSubmit(payload);
     };
 
@@ -70,6 +133,7 @@ export default function TeacherAssignmentForm({
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
+                    disabled={submitting}
                 />
             </div>
 
@@ -84,6 +148,7 @@ export default function TeacherAssignmentForm({
                     showTime
                     showSeconds={false}
                     hourFormat="24"
+                    disabled={submitting}
                 />
             </div>
 
@@ -95,8 +160,9 @@ export default function TeacherAssignmentForm({
                     id="maxScore"
                     value={maxScore}
                     onValueChange={(e) => setMaxScore(e.value)}
-                    min={1}
-                    max={100}
+                    min={10}
+                    max={10}
+                    disabled // khóa theo rule
                 />
             </div>
 
@@ -108,9 +174,9 @@ export default function TeacherAssignmentForm({
                     id="factor"
                     value={factor}
                     onValueChange={(e) => setFactor(e.value)}
-                    min={0}
-                    max={10}
-                    step={0.1}
+                    min={1}
+                    max={5}
+                    disabled // khóa theo rule, auto theo type
                 />
             </div>
 
@@ -119,10 +185,14 @@ export default function TeacherAssignmentForm({
                 <MultiSelect
                     value={assignmentType}
                     options={assignmentTypeOptions}
-                    onChange={(e) => setAssignmentType(e.value)}
+                    onChange={handleTypeChange}
                     placeholder="Choose type(s)"
                     display="chip"
+                    disabled={submitting}
                 />
+                <small className="text-muted-color">
+                    Rule: Quiz x4 (factor=1), Mid x1 (factor=3), Final x1 (factor=5).
+                </small>
             </div>
 
             <div className="field col-12 md:col-4 flex align-items-center gap-2 mt-4">
@@ -130,6 +200,7 @@ export default function TeacherAssignmentForm({
                     inputId="isActive"
                     checked={isActive}
                     onChange={(e) => setIsActive(e.checked)}
+                    disabled={submitting}
                 />
                 <label htmlFor="isActive">Active</label>
             </div>

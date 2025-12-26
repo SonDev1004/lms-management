@@ -14,33 +14,33 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SubjectDetailResponse {
-    Long id;
-    String codeSubject;
-    String subjectTitle;
-    String subjectDescription;
-    Integer sessionNumber;
-    BigDecimal fee;
-    String imgUrl;
-    Integer maxStudents;
-    Integer minStudents;
-    Boolean isActive;
 
-    List<CourseItem> classes;
+    private Long id;
+    private String title;
+    private String code;
+    private String description;
+    private String imageUrl;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
+    private Integer sessionNumber;
+    private BigDecimal fee;
+
+    private Integer minStudent;
+    private Integer maxStudent;
+    private Boolean isActive;
+
+    private List<CourseItem> courses;
+
+    @Getter @Setter @Builder
     public static class CourseItem {
-        Long courseId;
-        String courseTitle;
-        String courseCode;
-        Integer plannedSessions;
-        Integer capacity;
-        LocalDate startDate;
-        String schedule;
-        Integer status;
-        String statusName;
+        private Long courseId;
+        private String courseTitle;
+        private String courseCode;
+        private Integer plannedSessions;
+        private Integer capacity;
+        private LocalDate startDate;
+        private Integer status;
+        private String statusName;
+        private String schedule;
     }
 }
+

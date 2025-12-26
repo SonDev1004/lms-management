@@ -128,32 +128,67 @@ public class AssignmentServiceImpl implements AssignmentService {
     public AssignmentResponse createAssignmentForTeacher(Long courseId, AssignmentRequest req) {
         ensureTeacherOfCourse(courseId);
 
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found: " + courseId));
+
+        if (req.getAssignmentType() == null || req.getAssignmentType().isEmpty()) {
+            throw new IllegalArgumentException("Assignment type is required");
+        }
+
+        Assignment.AssignmentType type =
+                Assignment.AssignmentType.valueOf(
+                        req.getAssignmentType().getFirst().toUpperCase()
+                );
+
+        long existing = assignmentRepository
+                .countByCourse_IdAndAssignmentType(courseId, type);
+
+        int maxAllowed = MAX_PER_COURSE.get(type);
+
+        if (existing >= maxAllowed) {
+            throw new UnAuthorizeException(
+                    ErrorCode.ASSIGNMENT_LIMIT_EXCEEDED);
+        }
+
+        Integer expectedFactor = FACTOR_RULE.get(type);
+
+        if (req.getFactor() == null || req.getFactor().intValue() != expectedFactor) {
+            throw new UnAuthorizeException(
+                    ErrorCode.INVALID_FACTOR);
+        }
+
+        if (req.getMaxScore() == null || req.getMaxScore().intValue() != 10) {
+            throw new UnAuthorizeException(
+                    ErrorCode.INVALID_TOTAL_SCORE
+            );
+        }
+        if (type == Assignment.AssignmentType.FINAL_TEST) {
+            boolean hasMid =
+                    assignmentRepository.existsByCourse_IdAndAssignmentType(
+                            courseId,
+                            Assignment.AssignmentType.MID_TEST
+                    );
+
+            if (!hasMid) {
+                throw new UnAuthorizeException(
+                        ErrorCode.FINAL_REQUIRES_MID);
+            }
+        }
+
         Assignment entity = new Assignment();
         entity.setCourse(course);
         entity.setTitle(req.getTitle());
-
-        if (req.getMaxScore() != null) {
-            entity.setMaxScore(req.getMaxScore().toString());
-        }
-
+        entity.setMaxScore("10");
+        entity.setFactor(expectedFactor);
         entity.setFileName(req.getFileName());
-
-        if (req.getFactor() != null) {
-            entity.setFactor(req.getFactor().intValue());
-        }
         entity.setDueDate(req.getDueDate());
         entity.setActive(req.getIsActive() != null ? req.getIsActive() : Boolean.TRUE);
-
-        if (req.getAssignmentType() != null && !req.getAssignmentType().isEmpty()) {
-            String typeStr = req.getAssignmentType().getFirst();
-            entity.setAssignmentType(Assignment.AssignmentType.valueOf(typeStr.toUpperCase()));
-        }
+        entity.setAssignmentType(type);
 
         Assignment saved = assignmentRepository.save(entity);
-
         return assignmentMapper.toResponse(saved);
     }
+
 
     @Override
     @Transactional
@@ -217,26 +252,67 @@ public class AssignmentServiceImpl implements AssignmentService {
     /* ==========================================================
      *                 TEACHER SIDE – UPDATE
      * ========================================================== */
-
     @Override
     @Transactional
     public AssignmentResponse updateAssignmentForTeacher(Long assignmentId, AssignmentRequest req) {
-        Assignment entity = assignmentRepository.findById(assignmentId).orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
+        Assignment entity = assignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found: " + assignmentId));
 
         Long courseId = entity.getCourse().getId();
         ensureTeacherOfCourse(courseId);
 
+        // ===== Check hasSubmission (chọn A hoặc B) =====
+        boolean hasSubmission;
+        // A) nếu Assignment có mapping submissions
+        hasSubmission = assignmentRepository.existsByIdAndSubmissionsIsNotEmpty(assignmentId);
+
+        // B) nếu không có mapping submissions thì dùng:
+        // hasSubmission = submissionRepository.existsByAssignment_Id(assignmentId);
+
+        if (hasSubmission) {
+            // 1) khóa factor
+            if (req.getFactor() != null && !Objects.equals(req.getFactor().intValue(), entity.getFactor())) {
+                throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LOCKED);
+            }
+
+            // 2) khóa maxScore
+            if (req.getMaxScore() != null) {
+                String reqMax = req.getMaxScore().toString();
+                if (!Objects.equals(reqMax, entity.getMaxScore())) {
+                    throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LOCKED);
+                }
+            }
+
+            // 3) khóa assignmentType
+            if (req.getAssignmentType() != null && !req.getAssignmentType().isEmpty()) {
+                String reqTypeStr = req.getAssignmentType().getFirst();
+                if (reqTypeStr != null) {
+                    Assignment.AssignmentType reqType =
+                            Assignment.AssignmentType.valueOf(reqTypeStr.toUpperCase());
+
+                    if (entity.getAssignmentType() != reqType) {
+                        throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LOCKED);
+                    }
+                }
+            }
+
+            // 4) khóa chuyển course
+            if (req.getCourseId() != null && !Objects.equals(req.getCourseId(), courseId)) {
+                throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LOCKED);
+            }
+
+            // 5) (khuyến nghị) không cho set dueDate về quá khứ nếu đã có submission
+            if (req.getDueDate() != null && req.getDueDate().isBefore(LocalDateTime.now())) {
+                throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LOCKED);
+            }
+        }
+
+        // ===== Allowed updates =====
         if (req.getTitle() != null) {
             entity.setTitle(req.getTitle());
         }
-        if (req.getMaxScore() != null) {
-            entity.setMaxScore(req.getMaxScore().toString());
-        }
         if (req.getFileName() != null) {
             entity.setFileName(req.getFileName());
-        }
-        if (req.getFactor() != null) {
-            entity.setFactor(req.getFactor().intValue());
         }
         if (req.getDueDate() != null) {
             entity.setDueDate(req.getDueDate());
@@ -245,36 +321,95 @@ public class AssignmentServiceImpl implements AssignmentService {
             entity.setActive(req.getIsActive());
         }
 
-        if (req.getCourseId() != null && !req.getCourseId().equals(courseId)) {
-            ensureTeacherOfCourse(req.getCourseId());
-            Course newCourse = courseRepository.findById(req.getCourseId()).orElseThrow(() -> new IllegalArgumentException("Course not found: " + req.getCourseId()));
-            entity.setCourse(newCourse);
+        // ===== Nếu CHƯA có submission thì cho phép các field “nặng” (nhưng vẫn phải validate rule) =====
+        if (!hasSubmission) {
+
+            // factor: chỉ cho update nếu đúng rule factor theo type
+            if (req.getFactor() != null) {
+                Integer expected = FACTOR_RULE.get(entity.getAssignmentType());
+                if (expected != null && req.getFactor().intValue() != expected) {
+                    throw new UnAuthorizeException(ErrorCode.INVALID_FACTOR);
+                }
+                entity.setFactor(req.getFactor().intValue());
+            }
+
+            // maxScore luôn phải = 10 theo nghiệp vụ
+            if (req.getMaxScore() != null && req.getMaxScore().intValue() != 10) {
+                throw new UnAuthorizeException(ErrorCode.INVALID_TOTAL_SCORE);
+            }
+
+            // đổi course: cho phép nhưng phải đúng teacher
+            if (req.getCourseId() != null && !req.getCourseId().equals(courseId)) {
+                ensureTeacherOfCourse(req.getCourseId());
+                Course newCourse = courseRepository.findById(req.getCourseId())
+                        .orElseThrow(() -> new IllegalArgumentException("Course not found: " + req.getCourseId()));
+                entity.setCourse(newCourse);
+            }
+
+            // đổi type: nếu bạn cho đổi type khi chưa có submission thì phải validate limit
+            if (req.getAssignmentType() != null && !req.getAssignmentType().isEmpty()) {
+                Assignment.AssignmentType newType =
+                        Assignment.AssignmentType.valueOf(req.getAssignmentType().getFirst().toUpperCase());
+
+                // validate limit theo course + newType
+                long countNewType = assignmentRepository.countByCourse_IdAndAssignmentType(courseId, newType);
+                int maxAllowed = MAX_PER_COURSE.get(newType);
+
+                // Nếu đổi type, cần trừ chính nó khỏi count nếu nó đang thuộc newType (thường không)
+                if (newType == entity.getAssignmentType()) {
+                    // ok
+                } else if (countNewType >= maxAllowed) {
+                    throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LIMIT_EXCEEDED);
+                }
+
+                // validate factor theo type mới
+                Integer expectedFactor = FACTOR_RULE.get(newType);
+                if (expectedFactor != null) {
+                    entity.setFactor(expectedFactor);
+                }
+                entity.setAssignmentType(newType);
+
+                // FINAL requires MID
+                if (newType == Assignment.AssignmentType.FINAL_TEST) {
+                    boolean hasMid = assignmentRepository.existsByCourse_IdAndAssignmentType(
+                            courseId, Assignment.AssignmentType.MID_TEST);
+                    if (!hasMid) {
+                        throw new UnAuthorizeException(ErrorCode.FINAL_REQUIRES_MID);
+                    }
+                }
+            }
         }
 
         Assignment saved = assignmentRepository.save(entity);
         return assignmentMapper.toResponse(saved);
     }
 
+
     /* ==========================================================
      *                 TEACHER SIDE – DELETE
      * ========================================================== */
-
     @Override
     @Transactional
     public void deleteAssignmentForTeacher(Long assignmentId) {
         Assignment entity = assignmentRepository.findById(assignmentId).orElse(null);
-
-        if (entity == null) {
-            return;
-        }
+        if (entity == null) return;
 
         Long courseId = entity.getCourse().getId();
         ensureTeacherOfCourse(courseId);
 
+        // ===== Check submission =====
+        boolean hasSubmission;
+        hasSubmission = assignmentRepository.existsByIdAndSubmissionsIsNotEmpty(assignmentId);
+
+        if (hasSubmission) {
+            throw new UnAuthorizeException(ErrorCode.ASSIGNMENT_LOCKED);
+        }
+
+        // soft delete
         entity.setActive(false);
         assignmentRepository.save(entity);
-
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -314,45 +449,45 @@ public class AssignmentServiceImpl implements AssignmentService {
                     status = "SUBMITTED";
                 }
             } else {
-            LocalDateTime due = a.getDueDate();
-            if (due != null && due.isBefore(now)) {
-                // Quá hạn + chưa nộp → kiểm tra retake
-                Optional<AssignmentRetakeRequest> retakeOpt =
-                        assignmentRetakeRequestRepository
-                                .findFirstByStudent_IdAndAssignment_IdAndStatusIn(
-                                        studentId,
-                                        a.getId(),
-                                        java.util.List.of(
-                                                AssignmentRetakeStatus.PENDING,
-                                                AssignmentRetakeStatus.APPROVED
-                                        )
-                                );
+                LocalDateTime due = a.getDueDate();
+                if (due != null && due.isBefore(now)) {
+                    // Quá hạn + chưa nộp → kiểm tra retake
+                    Optional<AssignmentRetakeRequest> retakeOpt =
+                            assignmentRetakeRequestRepository
+                                    .findFirstByStudent_IdAndAssignment_IdAndStatusIn(
+                                            studentId,
+                                            a.getId(),
+                                            java.util.List.of(
+                                                    AssignmentRetakeStatus.PENDING,
+                                                    AssignmentRetakeStatus.APPROVED
+                                            )
+                                    );
 
-                if (retakeOpt.isPresent()) {
-                    AssignmentRetakeRequest r = retakeOpt.get();
+                    if (retakeOpt.isPresent()) {
+                        AssignmentRetakeRequest r = retakeOpt.get();
 
-                    if (r.getStatus() == AssignmentRetakeStatus.PENDING) {
-                        status = "RETAKE_PENDING";
-                    } else if (r.getStatus() == AssignmentRetakeStatus.APPROVED) {
-                        LocalDateTime dl = r.getRetakeDeadline();
-                        if (dl == null || dl.isAfter(now)) {
-                            status = "RETAKE_APPROVED";
+                        if (r.getStatus() == AssignmentRetakeStatus.PENDING) {
+                            status = "RETAKE_PENDING";
+                        } else if (r.getStatus() == AssignmentRetakeStatus.APPROVED) {
+                            LocalDateTime dl = r.getRetakeDeadline();
+                            if (dl == null || dl.isAfter(now)) {
+                                status = "RETAKE_APPROVED";
+                            } else {
+                                // hết hạn thi lại
+                                status = "MISSING";
+                            }
                         } else {
-                            // hết hạn thi lại
                             status = "MISSING";
                         }
                     } else {
                         status = "MISSING";
                     }
                 } else {
-                    status = "MISSING";
+                    status = "NOT_SUBMITTED";
                 }
-            } else {
-                status = "NOT_SUBMITTED";
             }
-        }
 
-        dto.setStudentStatus(status);
+            dto.setStudentStatus(status);
             dto.setStudentScore(studentScore);
 
             result.add(dto);
@@ -442,4 +577,21 @@ public class AssignmentServiceImpl implements AssignmentService {
             notificationSocketController.sendToUserId(studentUserId, noti);
         }
     }
+
+    /* ======================== BUSINESS RULE ======================== */
+
+    private static final java.util.Map<Assignment.AssignmentType, Integer> MAX_PER_COURSE =
+            java.util.Map.of(
+                    Assignment.AssignmentType.QUIZ_PHASE, 4,
+                    Assignment.AssignmentType.MID_TEST, 1,
+                    Assignment.AssignmentType.FINAL_TEST, 1
+            );
+
+    private static final java.util.Map<Assignment.AssignmentType, Integer> FACTOR_RULE =
+            java.util.Map.of(
+                    Assignment.AssignmentType.QUIZ_PHASE, 1,
+                    Assignment.AssignmentType.MID_TEST, 3,
+                    Assignment.AssignmentType.FINAL_TEST, 5
+            );
+
 }

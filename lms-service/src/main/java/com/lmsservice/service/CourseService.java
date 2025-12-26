@@ -14,7 +14,10 @@ public interface CourseService {
     List<SessionInfoDTO> getSessions(Long courseId);
 
     CreateCoursesByProgramResponse createCoursesByProgram(CreateCoursesByProgramRequest req);
+
     void assignTeacher(Long courseId, Long teacherId);
+
+    void refreshCourseStatusesMvp();
 
     void publishCourse(Long courseId);
 

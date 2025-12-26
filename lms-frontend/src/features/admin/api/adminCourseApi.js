@@ -20,6 +20,15 @@ export async function fetchAllCourses() {
 }
 
 /**
+ * Preview sessions cho course (KHÔNG lưu DB)
+ */
+export async function previewSessionsForCourse(courseId, payload = {}) {
+    const res = await axiosClient.post(urls.adminCoursePreviewSessions(courseId), payload);
+    const data = unwrap(res);
+    return data.result ?? [];
+}
+
+/**
  * Lấy danh sách session của 1 course
  */
 export async function fetchSessionsByCourse(courseId) {
@@ -52,7 +61,7 @@ export async function replaceTimeslots(courseId, timeslots) {
 /**
  * Thêm học sinh vào lớp thủ công
  */
-export async function addStudentToCourse(courseId, { studentId, source = "MANUAL" }) {
+export async function addStudentToCourse(courseId, {studentId, source = "MANUAL"}) {
     return axiosClient.post(urls.adminCourseAddStudent(courseId), {
         studentId,
         source,
@@ -75,7 +84,7 @@ export async function createCoursesByProgram(payload) {
  */
 export async function searchPrograms(q = "") {
     const res = await axiosClient.get(urls.searchPrograms, {
-        params: { q },
+        params: {q},
     });
     const data = unwrap(res);
     const list = data.result ?? [];
@@ -93,7 +102,7 @@ export async function searchPrograms(q = "") {
  */
 export async function searchTeachers(q = "") {
     const res = await axiosClient.get(urls.searchTeachers, {
-        params: { q },
+        params: {q},
     });
     const data = unwrap(res);
     const list = data.result ?? [];
@@ -134,7 +143,7 @@ export async function fetchTimeslotsByCourse(courseId) {
 
 
 export async function assignTeacher(courseId, teacherId) {
-    const res = await axiosClient.put(urls.adminCourseAssignTeachers(courseId), { teacherId });
+    const res = await axiosClient.put(urls.adminCourseAssignTeachers(courseId), {teacherId});
     return res?.result;
 }
 
@@ -142,5 +151,5 @@ export async function fetchRoomOptions() {
     const res = await axiosClient.get(urls.roomOptions);
     const data = unwrap(res);
     const list = data.result ?? [];
-    return list.map((x) => ({ value: x.value, label: x.label }));
+    return list.map((x) => ({value: x.value, label: x.label}));
 }

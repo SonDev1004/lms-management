@@ -11,7 +11,7 @@ export default {
     profile: `${rootAPI}/user/profile`,
 
     //Endpoint Student
-    getStudentCourses: `${rootAPI}/student/me/courses` ,
+    getStudentCourses: `${rootAPI}/student/me/courses`,
 
     //Lesson
     lessonBySubject: (id) => `${rootAPI}/lesson/by-subject/${id}`,
@@ -48,8 +48,7 @@ export default {
     // AdminIT notifications
     sendNotification: `${rootAPI}/admin-it/notifications/send`,
     getScheduledNotifications: `${rootAPI}/admin-it/notifications/scheduled`,
-    getAdminNotificationHistory: `${rootAPI}/admin-it/notifications/history`,
-    // ===== Options & Search cho form gửi thông báo =====
+    getAdminNotificationHistory: `${rootAPI}/admin-it/notifications/history`, // ===== Options & Search cho form gửi thông báo =====
     notificationTypes: `${rootAPI}/admin-it/notifications/types`,
     roleOptions: `${rootAPI}/admin-it/roles/options`,
 
@@ -60,89 +59,88 @@ export default {
 
 
     // CRUD assignment (nếu dùng)
-    createAssignment: `${rootAPI}/teacher/assignments`,
-    // Question Bank (ngân hàng đề)
+    createAssignment: `${rootAPI}/teacher/assignments`, // Question Bank (ngân hàng đề)
     questionBankList: `${rootAPI}/teacher/question-bank`,
     questionBankListBySubject: `${rootAPI}/teacher/question-bank/list-questions-by-subject`,
     questionBankCreateMcq: `${rootAPI}/teacher/question-bank/mcq-single`,
     questionBankDeactivate: (id) => `${rootAPI}/teacher/question-bank/${id}`,
 
     // Cấu hình quiz cho assignment
-    assignmentQuizConfig: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}/quiz-config`,
+    assignmentQuizConfig: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}/quiz-config`,
 
     // Student quiz flow
-    studentStartQuiz: (assignmentId) =>
-        `${rootAPI}/student/assignments/${assignmentId}/start`,
-    studentGetQuiz: (assignmentId) =>
-        `${rootAPI}/student/assignments/${assignmentId}/quiz`,
-    studentSubmitQuiz: (assignmentId, submissionId) =>
-        `${rootAPI}/student/assignments/${assignmentId}/submissions/${submissionId}/submit-quiz`,
+    studentStartQuiz: (assignmentId) => `${rootAPI}/student/assignments/${assignmentId}/start`,
+    studentGetQuiz: (assignmentId) => `${rootAPI}/student/assignments/${assignmentId}/quiz`,
+    studentSubmitQuiz: (assignmentId, submissionId) => `${rootAPI}/student/assignments/${assignmentId}/submissions/${submissionId}/submit-quiz`,
 
     //Assignment - STUDENT
-    studentAssignmentsByCourse: (courseId) =>
-        `${rootAPI}/student/courses/${courseId}/assignments`,
-    studentSubmissionSummary: (assignmentId) =>
-        `${rootAPI}/student/assignments/${assignmentId}/submission-summary`,
+    studentAssignmentsByCourse: (courseId) => `${rootAPI}/student/courses/${courseId}/assignments`,
+    studentSubmissionSummary: (assignmentId) => `${rootAPI}/student/assignments/${assignmentId}/submission-summary`,
 
     //Assignment - TEACHER
-    teacherAssignmentsByCourse: (courseId) =>
-        `${rootAPI}/teacher/courses/${courseId}/assignments`,
-    teacherAssignmentStudents: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}/students`,
-    teacherRemindStudent: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}/remind-not-submitted`,
-    teacherPublishAssignment: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}/publish`,
-    createTeacherAssignment: (courseId) =>
-        `${rootAPI}/teacher/courses/${courseId}/assignments`,
+    teacherAssignmentsByCourse: (courseId) => `${rootAPI}/teacher/courses/${courseId}/assignments`,
+    teacherAssignmentStudents: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}/students`,
+    teacherRemindStudent: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}/remind-not-submitted`,
+    teacherPublishAssignment: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}/publish`,
+    createTeacherAssignment: (courseId) => `${rootAPI}/teacher/courses/${courseId}/assignments`,
 
-    teacherAssignmentDetail: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}`,
-    updateTeacherAssignment: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}`,
-    deleteTeacherAssignment: (assignmentId) =>
-        `${rootAPI}/teacher/assignments/${assignmentId}`,
-    teacherRetakeRequests: (assignmentId) =>
-        `${AppConfig.rootAPI}/teacher/assignments/${assignmentId}/retake-requests`,
-    teacherHandleRetakeRequest: (requestId) =>
-        `${AppConfig.rootAPI}/teacher/assignments/retake-requests/${requestId}/handle`,
-    // Student attendance
+    teacherAssignmentDetail: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}`,
+    updateTeacherAssignment: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}`,
+    deleteTeacherAssignment: (assignmentId) => `${rootAPI}/teacher/assignments/${assignmentId}`,
+    teacherRetakeRequests: (assignmentId) => `${AppConfig.rootAPI}/teacher/assignments/${assignmentId}/retake-requests`,
+    teacherHandleRetakeRequest: (requestId) => `${AppConfig.rootAPI}/teacher/assignments/retake-requests/${requestId}/handle`, // Student attendance
     studentAttendanceOverview: `${rootAPI}/student/attendance/overview`,
     studentAttendanceDetails: `${rootAPI}/student/attendance/details`,
 
     // Student–sessions của 1 course (dùng cho Make-up + session details)
-    studentCourseSessions: (courseId) =>
-        `${rootAPI}/student/courses/${courseId}/sessions`,
+    studentCourseSessions: (courseId) => `${rootAPI}/student/courses/${courseId}/sessions`,
 
-    // Student – danh sách yêu cầu học bù của chính mình
-    studentMakeupRequests: `${rootAPI}/student/makeup-requests/create`,
-    requestAssignmentRetake: (assignmentId) =>
-        `${rootAPI}/student/makeup-requests/assignments/${assignmentId}/retake-request`,
+    /** ===================== MAKE-UP REQUEST ===================== **/
 
-    // Academic Manager/AdminIT – danh sách yêu cầu học bù (phân trang)
-    adminMakeupRequests: `${rootAPI}/admin/makeup-requests`,
+// Student – tạo yêu cầu học bù
+    studentMakeupRequestCreate: `${rootAPI}/student/makeup-requests/create`,
 
-    // Academic Manager/AdminIT – xác nhận đã học bù
-    adminMarkMakeupAttended: (id) =>
-        `${rootAPI}/admin/makeup-requests/${id}/mark-attended`,
+// Student – lấy session học bù khả dụng (GET ?missedSessionId=)
+    studentMakeupAvailableSessions: `${rootAPI}/student/makeup-requests/available-sessions`,
+
+// Student – chọn preferred session (RequestParam preferredSessionId)
+    studentMakeupSelectPreferredSession: (id, preferredSessionId) =>
+        `${rootAPI}/student/makeup-requests/${id}/select-preferred-session?preferredSessionId=${preferredSessionId}`,
+
+// Student – list requests (paging + filter)
+    studentMakeupRequests: `${rootAPI}/student/makeup-requests`, // GET ?status=&courseId=&page=&size=
+
+// Student – detail request
+    studentMakeupRequestDetail: (id) => `${rootAPI}/student/makeup-requests/${id}`,
+
+
+// Admin/Academic Manager – list (paging)
+    adminMakeupRequests: `${rootAPI}/admin/makeup-requests`, // GET ?status=&courseId=&page=&size=
+
+// Admin – detail
+    adminMakeupRequestDetail: (id) => `${rootAPI}/admin/makeup-requests/${id}`,
+
+// Admin – available sessions theo request (để approve chọn dropdown đẹp)
+    adminMakeupAvailableSessionsForRequest: (id) =>
+        `${rootAPI}/admin/makeup-requests/${id}/available-sessions`,
+
+// Admin – approve/reject/mark attended
+    adminApproveMakeupRequest: (id) => `${rootAPI}/admin/makeup-requests/${id}/approve`,
+    adminRejectMakeupRequest: (id) => `${rootAPI}/admin/makeup-requests/${id}/reject`,
+    adminMarkMakeupAttended: (id) => `${rootAPI}/admin/makeup-requests/${id}/mark-attended`,
+
+
 
     // Lịch giảng viên & học viên
-    teacherSchedule: (from, to) =>
-        `${rootAPI}/teacher/schedule?from=${from}&to=${to}`,
-    academySchedule: (from, to) =>
-        `${rootAPI}/academic/schedule?from=${from}&to=${to}`,
-    studentSchedule: (from, to) =>
-        `${rootAPI}/student/schedule?from=${from}&to=${to}`,
+    teacherSchedule: (from, to) => `${rootAPI}/teacher/schedule?from=${from}&to=${to}`,
+    academySchedule: (from, to) => `${rootAPI}/academic/schedule?from=${from}&to=${to}`,
+    studentSchedule: (from, to) => `${rootAPI}/student/schedule?from=${from}&to=${to}`,
 
 
     // Latest enrollments (Admin IT) – list có filter + paging
-    adminLatestEnrollments: `${rootAPI}/admin/enrollments/latest`,
-    // Tuition Revenue – summary theo năm/tháng/chương trình/môn
-    tuitionRevenueSummary: `${rootAPI}/admin/tuition-revenue/summary`,
-    // Tuition Revenue – danh sách giao dịch chi tiết
-    tuitionRevenueTransactions: `${rootAPI}/admin/tuition-revenue/transactions`,
-    // Course Admin
+    adminLatestEnrollments: `${rootAPI}/admin/enrollments/latest`, // Tuition Revenue – summary theo năm/tháng/chương trình/môn
+    tuitionRevenueSummary: `${rootAPI}/admin/tuition-revenue/summary`, // Tuition Revenue – danh sách giao dịch chi tiết
+    tuitionRevenueTransactions: `${rootAPI}/admin/tuition-revenue/transactions`, // Course Admin
     getAllCourses: `${rootAPI}/admin/courses/list-courses`,
     adminCourseSessions: (courseId) => `${rootAPI}/admin/courses/${courseId}/sessions`,
     adminCourseGenerateSessions: (courseId) => `${rootAPI}/admin/courses/${courseId}/sessions/generate`,
@@ -150,12 +148,12 @@ export default {
     adminCourseTimeslots: (courseId) => `${rootAPI}/admin/courses/${courseId}/timeslots`,
     adminCourseAddStudent: (courseId) => `${rootAPI}/admin/courses/${courseId}/students`,
     adminCourseAssignTeachers: (courseId) => `${rootAPI}/admin/courses/${courseId}/teacher`,
+    adminCoursePreviewSessions: (courseId) => `${rootAPI}/admin/courses/${courseId}/sessions/preview`,
     createCourse: `${rootAPI}/admin/courses/create-courses-by-program`,
     searchTeachers: `${rootAPI}/admin-it/search/teachers`,
     programSubjectsOptions: (programId) => `${rootAPI}/program/${programId}/subjects`,
-    roomOptions:`${rootAPI}/admin/courses/rooms-options`,
-    adminCourseListTimeslots:(courseId)=> `${rootAPI}/admin/courses/${courseId}/list-timeslots`,
-    // ===== Admin IT - User Management =====
+    roomOptions: `${rootAPI}/admin/courses/rooms-options`,
+    adminCourseListTimeslots: (courseId) => `${rootAPI}/admin/courses/${courseId}/list-timeslots`, // ===== Admin IT - User Management =====
     adminItUsers: `${rootAPI}/admin-it/users`,
     adminItUserById: (id) => `${rootAPI}/admin-it/users/${id}`,
     adminItAssignRole: (userId, roleId) => `${rootAPI}/admin-it/users/${userId}/role/${roleId}`,
@@ -166,20 +164,15 @@ export default {
     staffStudents: `${rootAPI}/staff/students`, // GET ?q=&page=&size=&active=&sort=
     staffStudentProfile: (userId) => `${rootAPI}/staff/students/${userId}/profile`,
     staffStudentCourses: (userId) => `${rootAPI}/staff/students/${userId}/courses`,
-    staffStudentAttendanceOverview: (userId, courseId) =>
-        `${rootAPI}/staff/students/${userId}/attendance/overview?courseId=${courseId}`,
-    staffStudentAttendanceDetails: (userId, courseId) =>
-        `${rootAPI}/staff/students/${userId}/attendance/details?courseId=${courseId}`,
-    staffStudentSchedule: (userId, from, to) =>
-        `${rootAPI}/staff/students/${userId}/schedule?from=${from}&to=${to}`, // nếu BE có
+    staffStudentAttendanceOverview: (userId, courseId) => `${rootAPI}/staff/students/${userId}/attendance/overview?courseId=${courseId}`,
+    staffStudentAttendanceDetails: (userId, courseId) => `${rootAPI}/staff/students/${userId}/attendance/details?courseId=${courseId}`,
+    staffStudentSchedule: (userId, from, to) => `${rootAPI}/staff/students/${userId}/schedule?from=${from}&to=${to}`, // nếu BE có
 
 // ===== Staff - Teachers (list + profile) =====
     staffTeachers: `${rootAPI}/staff/teachers`, // GET ?q=&page=&size=&active=&sort=
     staffTeacherProfile: (userId) => `${rootAPI}/staff/teachers/${userId}/profile`,
     staffTeacherCourses: (userId) => `${rootAPI}/staff/teachers/${userId}/courses`,
-    staffTeacherSchedule: (userId, from, to) =>
-        `${rootAPI}/staff/teachers/${userId}/schedule?from=${from}&to=${to}`, // để làm Teacher sau
-
+    staffTeacherSchedule: (userId, from, to) => `${rootAPI}/staff/teachers/${userId}/schedule?from=${from}&to=${to}`, // để làm Teacher sau
 
 
     forgotPassword: `${rootAPI}/auth/forgot-password`,

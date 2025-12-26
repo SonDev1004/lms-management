@@ -7,5 +7,4 @@ import java.time.LocalDate;
 @Data
 public class GenerateSessionsRequest {
     private LocalDate startDate;
-    private Integer totalSessions;
 }

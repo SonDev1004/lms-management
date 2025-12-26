@@ -27,12 +27,13 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequestMapping("/api/subject")
-@PreAuthorize("hasAnyRole('ACADEMIC_MANAGER', 'ADMIN_IT')")
+
 public class SubjectController {
     SubjectService subjectService;
 
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('ACADEMIC_MANAGER', 'ADMIN_IT')")
     @Operation(
             summary = "Tạo môn học mới",
             description =
@@ -63,7 +64,9 @@ public class SubjectController {
 
     @GetMapping("/{id}/detail")
     public ResponseEntity<ApiResponse<SubjectDetailResponse>> getSubjectDetail(
-            @PathVariable Long id, @RequestParam(defaultValue = "true") boolean onlyUpcoming) {
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "false") boolean onlyUpcoming
+    ) {
         var result = subjectService.getDetail(id, onlyUpcoming);
         return ResponseEntity.ok(ApiResponse.<SubjectDetailResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -71,4 +74,5 @@ public class SubjectController {
                 .result(result)
                 .build());
     }
+
 }
