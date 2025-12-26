@@ -26,7 +26,12 @@ export async function getListSubject({page = 1, size = 10} = {}) {
 }
 
 function mapSubject(item = {}) {
-    const image = item.imgUrl ?? item.image ?? "/noimg.png";
+    const image =
+        item.imageUrl ??
+        item.imgUrl ??
+        item.image ??
+        "";
+
     const fee = Number(item.fee) || 0;
 
     return {
@@ -35,7 +40,8 @@ function mapSubject(item = {}) {
         code: item.code?.trim?.() ?? "",
         sessionNumber: Number(item.sessionNumber) || 0,
         fee,
-        image,
+        image,          // RAW image
+        imageUrl: image, // alias cho đồng bộ
         minStudent: Number(item.minStudent) || 0,
         maxStudent: Number(item.maxStudent) || 0,
         description: item.description ?? "",
@@ -43,6 +49,7 @@ function mapSubject(item = {}) {
         isActive: Boolean(item.isActive),
     };
 }
+
 
 export async function getSubjectDetail(subjectId) {
     const url = AppUrls.getDetailSubject(subjectId);
@@ -59,40 +66,44 @@ export async function getSubjectDetail(subjectId) {
 export function mapSubjectDetail(data) {
     if (!data) return null;
 
+    const coursesRaw = Array.isArray(data.courses) ? data.courses : (Array.isArray(data.classes) ? data.classes : []);
+
+    const image = data.imageUrl ?? data.imgUrl ?? data.image ?? "/noimg.png";
+
     return {
         id: data.id,
-        code: data.codeSubject ?? data.code ?? "",
-        title: data.subjectTitle ?? data.title ?? "",
-        description: data.subjectDescription ?? data.description ?? "",
+        code: data.code ?? data.codeSubject ?? "",
+        title: data.title ?? data.subjectTitle ?? "",
+        description: data.description ?? data.subjectDescription ?? "",
         sessionNumber: Number(data.sessionNumber) || 0,
         fee: Number(data.fee) || 0,
-        image: data.imgUrl || data.image || "/noimg.png",
-        maxStudent: Number(data.maxStudents ?? data.maxStudent) || 0,
-        minStudent: Number(data.minStudents ?? data.minStudent) || 0,
+        image,
+        imageUrl: image,
+        maxStudent: Number(data.maxStudent ?? data.maxStudents) || 0,
+        minStudent: Number(data.minStudent ?? data.minStudents) || 0,
         isActive: Boolean(data.isActive),
 
-        // legacy fields – giữ nguyên
+
         audience: data.audience ?? "Teens & Adults",
         level: data.level ?? "Intermediate (B1–B2)",
         summary: data.summary ?? "",
         rating: Number(data.rating ?? 0),
         reviewCount: Number(data.reviewCount ?? 0),
 
-        classes: Array.isArray(data.classes)
-            ? data.classes.map((cls) => ({
-                courseId: cls.courseId,
-                courseTitle: cls.courseTitle,
-                courseCode: cls.courseCode,
-                plannedSessions: Number(cls.plannedSessions) || 0,
-                capacity: cls.capacity ?? 0,
-                startDate: cls.startDate,
-                schedule: cls.schedule,
-                status: cls.status,
-                statusName: cls.statusName,
-            }))
-            : [],
+        classes: coursesRaw.map((cls) => ({
+            courseId: cls.courseId,
+            courseTitle: cls.courseTitle,
+            courseCode: cls.courseCode,
+            plannedSessions: Number(cls.plannedSessions) || 0,
+            capacity: cls.capacity ?? 0,
+            startDate: cls.startDate,
+            schedule: cls.schedule,
+            status: cls.status,
+            statusName: cls.statusName,
+        })),
     };
 }
+
 
 /**
  * =========================

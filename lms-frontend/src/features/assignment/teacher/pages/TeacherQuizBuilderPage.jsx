@@ -1,29 +1,36 @@
-import {useEffect, useState, useRef} from "react";
-import {useParams,useNavigate} from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-import {Card} from "primereact/card";
-import {DataTable} from "primereact/datatable";
-import {Column} from "primereact/column";
-import {Button} from "primereact/button";
-import {InputNumber} from "primereact/inputnumber";
-import {Dialog} from "primereact/dialog";
-import {Dropdown} from "primereact/dropdown";
-import {InputText} from "primereact/inputtext";
-import {Tag} from "primereact/tag";
-import {Toast} from "primereact/toast";
+import { Card } from "primereact/card";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+import { InputNumber } from "primereact/inputnumber";
+import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { Tag } from "primereact/tag";
+import { Toast } from "primereact/toast";
 
 import axiosClient from "@/shared/api/axiosClient.js";
-import {AppUrls} from "@/shared/constants/index.js";
+import { AppUrls } from "@/shared/constants/index.js";
 import {
     fetchAssignmentQuizConfig,
     saveAssignmentQuizConfig,
 } from "@/features/assignment/api/assignmentService.js";
 
+const MAX_QUESTIONS = 10;
+
+const sumPoints = (list) =>
+    (list || []).reduce((s, it) => s + (Number(it.points) || 0), 0);
+
 export default function TeacherQuizBuilderPage() {
-    const {assignmentId} = useParams();
+    const { assignmentId } = useParams();
     const navigate = useNavigate();
-    const [ setConfig] = useState(null);
+
+    const [config, setConfig] = useState(null);
     const [items, setItems] = useState([]);
+
     const [loadingConfig, setLoadingConfig] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -33,11 +40,13 @@ export default function TeacherQuizBuilderPage() {
     const [bankKeyword, setBankKeyword] = useState("");
     const [bankSubject, setBankSubject] = useState(null);
     const [bankSelection, setBankSelection] = useState([]);
+
     const [subjectOptions, setSubjectOptions] = useState([]);
+
     const toastRef = useRef(null);
+
     const buildSubjectOptionsFromList = (questions) => {
         const map = new Map();
-
         (questions || []).forEach((q) => {
             if (q.subjectId && q.subjectName && !map.has(q.subjectId)) {
                 map.set(q.subjectId, {
@@ -46,32 +55,40 @@ export default function TeacherQuizBuilderPage() {
                 });
             }
         });
-
         setSubjectOptions(Array.from(map.values()));
     };
+
     useEffect(() => {
         loadSubjects();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadSubjects = async () => {
         try {
-            // LẤY DS MÔN HỌC ĐÚNG API
             const res = await axiosClient.get(AppUrls.listSubject);
-            const items = res.data?.result || [];
+            const payload = res.data?.result ?? res.data?.data ?? res.data ?? [];
 
-            if (Array.isArray(items) && items.length > 0) {
-                const opts = items.map((s) => ({
-                    label: s.title ?? s.name,
+            const list = Array.isArray(payload)
+                ? payload
+                : payload.items ?? payload.content ?? [];
+
+            if (Array.isArray(list) && list.length > 0) {
+                const opts = list.map((s) => ({
+                    label: s.title ?? s.name ?? "",
                     value: s.id,
                 }));
                 setSubjectOptions(opts);
             }
         } catch (e) {
             console.error("Failed to load subjects", e);
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Không tải được danh sách môn học.",
+                life: 3000,
+            });
         }
     };
-
-
 
     useEffect(() => {
         if (!assignmentId || assignmentId === "null") return;
@@ -84,9 +101,15 @@ export default function TeacherQuizBuilderPage() {
             setLoadingConfig(true);
             const data = await fetchAssignmentQuizConfig(assignmentId);
             setConfig(data);
-            setItems(data.items || []);
+            setItems(data?.items || []);
         } catch (e) {
             console.error("Failed to load quiz config", e);
+            toastRef.current?.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Không tải được cấu hình quiz.",
+                life: 3000,
+            });
         } finally {
             setLoadingConfig(false);
         }
@@ -95,7 +118,7 @@ export default function TeacherQuizBuilderPage() {
     const handleChangePoints = (row, points) => {
         setItems((prev) =>
             prev.map((it) =>
-                it.questionId === row.questionId ? {...it, points} : it
+                it.questionId === row.questionId ? { ...it, points } : it
             )
         );
     };
@@ -103,18 +126,25 @@ export default function TeacherQuizBuilderPage() {
     const handleChangeOrder = (row, orderNumber) => {
         setItems((prev) =>
             prev.map((it) =>
-                it.questionId === row.questionId ? {...it, orderNumber} : it
+                it.questionId === row.questionId ? { ...it, orderNumber } : it
             )
         );
     };
 
     const handleRemoveItem = (row) => {
-        setItems((prev) =>
-            prev.filter((it) => it.questionId !== row.questionId)
-        );
+        setItems((prev) => prev.filter((it) => it.questionId !== row.questionId));
     };
 
     const openQuestionBank = () => {
+        if (items.length >= MAX_QUESTIONS) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Limit",
+                detail: `Quiz chỉ được tối đa ${MAX_QUESTIONS} câu.`,
+                life: 2500,
+            });
+            return;
+        }
         setBankVisible(true);
         loadQuestionBank();
     };
@@ -135,7 +165,9 @@ export default function TeacherQuizBuilderPage() {
                 size: 50,
             };
 
-            const res = await axiosClient.get(AppUrls.questionBankListBySubject, { params });
+            const res = await axiosClient.get(AppUrls.questionBankListBySubject, {
+                params,
+            });
 
             const payload = res.data?.result || {};
             const list = Array.isArray(payload.items) ? payload.items : [];
@@ -167,32 +199,48 @@ export default function TeacherQuizBuilderPage() {
         }
     };
 
-
-
-
-
     const handleAddFromBank = () => {
         const existingIds = new Set(items.map((it) => it.questionId));
+
+        const remaining = MAX_QUESTIONS - items.length;
+        if (remaining <= 0) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Limit",
+                detail: `Quiz chỉ được tối đa ${MAX_QUESTIONS} câu.`,
+                life: 2500,
+            });
+            return;
+        }
+
         const maxOrder =
-            items.reduce(
-                (max, it) => Math.max(max, it.orderNumber || 0),
-                0
-            ) || 0;
+            items.reduce((max, it) => Math.max(max, it.orderNumber || 0), 0) || 0;
 
         let order = maxOrder;
-        const newItems = bankSelection
-            .filter((q) => !existingIds.has(q.id))
-            .map((q) => {
-                order += 1;
-                return {
-                    id: null,
-                    questionId: q.id,
-                    orderNumber: order,
-                    points: 1,
-                    content: q.contentPreview || q.content,
-                    type: q.type,
-                };
+
+        const candidates = bankSelection.filter((q) => !existingIds.has(q.id));
+        const picked = candidates.slice(0, remaining);
+
+        if (candidates.length > remaining) {
+            toastRef.current?.show({
+                severity: "info",
+                summary: "Limit",
+                detail: `Chỉ thêm được ${remaining} câu để đủ ${MAX_QUESTIONS} câu.`,
+                life: 2500,
             });
+        }
+
+        const newItems = picked.map((q) => {
+            order += 1;
+            return {
+                id: null,
+                questionId: q.id,
+                orderNumber: order,
+                points: 1,
+                content: q.contentPreview || q.content,
+                type: q.type,
+            };
+        });
 
         setItems((prev) => [...prev, ...newItems]);
         setBankVisible(false);
@@ -204,6 +252,41 @@ export default function TeacherQuizBuilderPage() {
             console.error("assignmentId is null, cannot save config");
             return;
         }
+
+        // ===== FE validate: đúng 10 câu + tổng điểm = 10 =====
+        if (items.length !== MAX_QUESTIONS) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Invalid",
+                detail: `Bài này phải có đúng ${MAX_QUESTIONS} câu. Hiện tại: ${items.length}.`,
+                life: 3200,
+            });
+            return;
+        }
+
+        const total = sumPoints(items);
+        if (total !== 10) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Invalid points",
+                detail: `Tổng điểm phải bằng 10. Hiện tại: ${total}.`,
+                life: 3500,
+            });
+            return;
+        }
+
+        // (khuyến nghị) không cho điểm âm
+        const hasNegative = items.some((it) => (Number(it.points) || 0) < 0);
+        if (hasNegative) {
+            toastRef.current?.show({
+                severity: "warn",
+                summary: "Invalid points",
+                detail: "Points không được âm.",
+                life: 3000,
+            });
+            return;
+        }
+
         try {
             setSaving(true);
             await saveAssignmentQuizConfig(assignmentId, items);
@@ -227,16 +310,18 @@ export default function TeacherQuizBuilderPage() {
 
     return (
         <div className="page-wrap">
-            <Toast ref={toastRef}/>
+            <Toast ref={toastRef} />
+
             <div className="header-row">
                 <div className="title-block">
-                    <i className="pi pi-list-check title-icon"/>
+                    <i className="pi pi-list-check title-icon" />
                     <div>
                         <h2 className="title">
                             Quiz Builder – Assignment #{assignmentId}
                         </h2>
                         <p className="subtitle">
                             Chọn câu hỏi từ ngân hàng đề và cấu hình điểm / thứ tự.
+                            (Bắt buộc {MAX_QUESTIONS} câu, tổng điểm = 10)
                         </p>
                     </div>
                 </div>
@@ -256,49 +341,51 @@ export default function TeacherQuizBuilderPage() {
                     />
                 </div>
             </div>
+
             <Card>
                 <div className="flex justify-content-between align-items-center mb-3">
                     <div>
                         <h3 className="m-0">Assigned questions</h3>
                         <p className="text-sm text-muted-color m-0">
-                            Total: {items.length} questions
+                            Total: {items.length}/{MAX_QUESTIONS} questions · Points:{" "}
+                            {sumPoints(items)}/10
                         </p>
                     </div>
+
                     <Button
                         label="Add from Question Bank"
                         icon="pi pi-plus"
                         onClick={openQuestionBank}
+                        disabled={items.length >= MAX_QUESTIONS}
                     />
                 </div>
 
+                {/* ✅ FIX: bảng này phải render items (assigned) chứ không phải bankList */}
                 <DataTable
-                    value={bankList}
-                    loading={bankLoading}
-                    selection={bankSelection}
-                    onSelectionChange={(e) => setBankSelection(e.value)}
-                    dataKey="id"
+                    value={items}
+                    loading={loadingConfig}
+                    dataKey="questionId"
+                    stripedRows
                     size="small"
                     responsiveLayout="scroll"
                     paginator
                     rows={10}
                     rowsPerPageOptions={[10, 20, 50]}
+                    emptyMessage="Chưa có câu hỏi nào được gán."
                 >
-
-                <Column
+                    <Column
                         field="orderNumber"
                         header="#"
                         body={(row) => (
                             <InputNumber
                                 value={row.orderNumber}
-                                onValueChange={(e) =>
-                                    handleChangeOrder(row, e.value)
-                                }
+                                onValueChange={(e) => handleChangeOrder(row, e.value)}
                                 min={1}
                                 max={999}
-                                inputStyle={{width: "4rem"}}
+                                inputStyle={{ width: "4rem" }}
                             />
                         )}
-                        style={{width: "6rem"}}
+                        style={{ width: "6rem" }}
                     />
                     <Column
                         field="content"
@@ -320,15 +407,13 @@ export default function TeacherQuizBuilderPage() {
                         body={(row) => (
                             <InputNumber
                                 value={row.points}
-                                onValueChange={(e) =>
-                                    handleChangePoints(row, e.value)
-                                }
+                                onValueChange={(e) => handleChangePoints(row, e.value)}
                                 min={0}
-                                max={100}
-                                inputStyle={{width: "4rem"}}
+                                max={10}
+                                inputStyle={{ width: "4rem" }}
                             />
                         )}
-                        style={{width: "8rem"}}
+                        style={{ width: "8rem" }}
                     />
                     <Column
                         header=""
@@ -341,7 +426,7 @@ export default function TeacherQuizBuilderPage() {
                                 onClick={() => handleRemoveItem(row)}
                             />
                         )}
-                        style={{width: "4rem"}}
+                        style={{ width: "4rem" }}
                     />
                 </DataTable>
             </Card>
@@ -350,12 +435,12 @@ export default function TeacherQuizBuilderPage() {
             <Dialog
                 header="Question Bank"
                 visible={bankVisible}
-                style={{width: "900px"}}
+                style={{ width: "900px" }}
                 onHide={() => setBankVisible(false)}
             >
                 <div className="flex gap-2 mb-3">
                     <span className="p-input-icon-left flex-1">
-                        <i className="pi pi-search"/>
+                        <i className="pi pi-search" />
                         <InputText
                             placeholder="Search content..."
                             value={bankKeyword}
@@ -367,6 +452,7 @@ export default function TeacherQuizBuilderPage() {
                             }}
                         />
                     </span>
+
                     <Dropdown
                         value={bankSubject}
                         options={subjectOptions}
@@ -386,6 +472,10 @@ export default function TeacherQuizBuilderPage() {
                     />
                 </div>
 
+                <div className="text-sm text-muted-color mb-2">
+                    Bạn còn có thể thêm: {Math.max(0, MAX_QUESTIONS - items.length)} câu
+                </div>
+
                 <DataTable
                     value={bankList}
                     loading={bankLoading}
@@ -395,11 +485,8 @@ export default function TeacherQuizBuilderPage() {
                     size="small"
                     responsiveLayout="scroll"
                 >
-                    <Column
-                        selectionMode="multiple"
-                        headerStyle={{width: "4rem"}}
-                    />
-                    <Column field="id" header="ID" style={{width: "6rem"}}/>
+                    <Column selectionMode="multiple" headerStyle={{ width: "4rem" }} />
+                    <Column field="id" header="ID" style={{ width: "6rem" }} />
                     <Column
                         field="contentPreview"
                         header="Content"
@@ -408,13 +495,9 @@ export default function TeacherQuizBuilderPage() {
                     <Column
                         field="subjectName"
                         header="Subject"
-                        style={{width: "10rem"}}
+                        style={{ width: "10rem" }}
                     />
-                    <Column
-                        field="level"
-                        header="Level"
-                        style={{width: "8rem"}}
-                    />
+                    <Column field="level" header="Level" style={{ width: "8rem" }} />
                 </DataTable>
 
                 <div className="flex justify-content-end gap-2 mt-3">
@@ -427,11 +510,10 @@ export default function TeacherQuizBuilderPage() {
                         label="Add selected"
                         icon="pi pi-plus"
                         onClick={handleAddFromBank}
-                        disabled={!bankSelection.length}
+                        disabled={!bankSelection.length || items.length >= MAX_QUESTIONS}
                     />
                 </div>
             </Dialog>
         </div>
     );
 }
-

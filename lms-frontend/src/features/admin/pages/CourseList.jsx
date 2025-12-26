@@ -13,6 +13,7 @@ import { MultiSelect } from "primereact/multiselect";
 import {
     fetchAllCourses,
     fetchSessionsByCourse,
+    previewSessionsForCourse, // NEW
     generateSessionsForCourse,
     publishCourse,
     replaceTimeslots,
@@ -55,13 +56,15 @@ export default function CourseList() {
     const [sessions, setSessions] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
 
-    // ===== Generate sessions dialog =====
+    // ===== Generate sessions dialog (Preview -> Generate) =====
     const [genVisible, setGenVisible] = useState(false);
     const [genLoading, setGenLoading] = useState(false);
-    const [genForm, setGenForm] = useState({
-        startDate: null, // optional
-        totalSessions: null, // optional override
-    });
+    const [genForm, setGenForm] = useState({ startDate: null });
+
+    // preview states
+    const [previewLoading, setPreviewLoading] = useState(false);
+    const [previewSessions, setPreviewSessions] = useState([]);
+    const [hasPreview, setHasPreview] = useState(false);
 
     // ===== Add Student dialog =====
     const [addStudentVisible, setAddStudentVisible] = useState(false);
@@ -247,28 +250,78 @@ export default function CourseList() {
         }
     }
 
-    // ===== Generate sessions (NEW: dialog + totalSessions) =====
+    // ===== Generate dialog =====
     function openGenerateDialog(course) {
         setSelectedCourse(course);
 
         const defaultStart = course?.startDate ? new Date(course.startDate) : null;
+        setGenForm({ startDate: defaultStart });
 
-        setGenForm({
-            startDate: defaultStart,
-            totalSessions:
-                course?.plannedSession ??
-                course?.sessions ??
-                null,
-        });
+        // reset preview
+        setPreviewSessions([]);
+        setHasPreview(false);
 
         setGenVisible(true);
+    }
+
+    async function handlePreviewGenerate() {
+        if (!selectedCourse) return;
+
+        try {
+            setPreviewLoading(true);
+
+            const payload = {};
+            if (genForm.startDate) {
+                payload.startDate = genForm.startDate.toISOString().substring(0, 10);
+            }
+
+            const data = await previewSessionsForCourse(selectedCourse.courseId, payload);
+
+            const mapped = (Array.isArray(data) ? data : []).map((s) => ({
+                ...s,
+                orderSession: s.order,
+                startTime: s.starttime,
+                endTime: s.endtime,
+                roomName: s.room,
+            }));
+
+            setPreviewSessions(mapped);
+            setHasPreview(true);
+
+            toast.current?.show({
+                severity: "info",
+                summary: "Preview",
+                detail: `Đã preview ${mapped.length} buổi`,
+            });
+        } catch (err) {
+            console.error("Preview sessions failed:", err);
+            setPreviewSessions([]);
+            setHasPreview(false);
+
+            toast.current?.show({
+                severity: "error",
+                summary: "Lỗi",
+                detail: err?.response?.data?.message || "Preview thất bại",
+            });
+        } finally {
+            setPreviewLoading(false);
+        }
     }
 
     async function handleConfirmGenerate() {
         if (!selectedCourse) return;
 
+        if (!hasPreview) {
+            toast.current?.show({
+                severity: "warn",
+                summary: "Chưa preview",
+                detail: "Vui lòng bấm Preview trước khi Generate",
+            });
+            return;
+        }
+
         const ok = window.confirm(
-            `Tạo lại toàn bộ buổi học cho lớp "${selectedCourse.title}"?\nCác buổi cũ (nếu có) sẽ bị xoá.`
+            `Xác nhận tạo ${previewSessions.length} buổi học cho lớp "${selectedCourse.title}"?\nCác buổi cũ (nếu có) sẽ bị xoá.`
         );
         if (!ok) return;
 
@@ -276,14 +329,8 @@ export default function CourseList() {
             setGenLoading(true);
 
             const payload = {};
-
             if (genForm.startDate) {
                 payload.startDate = genForm.startDate.toISOString().substring(0, 10);
-            }
-
-            const n = Number(genForm.totalSessions);
-            if (!Number.isNaN(n) && n > 0) {
-                payload.totalSessions = n;
             }
 
             await generateSessionsForCourse(selectedCourse.courseId, payload);
@@ -291,11 +338,14 @@ export default function CourseList() {
             toast.current?.show({
                 severity: "success",
                 summary: "Thành công",
-                detail: "Đã tạo buổi học theo lịch",
+                detail: "Đã generate sessions",
             });
 
             setGenVisible(false);
             await loadCourses();
+
+            // mở luôn Sessions thật để thấy DB đã tạo
+            await handleViewSessions(selectedCourse);
         } catch (err) {
             console.error("Generate sessions failed:", err);
             toast.current?.show({
@@ -775,11 +825,11 @@ export default function CourseList() {
                 </DataTable>
             </Dialog>
 
-            {/* ===== Generate Sessions Dialog (NEW) ===== */}
+            {/* ===== Generate Sessions Dialog (PREVIEW -> GENERATE) ===== */}
             <Dialog
                 header={selectedCourse ? `Generate Sessions – ${selectedCourse.title}` : "Generate Sessions"}
                 visible={genVisible}
-                style={{ width: "520px", maxWidth: "95vw" }}
+                style={{ width: "780px", maxWidth: "95vw" }}
                 modal
                 onHide={() => setGenVisible(false)}
                 footer={
@@ -788,27 +838,47 @@ export default function CourseList() {
                             label="Cancel"
                             className="p-button-text"
                             onClick={() => setGenVisible(false)}
+                            disabled={genLoading || previewLoading}
+                        />
+
+                        <Button
+                            label={hasPreview ? "Re-Preview" : "Preview"}
+                            icon="pi pi-eye"
+                            className="p-button-outlined"
+                            loading={previewLoading}
+                            onClick={handlePreviewGenerate}
                             disabled={genLoading}
                         />
+
                         <Button
                             label="Generate"
                             icon="pi pi-sync"
                             loading={genLoading}
                             onClick={handleConfirmGenerate}
+                            disabled={!hasPreview || previewLoading}
                         />
                     </div>
                 }
             >
                 <div className="flex flex-col gap-3">
-                    <div className="text-sm text-gray-500">
-                        Bạn có thể override số buổi (tuỳ chọn). Nếu để trống, BE sẽ dùng plannedSession/subject.sessionNumber.
+
+                    <div className="p-3 border-1 surface-border border-round">
+                        <div className="text-xs text-gray-500 mb-1">Tổng số buổi của lớp học</div>
+                        <div className="text-2xl font-semibold">
+                            {hasPreview ? previewSessions.length : (selectedCourse?.sessions ?? "—")} buổi
+                        </div>
                     </div>
 
                     <div>
                         <label className="text-sm font-medium mb-1 block">Start date (tuỳ chọn)</label>
                         <Calendar
                             value={genForm.startDate}
-                            onChange={(e) => setGenForm((p) => ({ ...p, startDate: e.value }))}
+                            onChange={(e) => {
+                                setGenForm((p) => ({ ...p, startDate: e.value }));
+                                // đổi startDate => preview cũ không còn đúng
+                                setHasPreview(false);
+                                setPreviewSessions([]);
+                            }}
                             dateFormat="yy-mm-dd"
                             showIcon
                             className="w-full"
@@ -816,18 +886,33 @@ export default function CourseList() {
                         />
                     </div>
 
-                    <div>
-                        <label className="text-sm font-medium mb-1 block">Total sessions (tuỳ chọn)</label>
-                        <InputText
-                            value={genForm.totalSessions ?? ""}
-                            onChange={(e) => {
-                                const raw = e.target.value;
-                                setGenForm((p) => ({ ...p, totalSessions: raw === "" ? null : raw }));
-                            }}
-                            placeholder="VD: 20"
-                            className="w-full"
-                            keyfilter="int"
-                        />
+                    {/* Preview table */}
+                    <div className="mt-2">
+                        <div className="text-sm font-medium mb-2">
+                            Preview sessions {hasPreview ? `(${previewSessions.length})` : ""}
+                        </div>
+
+                        <DataTable
+                            value={previewSessions}
+                            loading={previewLoading}
+                            paginator
+                            rows={8}
+                            className="p-datatable-sm"
+                            emptyMessage={hasPreview ? "Không có buổi nào" : "Bấm Preview để xem lịch dự kiến"}
+                            responsiveLayout="scroll"
+                        >
+                            <Column field="orderSession" header="#" style={{ width: "70px" }} />
+                            <Column field="date" header="Date" />
+                            <Column field="startTime" header="Start" />
+                            <Column field="endTime" header="End" />
+                            <Column field="roomName" header="Room" />
+                        </DataTable>
+
+                        {!hasPreview && (
+                            <div className="text-xs text-gray-500 mt-2">
+                                Bạn phải Preview trước rồi mới Generate.
+                            </div>
+                        )}
                     </div>
                 </div>
             </Dialog>
@@ -926,9 +1011,14 @@ export default function CourseList() {
                                 />
                             </div>
 
-                            <div className="mt-4">
+                            <div className="mt-4 col-span-12">
                                 <div className="text-sm font-medium mb-2">Timeslot hiện tại</div>
-                                <DataTable value={existingTimeslots} emptyMessage="Chưa có timeslot" className="p-datatable-sm">
+                                <DataTable
+                                    value={existingTimeslots}
+                                    emptyMessage="Chưa có timeslot"
+                                    className="p-datatable-sm"
+                                    responsiveLayout="scroll"
+                                >
                                     <Column field="dayOfWeek" header="Day" />
                                     <Column header="Time" body={(r) => `${r.startTime}–${r.endTime}`} />
                                     <Column header="Room" body={(r) => r.roomName || "Không gán phòng"} />
@@ -956,7 +1046,11 @@ export default function CourseList() {
             >
                 <div className="flex flex-col gap-2">
                     <label className="text-sm font-medium">Student ID</label>
-                    <InputText value={studentIdInput} onChange={(e) => setStudentIdInput(e.target.value)} placeholder="VD: 15" />
+                    <InputText
+                        value={studentIdInput}
+                        onChange={(e) => setStudentIdInput(e.target.value)}
+                        placeholder="VD: 15"
+                    />
                 </div>
             </Dialog>
 

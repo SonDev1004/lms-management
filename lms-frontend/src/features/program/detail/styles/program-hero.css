@@ -1,0 +1,201 @@
+:root {
+    --hero-primary: #335CFF;
+    --hero-shadow: rgba(51, 92, 255, 0.15);
+    --hero-bg: #fff;
+    --hero-text: #0f1e39;
+    --hero-muted: #64748b;
+}
+
+/* ============= PROGRAM HERO CARD ============= */
+.program-hero-card.p-card {
+    background: var(--hero-bg);
+    border-radius: 24px;
+    padding: 0;
+    box-shadow: 0 20px 60px rgba(51, 92, 255, 0.12);
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.program-hero-card .p-card-body {
+    padding: 28px;
+}
+
+.program-hero-card .p-card-content {
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+/* ============= IMAGE WRAPPER ============= */
+.program-hero-imgwrap {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px var(--hero-shadow);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e3e9f2 100%);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.program-hero-imgwrap:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 70px rgba(51, 92, 255, 0.2);
+}
+
+/* ============= IMAGE ============= */
+.program-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.program-hero-imgwrap:hover .program-hero-img {
+    transform: scale(1.05);
+}
+
+/* Nếu muốn hiển thị đầy đủ ảnh không bị cắt */
+.program-hero-img.contain {
+    object-fit: contain;
+    background: #fff;
+    padding: 20px;
+}
+
+/* ============= LOADING SKELETON ============= */
+.program-hero-skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    z-index: 1;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.program-hero-skeleton i {
+    color: var(--hero-primary);
+    font-size: 2.5rem;
+}
+
+/* ============= TITLE & DESCRIPTION ============= */
+.program-hero-card h1 {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: var(--hero-text);
+    line-height: 1.2;
+    margin-bottom: 16px;
+}
+
+.program-hero-card p {
+    color: var(--hero-muted);
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+/* ============= TAGS ============= */
+.program-hero-card .p-tag {
+    font-weight: 700;
+    padding: 8px 14px;
+    font-size: 0.875rem;
+}
+
+/* ============= BUTTONS ============= */
+.program-hero-card .p-button {
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 14px 24px;
+    transition: all 0.3s ease;
+}
+
+.program-hero-card .p-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(51, 92, 255, 0.25);
+}
+
+.program-hero-card .p-button-outlined {
+    border-width: 2px;
+}
+
+/* ============= RESPONSIVE ============= */
+@media (max-width: 576px) {
+    .program-hero-imgwrap {
+        height: 220px;
+    }
+
+    .program-hero-card .p-card-body {
+        padding: 20px;
+    }
+
+    .program-hero-card h1 {
+        font-size: 1.75rem !important;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .program-hero-imgwrap {
+        height: 280px;
+    }
+
+    .program-hero-card h1 {
+        font-size: 2rem !important;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .program-hero-imgwrap {
+        height: 320px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .program-hero-imgwrap {
+        height: 400px;
+    }
+}
+
+/* ============= GRID ADJUSTMENTS ============= */
+@media (max-width: 768px) {
+    .program-hero-card .grid {
+        gap: 24px !important;
+    }
+}
+
+/* ============= ACCESSIBILITY ============= */
+.program-hero-img:focus {
+    outline: 3px solid var(--hero-primary);
+    outline-offset: 4px;
+}
+
+.program-hero-card .p-button:focus {
+    outline: 3px solid var(--hero-primary);
+    outline-offset: 2px;
+}
+
+/* ============= PRINT STYLES ============= */
+@media print {
+    .program-hero-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .program-hero-imgwrap {
+        box-shadow: none;
+    }
+}

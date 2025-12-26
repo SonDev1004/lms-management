@@ -31,12 +31,11 @@ export async function getListProgram({page = 1, size = 10} = {}) {
     }
 }
 
-//Mapper chấp nhận cả tên key của BE ở list và ở detail
 function mapProgram(item = {}) {
     const title =
         item.titleProgram ??
         item.title ??
-        ""; // BE list có thể trả titleProgram
+        "";
 
     const code =
         (item.codeProgram ?? item.code ?? "").trim();
@@ -231,6 +230,8 @@ export async function getSubjectsPSPage({ page0 = 0, size = 50, keyword, pageBas
 function mapProgramDetail(data) {
     if (!data) return null;
 
+    const imageUrl = data.imageUrl ?? data.imgUrl ?? data.image ?? "/noimg.png";
+
     return {
         id: data.id,
         title: data.titleProgram ?? "",
@@ -239,14 +240,15 @@ function mapProgramDetail(data) {
         fee: Number(data.fee) || 0,
         minStudents: data.minStudents ?? 0,
         maxStudents: data.maxStudents ?? 0,
-        image: data.imgUrl || "/noimg.png",
-        isActive: Boolean(data.isActive),
 
+        imageUrl,
+        image: imageUrl,
+
+        isActive: Boolean(data.isActive),
         tracks: (data.tracks ?? []).map((t) => ({
             code: (t.trackCode ?? "").trim(),
             label: t.trackLabel ?? "",
         })),
-
         subjects: (data.subjectList ?? []).map((s) => ({
             id: s.subjectId,
             title: s.subjectTitle ?? "",
@@ -261,8 +263,9 @@ function mapProgramDetail(data) {
                 schedule: c.schedule ?? "",
                 status: c.status ?? 0,
                 statusName: c.statusName ?? "",
-                trackCode: (c.trackCode ?? "").trim(),   // ✅ QUAN TRỌNG
+                trackCode: (c.trackCode ?? "").trim(),
             })),
         })),
     };
 }
+

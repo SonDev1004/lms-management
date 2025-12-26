@@ -1,60 +1,85 @@
+import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 
-function StatusPill({ value }) {
-    const s = String(value || "").toLowerCase();
-    const map = {
-        open: { text: "Đang tuyển sinh", cls: "bg-teal-100 text-teal-700" },
-        upcoming: { text: "Upcoming", cls: "bg-cyan-100 text-cyan-700" },
-        pending: { text: "Chờ mở", cls: "bg-gray-100 text-gray-700" },
-    };
-    const m = map[s] || map.pending;
-    return <span className={`px-3 py-1 rounded-full text-sm ${m.cls}`}>{m.text}</span>;
+/**
+ * Map CourseStatus (BE) -> registration status (UI)
+ * Updated to handle Vietnamese status names from API
+ */
+function mapCourseStatusToUi(statusName, statusCode) {
+    // Prefer checking by status code (if provided)
+    if (typeof statusCode === "number") {
+        if (statusCode === 1 || statusCode === 2) return "OPEN";      // SCHEDULED or ENROLLING
+        if (statusCode === 0) return "PENDING";                       // DRAFT
+        if (statusCode === 4 || statusCode === 5) return "CLOSED";    // IN_PROGRESS or COMPLETED
+        if (statusCode === 3) return "WAITLIST";                      // WAITLIST
+    }
+
+    // Fallback: check by text
+    const s = String(statusName || "").toLowerCase().trim();
+
+    // Vietnamese status names
+    if (s === "đang tuyển sinh" || s === "sắp khai giảng") return "OPEN";
+    if (s === "nháp") return "PENDING";
+    if (s === "đang diễn ra" || s === "đã hoàn thành" || s === "đã kết thúc") return "CLOSED";
+
+    // Fallback for English status names
+    const upper = s.toUpperCase();
+    if (upper === "ENROLLING" || upper === "WAITLIST") return "OPEN";
+    if (upper === "DRAFT" || upper === "SCHEDULED") return "PENDING";
+    if (upper === "IN_PROGRESS" || upper === "COMPLETED" || upper === "ENDED") return "CLOSED";
+
+    return "PENDING";
 }
 
+const StatusTag = ({ statusName, statusCode }) => {
+    const ui = mapCourseStatusToUi(statusName, statusCode);
+
+    if (ui === "OPEN") return <Tag value="Open" severity="success" rounded />;
+    if (ui === "CLOSED") return <Tag value="Closed" severity="secondary" rounded />;
+    if (ui === "WAITLIST") return <Tag value="Waitlist" severity="warning" rounded />;
+    return <Tag value="Pending" severity="warning" rounded />;
+};
+
 export default function CourseClassesDialog({
-    visible,
-    onHide,
-    courseLabel,        // ví dụ: "IELTS-2025-A (IELTS-2025-A)"
-    rows = [],          // [{id,title,code,startDate,scheduleText,sessions,capacity,size,status}]
-}) {
+                                                visible,
+                                                onHide,
+                                                courses = [],
+                                                title,
+                                            }) {
+    const [rows, setRows] = useState([]);
+
+    useEffect(() => {
+        if (!visible) return;
+        setRows(courses || []);
+    }, [visible, courses]);
+
     return (
         <Dialog
-            header={<div className="flex items-center gap-2">
-                <i className="pi pi-calendar" />
-                <span>Danh sách lớp – {courseLabel}</span>
-            </div>}
+            header={title || "Class List"}
             visible={visible}
+            style={{ width: "90vw", maxWidth: "960px" }}
+            modal
             onHide={onHide}
-            style={{ width: "90vw", maxWidth: 1080 }}
-            draggable={false}
-            dismissableMask
         >
-            <DataTable
-                value={rows}
-                paginator rows={10}
-                emptyMessage="Chưa có lớp."
-                stripedRows
-                size="large"
-                rowNumberMode="static"
-            >
-                <Column header="#" body={(_, opt) => opt.rowIndex + 1} style={{ width: 70 }} />
-                <Column field="title" header="Tên lớp" sortable />
-                <Column field="code" header="Mã lớp" sortable style={{ width: 220 }} />
-                <Column field="startDate" header="Bắt đầu" sortable style={{ width: 140 }} />
-                <Column field="scheduleText" header="Lịch học" />
-                <Column field="sessions" header="Số buổi" sortable style={{ width: 110 }} />
-                <Column field="capacity" header="Sĩ số" sortable style={{ width: 110 }} />
+            <DataTable value={rows} paginator rows={10} emptyMessage="No classes found">
+                <Column header="#" body={(_, o) => o.rowIndex + 1} style={{ width: 60 }} />
+                <Column field="courseTitle" header="Class name" />
+                <Column field="courseCode" header="Class code" />
+                <Column field="startDate" header="Start date" />
+                <Column field="schedule" header="Schedule" />
+                <Column field="plannedSessions" header="Sessions" />
+                <Column field="capacity" header="Capacity" />
                 <Column
-                    field="status"
-                    header="Trạng thái"
-                    body={(r) => <StatusPill value={r.status} />}
-                    style={{ width: 170 }}
+                    header="Status"
+                    body={(row) => (
+                        <StatusTag statusName={row.statusName} statusCode={row.status} />
+                    )}
                 />
             </DataTable>
-
         </Dialog>
     );
 }

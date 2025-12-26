@@ -97,11 +97,25 @@ public class CourseAdminController {
     @PostMapping("/{courseId}/sessions/generate")
     public ApiResponse<Void> generateSessions(
             @PathVariable Long courseId,
-            @RequestBody GenerateSessionsRequest request
+            @RequestBody(required = false) GenerateSessionsRequest request
     ) {
         sessionService.generateSessionsForCourse(courseId, request);
         return ApiResponse.<Void>builder().message("SUCCESS").build();
     }
+
+    @PostMapping("/{courseId}/sessions/preview")
+    public ApiResponse<List<SessionInfoDTO>> previewSessions(
+            @PathVariable Long courseId,
+            @RequestBody(required = false) GenerateSessionsRequest request
+    ) {
+        List<SessionInfoDTO> preview = sessionService.previewSessionsForCourse(courseId, request);
+
+        return ApiResponse.<List<SessionInfoDTO>>builder()
+                .message("SUCCESS")
+                .result(preview)
+                .build();
+    }
+
 
     @PostMapping("/{courseId}/publish")
     public ApiResponse<Void> publishCourse(@PathVariable Long courseId) {

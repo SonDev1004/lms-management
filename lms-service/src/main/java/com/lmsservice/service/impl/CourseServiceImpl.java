@@ -41,6 +41,117 @@ public class CourseServiceImpl implements CourseService {
     static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ISO_LOCAL_DATE;
     static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
 
+
+    private void refreshEnrollmentStatusForMvp(List<Course> courses) {
+        if (courses == null || courses.isEmpty()) return;
+
+        LocalDate today = LocalDate.now();
+        List<Course> changed = new ArrayList<>();
+
+        for (Course c : courses) {
+            CourseStatus oldStatus = c.getStatus();
+            CourseStatus newStatus = oldStatus;
+
+            // 1. MỞ ĐĂNG KÝ
+            if (c.getStartDate() != null
+                    && (oldStatus == CourseStatus.DRAFT || oldStatus == CourseStatus.SCHEDULED)
+                    && !today.isBefore(c.getStartDate())) {
+                newStatus = CourseStatus.ENROLLING;
+            }
+
+            // 2. ĐÓNG ĐĂNG KÝ → ĐANG HỌC (sau buổi #3)
+            LocalDate thirdDate = sessionRepository
+                    .findDateByCourseIdAndOrderSession(c.getId(), (short) 3)
+                    .orElse(null);
+
+            if (thirdDate != null && today.isAfter(thirdDate)) {
+                newStatus = CourseStatus.IN_PROGRESS;
+            }
+
+            // 3. HOÀN THÀNH
+            LocalDate lastDate = sessionRepository
+                    .findMaxDateByCourseId(c.getId())
+                    .orElse(null);
+
+            if (lastDate != null && today.isAfter(lastDate)) {
+                newStatus = CourseStatus.COMPLETED;
+            }
+
+            if (newStatus != oldStatus) {
+                c.setStatus(newStatus);
+                changed.add(c);
+            }
+        }
+
+        if (!changed.isEmpty()) {
+            courseRepository.saveAll(changed);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void refreshCourseStatusesMvp() {
+        LocalDate today = LocalDate.now();
+
+        List<CourseStatus> candidates = List.of(
+                CourseStatus.DRAFT,
+                CourseStatus.SCHEDULED,
+                CourseStatus.ENROLLING,
+                CourseStatus.WAITLIST,
+                CourseStatus.IN_PROGRESS
+        );
+
+        List<Course> courses = courseRepository.findByStatusIn(candidates);
+        if (courses == null || courses.isEmpty()) return;
+
+        List<Course> changed = new ArrayList<>();
+
+        for (Course c : courses) {
+            if (c == null) continue;
+
+            CourseStatus oldStatus = c.getStatus();
+            CourseStatus newStatus = oldStatus;
+
+            // 1) OPEN REG: today >= startDate, từ DRAFT/SCHEDULED -> ENROLLING
+            if (c.getStartDate() != null
+                    && (oldStatus == CourseStatus.DRAFT || oldStatus == CourseStatus.SCHEDULED)
+                    && !today.isBefore(c.getStartDate())) {
+                newStatus = CourseStatus.ENROLLING;
+            }
+
+            // 2) CLOSE REG: today > session#3.date => IN_PROGRESS
+            if (oldStatus == CourseStatus.ENROLLING
+                    || oldStatus == CourseStatus.WAITLIST
+                    || oldStatus == CourseStatus.SCHEDULED) {
+
+                LocalDate thirdDate = sessionRepository
+                        .findDateByCourseIdAndOrderSession(c.getId(), (short) 3)
+                        .orElse(null);
+
+                if (thirdDate != null && today.isAfter(thirdDate)) {
+                    newStatus = CourseStatus.IN_PROGRESS;
+                }
+            }
+
+            // 3) FINISH: today > last session => COMPLETED
+            if (newStatus == CourseStatus.IN_PROGRESS) {
+                LocalDate lastDate = sessionRepository.findMaxDateByCourseId(c.getId()).orElse(null);
+                if (lastDate != null && today.isAfter(lastDate)) {
+                    newStatus = CourseStatus.COMPLETED;
+                }
+            }
+
+            if (newStatus != oldStatus) {
+                c.setStatus(newStatus);
+                changed.add(c);
+            }
+        }
+
+        if (!changed.isEmpty()) {
+            courseRepository.saveAll(changed);
+        }
+    }
+
     @Override
     public List<SessionInfoDTO> getSessions(Long courseId) {
         courseRepository.findById(courseId)
@@ -229,8 +340,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional
     public List<CourseListItemDTO> getAllCourses() {
+        refreshCourseStatusesMvp();
         List<Course> courses = courseRepository.findAll();
+
+        // NEW: auto refresh status theo MVP trước khi map ra DTO
+        refreshEnrollmentStatusForMvp(courses);
 
         return courses.stream().map(c -> {
             CourseListItemDTO dto = new CourseListItemDTO();
@@ -256,6 +372,7 @@ public class CourseServiceImpl implements CourseService {
             return dto;
         }).toList();
     }
+
 
     @Override
     public List<OptionDto> getRoomOptionsForCourse() {

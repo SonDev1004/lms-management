@@ -1,24 +1,33 @@
-import React from 'react';
-import { Button } from 'primereact/button';
-import { Tag } from 'primereact/tag';
-import { Rating } from 'primereact/rating';
+import React, { useMemo } from "react";
+import { Button } from "primereact/button";
+import { Tag } from "primereact/tag";
+import { Rating } from "primereact/rating";
+import { getSubjectCover } from "@/features/subject/utils/resolveSubjectImage";
 
 export default function SubjectHero({ subject, onEnrollClick }) {
     if (!subject) return null;
 
+    const cover = useMemo(() => getSubjectCover(subject), [subject]);
+
     const {
         title,
-        audience = 'Teens & Adults',
-        level = 'Intermediate (B1–B2)',
-        summary = 'Boost your listening accuracy with exam-style drills.',
+        audience = "Teens & Adults",
+        level = "Intermediate (B1–B2)",
+        summary = "Boost your listening accuracy with exam-style drills.",
         rating = 4.7,
         reviewCount = 186,
-        image = 'https://images.unsplash.com/photo-1523246191167-6f4546b14880?q=80&w=1600&auto=format&fit=crop',
     } = subject;
 
     return (
         <header className="sd-hero" aria-label="Subject hero">
-            <img className="sd-hero__img" src={image} alt="" />
+            <img
+                className="sd-hero__img"
+                src={cover}
+                alt={title || "Subject"}
+                loading="eager"
+                onError={(e) => (e.currentTarget.src = "/noimg.png")}
+            />
+
             <div className="sd-hero__main">
                 <h1 className="sd-title">{title}</h1>
 

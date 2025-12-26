@@ -1,6 +1,8 @@
 .sc{
     --ink:#0f1e39; --muted:#6e84a9; --brand:#335CFF; --ring:#E8EEFF; --card:#fff;
     --halo:0 26px 70px rgba(36,76,255,.10);
+    padding :0 0 0 24px;
+    margin:24px;
 }
 
 /* bao section */
@@ -8,7 +10,7 @@
     background:var(--card);
     border:1px solid var(--ring);
     border-radius:22px;
-    padding:28px 24px;
+    padding:40px 24px;
     box-shadow:var(--halo);
     position:relative;
 }

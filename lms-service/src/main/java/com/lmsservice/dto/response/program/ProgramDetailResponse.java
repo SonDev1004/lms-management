@@ -21,7 +21,7 @@ public class ProgramDetailResponse {
     BigDecimal fee;
     Integer minStudents;
     Integer maxStudents;
-    String imgUrl;
+    String imageUrl;
     Boolean isActive;
 
     List<TrackItem> tracks;

@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.lmsservice.dto.response.OptionDto;
+import com.lmsservice.service.CourseService;
 import jakarta.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -55,6 +56,7 @@ public class ProgramServiceImpl implements ProgramService {
     SubjectRepository subjectRepository;
     ProgramPolicy programPolicy;
     CourseRepository courseRepository;
+    CourseService courseService;
 
     public ProgramResponse createProgram(ProgramRequest programRequest) {
 
@@ -108,7 +110,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         Program program =
                 programRepository.findById(programId).orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
-        if (program.getIsActive() == false) {
+        if (!program.getIsActive()) {
             throw new AppException(ErrorCode.PROGRAM_NOT_ACTIVE);
         }
         Set<Long> subjectIds = new HashSet<>();
@@ -126,7 +128,7 @@ public class ProgramServiceImpl implements ProgramService {
             Subject subject = subjectRepository
                     .findById(req.getSubjectId())
                     .orElseThrow(() -> new AppException(ErrorCode.SUBJECT_NOT_FOUND));
-            if (subject.getIsActive() == false) {
+            if (!subject.getIsActive()) {
                 throw new AppException(ErrorCode.SUBJECT_NOT_ACTIVE);
             }
 
@@ -155,8 +157,9 @@ public class ProgramServiceImpl implements ProgramService {
     }
 
     @Override
+    @Transactional
     public PageResponse<ProgramResponse> getAllPrograms(ProgramFilterRequest f, Pageable pageable) {
-
+        courseService.refreshCourseStatusesMvp();
         var auth = SecurityContextHolder.getContext().getAuthentication();
         boolean canViewAll = programPolicy.canViewAll(auth);
 
@@ -164,18 +167,15 @@ public class ProgramServiceImpl implements ProgramService {
                 "getAllPrograms canViewAll={} authorities={}",
                 canViewAll,
                 auth != null ? auth.getAuthorities() : "null");
-
-        //chỉ cần gọi 1 hàm from(f, canViewAll)
         Specification<Program> spec = ProgramSpecifications.from(f, canViewAll);
 
-        // Cho phép sort theo các field ROOT của Program
         Set<String> whitelist = PageableUtils.toWhitelist(
                 "id", "title", "fee", "code", "minStudent", "maxStudent", "status", "createdAt", "updatedAt");
-        Sort fallback = Sort.by(Sort.Order.desc("id")); // sort mặc định khi client không truyền/hoặc truyền sai
+        Sort fallback = Sort.by(Sort.Order.desc("id"));
         Pageable safe = PageableUtils.sanitizeSort(pageable, whitelist, fallback);
 
         Page<Program> page = programRepository.findAll(spec, safe);
-        // map sang DTO
+
         Page<ProgramResponse> dtoPage = page.map(p -> ProgramResponse.builder()
                 .id(p.getId())
                 .title(p.getTitle())
@@ -184,20 +184,22 @@ public class ProgramServiceImpl implements ProgramService {
                 .minStudent(p.getMinStudent())
                 .maxStudent(p.getMaxStudent())
                 .description(p.getDescription())
+                .imageUrl(p.getImageUrl())
                 .isActive(p.getIsActive())
                 .build());
         return PageResponse.from(dtoPage);
     }
 
     @Override
+    @Transactional
     public ProgramDetailResponse getProgramDetail(Long programId, boolean onlyUpcoming) {
-
+        courseService.refreshCourseStatusesMvp();
         Program program =
                 programRepository.findById(programId).orElseThrow(() -> new AppException(ErrorCode.PROGRAM_NOT_FOUND));
         if (program == null) {
             throw new AppException(ErrorCode.PROGRAM_NOT_FOUND);
         }
-        if (program.getIsActive() == false) {
+        if (!program.getIsActive()) {
             throw new AppException(ErrorCode.PROGRAM_NOT_ACTIVE);
         }
         // lấy curriculums theo  order
@@ -288,7 +290,7 @@ public class ProgramServiceImpl implements ProgramService {
                 .fee(program.getFee())
                 .minStudents(program.getMinStudent())
                 .maxStudents(program.getMaxStudent())
-                .imgUrl(program.getImageUrl())
+                .imageUrl(program.getImageUrl())
                 .isActive(program.getIsActive())
                 .tracks(trackItems)
                 .subjectList(subjectItems)
