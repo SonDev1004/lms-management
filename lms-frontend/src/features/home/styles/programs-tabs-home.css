@@ -1,0 +1,214 @@
+/* ========================================
+   PROGRAMS HOME SECTION
+======================================== */
+.programs-home {
+    padding: 60px 0;
+    background: #fff;
+}
+
+.programs-home__header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.section-subtitle {
+    font-size: 16px;
+    color: #666;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ========================================
+   TABS STYLING
+======================================== */
+.programs-tabs .p-tabview-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    background: transparent;
+    margin-bottom: 40px;
+}
+
+.programs-tabs .p-tabview-nav-link {
+    padding: 12px 24px;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    background: white;
+    color: #666;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.programs-tabs .p-tabview-nav-link:hover {
+    border-color: #0066cc;
+    color: #0066cc;
+    background: #f0f7ff;
+}
+
+.programs-tabs .p-tabview-nav-link.p-highlight {
+    background: #0066cc;
+    border-color: #0066cc;
+    color: white;
+}
+
+.programs-tabs .p-tabview-panels {
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+/* ========================================
+   CAROUSEL
+======================================== */
+.programs-carousel {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 30px 0;
+}
+
+.programs-carousel__wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.programs-carousel__track {
+    display: flex;
+    gap: 20px;
+    will-change: transform;
+    transition: none;
+}
+
+.programs-carousel__card {
+    flex-shrink: 0;
+    width: 320px;
+    min-width: 320px;
+}
+
+/* ========================================
+   LOADING & EMPTY STATES
+======================================== */
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.program-skeleton {
+    height: 350px;
+    background: linear-gradient(
+            90deg,
+            #f0f0f0 25%,
+            #e0e0e0 50%,
+            #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 12px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.programs-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-size: 16px;
+}
+
+/* ========================================
+   GRADIENT FADE EDGES
+======================================== */
+.programs-carousel::before,
+.programs-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 150px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.programs-carousel::before {
+    left: 0;
+    background: linear-gradient(to right,
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,0) 100%
+    );
+}
+
+.programs-carousel::after {
+    right: 0;
+    background: linear-gradient(to left,
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,0) 100%
+    );
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 768px) {
+    .programs-home {
+        padding: 40px 0;
+    }
+
+    .section-title {
+        font-size: 28px;
+    }
+
+    .section-subtitle {
+        font-size: 14px;
+        padding: 0 20px;
+    }
+
+    .programs-tabs .p-tabview-nav {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 0 20px;
+    }
+
+    .programs-tabs .p-tabview-nav-link {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .programs-carousel__card {
+        width: 280px;
+    }
+
+    .programs-carousel::before,
+    .programs-carousel::after {
+        width: 50px;
+    }
+
+    .programs-grid {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .programs-carousel__card {
+        width: 260px;
+    }
+
+    .programs-carousel::before,
+    .programs-carousel::after {
+        width: 30px;
+    }
+}
