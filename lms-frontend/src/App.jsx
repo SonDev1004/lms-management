@@ -106,7 +106,8 @@ const App = () => {
                     <Route path="forgot-password" element={<ForgotPassword />} />
                     <Route path="reset-password" element={<ResetPassword />} />
                     <Route path="programs" element={<ProgramList/>}/>
-                    <Route path="programs/:id" element={<ProgramDetailPage/>}/>
+                    <Route path="programs/:id" element={
+                        <ProgramDetailPage/>}/>
                     <Route path="userprofile" element={<UserProfile/>}/>
                     <Route path="subjects" element={<SubjectList/>}/>
                     <Route path="subjects/:id" element={<SubjectDetail/>}/>
